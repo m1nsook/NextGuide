@@ -1,14 +1,14 @@
 ---
-title: "@ariadocs/mdx"
+title: MDX
 description: Turn MDX files into pages, a table of contents and a sidebar.
 ---
 
-<Install packages="@ariadocs/mdx" />
+<Install packages="nextguide@alpha" />
 
 Point it at a folder of `.mdx` files. For each page you get the rendered content, the frontmatter and the headings. For the folder you get a sidebar, ordered by optional `_meta.json` files.
 
 ```ts
-import { createDocs } from "@ariadocs/mdx";
+import { createDocs } from "nextguide/mdx";
 
 const docs = createDocs({ contentDir: "content/docs" });
 
@@ -19,7 +19,7 @@ const sidebar = await docs.getNavigation();
 MDX can also come from a string, for example from a CMS:
 
 ```ts
-import { parseMdx } from "@ariadocs/mdx";
+import { parseMdx } from "nextguide/mdx";
 
 const page = await parseMdx({ source: textFromCms, blockJs: true });
 ```
@@ -28,9 +28,9 @@ const page = await parseMdx({ source: textFromCms, blockJs: true });
 
 | Import | Use it for |
 | --- | --- |
-| `@ariadocs/mdx` | Everything. Server code only. |
-| `@ariadocs/mdx/client` | `MdxClient`, in Client Components |
-| `@ariadocs/mdx/server` | `MdxServer` on its own |
-| `@ariadocs/mdx/plugins` | remark and rehype plugins |
+| `nextguide/mdx` | Everything. Server code only. |
+| `nextguide/mdx/client` | `MdxClient`, in Client Components |
+| `nextguide/mdx/server` | `MdxServer` on its own |
+| `nextguide/mdx/plugins` | remark and rehype plugins |
 
-This package replaces `@ariadocs/react`. See the [migration guide](/docs/guides/migration) if you're upgrading.
+MDX, OpenAPI, core, and components are all included in `nextguide`.

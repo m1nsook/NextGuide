@@ -11,8 +11,8 @@ This guide assumes you've done the [installation](/docs/getting-started/installa
 
 ```tsx title="app/docs/[[...slug]]/page.tsx"
 import { notFound } from "next/navigation";
-import { isMdxNotFound } from "@ariadocs/mdx";
-import { Docs } from "@ariadocs/components";
+import { isMdxNotFound } from "nextguide/mdx";
+import { Docs } from "nextguide/components";
 import { docs } from "@/lib/docs";
 
 type Props = { params: Promise<{ slug?: string[] }> };
@@ -48,7 +48,7 @@ A missing page, or a slug like `../secret`, throws an error that `isMdxNotFound`
 Parse the spec in a layout and pass it to `OpenAPI.Root`. Every page under the layout can then render endpoints by id.
 
 ```tsx title="app/reference/layout.tsx"
-import { OpenAPI } from "@ariadocs/components";
+import { OpenAPI } from "nextguide/components";
 import { openapi } from "@/lib/openapi";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -62,7 +62,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 ```
 
 ```tsx title="app/reference/[operation]/page.tsx"
-import { OpenAPI } from "@ariadocs/components";
+import { OpenAPI } from "nextguide/components";
 import { openapi } from "@/lib/openapi";
 
 export default async function Page({ params }: { params: Promise<{ operation: string }> }) {
@@ -87,8 +87,8 @@ To show the whole API on a single page instead, render `<OpenAPI.Docs />` inside
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Docs } from "@ariadocs/components";
-import type { NavItem } from "@ariadocs/core";
+import { Docs } from "nextguide/components";
+import type { NavItem } from "nextguide/core";
 
 export function Sidebar({ items }: { items: NavItem[] }) {
   return <Docs.Nav items={items} activeHref={usePathname()} linkAs={Link} />;
