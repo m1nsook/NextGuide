@@ -27,7 +27,7 @@
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "build": "rm -rf dist && tsc && copyfiles -u 1 \"src/styles/**/*.css\" dist",
+    "build": "node ../../scripts/clean-dist.mjs && tsc && copyfiles -u 1 \"src/styles/**/*.css\" dist",
     "check-types": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },

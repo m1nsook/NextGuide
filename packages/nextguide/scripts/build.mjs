@@ -1,0 +1,55 @@
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs"
+import { join, resolve } from "node:path"
+import { spawnSync } from "node:child_process"
+import { fileURLToPath } from "node:url"
+
+const here = fileURLToPath(new URL("..", import.meta.url))
+const workspace = resolve(here, "../..")
+const out = join(here, "dist")
+const libraries = ["core", "openapi", "mdx", "components"]
+const internal = /@ariadocs\/(core|openapi|mdx|components)(?![\w-])/g
+
+function run(command, args, cwd) {
+  const result = spawnSync(command, args, { cwd, stdio: "inherit", shell: process.platform === "win32" })
+  if (result.error) throw result.error
+  if (result.status !== 0) throw new Error(command + " " + args.join(" ") + " failed with exit code " + result.status)
+}
+
+function rewriteDirectory(folder) {
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const path = join(folder, entry.name)
+    if (entry.isDirectory()) {
+      rewriteDirectory(path)
+    } else if (/\.(?:js|d\.ts)$/.test(entry.name)) {
+      const before = readFileSync(path, "utf8")
+      const after = before.replace(internal, "nextguide/$1")
+      if (after !== before) writeFileSync(path, after)
+    }
+  }
+}
+
+run("bun", ["run", "build:packages"], workspace)
+rmSync(out, { recursive: true, force: true })
+mkdirSync(out, { recursive: true })
+
+for (const library of libraries) {
+  const built = join(workspace, "packages", "lib-" + library, "dist")
+  if (!existsSync(join(built, "index.js")) || !existsSync(join(built, "index.d.ts"))) {
+    throw new Error("Missing compiled " + library + ". Run bun install at repository root before building.")
+  }
+  const dest = join(out, library)
+  cpSync(built, dest, { recursive: true })
+  rewriteDirectory(dest)
+}
+
+run("bun", ["x", "tsc", "--project", join(here, "tsconfig.json")], workspace)
+for (const name of ["ui", "icons"]) {
+  const file = join(out, name, "index.js")
+  if (!existsSync(file)) throw new Error("Missing NextGuide " + name + " entry")
+  writeFileSync(file, '"use client";\n' + readFileSync(file, "utf8"))
+}
+cpSync(join(here, "src/ui/theme.css"), join(out, "ui/theme.css"))
+writeFileSync(join(out, "styles.css"), '@import "./components/styles/index.css";\n@import "./ui/theme.css";\n')
+writeFileSync(join(out, "index.js"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
+writeFileSync(join(out, "index.d.ts"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
+console.log("NextGuide all-in-one distribution assembled")

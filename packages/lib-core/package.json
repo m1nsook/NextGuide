@@ -21,7 +21,7 @@
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "build": "rm -rf dist && tsc",
+    "build": "node ../../scripts/clean-dist.mjs && tsc",
     "test": "vitest run",
     "check-types": "tsc --noEmit",
     "prepublishOnly": "bun run build"
