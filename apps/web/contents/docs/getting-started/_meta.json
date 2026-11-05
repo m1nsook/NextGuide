@@ -4,11 +4,27 @@
     "title": "Installation"
   },
   {
+    "slug": "routing",
+    "title": "Next.js routing"
+  },
+  {
+    "slug": "account-mode",
+    "title": "Account mode"
+  },
+  {
+    "slug": "developer-mode",
+    "title": "Developer mode"
+  },
+  {
+    "slug": "administration",
+    "title": "Administration"
+  },
+  {
     "slug": "nextjs-app",
-    "title": "App Router"
+    "title": "App Router example"
   },
   {
     "slug": "nextjs-pages",
-    "title": "Pages Router"
+    "title": "Pages Router example"
   }
 ]

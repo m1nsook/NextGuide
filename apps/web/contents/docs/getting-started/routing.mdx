@@ -1,0 +1,23 @@
+---
+title: Next.js routing
+description: NextGuide requires Next.js and targets both supported router architectures.
+---
+
+# Next.js routing
+
+**Next.js is mandatory** for NextGuide.
+
+NextGuide intends to integrate with both of the following layouts:
+
+| Router | Supported folder locations | Integration status |
+| --- | --- | --- |
+| App Router | `app/`, `src/app/` | The reference website uses App Router today |
+| Pages Router | `pages/`, `src/pages/` | Adapter planned |
+
+The future CLI will detect the router automatically and ask the developer to choose if both are present. Both adapters will share the same MDX and OpenAPI rendering engine.
+
+## Important distinction
+
+The static [GitHub Pages site](/docs/deployment/github-pages) runs a read-only build. When Account mode is available, its CMS, authentication, and persistent settings will require a running Next.js server.
+
+You can examine the source's existing [App Router example](/docs/getting-started/nextjs-app) and [Pages Router example](/docs/getting-started/nextjs-pages). These are inherited Aria Docs integration examples, not the finished NextGuide CLI adapters.

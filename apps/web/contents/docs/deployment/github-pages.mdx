@@ -1,0 +1,37 @@
+---
+title: GitHub Pages
+description: NextGuide's own read-only documentation is exported and deployed to GitHub Pages.
+---
+
+# GitHub Pages
+
+This documentation site uses NextGuide itself and is published at [m1nsook.github.io/NextGuide](https://m1nsook.github.io/NextGuide/).
+
+The repository includes a Pages workflow that builds the Next.js application as a static export. It runs on pull requests for build validation, and publishes on pushes to `main` or manual workflow dispatches.
+
+## Repository settings
+
+Go to **Settings → Pages → Build and deployment**, then select **GitHub Actions** as the publishing source.
+
+For the project site, the static export uses `/NextGuide` as its Next.js `basePath`. This is enabled only in the Pages build, leaving local development at `http://localhost:4310`.
+
+## Local preview
+
+To run the regular development server:
+
+```powershell
+bun install
+bun run dev
+```
+
+To check the production application build locally:
+
+```powershell
+bun run build:web
+```
+
+## Limitations
+
+Static Pages hosting cannot run `/setup` ownership verification, sessions, database writes, or a browser content-management backend. The public NextGuide documentation is therefore built as a read-only developer-mode example.
+
+For the future Account mode, use a [persistent Next.js host](/docs/deployment/self-hosting).

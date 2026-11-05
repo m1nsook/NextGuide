@@ -1,0 +1,22 @@
+---
+title: Developer mode
+description: Planned file-first mode for developers who prefer editing MDX and configuration directly.
+---
+
+# Developer mode
+
+**Status: planned.** Developer mode will be selected with the future `bunx nextguide init --developer` command.
+
+In this mode, documentation and configuration are edited as files rather than managed through a user account. It is intended for teams already comfortable using Next.js, MDX, and their own editors.
+
+## Planned workflow
+
+- Detect Next.js App Router or Pages Router projects.
+- Create the NextGuide configuration and documentation folders.
+- Edit MDX pages and navigation directly in the repository.
+- Render OpenAPI from local specification files.
+- Build a static export when the project has no server-dependent functionality.
+
+Developer mode should not require a database or administrator sign-in for ordinary content editing. Project owners can still verify an initial installation in a controlled environment.
+
+Read the [routing overview](/docs/getting-started/routing) or [static deployment guide](/docs/deployment/github-pages).

@@ -1,55 +1,62 @@
 # NextGuide
 
-**NextGuide** is a Next.js documentation platform built from the [Aria Docs](https://github.com/nisabmohd/Aria-Docs) foundation. It is under active development; the browser-based first-run setup wizard and administration panel are **not implemented yet**.
+A Next.js documentation platform built from the [MIT-licensed Aria Docs](https://github.com/nisabmohd/Aria-Docs) source.
 
-This repository currently provides the initial source workspace for local testing and NextGuide branding. Aria Docs' original MIT notices remain in `LICENSE.txt` and the upstream package license files.
+**Official documentation (built with NextGuide):** https://m1nsook.github.io/NextGuide/
+
+> Early development preview (0.1.0). Rendering and reference website: in progress. Browser setup wizard, administrator, account/developer CLI modes: planned and not yet released.
 
 ## Requirements
 
-- **Next.js is required.** The planned NextGuide integration supports both **App Router** and **Pages Router** (including `src/app` and `src/pages` layouts).
-- Bun 1.4+ for installation, builds, and local testing.
-- Node.js 20+ for Next.js toolchain compatibility.
-- No Docker, GitHub Actions, or hosted CI is required.
+- **Next.js is required.** The integration roadmap includes both **App Router** (`app/` or `src/app/`) and **Pages Router** (`pages/` or `src/pages/`).
+- Bun 1.4+ and Node.js 20+ for local development.
+- No Docker required.
 
-## Local development (Windows / Bun)
+## Local development
 
-Clone this repository with **GitHub Desktop**. In the project folder:
+Open the repository in GitHub Desktop, then in the project's root run:
 
 ```powershell
 bun install
 bun run dev
 ```
 
-Open **http://localhost:4310**. The first run builds the local workspace packages before starting Next.js.
+Open **http://localhost:4310**. The workspace builds its local packages before starting the Next.js documentation application.
 
-Other local commands:
+To validate locally:
 
 ```powershell
-bun run build
+bun run build:web
 bun run lint
 bun run check-types
-bun run test
 ```
 
-The Next.js application is at `apps/web`; shared Aria Docs libraries are under `packages/`. Package import names remain `@ariadocs/*` temporarily to preserve compatibility while NextGuide is developed.
+## GitHub Pages
 
-## Planned installation modes
+The NextGuide documentation in `apps/web/` is deployed from this same repository through `.github/workflows/nextguide-pages.yml` using a **static Next.js export** and a `/NextGuide` base path.
 
-| Mode | Intended experience |
-| --- | --- |
-| Account mode (default) | First-run `/setup` wizard, ownership token, admin account, browser-based `/admin` CMS and site settings |
-| Developer mode | Manage configuration and MDX/OpenAPI content directly as files, with optional static export |
+Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once. The workflow verifies builds on PRs and publishes the documentation after changes reach `main`. The published website is **read-only**: no `/admin` or `/setup` backend can run on GitHub Pages.
 
-Planned commands (not available yet): `bun add nextguide`, `bunx nextguide init`, and `bunx nextguide init --developer`. Both Next.js routers are in scope.
+See the [Pages deployment guide](https://m1nsook.github.io/NextGuide/docs/deployment/github-pages/).
 
-## Design direction
+## Roadmap
 
-Reuse the Next.js/Aria Docs engine, rebrand it to NextGuide, and refine the public documentation and eventual administration UI using the shadcn/ui design language from [BSIS.dev](https://github.com/m1nsook/BSIS.dev). Typography: Inter and JetBrains Mono; dark and light mode; selectable accent color.
+- Guided `/setup` wizard (site title, description, accent picker, logo, favicon and settings)
+- Terminal-issued one-time owner verification token
+- **Account mode** (default): admin credentials and `/admin` browser CMS
+- **Developer mode**: edit MDX, OpenAPI and configuration as files
+- Next.js App Router and Pages Router adapters
 
-## Security direction
+Planned commands, **not implemented/published yet**:
 
-The future first-run flow will display a one-time setup token in the server terminal. The owner must enter it at `/setup` before configuration or admin account creation. The token must be hashed in storage, rate-limited and invalidated after setup.
+```powershell
+bun add nextguide
+bunx nextguide init
+bunx nextguide init --developer
+```
 
-## Licensing
+The original `@ariadocs/*` names remain in the source workspace for now as the internal rendering engine.
 
-NextGuide additions: MIT, see `LICENSE`. Original Aria Docs source: MIT © Mohd. Nisab, see `LICENSE.txt` and the package-level licenses. Preserve those notices in derivative releases.
+## License and attribution
+
+NextGuide modifications: MIT, see `LICENSE`. Original Aria Docs source: MIT © Mohd. Nisab, see `LICENSE.txt` and package-level notices. Keep all attribution and license notices when redistributing.

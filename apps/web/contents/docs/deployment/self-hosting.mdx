@@ -1,0 +1,19 @@
+---
+title: Self-hosting
+description: Server-based deployment requirements for NextGuide's planned Account mode.
+---
+
+# Self-hosting NextGuide
+
+NextGuide's current documentation renderer is a standard Next.js application. The **planned** Account mode will require server-side features that static hosting cannot provide.
+
+## Production server requirements
+
+- A supported Node.js/Bun environment for your Next.js version.
+- Persistent filesystem or database storage for administrator accounts, settings, and uploaded content.
+- HTTPS and a trusted reverse proxy when publicly accessible.
+- Secure backups, administrator authentication, and first-run ownership verification.
+
+The NextGuide CMS and its storage configuration are **not implemented yet**. This page describes the intended architecture rather than a deployable Account mode.
+
+If you only need static documentation, see [GitHub Pages](/docs/deployment/github-pages).
