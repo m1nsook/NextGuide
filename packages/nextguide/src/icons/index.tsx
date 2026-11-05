@@ -3,17 +3,17 @@
 import * as React from "react"
 import {
   ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight,
-  Code2, Copy, ExternalLink, FileText, Github, Home, Info, Link, Menu,
+  Code2, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
   Moon, Palette, Search, Settings, Sun, Terminal, X,
 } from "lucide-react"
 import {
-  siDiscord, siGithub, siInstagram, siLinkedin, siNpm, siReact, siTiktok,
+  siDiscord, siGithub, siInstagram, siNpm, siReact, siTiktok,
   siVercel, siYoutube,
 } from "simple-icons"
 
 export {
   ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight,
-  Code2, Copy, ExternalLink, FileText, Github, Home, Info, Link, Menu,
+  Code2, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
   Moon, Palette, Search, Settings, Sun, Terminal, X,
 }
 export type { LucideIcon, LucideProps } from "lucide-react"
@@ -22,14 +22,14 @@ const uiIcons = {
   "arrow-left": ArrowLeft, "arrow-right": ArrowRight, "book-open": BookOpen,
   check: Check, "chevron-down": ChevronDown, "chevron-left": ChevronLeft,
   "chevron-right": ChevronRight, code: Code2, copy: Copy, "external-link": ExternalLink,
-  file: FileText, github: Github, home: Home, info: Info, link: Link,
+  file: FileText, home: Home, info: Info, link: Link,
   menu: Menu, moon: Moon, palette: Palette, search: Search,
   settings: Settings, sun: Sun, terminal: Terminal, x: X,
 } as const
 
 const brandIcons = {
   discord: siDiscord, github: siGithub, instagram: siInstagram,
-  linkedin: siLinkedin, npm: siNpm, react: siReact,
+  npm: siNpm, react: siReact,
   tiktok: siTiktok, vercel: siVercel, youtube: siYoutube,
 } as const
 
