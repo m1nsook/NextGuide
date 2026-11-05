@@ -9,7 +9,7 @@ const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 const output = join(root, "dist")
 
 test("all-in-one exports are present", () => {
-  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./fonts", "./fonts/catalog", "./styles.css"]) {
+  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./blocks", "./ui/primitives", "./ui/interactive", "./fonts", "./fonts/catalog", "./styles.css"]) {
     assert.ok(manifest.exports[key], key)
   }
 })
@@ -60,4 +60,11 @@ test("public JS modules import from the self-contained package", async () => {
   assert.equal(typeof icons.BrandIcon, "function")
   assert.equal(typeof fonts.FontPicker, "function")
   assert.equal(typeof fonts.validateFontSelection, "function")
+  const blocks = await import("nextguide/blocks")
+  assert.equal(typeof blocks.CodeWindow, "function")
+  assert.equal(typeof blocks.CodeTabs, "function")
+  assert.equal(typeof blocks.FileTree, "function")
+  assert.equal(typeof ui.DialogContent, "function")
+  assert.equal(typeof ui.TabsTrigger, "function")
+  assert.equal(typeof ui.Table, "function")
 })

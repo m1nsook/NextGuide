@@ -1,7 +1,7 @@
 {
   "name": "nextguide",
-  "version": "0.0.1-alpha.1",
-  "description": "NextGuide: all-in-one Next.js documentation framework with MDX, OpenAPI, shadcn-style UI, and icons.",
+  "version": "0.0.1-alpha.2",
+  "description": "NextGuide: the all-in-one Next.js documentation framework with MDX, OpenAPI, integrated UI components and icons.",
   "type": "module",
   "bin": {
     "nextguide": "bin/nextguide.mjs"
@@ -98,6 +98,18 @@
     "./fonts/catalog": {
       "types": "./dist/fonts/catalog.d.ts",
       "default": "./dist/fonts/catalog.js"
+    },
+    "./blocks": {
+      "types": "./dist/blocks/index.d.ts",
+      "default": "./dist/blocks/index.js"
+    },
+    "./ui/primitives": {
+      "types": "./dist/ui/primitives.d.ts",
+      "default": "./dist/ui/primitives.js"
+    },
+    "./ui/interactive": {
+      "types": "./dist/ui/interactive.d.ts",
+      "default": "./dist/ui/interactive.js"
     }
   },
   "imports": {

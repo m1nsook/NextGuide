@@ -53,7 +53,18 @@ if (!existsSync(picker)) throw new Error("Missing font picker")
 writeFileSync(picker, '"use client";\n' + readFileSync(picker, "utf8"))
 cpSync(join(here, "src/ui/theme.css"), join(out, "ui/theme.css"))
 cpSync(join(here, "src/fonts/picker.css"), join(out, "fonts/picker.css"))
-writeFileSync(join(out, "styles.css"), '@import "./components/styles/index.css";\n@import "./ui/theme.css";\n@import "./fonts/picker.css";\n')
+cpSync(join(here, "src/blocks/styles.css"), join(out, "blocks/styles.css"))
+cpSync(join(here, "src/ui/primitives.css"), join(out, "ui/primitives.css"))
+cpSync(join(here, "src/ui/interactive.css"), join(out, "ui/interactive.css"))
+writeFileSync(join(out, "styles.css"), [
+  '@import "./components/styles/index.css";',
+  '@import "./ui/theme.css";',
+  '@import "./ui/primitives.css";',
+  '@import "./ui/interactive.css";',
+  '@import "./blocks/styles.css";',
+  '@import "./fonts/picker.css";',
+  ''
+].join("\\n"))
 writeFileSync(join(out, "index.js"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
 writeFileSync(join(out, "index.d.ts"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
 console.log("NextGuide all-in-one distribution assembled")

@@ -12,7 +12,7 @@ import {
   ToggleGroup as ToggleGroupPrimitive, Tooltip as TooltipPrimitive,
 } from "radix-ui"
 import { Check, ChevronDown, ChevronRight, Circle } from "lucide-react"
-import { cn } from "./index.js"
+const cn = (...parts: (string | undefined)[]) => parts.filter(Boolean).join(" ")
 
 export const Tabs = TabsPrimitive.Root
 export function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
