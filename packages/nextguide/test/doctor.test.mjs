@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-const cli = new URL("../bin/nextguide.mjs", import.meta.url);
+const cli = fileURLToPath(new URL("../bin/nextguide.mjs", import.meta.url));
 
 function fixture({ next = "^16.4.5", folders = ["src/app"] } = {}) {
   const directory = mkdtempSync(join(tmpdir(), "nextguide-doctor-"));
@@ -18,8 +19,12 @@ function fixture({ next = "^16.4.5", folders = ["src/app"] } = {}) {
 }
 
 function run(...args) {
-  return spawnSync(process.execPath, [cli.pathname, ...args], { encoding: "utf8" });
+  return spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" });
 }
+
+test("CLI file URL resolves to a real filesystem path (including Windows drive letters)", () => {
+  assert.equal(existsSync(cli), true, `CLI not found at ${cli}`);
+});
 
 test("--version prints first alpha", () => {
   const result = run("--version");
