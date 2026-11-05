@@ -1,27 +1,35 @@
 ---
 title: Account mode
-description: Planned guided setup and browser-managed documentation.
+description: Planned secure server-side setup and CMS, independently testable from the full NextGuide package.
 ---
 
 # Account mode
 
-**Status: planned.** Account mode will be the default installation experience once the NextGuide CLI is ready.
+**Status: not implemented.** Account mode will be the default installation when the NextGuide all-in-one package and installer are ready. It is **not** used for the official GitHub Pages documentation.
 
-## First run
+Account mode needs a persistent Next.js server, a writable data directory, and persistent storage. The planned default is **embedded SQLite**, requiring no separate database server for a basic installation.
 
-When the Next.js application starts without an installation, it will show a cryptographically random, one-time setup token in the terminal. The owner will visit `/setup`, enter that token, and then complete a guided wizard.
+## First-run ownership
 
-1. Verify ownership with the server-console token.
-2. Choose website name, description, language, logo, favicon and public address.
-3. Configure the accent color, light/dark appearance and typography.
-4. Create the administrator account with username, email and password; choose Gravatar or an uploaded avatar.
-5. Create an example or empty content structure and optionally import OpenAPI.
-6. Review, confirm and lock the first-run setup.
+The server generates a cryptographically random single-use ownership token and prints it only in its console. The user verifies that token in /setup before creating a first owner.
 
-The token must be stored hashed, rate limited, short-lived, and invalidated after use. Once installed, `/setup` must not be accessible to untrusted visitors.
+After verification, the owner selects site metadata, language, URL, branding, theme, accent color and body/heading/code fonts with a live browser preview; creates their admin credentials; chooses starter content; and confirms setup.
 
-## After setup
+Verification must check a securely hashed token with expiration and attempt limits. Passwords need a modern password hash such as Argon2id, authentication must be rate-limited, and ownership creation plus token consumption must be **transactional** to prevent duplicate claims. Public ownership setup stays locked after the owner is established.
 
-Sign in at `/admin` to create and edit pages, organize navigation, manage API specifications, upload media, and configure the site. Content will remain MDX-based wherever practical to preserve portability.
+## Persistent local data
 
-Account mode needs a **persistent Next.js server**; it cannot run on static-only GitHub Pages. See [self-hosting](/docs/deployment/self-hosting).
+~~~text
+.nextguide/
+  nextguide.db
+  uploads/
+  backups/
+~~~
+
+This directory must be server-only, excluded from Git and static exports, and kept across deployments. Never place the database below public/ or expose it through Next.js static routes.
+
+## Testing and administration
+
+Authenticated site managers will eventually use /admin to edit MDX pages, navigation, OpenAPI, uploaded assets, and settings. **We will test Account Mode from a complete locally installed NextGuide npm package**, not from the official GitHub Pages build.
+
+For NextGuide's own docs, see [Developer mode](/docs/getting-started/developer-mode). For hosting account-mode sites, see [self-hosting](/docs/deployment/self-hosting).
