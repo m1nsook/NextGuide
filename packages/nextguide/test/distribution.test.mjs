@@ -41,3 +41,23 @@ test("compiled code contains no internal workspace imports", () => {
     assert.doesNotMatch(source, /@workspace\//, filename)
   }
 })
+
+test("public JS modules import from the self-contained package", async () => {
+  const [core, mdx, api, components, ui, icons, fonts] = await Promise.all([
+    import("nextguide/core"),
+    import("nextguide/mdx"),
+    import("nextguide/openapi"),
+    import("nextguide/components"),
+    import("nextguide/ui"),
+    import("nextguide/icons"),
+    import("nextguide/fonts"),
+  ])
+  assert.equal(typeof core.slugify, "function")
+  assert.equal(typeof mdx.createDocs, "function")
+  assert.equal(typeof api.parseOpenAPI, "function")
+  assert.ok(components.Docs)
+  assert.equal(typeof ui.Button, "function")
+  assert.equal(typeof icons.BrandIcon, "function")
+  assert.equal(typeof fonts.FontPicker, "function")
+  assert.equal(typeof fonts.validateFontSelection, "function")
+})
