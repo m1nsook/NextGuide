@@ -64,7 +64,7 @@ writeFileSync(join(out, "styles.css"), [
   '@import "./blocks/styles.css";',
   '@import "./fonts/picker.css";',
   ''
-].join("\\n"))
+].join("\n"))
 writeFileSync(join(out, "index.js"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
 writeFileSync(join(out, "index.d.ts"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
 console.log("NextGuide all-in-one distribution assembled")
