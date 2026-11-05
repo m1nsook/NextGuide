@@ -1,7 +1,29 @@
 # Third-party notices
 
-NextGuide incorporates source derived from [Aria Docs](https://github.com/nisabmohd/Aria-Docs), copyright Nisab Mohd and its contributors, under the MIT License. Original copyright and license notices are preserved in the source repository. The bundled compiled renderer retains those attribution obligations.
+NextGuide incorporates MIT-licensed source code derived from [Aria Docs](https://github.com/nisabmohd/Aria-Docs). The original Aria Docs copyright and MIT permission notice is reproduced below.
 
-NextGuide includes shadcn-style components (MIT licensed design patterns) and depends on Lucide and Simple Icons. Simple Icons contains brand logos that may be trademarks of their respective owners; inclusion does not imply endorsement or affiliation.
+Other dependencies include shadcn-style UI code, Lucide and Simple Icons, governed by their own licenses and any relevant trademarks. No affiliation with brand owners is implied. Segoe UI is not redistributed by NextGuide.
 
-The host application manages font licensing and loading. Segoe UI is used only as a system-font stack and is **not** distributed with NextGuide.
+## Original Aria Docs MIT license
+
+MIT License
+
+Copyright (c) 2025 Mohd. Nisab
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
