@@ -3,7 +3,7 @@ title: Components
 description: Components for docs pages and API references.
 ---
 
-<Install packages="@ariadocs/components" />
+<Install packages="nextguide@alpha" />
 
 There are two groups. `Docs.*` lays out MDX pages: the sidebar, the table of contents and the page itself. `OpenAPI.*` renders endpoints from a parsed spec.
 
@@ -34,11 +34,11 @@ The components use Tailwind CSS v4. Let Tailwind scan the package, then import t
 ```css title="app/globals.css"
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@source "../node_modules/@ariadocs/components/dist";
+@source "../node_modules/nextguide/dist/**/*.{js,mjs}";
 ```
 
 ```ts title="app/layout.tsx"
-import "@ariadocs/components/styles.css";
+import "nextguide/styles.css";
 ```
 
-If you use shadcn/ui, the components use your colors. You can render them from Server or Client Components.
+NextGuide includes shadcn-style UI components; no separate shadcn installer is required. You can render them from Server or Client Components.

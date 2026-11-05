@@ -13,7 +13,7 @@ const COMMANDS: Record<Manager, (packages: string, dev: boolean) => string> = {
   bun: (p, dev) => `bun add${dev ? " -d" : ""} ${p}`,
 }
 
-/** `<Install packages="@ariadocs/mdx" />` — the install command for each package manager. */
+/** `<Install packages="nextguide@alpha" />` — the install command for each package manager. */
 export function Install({ packages, dev = false }: { packages: string; dev?: boolean }) {
   const [manager, setManager] = useState<Manager>("bun")
   return (

@@ -1,0 +1,47 @@
+---
+title: Tabs & accordion
+description: Accessible tab navigation and expandable content.
+---
+
+# Tabs & accordion
+
+<Preview>
+  <UiTabs defaultValue="docs">
+    <TabsList>
+      <TabsTrigger value="docs">Documentation</TabsTrigger>
+      <TabsTrigger value="api">API reference</TabsTrigger>
+    </TabsList>
+    <TabsContent value="docs"><p>Write guides and examples using MDX files.</p></TabsContent>
+    <TabsContent value="api"><p>Render operations directly from OpenAPI specifications.</p></TabsContent>
+  </UiTabs>
+</Preview>
+
+```tsx
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "nextguide/ui";
+
+<Tabs defaultValue="docs">
+  <TabsList><TabsTrigger value="docs">Docs</TabsTrigger><TabsTrigger value="api">API</TabsTrigger></TabsList>
+  <TabsContent value="docs">Write pages using MDX.</TabsContent>
+  <TabsContent value="api">Render API operations.</TabsContent>
+</Tabs>
+```
+
+## Accordion
+
+<Preview>
+  <Accordion type="single" collapsible defaultValue="one">
+    <AccordionItem value="one"><AccordionTrigger>Does NextGuide require Next.js?</AccordionTrigger><AccordionContent>Yes. Next.js is the host framework for NextGuide.</AccordionContent></AccordionItem>
+    <AccordionItem value="two"><AccordionTrigger>Do I need a separate UI package?</AccordionTrigger><AccordionContent>No. The UI components ship with NextGuide.</AccordionContent></AccordionItem>
+  </Accordion>
+</Preview>
+
+```tsx
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "nextguide/ui";
+
+<Accordion type="single" collapsible>
+  <AccordionItem value="installation">
+    <AccordionTrigger>How do I install it?</AccordionTrigger>
+    <AccordionContent>Use bun add nextguide.</AccordionContent>
+  </AccordionItem>
+</Accordion>
+```

@@ -1,0 +1,40 @@
+---
+title: Code windows & tabs
+description: Titled code snippets, copy buttons, language labels and package manager tabs.
+---
+
+# Code windows & tabs
+
+The NextGuide `CodeWindow` supports a header, syntax label, copy button, optional line numbers and multiline content.
+
+<Preview>
+  <CodeWindow title="PowerShell · install NextGuide" language="powershell" code={"bun add nextguide\nbunx nextguide doctor"} />
+</Preview>
+
+```tsx
+import { CodeWindow } from "nextguide/blocks";
+
+<CodeWindow
+  title="PowerShell · install NextGuide"
+  language="powershell"
+  code={"bun add nextguide\nbunx nextguide doctor"}
+/>;
+```
+
+## Switch between commands
+
+<Preview>
+  <CodeTabs items={[{ label: "Bun", code: "bun add nextguide", language: "bash" }, { label: "npm", code: "npm install nextguide", language: "bash" }, { label: "pnpm", code: "pnpm add nextguide", language: "bash" }]} />
+</Preview>
+
+```tsx
+import { CodeTabs } from "nextguide/blocks";
+
+<CodeTabs items={[
+  { label: "Bun", language: "bash", code: "bun add nextguide" },
+  { label: "npm", language: "bash", code: "npm install nextguide" },
+  { label: "pnpm", language: "bash", code: "pnpm add nextguide" },
+]} />;
+```
+
+You can also pass `lineNumbers`, `wrap`, or `description` to `CodeWindow`. The text is copied from the original `code` prop rather than from visually highlighted HTML.

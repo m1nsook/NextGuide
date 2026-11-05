@@ -1,0 +1,38 @@
+---
+title: File trees
+description: Expandable project structures with icons and a copyable text representation.
+---
+
+# File trees
+
+`FileTree` renders an interactive, keyboard-accessible project tree. Folder nodes expand and collapse using native HTML details elements.
+
+<Preview>
+  <FileTree title="NextGuide project structure" items={[{
+    name: "my-documentation", kind: "folder", children: [
+      { name: "app", kind: "folder", children: [{ name: "page.tsx", kind: "code" }, { name: "layout.tsx", kind: "code" }] },
+      { name: "content", kind: "folder", children: [{ name: "index.mdx", kind: "code" }, { name: "getting-started.mdx", kind: "code" }] },
+      { name: "public", kind: "folder", children: [{ name: "favicon.svg", kind: "file" }] },
+      { name: "nextguide.config.json", kind: "json" }
+    ]
+  }]} />
+</Preview>
+
+```tsx
+import { FileTree } from "nextguide/blocks";
+
+<FileTree
+  title="NextGuide project structure"
+  items={[{
+    name: "my-documentation",
+    kind: "folder",
+    children: [
+      { name: "app", kind: "folder", children: [{ name: "page.tsx", kind: "code" }] },
+      { name: "content", kind: "folder", children: [{ name: "index.mdx", kind: "code" }] },
+      { name: "nextguide.config.json", kind: "json" },
+    ],
+  }]}
+/>;
+```
+
+Nodes support `name`, optional `kind` (`folder`, `file`, `code`, `json`, `archive`, `executable`), optional `detail`, and nested `children`. The copy action produces a plain-text directory tree.

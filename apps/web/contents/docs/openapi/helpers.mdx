@@ -8,7 +8,7 @@ These are plain functions. They work on the server and in Client Components.
 ## Finding things
 
 ```ts
-import { getOperation, getSchema, getOperationTitle, search } from "@ariadocs/openapi";
+import { getOperation, getSchema, getOperationTitle, search } from "nextguide/openapi";
 
 getOperation(api, "emails-send"); // by id or by the original operationId
 getSchema(api, "Email");
@@ -19,7 +19,7 @@ search(api, "send email"); // endpoints, schemas and tags that match every word
 ## Navigation
 
 ```ts
-import { getNavigation, getPagePaths } from "@ariadocs/openapi";
+import { getNavigation, getPagePaths } from "nextguide/openapi";
 
 getNavigation(api, { getOperationHref: (op) => `/reference/${op.id}` });
 getPagePaths(api); // ["/emails-send", "/emails-list", ...]
@@ -28,7 +28,7 @@ getPagePaths(api); // ["/emails-send", "/emails-list", ...]
 ## Responses
 
 ```ts
-import { getPrimaryResponse, getSuccessResponses, getErrorResponses } from "@ariadocs/openapi";
+import { getPrimaryResponse, getSuccessResponses, getErrorResponses } from "nextguide/openapi";
 
 getPrimaryResponse(operation); // the first 2xx response
 ```
@@ -36,7 +36,7 @@ getPrimaryResponse(operation); // the first 2xx response
 ## Schemas
 
 ```ts
-import { getSchemaProperties, getSchemaTypeLabel, generateSchemaExample } from "@ariadocs/openapi";
+import { getSchemaProperties, getSchemaTypeLabel, generateSchemaExample } from "nextguide/openapi";
 
 getSchemaProperties(schema); // fields, including those from allOf
 getSchemaTypeLabel(schema); // "string<email>", "Tag[]", "integer | null"
@@ -48,7 +48,7 @@ generateSchemaExample(schema, { mode: "request" }); // example JSON, without rea
 ## Servers
 
 ```ts
-import { getServerUrl } from "@ariadocs/openapi";
+import { getServerUrl } from "nextguide/openapi";
 
 getServerUrl(server, { region: "eu" }); // fills in {region} in the server URL
 ```

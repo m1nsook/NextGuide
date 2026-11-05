@@ -4,7 +4,7 @@ description: Read a page's metadata and headings without rendering it.
 ---
 
 ```ts
-import { getFrontmatter, getToc } from "@ariadocs/mdx";
+import { getFrontmatter, getToc } from "nextguide/mdx";
 
 const frontmatter = await getFrontmatter<{ title: string }>({ contentDir: "content/docs", slug: "intro" });
 const toc = await getToc({ source: "## Install\n\n## Usage" });

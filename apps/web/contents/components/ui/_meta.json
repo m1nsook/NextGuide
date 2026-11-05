@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "index",
+    "title": "UI library"
+  },
+  {
+    "slug": "code-windows",
+    "title": "Code windows & tabs"
+  },
+  {
+    "slug": "file-trees",
+    "title": "File trees"
+  },
+  {
+    "slug": "buttons-and-feedback",
+    "title": "Buttons & feedback"
+  },
+  {
+    "slug": "forms",
+    "title": "Forms & inputs"
+  },
+  {
+    "slug": "tabs-and-accordion",
+    "title": "Tabs & accordion"
+  },
+  {
+    "slug": "dialogs",
+    "title": "Dialogs & overlays"
+  },
+  {
+    "slug": "tables-and-navigation",
+    "title": "Tables & navigation"
+  },
+  {
+    "slug": "documentation-blocks",
+    "title": "Docs blocks"
+  }
+]

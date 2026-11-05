@@ -11,8 +11,8 @@ The Pages Router has no Server Components. You load the data in `getStaticProps`
 
 ```tsx title="pages/docs/[[...slug]].tsx"
 import type { GetStaticPaths, GetStaticProps } from "next";
-import { isMdxNotFound, type SerializeResult } from "@ariadocs/mdx";
-import { MdxClient } from "@ariadocs/mdx/client";
+import { isMdxNotFound, type SerializeResult } from "nextguide/mdx";
+import { MdxClient } from "nextguide/mdx/client";
 import { docs } from "@/lib/docs";
 
 type Props = { serialized: SerializeResult; title: string };
@@ -46,7 +46,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 ```
 
-Import `MdxClient` from `@ariadocs/mdx/client`. The main entry also contains code that reads files, which can't run in the browser.
+Import `MdxClient` from `nextguide/mdx/client`. The main entry also contains code that reads files, which can't run in the browser.
 
 ## API reference
 
@@ -54,8 +54,8 @@ The OpenAPI components work on the client too. Pass the parsed spec as a prop.
 
 ```tsx title="pages/reference/[operation].tsx"
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { APISpec } from "@ariadocs/openapi";
-import { OpenAPI } from "@ariadocs/components";
+import type { APISpec } from "nextguide/openapi";
+import { OpenAPI } from "nextguide/components";
 import { openapi } from "@/lib/openapi";
 
 type Props = { api: APISpec; operation: string };

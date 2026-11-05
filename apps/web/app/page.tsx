@@ -7,7 +7,7 @@ import { site } from "@/lib/site"
 
 const features = [
   { title: "MDX documentation", description: "Documentation pages, search, navigation, code blocks, and reusable components.", icon: BookOpen, href: "/docs" },
-  { title: "API reference", description: "OpenAPI-powered references built using the Aria Docs rendering engine.", icon: Layers3, href: "/reference" },
+  { title: "API reference", description: "OpenAPI-powered references with reusable endpoint components and typed parsing.", icon: Layers3, href: "/reference" },
   { title: "App and Pages Router", description: "Next.js is required. We are building adapters for both router styles.", icon: Code2, href: "/docs/getting-started/routing" },
   { title: "Setup wizard", description: "Planned guided installation with site branding, themes, and an ownership token.", icon: Palette, href: "/docs/getting-started/account-mode" },
   { title: "Admin panel", description: "Planned browser CMS for pages, navigation, media, settings, and API definitions.", icon: LockKeyhole, href: "/docs/getting-started/administration" },
@@ -34,9 +34,9 @@ export default function HomePage() {
         <section className="relative overflow-hidden border-b">
           <div aria-hidden className="pointer-events-none absolute inset-0 opacity-50 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]" />
           <div className="relative mx-auto max-w-5xl px-5 py-24 sm:py-32">
-            <span className="mb-6 inline-flex rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">Development preview · 0.1.0</span>
+            <span className="mb-6 inline-flex rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">NextGuide · Early alpha</span>
             <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.045em] text-balance sm:text-7xl">Documentation that starts simple and grows with you.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">NextGuide builds on Aria Docs and Next.js. Write MDX, publish API references, and follow our progress toward a guided installer and browser-based editor.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Build documentation with Next.js, MDX, OpenAPI, flexible themes, and one all-in-one package. A guided installer and browser editor are on the roadmap.</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href="/docs/getting-started/installation" className="inline-flex items-center gap-2 rounded-md bg-foreground px-5 py-3 text-sm font-medium text-background hover:opacity-90">Get started <ArrowRight className="size-4" /></Link>
               <a href={site.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-md border bg-background px-5 py-3 text-sm font-medium hover:bg-muted">View source</a>
@@ -48,7 +48,7 @@ export default function HomePage() {
         <section className="mx-auto max-w-6xl px-5 py-20 sm:px-6">
           <div className="mb-8">
             <h2 className="text-3xl font-semibold tracking-tight">Explore NextGuide</h2>
-            <p className="mt-2 text-muted-foreground">A working documentation renderer today, with more authoring tools on the roadmap.</p>
+            <p className="mt-2 text-muted-foreground">Explore NextGuide's MDX renderer, components, API references, and guides.</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ title, description, href, icon: Icon }) => (
@@ -78,7 +78,7 @@ export default function HomePage() {
       </main>
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-6 text-sm text-muted-foreground sm:px-6">
-          <span>NextGuide · MIT-licensed · Built from Aria Docs</span>
+          <span>NextGuide · MIT License · <Link href="/docs/credits" className="hover:text-foreground">Attribution</Link></span>
           <div className="flex gap-5"><a href={site.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub</a><Link href="/docs" className="hover:text-foreground">Docs</Link></div>
         </div>
       </footer>

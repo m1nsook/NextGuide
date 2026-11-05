@@ -82,7 +82,7 @@ export async function getLlmsTxt(): Promise<string> {
   const lines = [
     header(),
     `The full text of every page is at ${url("/llms-full.txt")}.`,
-    "@ariadocs/components does not include MDX content components (Callout, Tabs, Steps, Cards). Write your own and pass them to `createDocs({ components })`.",
+    "NextGuide includes MDX content components, UI primitives and API reference components. Import them from `nextguide/blocks`, `nextguide/ui` and `nextguide/components`.",
   ]
   for (const section of sections) {
     lines.push(`## ${section.title}`)

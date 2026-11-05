@@ -7,6 +7,10 @@ import { site } from "@/lib/site"
 import "@workspace/ui/globals.css"
 import "@ariadocs/components/styles.css"
 import "./site.css"
+import "../../../packages/nextguide/src/ui/theme.css"
+import "../../../packages/nextguide/src/ui/primitives.css"
+import "../../../packages/nextguide/src/ui/interactive.css"
+import "../../../packages/nextguide/src/blocks/styles.css"
 
 // Fonts live in the app. @ariadocs/components only uses `font-sans` and `font-mono`.
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans" })

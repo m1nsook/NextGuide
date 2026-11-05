@@ -1,53 +1,58 @@
-# NextGuide — all-in-one framework alpha
+# NextGuide
 
-NextGuide is an MIT-licensed, Next.js-based documentation framework built from the Aria Docs renderer. Install **one** package instead of separately installing core, MDX, OpenAPI, UI libraries, and icon packs.
+An independent, all-in-one Next.js documentation framework with MDX, OpenAPI, themes, icons, and an integrated component library.
 
-> **Early alpha:** `0.0.1-alpha.1` bundles MDX, OpenAPI, UI, icons and fonts. The project initializer, setup-token verification, Account Mode, and `/admin` are still being developed. The older `0.0.1-alpha.0` release only supports `doctor`.
+**Current branch target: `0.0.1-alpha.2` (not automatically published).** The publicly available version may be older. The project initializer, Account Mode, `/setup`, and `/admin` are not implemented yet.
 
-## Installation
+## Install
 
-```sh
-bun add nextguide
+```powershell
+bun add nextguide@alpha
 ```
 
-Next.js and React are required peer dependencies. For a new project, install Next.js and React first; the future `nextguide init` command will scaffold them.
+Next.js and React are required peers. NextGuide bundles its own documentation engine and UI library; a separate shadcn setup is unnecessary.
 
-## Public API targets
+## Rendering and content
 
 ```tsx
 import { createDocs } from "nextguide/mdx"
 import { createOpenAPI } from "nextguide/openapi"
 import { Docs, OpenAPI } from "nextguide/components"
-import { Button, Card, Input } from "nextguide/ui"
-import { UIIcon, BrandIcon } from "nextguide/icons"
-import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
 import "nextguide/styles.css"
 ```
 
-These imports require **0.0.1-alpha.1 or later**; alpha.0 does not contain the renderer. `nextguide/mdx/server` and `nextguide/mdx/client` provide distinct server/client rendering entrypoints.
+For client-side MDX rendering, use `nextguide/mdx/client`; for standalone server rendering, use `nextguide/mdx/server`.
 
-The included shadcn-style UI components are compiled and bundled with NextGuide — no shadcn CLI is required. Lucide provides interface icons, while Simple Icons supplies selected popular brands; users can still import specific icons from their original libraries for more choices.
+## Built-in UI (alpha.2)
 
-## First-run font choice
+```tsx
+import { Button, Card, Tabs, Table, Dialog, Input } from "nextguide/ui"
+import { CodeWindow, CodeTabs, FileTree, Callout, Steps, Step, LinkCards, LinkCard } from "nextguide/blocks"
+import { UIIcon, BrandIcon } from "nextguide/icons"
+import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
+```
 
-The future `/setup` wizard will show a live, rendered font comparison in the browser. Visitors can preview **body, heading, and code fonts separately**, using Inter, Geist, IBM Plex Sans, Segoe UI, System UI, JetBrains Mono, Geist Mono, IBM Plex Mono, and a system monospace option.
+These additional components and their documentation gallery are part of the `alpha.2` source branch. Older releases may not export `nextguide/blocks`.
 
-Google fonts are loaded and self-hosted by the Next.js application's static `next/font/google` declarations, not dynamically by name. `FontPicker` receives the set of loaded font CSS variables. Segoe UI is a **system-only** font and uses a fallback on devices without it. Choices are saved as font IDs in the site's configuration; the wizard must verify the server's one-time ownership token before committing account-mode settings.
+The UI uses shadcn-style tokens with Radix-backed interactive elements. The documentation blocks include copyable/titled code windows, tabs, collapsible file trees, callouts, steps and links. Default CSS is included in `nextguide/styles.css`.
 
-## Current CLI
+## Fonts
 
-```sh
-bunx nextguide@alpha --help
+NextGuide will allow first-run selection of independent body, heading, and code fonts, with visual previews: Inter, Geist, IBM Plex Sans, system/Segoe UI, JetBrains Mono, Geist Mono, IBM Plex Mono, and system monospace. Host applications self-host their chosen open fonts via `next/font/google`. Segoe UI is used only when installed as a system font.
+
+## CLI
+
+```powershell
+bunx nextguide@alpha --version
 bunx nextguide@alpha doctor --json
 ```
 
-`doctor` checks for Next.js and App Router/Pages Router directories. The project initializer isn't implemented yet.
-
-## Licensing
-
-NextGuide is MIT-licensed and includes MIT-licensed source derived from [Aria Docs](https://github.com/nisabmohd/Aria-Docs). See `THIRD_PARTY_NOTICES.md`. Brand logos are trademarks of their owners.
+`nextguide init` is planned and will not claim to work before implementation.
 
 ## Links
 
-- [Source repository](https://github.com/m1nsook/NextGuide)
-- [Documentation](https://m1nsook.github.io/NextGuide/)
+- [Documentation and live component examples](https://m1nsook.github.io/NextGuide/)
+- [Repository](https://github.com/m1nsook/NextGuide)
+- [License and third-party notices](https://github.com/m1nsook/NextGuide/blob/main/packages/nextguide/THIRD_PARTY_NOTICES.md)
+
+NextGuide is MIT licensed. Original third-party copyrights and permission notices are preserved in `THIRD_PARTY_NOTICES.md`.

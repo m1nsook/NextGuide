@@ -60,3 +60,6 @@ export function Label({ className, ...props }: React.ComponentProps<"label">) {
 export function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return <textarea data-slot="textarea" className={cn("ng-textarea", className)} {...props} />
 }
+
+export * from "./primitives.js"
+export * from "./interactive.js"

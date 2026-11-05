@@ -85,15 +85,9 @@ export async function getSidebar(): Promise<NavItem[]> {
     getReferenceNavigation(),
   ])
 
-  const isPackage = (item: NavItem) => item.title.startsWith("@ariadocs/")
-  // The components docs live under /components; list them as a package folder.
-  const packages = docsNav.filter(isPackage)
-  const core = packages.findIndex((item) => item.title === "@ariadocs/core")
-  packages.splice(core === -1 ? packages.length : core, 0, section("@ariadocs/components", "/components", componentsNav))
-
   return [
-    section("Documentation", "#documentation", docsNav.filter((item) => !isPackage(item))),
-    section("Packages", "#packages", packages),
+    section("Documentation", "#documentation", docsNav),
+    section("Components", "#components", componentsNav),
     section("API Reference", "#api-reference", referenceNav),
   ]
 }
