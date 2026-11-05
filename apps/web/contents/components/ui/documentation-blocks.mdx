@@ -1,0 +1,48 @@
+---
+title: Documentation blocks
+description: Callouts, steps and linked cards for MDX pages.
+---
+
+# Documentation blocks
+
+A developer documentation site needs components beyond ordinary buttons and inputs. NextGuide includes purpose-built MDX blocks.
+
+## Numbered steps
+
+<Preview>
+  <Steps>
+    <Step title="Install the package">Run the Bun installation command.</Step>
+    <Step title="Create your pages">Add Markdown or MDX documentation content.</Step>
+    <Step title="Publish">Build your Next.js site for static hosting.</Step>
+  </Steps>
+</Preview>
+
+```tsx
+import { Steps, Step } from "nextguide/blocks";
+
+<Steps>
+  <Step title="Install">Install NextGuide.</Step>
+  <Step title="Publish">Deploy your documentation.</Step>
+</Steps>
+```
+
+## Navigation cards
+
+<Preview>
+  <LinkCards>
+    <LinkCard title="MDX" href="/docs/mdx" description="Documentation content and plugins" />
+    <LinkCard title="OpenAPI" href="/docs/openapi" description="Build an API reference" />
+  </LinkCards>
+</Preview>
+
+```tsx
+import { LinkCards, LinkCard, Callout } from "nextguide/blocks";
+
+<LinkCards>
+  <LinkCard title="Getting started" href="/docs" description="Documentation and examples" />
+</LinkCards>
+
+<Callout kind="tip" title="Tip">NextGuide components come with the npm package.</Callout>
+```
+
+The blocks also include `Callout` with `info`, `tip`, `warning`, `danger`, and `success` tones. Source code and TypeScript definitions are part of the main NextGuide npm package.

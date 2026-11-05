@@ -1,0 +1,61 @@
+---
+title: Buttons & feedback
+description: Basic controls, badges, alerts and feedback components.
+---
+
+# Buttons & feedback
+
+<Preview>
+  <div className="flex flex-wrap items-center gap-3">
+    <Button>Primary action</Button>
+    <Button variant="outline">Secondary</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Badge>Alpha</Badge>
+    <Kbd>Ctrl K</Kbd>
+  </div>
+</Preview>
+
+```tsx
+import { Button, Badge, Kbd } from "nextguide/ui";
+
+<Button>Primary action</Button>
+<Button variant="outline">Secondary</Button>
+<Button variant="ghost">Ghost</Button>
+<Badge>Alpha</Badge>
+<Kbd>Ctrl K</Kbd>
+```
+
+## Alerts
+
+<Preview>
+  <div className="grid gap-4">
+    <Alert tone="success"><AlertTitle>Build succeeded</AlertTitle><AlertDescription>The static documentation is ready to publish.</AlertDescription></Alert>
+    <Alert tone="warning"><AlertTitle>Development feature</AlertTitle><AlertDescription>Account Mode is not available in the published alpha yet.</AlertDescription></Alert>
+  </div>
+</Preview>
+
+```tsx
+import { Alert, AlertTitle, AlertDescription } from "nextguide/ui";
+
+<Alert tone="warning">
+  <AlertTitle>Heads up</AlertTitle>
+  <AlertDescription>This feature is in development.</AlertDescription>
+</Alert>;
+```
+
+## Progress and loading
+
+<Preview>
+  <div className="grid gap-4">
+    <Progress value={65} aria-label="Completion" />
+    <Skeleton style={{ height: 20, maxWidth: 240 }} />
+  </div>
+</Preview>
+
+```tsx
+import { Progress, Skeleton, Spinner } from "nextguide/ui";
+
+<Progress value={65} aria-label="Completion" />
+<Skeleton style={{ height: 20, width: 240 }} />
+<Spinner />
+```

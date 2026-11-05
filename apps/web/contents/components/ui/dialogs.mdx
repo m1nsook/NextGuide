@@ -1,0 +1,32 @@
+---
+title: Dialogs & overlays
+description: Dialogs, sheets, popovers, tooltips and dropdown menus.
+---
+
+# Dialogs & overlays
+
+<Preview>
+  <Dialog>
+    <DialogTrigger asChild><Button variant="outline">Open example dialog</Button></DialogTrigger>
+    <DialogContent>
+      <DialogTitle>Example dialog</DialogTitle>
+      <DialogDescription>Interactive dialogs are built on Radix and include keyboard and focus management.</DialogDescription>
+      <DialogClose asChild><Button>Close dialog</Button></DialogClose>
+    </DialogContent>
+  </Dialog>
+</Preview>
+
+```tsx
+import { Button, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "nextguide/ui";
+
+<Dialog>
+  <DialogTrigger asChild><Button>Open dialog</Button></DialogTrigger>
+  <DialogContent>
+    <DialogTitle>Site settings</DialogTitle>
+    <DialogDescription>Manage your documentation preferences.</DialogDescription>
+    <DialogClose asChild><Button>Done</Button></DialogClose>
+  </DialogContent>
+</Dialog>
+```
+
+Additional primitives include `Sheet`, `SheetContent`, `Popover`, `PopoverContent`, `Tooltip`, `TooltipProvider`, `DropdownMenu`, `HoverCard`, and `ContextMenu` from `nextguide/ui`. These are Radix-backed UI components and do not require installing a registry.

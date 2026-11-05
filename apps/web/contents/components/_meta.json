@@ -1,6 +1,22 @@
 [
-  { "slug": "index", "title": "Overview" },
-  { "slug": "theming", "title": "Theming" },
-  { "slug": "docs", "title": "Docs" },
-  { "slug": "openapi", "title": "OpenAPI" }
+  {
+    "slug": "index",
+    "title": "Overview"
+  },
+  {
+    "slug": "ui",
+    "title": "UI library"
+  },
+  {
+    "slug": "theming",
+    "title": "Theming"
+  },
+  {
+    "slug": "docs",
+    "title": "Documentation renderer"
+  },
+  {
+    "slug": "openapi",
+    "title": "OpenAPI renderer"
+  }
 ]

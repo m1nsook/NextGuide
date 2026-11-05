@@ -1,0 +1,28 @@
+---
+title: Tables & navigation
+description: Structured data, breadcrumbs and other navigation primitives.
+---
+
+# Tables & navigation
+
+<Preview>
+  <Table>
+    <TableHeader><TableRow><TableHead>Component</TableHead><TableHead>Module</TableHead></TableRow></TableHeader>
+    <TableBody>
+      <TableRow><TableCell>Button</TableCell><TableCell>nextguide/ui</TableCell></TableRow>
+      <TableRow><TableCell>FileTree</TableCell><TableCell>nextguide/blocks</TableCell></TableRow>
+      <TableRow><TableCell>Docs.Nav</TableCell><TableCell>nextguide/components</TableCell></TableRow>
+    </TableBody>
+  </Table>
+</Preview>
+
+```tsx
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "nextguide/ui";
+
+<Table>
+  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Value</TableHead></TableRow></TableHeader>
+  <TableBody><TableRow><TableCell>Site</TableCell><TableCell>NextGuide</TableCell></TableRow></TableBody>
+</Table>
+```
+
+Other navigation and layout components include `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbPage`, `BreadcrumbSeparator`, `Separator`, `ScrollArea`, `ScrollAreaViewport`, and `ScrollBar`.
