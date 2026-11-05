@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "installation",
+    "title": "Installation"
+  },
+  {
+    "slug": "nextjs-app",
+    "title": "App Router"
+  },
+  {
+    "slug": "nextjs-pages",
+    "title": "Pages Router"
+  }
+]

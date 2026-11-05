@@ -1,0 +1,82 @@
+{
+  "name": "@ariadocs/components",
+  "version": "1.0.0",
+  "type": "module",
+  "author": {
+    "name": "Nisab Mohd",
+    "email": "nisabmohd@gmail.com"
+  },
+  "license": "MIT",
+  "description": "shadcn-style compound components for Ariadocs. Renders @ariadocs/mdx pages and @ariadocs/openapi references with composable Docs.* and OpenAPI.* trees. Works in Server and Client Components.",
+  "keywords": [
+    "react",
+    "shadcn",
+    "openapi",
+    "documentation",
+    "docs",
+    "components",
+    "ariadocs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles/index.css",
+    "./styles/*": "./dist/styles/*"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "build": "rm -rf dist && tsc && copyfiles -u 1 \"src/styles/**/*.css\" dist",
+    "check-types": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "packageManager": "bun@1.4.4",
+  "dependencies": {
+    "@ariadocs/core": "workspace:*",
+    "@ariadocs/openapi": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.52.0",
+    "radix-ui": "^1.7.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "copyfiles": "^2.4.1",
+    "eslint": "^9.32.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "files": [
+    "dist",
+    "docs",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nisabmohd/Aria-Docs.git",
+    "directory": "packages/lib-components"
+  },
+  "bugs": {
+    "url": "https://github.com/nisabmohd/Aria-Docs/issues"
+  },
+  "homepage": "https://github.com/nisabmohd/Aria-Docs#readme"
+}

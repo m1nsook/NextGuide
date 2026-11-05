@@ -1,0 +1,98 @@
+---
+title: Next.js App Router
+description: Docs pages and an API reference with Server Components.
+---
+
+This guide assumes you've done the [installation](/docs/getting-started/installation) steps.
+
+## Docs pages
+
+`docs.parse()` returns the page as a React element, so a Server Component can render it directly.
+
+```tsx title="app/docs/[[...slug]]/page.tsx"
+import { notFound } from "next/navigation";
+import { isMdxNotFound } from "@ariadocs/mdx";
+import { Docs } from "@ariadocs/components";
+import { docs } from "@/lib/docs";
+
+type Props = { params: Promise<{ slug?: string[] }> };
+
+export default async function Page({ params }: Props) {
+  const slug = (await params).slug?.join("/") ?? "";
+
+  try {
+    const { MDX, frontmatter, toc } = await docs.parse<{ title: string }>({ slug });
+    return (
+      <Docs.Page>
+        <Docs.Page.Title>{frontmatter.title}</Docs.Page.Title>
+        <Docs.Page.Content>{MDX}</Docs.Page.Content>
+        <Docs.Toc items={toc} />
+      </Docs.Page>
+    );
+  } catch (error) {
+    if (isMdxNotFound(error)) notFound();
+    throw error;
+  }
+}
+
+export async function generateStaticParams() {
+  const paths = await docs.getPagePaths();
+  return paths.map((path) => ({ slug: path.split("/").filter(Boolean) }));
+}
+```
+
+A missing page, or a slug like `../secret`, throws an error that `isMdxNotFound` recognizes, so the visitor gets a 404.
+
+## API reference
+
+Parse the spec in a layout and pass it to `OpenAPI.Root`. Every page under the layout can then render endpoints by id.
+
+```tsx title="app/reference/layout.tsx"
+import { OpenAPI } from "@ariadocs/components";
+import { openapi } from "@/lib/openapi";
+
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const api = await openapi.parse();
+  return (
+    <OpenAPI.Root api={api} operationBaseHref="/reference">
+      {children}
+    </OpenAPI.Root>
+  );
+}
+```
+
+```tsx title="app/reference/[operation]/page.tsx"
+import { OpenAPI } from "@ariadocs/components";
+import { openapi } from "@/lib/openapi";
+
+export default async function Page({ params }: { params: Promise<{ operation: string }> }) {
+  const { operation } = await params;
+  return <OpenAPI.Operation id={operation} headingLevel={1} />;
+}
+
+export async function generateStaticParams() {
+  const paths = await openapi.getPagePaths();
+  return paths.map((path) => ({ operation: path.slice(1) }));
+}
+```
+
+To show the whole API on a single page instead, render `<OpenAPI.Docs />` inside `OpenAPI.Root`.
+
+## Sidebar
+
+`Docs.Nav` needs the current path and Next's `Link`, so put it in a small Client Component:
+
+```tsx title="components/sidebar.tsx"
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Docs } from "@ariadocs/components";
+import type { NavItem } from "@ariadocs/core";
+
+export function Sidebar({ items }: { items: NavItem[] }) {
+  return <Docs.Nav items={items} activeHref={usePathname()} linkAs={Link} />;
+}
+```
+
+Pass it `await docs.getNavigation()`, `await openapi.getNavigation()`, or both. They return the same format. Docs links are relative to your docs route, so set `baseHref="/docs"` when you render docs navigation on its own.

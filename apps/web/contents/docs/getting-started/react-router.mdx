@@ -1,0 +1,94 @@
+---
+title: React Router
+description: Docs pages and an API reference with loaders.
+---
+
+These examples use React Router's framework mode.
+
+## Routes
+
+```ts title="app/routes.ts"
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),
+  route("docs/*", "routes/docs.tsx"),
+  route("reference/:operation", "routes/reference.tsx"),
+] satisfies RouteConfig;
+```
+
+## Docs pages
+
+The loader compiles the page on the server. `MdxClient` renders it.
+
+```tsx title="app/routes/docs.tsx"
+import { useLoaderData } from "react-router";
+import { isMdxNotFound } from "@ariadocs/mdx";
+import { MdxClient } from "@ariadocs/mdx/client";
+import type { Route } from "./+types/docs";
+import { docs } from "../docs";
+
+export async function loader({ params }: Route.LoaderArgs) {
+  try {
+    const { serialized, frontmatter } = await docs.serialize<{ title: string }>({ slug: params["*"] ?? "" });
+    return { serialized, frontmatter };
+  } catch (error) {
+    if (isMdxNotFound(error)) throw new Response("Not found", { status: 404 });
+    throw error;
+  }
+}
+
+export default function DocsPage() {
+  const { serialized, frontmatter } = useLoaderData<typeof loader>();
+  return (
+    <article>
+      <h1>{frontmatter.title}</h1>
+      <MdxClient serialized={serialized} />
+    </article>
+  );
+}
+```
+
+## API reference
+
+```tsx title="app/routes/reference.tsx"
+import { useLoaderData } from "react-router";
+import { OpenAPI } from "@ariadocs/components";
+import type { Route } from "./+types/reference";
+import { openapi } from "../openapi";
+
+export async function loader({ params }: Route.LoaderArgs) {
+  return { api: await openapi.parse(), operation: params.operation };
+}
+
+export default function ReferencePage() {
+  const { api, operation } = useLoaderData<typeof loader>();
+  return (
+    <OpenAPI.Root api={api} operationBaseHref="/reference">
+      <OpenAPI.Operation id={operation} headingLevel={1} />
+    </OpenAPI.Root>
+  );
+}
+```
+
+## Prerendering
+
+List every page so they're built ahead of time:
+
+```ts title="react-router.config.ts"
+import type { Config } from "@react-router/dev/config";
+import { docs } from "./app/docs";
+import { openapi } from "./app/openapi";
+
+export default {
+  ssr: true,
+  async prerender() {
+    const docPaths = await docs.getPagePaths();
+    const apiPaths = await openapi.getPagePaths();
+    return [
+      ...docPaths.map((path) => `/docs${path === "/" ? "" : path}`),
+      ...apiPaths.map((path) => `/reference${path}`),
+    ];
+  },
+} satisfies Config;
+```

@@ -1,0 +1,43 @@
+---
+title: Installation
+description: Run the NextGuide development preview locally with Bun and Next.js.
+---
+
+## Requirements
+
+- **Next.js 16** (required), with either App Router or Pages Router.
+- **Bun 1.4+** for this repository.
+- Node.js 20 or later for the Next.js toolchain.
+
+## Run the development preview
+
+Clone `m1nsook/NextGuide` using GitHub Desktop, then open PowerShell in the repository directory:
+
+```powershell
+bun install
+bun run dev
+```
+
+Open [http://localhost:4310](http://localhost:4310).
+
+The monorepo builds its shared libraries first, then starts the docs website. Tests are run **on your machine**, not through GitHub Actions.
+
+```powershell
+bun run build
+bun run lint
+bun run check-types
+bun run test
+```
+
+## NextGuide installer — roadmap
+
+The package installation command `bun add nextguide` and its CLI are **not published or operational yet**.
+
+The planned workflow will detect `app/`, `src/app/`, `pages/` or `src/pages/` and select the matching Next.js adapter:
+
+```powershell
+bunx nextguide init
+bunx nextguide init --developer
+```
+
+Account mode will provide `/setup` and `/admin`; developer mode will be managed through files.

@@ -1,0 +1,8 @@
+[
+  { "slug": "index", "title": "Introduction" },
+  { "slug": "getting-started", "title": "Getting started" },
+  { "slug": "mdx", "title": "@ariadocs/mdx" },
+  { "slug": "openapi", "title": "@ariadocs/openapi" },
+  { "slug": "core", "title": "@ariadocs/core" },
+  { "slug": "guides", "title": "Guides" }
+]

@@ -1,0 +1,39 @@
+---
+title: Introduction
+description: NextGuide is a documentation platform for Next.js with MDX pages and OpenAPI references.
+---
+
+# NextGuide
+
+NextGuide is evolving the MIT-licensed Aria Docs renderer into a polished **Next.js documentation platform**, with the design language of BSIS.dev.
+
+Next.js is **mandatory**. The goal is to support either **App Router** or **Pages Router**, with the same documentation appearance and feature set. The setup CLI, account and developer modes, and browser administrator are still in development.
+
+## What this preview includes
+
+- MDX documentation pages with navigation, search, syntax highlighting and table of contents.
+- OpenAPI references rendered using the existing Aria Docs libraries.
+- Shared styling, dark and light themes, and NextGuide branding.
+
+## Try it locally
+
+Clone the [NextGuide repository](https://github.com/m1nsook/NextGuide) in GitHub Desktop. From the project root:
+
+```powershell
+bun install
+bun run dev
+```
+
+Open [localhost:4310](http://localhost:4310). For a production build, run `bun run build`. All testing is local; there are no GitHub Actions.
+
+## Planned installation
+
+The future `bunx nextguide init` command will initialize account mode by default, while `bunx nextguide init --developer` will select file-editing mode. Both modes will support Next.js App Router and Pages Router.
+
+In account mode, the first launch will open `/setup` and require a one-time verification token shown in the server terminal before allowing an admin account to be created.
+
+## Rendering foundation
+
+NextGuide currently retains the original `@ariadocs/mdx`, `@ariadocs/components`, `@ariadocs/openapi`, and `@ariadocs/core` import names in the source workspace. They will be progressively integrated into NextGuide's own public API without breaking the base rendering engine.
+
+The framework's source is MIT-licensed by Mohd. Nisab; see the upstream license notices in the repository.
