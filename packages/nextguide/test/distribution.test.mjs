@@ -9,7 +9,7 @@ const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 const output = join(root, "dist")
 
 test("all-in-one exports are present", () => {
-  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./styles.css"]) {
+  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./fonts", "./fonts/catalog", "./styles.css"]) {
     assert.ok(manifest.exports[key], key)
   }
 })

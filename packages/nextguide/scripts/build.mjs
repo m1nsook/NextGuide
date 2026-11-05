@@ -48,7 +48,11 @@ for (const name of ["ui", "icons"]) {
   if (!existsSync(file)) throw new Error("Missing NextGuide " + name + " entry")
   writeFileSync(file, '"use client";\n' + readFileSync(file, "utf8"))
 }
+const picker = join(out, "fonts", "picker.js")
+if (!existsSync(picker)) throw new Error("Missing font picker")
+writeFileSync(picker, '"use client";\n' + readFileSync(picker, "utf8"))
 cpSync(join(here, "src/ui/theme.css"), join(out, "ui/theme.css"))
+cpSync(join(here, "src/fonts/picker.css"), join(out, "fonts/picker.css"))
 writeFileSync(join(out, "styles.css"), '@import "./components/styles/index.css";\n@import "./ui/theme.css";\n')
 writeFileSync(join(out, "index.js"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')
 writeFileSync(join(out, "index.d.ts"), 'export { createDocs } from "./mdx/index.js";\nexport { createOpenAPI } from "./openapi/index.js";\n')

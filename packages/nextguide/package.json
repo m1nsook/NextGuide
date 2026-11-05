@@ -90,7 +90,15 @@
       "default": "./dist/icons/index.js"
     },
     "./styles.css": "./dist/styles.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./fonts": {
+      "types": "./dist/fonts/index.d.ts",
+      "default": "./dist/fonts/index.js"
+    },
+    "./fonts/catalog": {
+      "types": "./dist/fonts/catalog.d.ts",
+      "default": "./dist/fonts/catalog.js"
+    }
   },
   "imports": {
     "#read-file": {

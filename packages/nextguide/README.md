@@ -1,35 +1,53 @@
-# NextGuide CLI — alpha
+# NextGuide — all-in-one framework alpha
 
-[NextGuide](https://github.com/m1nsook/NextGuide) is a documentation platform built on **Next.js** and the MIT-licensed **Aria Docs** rendering libraries.
+NextGuide is an MIT-licensed, Next.js-based documentation framework built from the Aria Docs renderer. Install **one** package instead of separately installing core, MDX, OpenAPI, UI libraries, and icon packs.
 
-**This is an early developer-preview CLI, not a full NextGuide installation.** It does not yet scaffold a documentation site or implement the first-run wizard, user accounts, or `/admin`. Please do not use it to set up a production documentation site.
+> **Development status:** 0.0.1-alpha.1 is a work in progress in the repository and has **not been published**. The published alpha.0 contains only the `doctor` CLI. The project initializer, setup-token verification, account mode, and `/admin` are still under development.
 
-## Requirements
+## Installation (next alpha)
 
-- Node.js 20 or newer (for the CLI)
-- A Next.js project (Next.js is mandatory for NextGuide)
-- Bun is recommended for NextGuide's developer workflow
+```sh
+bun add nextguide
+```
 
-## Available commands
+Next.js and React are required peer dependencies. For a new project, install Next.js and React first; the future `nextguide init` command will scaffold them.
 
-Run from your Next.js project directory:
+## Public API targets
 
-```powershell
+```tsx
+import { createDocs } from "nextguide/mdx"
+import { createOpenAPI } from "nextguide/openapi"
+import { Docs, OpenAPI } from "nextguide/components"
+import { Button, Card, Input } from "nextguide/ui"
+import { UIIcon, BrandIcon } from "nextguide/icons"
+import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
+import "nextguide/styles.css"
+```
+
+These are the targets for **alpha.1**, and should only be used after the distribution tests pass and alpha.1 is published. `nextguide/mdx/server` and `nextguide/mdx/client` provide distinct server/client rendering entrypoints.
+
+The included shadcn-style UI components are compiled and bundled with NextGuide — no shadcn CLI is required. Lucide provides interface icons, while Simple Icons supplies selected popular brands; users can still import specific icons from their original libraries for more choices.
+
+## First-run font choice
+
+The future `/setup` wizard will show a live, rendered font comparison in the browser. Visitors can preview **body, heading, and code fonts separately**, using Inter, Geist, IBM Plex Sans, Segoe UI, System UI, JetBrains Mono, Geist Mono, IBM Plex Mono, and a system monospace option.
+
+Google fonts are loaded and self-hosted by the Next.js application's static `next/font/google` declarations, not dynamically by name. `FontPicker` receives the set of loaded font CSS variables. Segoe UI is a **system-only** font and uses a fallback on devices without it. Choices are saved as font IDs in the site's configuration; the wizard must verify the server's one-time ownership token before committing account-mode settings.
+
+## Current CLI
+
+```sh
 bunx nextguide@alpha --help
-bunx nextguide@alpha --version
-bunx nextguide@alpha doctor
 bunx nextguide@alpha doctor --json
 ```
 
-`doctor` checks whether the current project declares Next.js, and detects either `app/`, `src/app/`, `pages/`, or `src/pages/`. It doesn't modify any files or send data to a server.
+`doctor` checks for Next.js and App Router/Pages Router directories. The project initializer isn't implemented yet.
 
-The `init`, `/setup`, and `/admin` flows are being developed and are not included in this alpha.
+## Licensing
 
-## Documentation
+NextGuide is MIT-licensed and includes MIT-licensed source derived from [Aria Docs](https://github.com/nisabmohd/Aria-Docs). See `THIRD_PARTY_NOTICES.md`. Brand logos are trademarks of their owners.
 
-- [Official documentation](https://m1nsook.github.io/NextGuide/)
-- [Source code](https://github.com/m1nsook/NextGuide)
+## Links
 
-## Attribution
-
-NextGuide is built from the MIT-licensed [Aria Docs](https://github.com/nisabmohd/Aria-Docs) project. The renderer's original license and copyright notices remain in the source repository. The CLI package is MIT-licensed, copyright © 2026 민숙 MISO.
+- [Source repository](https://github.com/m1nsook/NextGuide)
+- [Documentation](https://m1nsook.github.io/NextGuide/)
