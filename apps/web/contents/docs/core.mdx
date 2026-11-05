@@ -1,23 +1,24 @@
 ---
-title: "@ariadocs/core"
-description: Types and helpers the other packages share.
+title: Core utilities
+description: Reusable types and helpers bundled with NextGuide.
 ---
 
-<Install packages="@ariadocs/core" />
+# Core utilities
 
-You don't usually install this yourself. The other packages depend on it and re-export the parts you need.
-
-It defines the two formats the packages share. `NavItem` is a sidebar entry, returned by both `docs.getNavigation()` and `openapi.getNavigation()` and rendered by `<Docs.Nav>`. `TocItem` is a heading, returned by `getToc()` and rendered by `<Docs.Toc>`.
+The core helpers are included in the single `nextguide` package.
 
 ```ts
-import type { NavItem, TocItem } from "@ariadocs/core";
+import { slugify, slugToTitle, sanitizeUrl, isExternalUrl } from "nextguide/core"
+import type { NavItem, TocItem } from "nextguide/core"
 ```
 
-It also has a few helpers that are useful in your own components:
-
-| Export | What it does |
+| Export | Purpose |
 | --- | --- |
-| `sanitizeUrl(url)` | Returns the URL if it's safe for a link, otherwise `undefined`. Blocks `javascript:` and `data:` URLs. |
-| `isExternalUrl(href)` | `true` for links to another site |
-| `slugify(text)` | `"Pets & Owners"` becomes `"pets-owners"` |
-| `slugToTitle(slug)` | `"getting-started"` becomes `"Getting Started"` |
+| `slugify(text)` | Convert a title to a URL-safe slug |
+| `slugToTitle(slug)` | Convert a slug into a human-readable label |
+| `sanitizeUrl(url)` | Reject dangerous URL schemes |
+| `isExternalUrl(href)` | Detect an external URL |
+| `NavItem` | Navigation entry shared across documentation and API references |
+| `TocItem` | Table of contents heading |
+
+Use these APIs with [MDX](/docs/mdx) or [OpenAPI](/docs/openapi).
