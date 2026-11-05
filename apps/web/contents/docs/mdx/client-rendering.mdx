@@ -13,7 +13,7 @@ Use client rendering when your framework has no Server Components, such as the N
 ## On the server
 
 ```ts
-import { serializeMdx } from "@ariadocs/mdx";
+import { serializeMdx } from "nextguide/mdx";
 
 const { serialized, frontmatter, toc } = await serializeMdx({ contentDir: "content/docs", slug: "intro" });
 ```
@@ -25,14 +25,14 @@ const { serialized, frontmatter, toc } = await serializeMdx({ contentDir: "conte
 ```tsx
 "use client";
 
-import { MdxClient } from "@ariadocs/mdx/client";
-import type { SerializeResult } from "@ariadocs/mdx";
+import { MdxClient } from "nextguide/mdx/client";
+import type { SerializeResult } from "nextguide/mdx";
 
 export function DocBody({ serialized }: { serialized: SerializeResult }) {
   return <MdxClient serialized={serialized} components={{ Callout }} />;
 }
 ```
 
-Import `MdxClient` from `@ariadocs/mdx/client`. The main entry reads files and won't bundle for the browser.
+Import `MdxClient` from `nextguide/mdx/client`. The main entry reads files and won't bundle for the browser.
 
 Components you pass to `MdxClient` run in the browser, so they can't be async Server Components. If the MDX fails to compile, `MdxClient` throws the error so your error boundary can show it.

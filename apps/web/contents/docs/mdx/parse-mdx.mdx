@@ -6,7 +6,7 @@ description: Render MDX in a Server Component.
 `parseMdx` is what `docs.parse` calls. Use it directly when you don't need a `docs` object, or when the MDX is a string.
 
 ```tsx
-import { parseMdx } from "@ariadocs/mdx";
+import { parseMdx } from "nextguide/mdx";
 
 export default async function Page() {
   const { MDX, frontmatter } = await parseMdx({ contentDir: "content/docs", slug: "intro" });
@@ -33,7 +33,7 @@ It returns:
 If you already have the MDX body, render it with `MdxServer`:
 
 ```tsx
-import { MdxServer } from "@ariadocs/mdx/server";
+import { MdxServer } from "nextguide/mdx/server";
 
 <MdxServer source={body} rehypePlugins={[rehypeSlug]} components={{ Callout }} />;
 ```
