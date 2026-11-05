@@ -44,8 +44,8 @@ In Next.js, pass `Link` and the current path from a Client Component:
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Docs } from "@ariadocs/components";
-import type { NavItem } from "@ariadocs/core";
+import { Docs } from "nextguide/components";
+import type { NavItem } from "nextguide/core";
 
 export function Sidebar({ items }: { items: NavItem[] }) {
   return <Docs.Nav items={items} activeHref={usePathname()} linkAs={Link} />;

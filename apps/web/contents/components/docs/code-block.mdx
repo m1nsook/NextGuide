@@ -14,7 +14,7 @@ description: Code with highlighting and a copy button.
 </Preview>
 
 ```tsx
-import { CodeBlock } from "@ariadocs/components";
+import { CodeBlock } from "nextguide/components";
 
 <CodeBlock code={code} language="json" title="email.json" />;
 ```
@@ -28,9 +28,9 @@ Pass `actions` to put controls such as tabs in the header. `CodeTabs` gives you 
 `Pre` replaces `pre` in MDX. It keeps the highlighting from `rehypePrism` and adds a copy button. Hover any code block on this site to see it.
 
 ```tsx
-import { Pre } from "@ariadocs/components";
+import { Pre } from "nextguide/components";
 
 createDocs({ contentDir: "content", components: { pre: Pre } });
 ```
 
-To copy the original code instead of the displayed text, add `rehypeCodeRaw` from `@ariadocs/mdx/plugins`.
+To copy the original code instead of the displayed text, add `rehypeCodeRaw` from `nextguide/mdx/plugins`.
