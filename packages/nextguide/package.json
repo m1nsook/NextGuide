@@ -1,0 +1,43 @@
+{
+  "name": "nextguide",
+  "version": "0.0.1-alpha.0",
+  "description": "Next.js documentation platform powered by the Aria Docs rendering engine.",
+  "type": "module",
+  "bin": {
+    "nextguide": "bin/nextguide.mjs"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "nextguide",
+    "nextjs",
+    "docs",
+    "documentation",
+    "mdx",
+    "openapi",
+    "ariadocs"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1nsook/NextGuide.git",
+    "directory": "packages/nextguide"
+  },
+  "homepage": "https://m1nsook.github.io/NextGuide/",
+  "bugs": {
+    "url": "https://github.com/m1nsook/NextGuide/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "tag": "alpha"
+  }
+}

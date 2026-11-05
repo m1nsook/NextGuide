@@ -1,0 +1,51 @@
+---
+title: Installation
+description: Run and test the NextGuide source workspace with Bun.
+---
+
+# Installation
+
+NextGuide requires **Next.js**. The project is built for Next.js with App Router and Pages Router compatibility as the goal; it does not support Vite-only or standalone React apps.
+
+## Requirements for this development preview
+
+- **Bun 1.4+**
+- **Node.js 20+** for compatibility with the Next.js toolchain
+- GitHub Desktop (or another way to clone the repository)
+
+## Run locally
+
+Clone [m1nsook/NextGuide](https://github.com/m1nsook/NextGuide) in GitHub Desktop. From the repository's root in PowerShell:
+
+```powershell
+bun install
+bun run dev
+```
+
+Open `http://localhost:4310`.
+
+The development command builds the shared libraries and starts the Next.js documentation app. To test the production build locally:
+
+```powershell
+bun run build:web
+bun run lint
+bun run check-types
+```
+
+The public documentation also builds and deploys using GitHub Actions after changes are merged into `main`. Local testing is always available.
+
+## What is not yet available
+
+The `nextguide` npm package and CLI have **not been published**. These commands are the intended design, **not commands you can use yet**:
+
+```powershell
+bun add nextguide
+bunx nextguide init
+bunx nextguide init --developer
+```
+
+The eventual default mode will be Account mode. `--developer` will select direct file editing.
+
+## Continue
+
+Read about [both Next.js routers](/docs/getting-started/routing) and [the planned first-run setup](/docs/getting-started/account-mode).

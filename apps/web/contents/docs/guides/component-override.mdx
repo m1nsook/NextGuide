@@ -1,0 +1,29 @@
+---
+title: Custom MDX components
+description: Replace HTML tags and add your own components to MDX.
+---
+
+Pass `components` to `createDocs`. Keys that match HTML tags replace those tags. Other keys become tags you can use in MDX.
+
+```tsx
+import { Pre } from "@ariadocs/components";
+import { Callout } from "@/components/callout";
+
+export const docs = createDocs({
+  contentDir: "content/docs",
+  components: {
+    pre: Pre, // code blocks get a copy button
+    Callout, // <Callout>...</Callout>
+  },
+});
+```
+
+To change components for one page only:
+
+```ts
+await docs.parse({ slug: "landing", components: { h1: HeroTitle } });
+```
+
+You can also pass the `OpenAPI` namespace and write `<OpenAPI.Operation id="emails-send" />` inside MDX. The [component pages](/components) on this site do that.
+
+For client-rendered pages, the components run in the browser, so they can't be async Server Components.

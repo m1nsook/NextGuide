@@ -1,0 +1,33 @@
+---
+title: Introduction
+description: Get started with NextGuide, a Next.js documentation platform built from Aria Docs.
+---
+
+# NextGuide
+
+NextGuide is a rebranded and extended version of the MIT-licensed [Aria Docs](https://github.com/nisabmohd/Aria-Docs) project. Our aim is to combine a polished documentation website, a guided first-run installer, and a browser administration interface.
+
+**Project status:** The rendering foundation is available in this repository. The installer, account management, and administration interface are planned features, **not yet implemented**.
+
+## The current foundation
+
+- Documentation content written in MDX, with navigation, search, syntax highlighting, and table of contents.
+- OpenAPI rendering and reusable React documentation components.
+- Next.js App Router-based reference website, inspired by the shadcn/ui styling in BSIS.dev.
+- A static documentation export for GitHub Pages.
+
+## The roadmap
+
+- A step-by-step `/setup` wizard to configure name, description, theme, favicon and site owner.
+- A one-time terminal token to verify the owner before setup.
+- **Account mode**, with administrator sign-in, a page editor, media uploads, OpenAPI management and site settings.
+- **Developer mode**, with configuration and MDX edited directly as files.
+- A public `nextguide` CLI that can integrate with projects using either of Next.js's routers.
+
+Next.js is a mandatory requirement. We intend to support **both App Router and Pages Router** in the future CLI integrations.
+
+## Get started
+
+See [local installation](/docs/getting-started/installation), [Next.js routing](/docs/getting-started/routing), or [GitHub Pages deployment](/docs/deployment/github-pages).
+
+The rendering packages currently retain their original `@ariadocs/*` workspace imports; those names identify the upstream engine and are not yet the final NextGuide public API.
