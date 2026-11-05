@@ -112,7 +112,7 @@ switch (command) {
     doctor(args);
     break;
   case "init":
-    process.stderr.write("NextGuide init is not implemented in ${version}. This release supports 'nextguide doctor' only.\n");
+    process.stderr.write("NextGuide init is not implemented in " + version + ". This release supports 'nextguide doctor' only.\n");
     process.exitCode = 2;
     break;
   default:

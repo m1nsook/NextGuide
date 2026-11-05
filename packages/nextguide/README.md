@@ -2,9 +2,9 @@
 
 NextGuide is an MIT-licensed, Next.js-based documentation framework built from the Aria Docs renderer. Install **one** package instead of separately installing core, MDX, OpenAPI, UI libraries, and icon packs.
 
-> **Development status:** 0.0.1-alpha.1 is a work in progress in the repository and has **not been published**. The published alpha.0 contains only the `doctor` CLI. The project initializer, setup-token verification, account mode, and `/admin` are still under development.
+> **Early alpha:** `0.0.1-alpha.1` bundles MDX, OpenAPI, UI, icons and fonts. The project initializer, setup-token verification, Account Mode, and `/admin` are still being developed. The older `0.0.1-alpha.0` release only supports `doctor`.
 
-## Installation (next alpha)
+## Installation
 
 ```sh
 bun add nextguide
@@ -24,7 +24,7 @@ import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
 import "nextguide/styles.css"
 ```
 
-These are the targets for **alpha.1**, and should only be used after the distribution tests pass and alpha.1 is published. `nextguide/mdx/server` and `nextguide/mdx/client` provide distinct server/client rendering entrypoints.
+These imports require **0.0.1-alpha.1 or later**; alpha.0 does not contain the renderer. `nextguide/mdx/server` and `nextguide/mdx/client` provide distinct server/client rendering entrypoints.
 
 The included shadcn-style UI components are compiled and bundled with NextGuide — no shadcn CLI is required. Lucide provides interface icons, while Simple Icons supplies selected popular brands; users can still import specific icons from their original libraries for more choices.
 
