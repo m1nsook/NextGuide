@@ -40,6 +40,12 @@ jobs:
       - name: Test NextGuide CLI
         run: node --test packages/nextguide/test/doctor.test.mjs
 
+      - name: Validate NextGuide all-in-one npm distribution
+        run: |
+          cd packages/nextguide
+          bun run build
+          bun run test:dist
+
       - name: Build NextGuide documentation
         run: bun run build:web
 
