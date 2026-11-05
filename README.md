@@ -54,6 +54,14 @@ npm publish --tag alpha
 
 Publishing requires npm authentication and 2FA. The publish is **manual**; GitHub Actions only test/build and deploy the read-only docs. Once published, try `bunx nextguide@alpha doctor` from a Next.js project. The unscoped package `nextguide` is public; the repository itself is still under active development.
 
+## Two distinct distribution modes
+
+**The official NextGuide documentation is a Developer Mode-style static build.** GitHub Pages publishes only static Next.js HTML and assets, with no owner verification, SQLite, login, or /admin. The static export currently uses NEXTGUIDE_PAGES=1; the future developer-mode initializer should produce the equivalent.
+
+**Account Mode is a separately enabled server capability within the same nextguide npm package.** It will create a local SQLite database and a secure first-run owner setup wizard on a persistent Next.js server. Its behavior will be validated through a locally installed, complete npm package; we will not test it on GitHub Pages.
+
+NextGuide remains a single all-in-one npm dependency for core, MDX, OpenAPI, UI and icons, with Next.js/React as peer dependencies. The published alpha.0 is still CLI-only.
+
 ## Roadmap
 
 - Guided `/setup` wizard (site title, description, accent picker, logo, favicon and settings)

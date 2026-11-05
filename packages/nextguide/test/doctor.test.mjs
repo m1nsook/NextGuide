@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const cli = fileURLToPath(new URL("../bin/nextguide.mjs", import.meta.url));
+const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
 function fixture({ next = "^16.4.5", folders = ["src/app"] } = {}) {
   const directory = mkdtempSync(join(tmpdir(), "nextguide-doctor-"));
@@ -29,7 +30,7 @@ test("CLI file URL resolves to a real filesystem path (including Windows drive l
 test("--version prints first alpha", () => {
   const result = run("--version");
   assert.equal(result.status, 0);
-  assert.equal(result.stdout.trim(), "0.0.1-alpha.0");
+  assert.equal(result.stdout.trim(), version);
 });
 
 test("--help lists actual commands", () => {

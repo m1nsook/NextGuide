@@ -1,22 +1,27 @@
 ---
 title: Developer mode
-description: Planned file-first mode for developers who prefer editing MDX and configuration directly.
+description: File-first, database-free NextGuide sites, including our GitHub Pages documentation.
 ---
 
 # Developer mode
 
-**Status: planned.** Developer mode will be selected with the future `bunx nextguide init --developer` command.
+**Status: installer in development.** The official website already follows the file-first, read-only static-export architecture.
 
-In this mode, documentation and configuration are edited as files rather than managed through a user account. It is intended for teams already comfortable using Next.js, MDX, and their own editors.
+Developer mode manages MDX pages, navigation, themes, and OpenAPI specifications as versioned files. **It does not require SQLite, an owner account, sessions, or an admin backend.**
 
-## Planned workflow
+## Intended CLI workflow
 
-- Detect Next.js App Router or Pages Router projects.
-- Create the NextGuide configuration and documentation folders.
-- Edit MDX pages and navigation directly in the repository.
-- Render OpenAPI from local specification files.
-- Build a static export when the project has no server-dependent functionality.
+~~~sh
+bun add nextguide
+bunx nextguide init --developer
+~~~
 
-Developer mode should not require a database or administrator sign-in for ordinary content editing. Project owners can still verify an initial installation in a controlled environment.
+These initialization commands are planned and not available in the published alpha.0 package yet.
 
-Read the [routing overview](/docs/getting-started/routing) or [static deployment guide](/docs/deployment/github-pages).
+## NextGuide's official documentation
+
+The documentation at https://m1nsook.github.io/NextGuide/ is a **Developer Mode-style build**. The Next.js app exports static HTML and assets through GitHub Actions; it has no owner setup, database, or admin routes.
+
+Today the project uses the NEXTGUIDE_PAGES=1 flag to enable static export and a /NextGuide base path. Once the developer-mode CLI can generate the same application, the site can adopt it without introducing server storage.
+
+See [GitHub Pages](/docs/deployment/github-pages) for build details.
