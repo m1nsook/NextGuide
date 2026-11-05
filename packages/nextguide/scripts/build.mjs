@@ -28,7 +28,12 @@ function rewriteDirectory(folder) {
   }
 }
 
-run("bun", ["run", "build:packages"], workspace)
+// Build only the internal renderer libraries. Building web^... would include
+// nextguide once the docs app depends on it and cause a recursive build.
+run("bun", ["x", "turbo", "run", "build",
+  "--filter=@ariadocs/core", "--filter=@ariadocs/openapi",
+  "--filter=@ariadocs/mdx", "--filter=@ariadocs/components",
+], workspace)
 rmSync(out, { recursive: true, force: true })
 mkdirSync(out, { recursive: true })
 
