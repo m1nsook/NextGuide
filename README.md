@@ -39,6 +39,21 @@ Enable **Settings → Pages → Build and deployment → Source: GitHub Actions*
 
 See the [Pages deployment guide](https://m1nsook.github.io/NextGuide/docs/deployment/github-pages/).
 
+## First npm alpha
+
+The `packages/nextguide/` workspace contains a real, minimal early-alpha CLI (`nextguide doctor`) for detecting local Next.js projects and either router. The setup wizard, `/admin`, and the CLI's `init` command are **not** implemented yet.
+
+To publish `0.0.1-alpha.0` to the public npm registry, a package owner signs in locally and runs these commands from the project root:
+
+```powershell
+cd packages/nextguide
+npm whoami
+npm pack --dry-run
+npm publish --tag alpha
+```
+
+Publishing requires npm authentication and 2FA. The publish is **manual**; GitHub Actions only test/build and deploy the read-only docs. Once published, try `bunx nextguide@alpha doctor` from a Next.js project. The unscoped package `nextguide` is public; the repository itself is still under active development.
+
 ## Roadmap
 
 - Guided `/setup` wizard (site title, description, accent picker, logo, favicon and settings)

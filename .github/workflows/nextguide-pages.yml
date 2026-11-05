@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Test NextGuide CLI
+        run: node --test packages/nextguide/test/doctor.test.mjs
+
       - name: Build NextGuide documentation
         run: bun run build:web
 
