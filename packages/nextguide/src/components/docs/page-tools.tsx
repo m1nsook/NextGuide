@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ChevronDown, ChevronRight, Copy, GitBranch, MessageCircleQuestion, Pencil } from "lucide-react"
+import { Check, ChevronDown, ChevronRight, Copy, MessageCircleQuestion, Pencil } from "lucide-react"
+import { siGithub } from "simple-icons"
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator,
@@ -88,7 +89,7 @@ export function DocsPageActions({ markdown, title, editUrl }: DocsPageActionsPro
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <a href={editUrl} target="_blank" rel="noopener noreferrer">
-                  {gitHubLink ? <GitBranch size={15} aria-hidden="true" /> : <Pencil size={15} aria-hidden="true" />}
+                  {gitHubLink ? <svg width={15} height={15} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d={siGithub.path} /></svg> : <Pencil size={15} aria-hidden="true" />}
                   {gitHubLink ? "Edit on GitHub" : "Edit source"}
                 </a>
               </DropdownMenuItem>
