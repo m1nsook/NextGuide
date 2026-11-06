@@ -86,3 +86,21 @@ test("Developer Mode page creation ships in the CLI package", () => {
     assert.ok(existsSync(join(root, filename)), filename + " is required in the npm package")
   }
 })
+
+test("official site version selector cannot appear in generated docs projects", () => {
+  const projectRoot = dirname(dirname(root))
+  const siteLayout = readFileSync(join(projectRoot, "apps/web/app/(docs)/layout.tsx"), "utf8")
+  const side = readFileSync(join(projectRoot, "apps/web/components/docs-sidebar.tsx"), "utf8")
+  const selector = readFileSync(join(projectRoot, "apps/web/components/version-selector.tsx"), "utf8")
+  const generated = readFileSync(join(root, "lib/init.mjs"), "utf8")
+  assert.match(siteLayout, /nextguidePackage\.version/)
+  assert.match(side, /DocsVersionSelector/)
+  assert.match(selector, /Development/)
+  assert.doesNotMatch(generated, /DocsVersionSelector|Documentation versions/)
+})
+test("official documentation keyboard shortcut uses Lucide Command, not literal glyph", () => {
+  const projectRoot = dirname(dirname(root))
+  const search = readFileSync(join(projectRoot, "apps/web/components/search.tsx"), "utf8")
+  assert.match(search, /<Command/)
+  assert.doesNotMatch(search, /⌘K/)
+})
