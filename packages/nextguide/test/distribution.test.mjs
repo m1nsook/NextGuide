@@ -68,3 +68,15 @@ test("public JS modules import from the self-contained package", async () => {
   assert.equal(typeof ui.TabsTrigger, "function")
   assert.equal(typeof ui.Table, "function")
 })
+
+test("all engine modules live in the single NextGuide source package", () => {
+  const projectRoot = dirname(dirname(root))
+  for (const legacy of ["lib-core", "lib-mdx", "lib-openapi", "lib-components", "ui"]) {
+    assert.equal(existsSync(join(projectRoot, "packages", legacy, "package.json")), false,
+      "Unexpected extra workspace package: " + legacy)
+  }
+  for (const module of ["core", "mdx", "openapi", "components", "ui", "blocks", "fonts", "icons"]) {
+    assert.ok(existsSync(join(root, "src", module)),
+      "Missing NextGuide source module: " + module)
+  }
+})
