@@ -110,7 +110,10 @@ export function planPage(projectDirectory, slug, options = {}) {
   const pagePath = join(dirname(folder), `${last}.mdx`)
   created.push({ path: displayPath(root, pagePath), content: frontmatter(title, description) })
   const route = segments.filter((name, index) => !(index === segments.length - 1 && name === "index")).join("/")
-  return { projectDirectory: root, created, modified, href: route ? "/docs/" + route : "/docs" }
+  const basePath = config.basePath ?? "/docs"
+  if (basePath !== "/docs" && basePath !== "/") throw new Error("Unsupported basePath in nextguide.config.json")
+  const href = basePath === "/" ? (route ? "/" + route : "/") : (route ? "/docs/" + route : "/docs")
+  return { projectDirectory: root, created, modified, href }
 }
 
 export function addPage(projectDirectory, slug, options = {}) {
