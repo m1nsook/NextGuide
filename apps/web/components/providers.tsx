@@ -2,17 +2,18 @@
 
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { TooltipProvider } from "nextguide/ui";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
       defaultTheme="dark"
-      enableSystem
+      enableSystem={false}
       disableTransitionOnChange
       enableColorScheme
     >
-      {children}
+      <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
     </NextThemesProvider>
   );
 }

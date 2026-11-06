@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { cn } from "nextguide/components"
+import { Tooltip, TooltipContent, TooltipTrigger } from "nextguide/ui"
 
 /** Light / dark segmented switch. */
 export function ThemeToggle({ className }: { className?: string }) {
@@ -20,8 +21,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           { value: "dark", label: "Dark theme", Icon: Moon },
         ] as const
       ).map(({ value, label, Icon }) => (
-        <button
-          key={value}
+        <Tooltip key={value}><TooltipTrigger asChild><button
           type="button"
           role="radio"
           aria-checked={current === value}
@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           )}
         >
           <Icon className="size-3.5" />
-        </button>
+        </button></TooltipTrigger><TooltipContent side="top">{label}</TooltipContent></Tooltip>
       ))}
     </div>
   )

@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url)
 
 function run(command, args) {
   const child = spawnSync(command, args, {
-    cwd: here, stdio: "inherit", shell: process.platform === "win32",
+    cwd: here, stdio: "inherit", shell: false,
   })
   if (child.error) throw child.error
   if (child.status !== 0) throw new Error(command + " failed with exit code " + child.status)

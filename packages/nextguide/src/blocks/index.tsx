@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/interactive.js"
 import {
   AlertCircle, Check, CheckCircle2, ChevronRight, Code2, Copy, FileArchive,
   FileCode2, FileJson2, FileText, Folder, Info, Lightbulb, ListTree, Terminal,
@@ -54,13 +55,19 @@ export function CopyButton({ value, className, label = "Copy" }: {
 }) {
   const { copied, copy } = useCopy()
   return (
-    <button type="button" className={"ng-copy-button " + (className ?? "")}
-      aria-label={copied ? "Copied" : label}
-      title={copied ? "Copied" : label}
-      onClick={() => void copy(value)}>
-      {copied ? <Check aria-hidden="true" size={15} /> : <Copy aria-hidden="true" size={15} />}
-      <span className="ng-sr-only" aria-live="polite">{copied ? "Copied" : ""}</span>
-    </button>
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button type="button" className={"ng-copy-button " + (className ?? "")}
+            aria-label={copied ? "Copied" : label}
+            onClick={() => void copy(value)}>
+            {copied ? <Check aria-hidden="true" size={15} /> : <Copy aria-hidden="true" size={15} />}
+            <span className="ng-sr-only" aria-live="polite">{copied ? "Copied" : ""}</span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top">{copied ? "Copied" : label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 

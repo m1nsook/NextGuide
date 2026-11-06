@@ -4,11 +4,12 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { useRouter } from "next/navigation"
 import { Command, CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
+import { ScrollArea, ScrollAreaViewport, ScrollBar, Tooltip, TooltipTrigger, TooltipContent } from "nextguide/ui"
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})
 
-/** Holds the ⌘K dialog; any `SearchButton` below can open it. */
+/** Holds the Control/Command+K dialog; any `SearchButton` below can open it. */
 export function SearchProvider({ entries, children }: { entries: SearchEntry[]; children: ReactNode }) {
   const [open, setOpen] = useState(false)
 
@@ -36,17 +37,22 @@ export function SearchButton({ compact = false, className }: { compact?: boolean
 
   if (compact) {
     return (
-      <button
-        type="button"
-        aria-label="Search"
-        onClick={open}
-        className={cn(
-          "text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-md transition-colors",
-          className
-        )}
-      >
-        <Search className="size-[18px]" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label="Search documentation"
+            onClick={open}
+            className={cn(
+              "text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-md transition-colors",
+              className
+            )}
+          >
+            <Search className="size-[18px]" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">Search documentation</TooltipContent>
+      </Tooltip>
     )
   }
 
@@ -134,7 +140,9 @@ function SearchDialog({ entries, onClose }: { entries: SearchEntry[]; onClose: (
           />
           <kbd className="text-muted-foreground rounded border px-1.5 font-mono text-[10px]">Esc</kbd>
         </div>
-        <ul ref={listRef} className="max-h-[55vh] overflow-y-auto p-2">
+        <ScrollArea className="h-[min(55vh,26rem)]">
+          <ScrollAreaViewport className="h-full">
+            <ul ref={listRef} className="p-2">
           {results.length === 0 ? (
             <li className="text-muted-foreground px-3 py-8 text-center text-sm">No results for “{query}”</li>
           ) : (
@@ -166,7 +174,10 @@ function SearchDialog({ entries, onClose }: { entries: SearchEntry[]; onClose: (
               </li>
             ))
           )}
-        </ul>
+            </ul>
+          </ScrollAreaViewport>
+          <ScrollBar />
+        </ScrollArea>
       </div>
     </div>
   )
