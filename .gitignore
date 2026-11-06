@@ -17,3 +17,5 @@ coverage/
 
 # Local test package archives; never check them into the source repository.
 *.tgz
+
+bun.lock
