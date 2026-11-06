@@ -22,14 +22,15 @@ export const docs = createDocs({
 `
 }
 
-function layoutSource(typescript, basePath = '/docs') {
+function layoutSource(typescript, basePath = '/docs', docsImport = '../../lib/nextguide') {
   const typeImport = typescript ? 'import type { ReactNode } from "react"\n' : ''
   const typeNav = typescript ? 'type LinkItem = { title: string; href: string; nav: boolean; items: LinkItem[] }\n' : ''
   const navigationType = typescript ? '(items: LinkItem[])' : '(items)'
   const childrenType = typescript ? '{ children }: { children: ReactNode }' : '{ children }'
   return `// ${SIGNATURE}
 import Link from "next/link"
-${typeImport}import { docs, site } from "../../lib/nextguide"
+import { Suspense } from "react"
+${typeImport}import { docs, site } from "${docsImport}"
 import "nextguide/styles.css"
 import "../../styles/nextguide.css"
 
@@ -42,14 +43,20 @@ ${typeNav}function renderNavigation${navigationType} {
   ))
 }
 
-export default async function DocumentationLayout(${childrenType}) {
+async function DocumentationNavigation() {
   const navigation = await docs.getNavigation()
+  return <nav aria-label="Documentation pages"><ul>{renderNavigation(navigation)}</ul></nav>
+}
+
+export default function DocumentationLayout(${childrenType}) {
   return (
     <div className="ng-starter">
       <header className="ng-starter-header"><Link href="${basePath}">{site.name}</Link><span>Documentation</span></header>
       <div className="ng-starter-body">
         <aside className="ng-starter-sidebar" aria-label="Documentation navigation">
-          <nav><ul>{renderNavigation(navigation)}</ul></nav>
+          <Suspense fallback={<p className="ng-starter-loading">Loading navigation…</p>}>
+            <DocumentationNavigation />
+          </Suspense>
         </aside>
         <main className="ng-starter-main">{children}</main>
       </div>
@@ -59,19 +66,20 @@ export default async function DocumentationLayout(${childrenType}) {
 `
 }
 
-function appPageSource(typescript) {
+function appPageSource(typescript, docsImport = '../../../lib/nextguide') {
   const propType = typescript ? '{ params }: { params: Promise<{ slug?: string[] }> }' : '{ params }'
   return `// ${SIGNATURE}
+import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { isMdxNotFound } from "nextguide/mdx"
-import { docs } from "../../../lib/nextguide"
+import { docs } from "${docsImport}"
 
 export async function generateStaticParams() {
   const paths = await docs.getPagePaths()
   return paths.map((path) => ({ slug: path.split("/").filter(Boolean) }))
 }
 
-export default async function DocumentationPage(${propType}) {
+async function DocumentationBody(${propType}) {
   const slug = ((await params).slug ?? []).join("/")
   try {
     const { MDX, frontmatter } = await docs.parse({ slug })
@@ -86,6 +94,14 @@ export default async function DocumentationPage(${propType}) {
     if (isMdxNotFound(error)) notFound()
     throw error
   }
+}
+
+export default function DocumentationPage(${propType}) {
+  return (
+    <Suspense fallback={<article className="ng-starter-prose ng-starter-loading">Loading documentation…</article>}>
+      <DocumentationBody params={params} />
+    </Suspense>
+  )
 }
 `
 }
@@ -103,7 +119,7 @@ export default function App(${props}) {
 `
 }
 
-function pagesPageSource(typescript, basePath = '/docs') {
+function pagesPageSource(typescript, basePath = '/docs', docsImport = '../../lib/nextguide') {
   const typeImport = typescript ? 'import type { GetStaticPaths, GetStaticProps } from "next"\n' : ''
   const pathsType = typescript ? ': GetStaticPaths' : ''
   const propsType = typescript ? ': GetStaticProps' : ''
@@ -115,7 +131,7 @@ type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: s
   return `// ${SIGNATURE}
 import Link from "next/link"
 ${typeImport}import { MdxClient } from "nextguide/mdx/client"
-import { docs, site } from "../../lib/nextguide"
+import { docs, site } from "${docsImport}"
 
 ${types}export const getStaticPaths${pathsType} = async () => {
   const paths = await docs.getPagePaths()
@@ -186,6 +202,7 @@ function styleSource() {
 .ng-starter-prose :not(pre) > code { background: #f0f0f1; padding: .15rem .35rem; border-radius: .3rem; font-size: .88em; }
 .ng-starter-prose blockquote { border-left: 3px solid #2196f3; padding-left: 1rem; color: var(--ng-starter-muted); }
 .ng-starter-prose li { margin: .25rem 0; }
+.ng-starter-loading { color: var(--ng-starter-muted); font-size: .875rem; }
 @media (prefers-color-scheme: dark) { .ng-starter { --ng-starter-border: #33363e; --ng-starter-muted: #a1a1aa; --ng-starter-bg: #101114; --ng-starter-fg: #f5f5f6; } .ng-starter-sidebar a:hover { background: #23242a; } .ng-starter-prose pre, .ng-starter-prose :not(pre) > code { background: #1d1d22; } .ng-starter-prose a { color: #8ac6ff; } }
 @media (max-width: 720px) { .ng-starter-body { grid-template-columns: 1fr; } .ng-starter-sidebar { min-height: auto; border-right: 0; border-bottom: 1px solid var(--ng-starter-border); padding: .8rem 1.1rem; } .ng-starter-sidebar nav > ul { display: flex; flex-wrap: wrap; gap: .2rem; } .ng-starter-sidebar ul ul { display: none; } .ng-starter-main { padding: 1.3rem; } }
 `
@@ -231,6 +248,23 @@ Your project uses \`nextguide.config.json\` for site metadata. Developer Mode do
   'nextguide.config.json': shellConfig(),
 }
 
+
+/**
+ * Honour a stock Next.js @/* alias when it maps to the actual source root.
+ * Other alias layouts keep correct relative imports: never rewrite user config.
+ */
+function docsImportPath(directory, hasSrc, relativePath) {
+  const expected = hasSrc ? 'src/*' : '*'
+  for (const name of ['tsconfig.json', 'jsconfig.json']) {
+    const file = join(directory, name)
+    if (!existsSync(file)) continue
+    const contents = readFileSync(file, 'utf8')
+    const match = contents.match(/"@\/*"\s*:\s*\[\s*"([^"]+)"/)
+    if (match?.[1]?.replace(/^\.\/+/, '') === expected) return '@/lib/nextguide'
+  }
+  return relativePath
+}
+
 export function planDeveloperProject(directory, inspection, routerOption, options = {}) {
   const basePath = options.basePath ?? '/docs'
   if (basePath !== '/docs' && basePath !== '/') throw new Error('Documentation path must be /docs or /')
@@ -271,10 +305,14 @@ export function planDeveloperProject(directory, inspection, routerOption, option
   let patch = null
   if (router.name === 'App Router') {
     const docsFolder = router.folder + (basePath === '/' ? '/(nextguide)' : '/docs')
-    files[docsFolder + '/layout.' + ext] = layoutSource(typed, basePath)
-    files[docsFolder + '/[[...slug]]/page.' + ext] = appPageSource(typed)
+    const layoutImport = docsImportPath(directory, src, '../../lib/nextguide')
+    const pageImport = docsImportPath(directory, src, '../../../lib/nextguide')
+    files[docsFolder + '/layout.' + ext] = layoutSource(typed, basePath, layoutImport)
+    files[docsFolder + '/[[...slug]]/page.' + ext] = appPageSource(typed, pageImport)
   } else {
-    files[router.folder + (basePath === '/' ? '/[[...slug]].' : '/docs/[[...slug]].') + ext] = pagesPageSource(typed, basePath)
+    const relativeImport = basePath === '/' ? '../lib/nextguide' : '../../lib/nextguide'
+    const pagesImport = docsImportPath(directory, src, relativeImport)
+    files[router.folder + (basePath === '/' ? '/[[...slug]].' : '/docs/[[...slug]].') + ext] = pagesPageSource(typed, basePath, pagesImport)
     const appVariants = ['tsx', 'ts', 'jsx', 'js'].filter((suffix) => existsSync(join(directory, router.folder, '_app.' + suffix)))
     if (appVariants.length > 1) throw new Error('Multiple pages/_app entrypoints detected; please use a single file.')
     if (appVariants.length === 0) files[router.folder + '/_app.' + ext] = pagesAppSource(typed)
