@@ -26,6 +26,7 @@ import config from "${configImport}"
 
 export const site = config.site
 export const appearance = config.appearance
+export const editBase = "editBase" in config.site ? String(config.site.editBase).replace(/\/$/, "") : ""
 export const docs = createDocs({
   contentDir: config.contentDir,
   remarkPlugins: [remarkGfm],
@@ -78,13 +79,14 @@ export default function DocumentationLayout(${childrenType}) {
 `
 }
 
-function appPageSource(typescript, docsImport = '../../../lib/nextguide') {
+function appPageSource(typescript, docsImport = '../../../lib/nextguide', basePath = '/docs') {
   const propType = typescript ? '{ params }: { params: Promise<{ slug?: string[] }> }' : '{ params }'
   return `// ${SIGNATURE}
 import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { isMdxNotFound } from "nextguide/mdx"
-import { docs } from "${docsImport}"
+import { docs, editBase } from "${docsImport}"
+import { DocsBreadcrumbs, DocsPageActions } from "nextguide/components"
 
 export async function generateStaticParams() {
   const paths = await docs.getPagePaths()
@@ -93,11 +95,25 @@ export async function generateStaticParams() {
 
 async function DocumentationBody(${propType}) {
   const slug = ((await params).slug ?? []).join("/")
+  const segments = slug ? slug.split("/") : []
+  const breadcrumbs = [
+    { title: "Documentation", href: ${JSON.stringify(basePath)} },
+    ...segments.map((segment, i) => ({
+      title: segment.replace(/[-_]/g, " "),
+      ...(i < segments.length - 1 ? { href: ${JSON.stringify(basePath === "/" ? "" : basePath)} + "/" + segments.slice(0, i + 1).join("/") } : {}),
+    })),
+  ]
   try {
     const { MDX, frontmatter } = await docs.parse({ slug })
+    if (segments.length) breadcrumbs[breadcrumbs.length - 1].title = String(frontmatter.title ?? "Documentation")
     return (
       <article className="ng-starter-prose">
-        <h1>{String(frontmatter.title ?? "Documentation")}</h1>
+        <DocsBreadcrumbs items={breadcrumbs} />
+        <div className="ng-starter-page-heading">
+          <h1>{String(frontmatter.title ?? "Documentation")}</h1>
+          <DocsPageActions markdown={await docs.read({ slug })} title={String(frontmatter.title ?? "Documentation")}
+            editUrl={editBase ? editBase + "/" + (slug || "index") + ".mdx" : undefined} />
+        </div>
         {frontmatter.description ? <p className="ng-starter-description">{String(frontmatter.description)}</p> : null}
         {MDX}
       </article>
@@ -204,6 +220,8 @@ function styleSource() {
 .ng-starter-sidebar a:hover { background: #f4f4f5; color: var(--ng-starter-fg); }
 .ng-starter-main { min-width: 0; padding: clamp(1.5rem, 5vw, 4rem); }
 .ng-starter-prose { max-width: 780px; font-size: 1rem; line-height: 1.75; }
+.ng-starter-page-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+.ng-starter-page-heading h1 { margin-bottom: 0; }
 .ng-starter-prose h1 { font-size: clamp(1.9rem, 4vw, 2.75rem); line-height: 1.2; letter-spacing: -.03em; margin: 0 0 1rem; }
 .ng-starter-prose h2 { font-size: 1.45rem; line-height: 1.35; margin: 2.2rem 0 .8rem; }
 .ng-starter-prose h3 { font-size: 1.15rem; margin: 1.6rem 0 .6rem; }
@@ -407,7 +425,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
       projectImport(directory, aliases, layoutFile, stylesFile)
     )
     files[pageFile] = appPageSource(
-      typed, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, ''))
+      typed, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, '')), basePath
     )
   } else {
     const pageFile = router.folder + (basePath === '/' ? '/[[...slug]].' : '/docs/[[...slug]].') + ext
