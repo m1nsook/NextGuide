@@ -27,18 +27,19 @@ function localHref(href: string, basePath: string): string {
 }
 
 function StarterNavigation({
-  items, basePath, depth = 0, onNavigate,
-}: { items: NavItem[]; basePath: string; depth?: number; onNavigate: () => void }) {
+  items, basePath, depth = 0, activeHref, onNavigate,
+}: { items: NavItem[]; basePath: string; depth?: number; activeHref: string; onNavigate: () => void }) {
   return (
     <ul className={depth === 0 ? "ng-site-nav" : "ng-site-nav-children"}>
       {items.filter((item) => item.nav).map((item) => item.items.length ? (
         <li key={item.href} className="ng-site-nav-group">
           <span className="ng-site-nav-group-label">{item.title}</span>
-          <StarterNavigation items={item.items} basePath={basePath} depth={depth + 1} onNavigate={onNavigate} />
+          <StarterNavigation items={item.items} basePath={basePath} depth={depth + 1} activeHref={activeHref} onNavigate={onNavigate} />
         </li>
       ) : (
         <li key={item.href}>
-          <a className="ng-site-nav-link" href={localHref(item.href, basePath)} onClick={onNavigate}>
+          <a className={"ng-site-nav-link" + (activeHref === localHref(item.href, basePath) ? " ng-site-nav-current" : "")}
+            href={localHref(item.href, basePath)} aria-current={activeHref === localHref(item.href, basePath) ? "page" : undefined} onClick={onNavigate}>
             <span>{item.title}</span><ChevronRight size={13} aria-hidden="true" />
           </a>
         </li>
@@ -56,12 +57,14 @@ export function DocsStarterShell({
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
   const [query, setQuery] = React.useState("")
+  const [pathname, setPathname] = React.useState("")
   const [highlight, setHighlight] = React.useState(0)
   const inputRef = React.useRef<HTMLInputElement>(null)
   const searchTrigger = React.useRef<HTMLButtonElement>(null)
   const dark = mode === "dark" || (mode === "system" && systemDark)
 
   React.useEffect(() => {
+    setPathname(window.location.pathname.replace(/\/$/, "") || "/")
     try {
       const saved = localStorage.getItem("nextguide:theme")
       if (saved === "light" || saved === "dark" || saved === "system") setMode(saved)
@@ -140,7 +143,7 @@ export function DocsStarterShell({
             <Search size={15} aria-hidden="true" /><span>Search pages</span><kbd>Ctrl K</kbd>
           </button>
           <nav aria-label="Documentation pages">
-            <StarterNavigation items={navigation} basePath={basePath} onNavigate={() => setMobileOpen(false)} />
+            <StarterNavigation items={navigation} basePath={basePath} activeHref={pathname} onNavigate={() => setMobileOpen(false)} />
           </nav>
           <div className="ng-site-sidebar-footer">
             <a href="https://github.com/m1nsook/NextGuide" target="_blank" rel="noopener noreferrer">Built with NextGuide</a>
