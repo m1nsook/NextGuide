@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { CornerDownLeft, FileText, Search } from "lucide-react"
+import { Command, CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
 import type { SearchEntry } from "@/lib/search-index"
 
@@ -61,7 +61,7 @@ export function SearchButton({ compact = false, className }: { compact?: boolean
     >
       <Search className="size-[15px]" />
       <span className="flex-1 text-left">Search</span>
-      <kbd className="text-muted-foreground font-mono text-[11px]">⌘K</kbd>
+      <kbd aria-label="Control or Command plus K" className="text-muted-foreground flex items-center gap-0.5 font-mono text-[11px]"><Command aria-hidden="true" className="size-3" /><span>K</span></kbd>
     </button>
   )
 }
