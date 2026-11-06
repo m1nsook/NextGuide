@@ -6,7 +6,7 @@ import { ApiPreview, EdgeCasePreview, Preview } from "./demos/preview"
 import { Install, Tab, Tabs } from "./install"
 import { MdxLink } from "./mdx-link"
 import { CodeWindow, CodeTabs, FileTree, Steps, Step, LinkCards, LinkCard } from "nextguide/blocks"
-import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, Textarea, NativeSelect, Spinner, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
+import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, ScrollArea, ScrollAreaViewport, ScrollBar, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, Textarea, NativeSelect, Spinner, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
 
 /**
  * Components available in server-rendered MDX (live demos included).
@@ -56,6 +56,24 @@ export const mdxComponents = {
   TableCell,
   Progress,
   Kbd,
+  ScrollArea,
+  ScrollAreaViewport,
+  ScrollBar,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
   Accordion,
   AccordionItem,
   AccordionTrigger,

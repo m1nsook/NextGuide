@@ -32,3 +32,57 @@ import { Button, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescri
 ```
 
 NextGuide also ships Sheet, Popover, Tooltip, DropdownMenu, HoverCard and ContextMenu primitives. These are components, not account-administration features.
+
+## Tooltip
+
+<Preview>
+<TooltipProvider delayDuration={250}>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Hover for help</Button></TooltipTrigger>
+    <TooltipContent side="top">Edit your documentation files locally.</TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+</Preview>
+
+```tsx
+import { Button, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "nextguide/ui"
+
+<TooltipProvider delayDuration={250}>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Hover for help</Button></TooltipTrigger>
+    <TooltipContent side="top">Edit your documentation files locally.</TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+The tooltip uses NextGuide's own themed Radix overlay. It supports pointer hover and keyboard focus, without the browser's native `title` popup.
+
+## Dropdown menu
+
+<Preview>
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button variant="outline">Documentation actions</Button></DropdownMenuTrigger>
+  <DropdownMenuContent align="start">
+    <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Copy page link</DropdownMenuItem>
+    <DropdownMenuItem>View source</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+</Preview>
+
+```tsx
+import { Button, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "nextguide/ui"
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button variant="outline">Documentation actions</Button></DropdownMenuTrigger>
+  <DropdownMenuContent align="start">
+    <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Copy page link</DropdownMenuItem>
+    <DropdownMenuItem>View source</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+For actions, provide an `onSelect` handler in your own client component; these gallery menu items demonstrate the appearance and keyboard behavior only.
