@@ -391,3 +391,44 @@ test('Pages Router also gets the full shell and reusable MDX components', () => 
     assert.match(read(d, 'pages/_app.tsx'), /nextguide\/styles\.css/)
   } finally { clear(d) }
 })
+
+test('Developer Mode creates a distinctive full-width landing page, not the old placeholder', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']))
+    const source = read(d, 'content/docs/index.mdx')
+    const route = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    const mdx = read(d, 'src/lib/nextguide-mdx-components.tsx')
+    assert.match(source, /layout: landing/)
+    assert.match(source, /<DocsLandingHero/)
+    assert.match(source, /<LinkCards>/)
+    assert.match(source, /<CodeWindow/)
+    assert.doesNotMatch(source, /This page was created by the NextGuide installer/)
+    assert.match(route, /frontmatter\.layout === "landing"/)
+    assert.match(route, /ng-site-landing-layout/)
+    assert.match(route, /!isLanding \? <h1>\{title\}<\/h1>/)
+    assert.match(mdx, /DocsLandingHero/)
+  } finally { clear(d) }
+})
+
+test('Root homepage CTA links are rewritten for the selected basePath', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']), { basePath: '/' })
+    const source = read(d, 'content/docs/index.mdx')
+    assert.match(source, /primaryHref="\/getting-started"/)
+    assert.match(source, /secondaryHref="\/components"/)
+    assert.doesNotMatch(source, /Href="\/docs\//)
+  } finally { clear(d) }
+})
+
+test('Pages Router supports landing frontmatter and keeps standard article pages', () => {
+  const d = fixture({ folder: 'src/pages' })
+  try {
+    initDeveloper(d, inspect(d, ['src/pages']))
+    const route = read(d, 'src/pages/docs/[[...slug]].tsx')
+    assert.match(route, /isLanding: frontmatter\.layout === "landing"/)
+    assert.match(route, /ng-site-landing-layout/)
+    assert.match(route, /!isLanding && toc\.length/)
+  } finally { clear(d) }
+})
