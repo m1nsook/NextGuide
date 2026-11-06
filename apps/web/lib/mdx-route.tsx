@@ -4,6 +4,7 @@ import type { NavItem } from "nextguide/core"
 import { isMdxNotFound, type DocsInstance } from "nextguide/mdx"
 import { ClientMdx } from "@/components/mdx-client"
 import { MdxPage } from "@/components/mdx-page"
+import type { DocsBreadcrumbItem } from "nextguide/components"
 import { getEditUrl, getNeighbours } from "./navigation"
 
 interface Frontmatter {
@@ -24,10 +25,34 @@ export function createMdxRoute(source: DocsInstance, base: string, getNavigation
 
     try {
       const frontmatter = await source.getFrontmatter<Frontmatter>({ slug })
-      const { previous, next } = getNeighbours(await getNavigation(), href)
+      const navigation = await getNavigation()
+      const { previous, next } = getNeighbours(navigation, href)
+      const markdown = await source.read({ slug })
+      const findLabel = (items: NavItem[], target: string): string | undefined => {
+        for (const item of items) {
+          if (item.href === target) return item.title
+          const nested = findLabel(item.items, target)
+          if (nested) return nested
+        }
+        return undefined
+      }
+      const breadcrumbs: DocsBreadcrumbItem[] = [
+        { title: base === "/docs" ? "Documentation" : base === "/components" ? "Components" : "Docs", href: base },
+        ...segments.map((segment, index) => {
+          const path = base + "/" + segments.slice(0, index + 1).join("/")
+          const final = index === segments.length - 1
+          return {
+            title: final && frontmatter.title ? frontmatter.title
+              : findLabel(navigation, path) ?? segment.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+            ...(final ? {} : findLabel(navigation, path) ? { href: path } : {}),
+          }
+        }),
+      ]
       const shared = {
         title: frontmatter.title,
         description: frontmatter.description,
+        markdown,
+        breadcrumbs,
         editUrl: getEditUrl(source, slug),
         previous,
         next,
