@@ -21,6 +21,10 @@ Usage:
   nextguide init --router app  Select App Router when both routers exist
   nextguide init --base-path /docs  Use /docs as documentation path (default)
   nextguide init --base-path /     Use documentation as website homepage
+  nextguide init --light           Default to light theme
+  nextguide init --dark            Default to dark theme
+  nextguide init --system          Follow operating-system theme (default)
+  nextguide init --accent:blue     Accessible accent palette (blue/red/green/purple/yellow/orange/pink/teal/cyan/gray)
   nextguide init --replace-home    Back up an existing homepage for root install
   nextguide init --yes             Use defaults noninteractively
   nextguide init --dry-run     Preview files without writing
@@ -123,6 +127,8 @@ async function init(args) {
   let router;
   let basePath;
   let replaceHome = false;
+  let theme;
+  let accent;
   let yes = false;
   let dryRun = false;
   let mode = "developer";
@@ -134,6 +140,17 @@ async function init(args) {
     else if (arg === "--router" && args[index + 1]) router = args[++index];
     else if (arg === "--base-path" && args[index + 1]) basePath = args[++index];
     else if (arg === "--replace-home") replaceHome = true;
+    else if (["--light", "--dark", "--system"].includes(arg)) {
+      const selection = arg.slice(2);
+      if (theme && theme !== selection) {
+        process.stderr.write("Choose only one default theme: --light, --dark or --system.\n");
+        process.exitCode = 2;
+        return;
+      }
+      theme = selection;
+    }
+    else if (arg.startsWith("--accent:")) accent = arg.slice("--accent:".length);
+    else if (arg === "--accent" && args[index + 1]) accent = args[++index];
     else if (arg === "--dry-run") dryRun = true;
     else if (arg === "--yes") yes = true;
     else if (!arg.startsWith("-") && !projectPath) projectPath = arg;
@@ -192,11 +209,12 @@ async function init(args) {
         replaceHome = true;
       }
     }
-    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome });
+    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome, theme, accent });
     process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
     process.stdout.write("Project: " + result.projectDirectory + "\n");
     process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
     process.stdout.write("Documentation URL: " + result.basePath + "\n");
+    process.stdout.write("Appearance: " + result.appearance.defaultTheme + " | accent " + result.appearance.accent + "\n");
     for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
     for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
     for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
