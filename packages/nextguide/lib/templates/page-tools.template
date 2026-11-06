@@ -42,8 +42,8 @@ export function NextGuidePageTools({ title, slug, basePath, source, githubUrl = 
     const prompt = [
       "Help me understand this documentation page: " + title,
       "Page URL: " + window.location.href,
-      "Page source (Markdown/MDX):\\n" + source.slice(0, 4500),
-    ].join("\\n\\n")
+      "Page source (Markdown/MDX):\n" + source.slice(0, 4500),
+    ].join("\n\n")
     window.open("https://chatgpt.com/?q=" + encodeURIComponent(prompt), "_blank", "noopener,noreferrer")
   }
 

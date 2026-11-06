@@ -44,12 +44,12 @@ All components exported from `nextguide/ui` and `nextguide/blocks` are registere
 Switch between the two code examples using the language dropdown. The selector uses accessible keyboard controls.
 
 <CodeTabs presentation="select" items={[
-  { label: "TypeScript", language: "ts", title: "nextguide.config.ts", code: "type SiteConfig = { name: string }\\nconst site: SiteConfig = { name: 'My Documentation' }\\nexport default site" },
-  { label: "JavaScript", language: "js", title: "nextguide.config.js", code: "const site = { name: 'My Documentation' }\\nexport default site" }
+  { label: "TypeScript", language: "ts", title: "nextguide.config.ts", code: "type SiteConfig = { name: string }\nconst site: SiteConfig = { name: 'My Documentation' }\nexport default site" },
+  { label: "JavaScript", language: "js", title: "nextguide.config.js", code: "const site = { name: 'My Documentation' }\nexport default site" }
 ]} />
 
 ## File language icons
 
-<CodeWindow language="json" title="example.json" code="{ \\"name\\": \\"my-docs\\" }" />
+<CodeWindow language="json" title="example.json" code={'{ "name": "my-docs" }'} />
 
 <CodeWindow language="mdx" title="introduction.mdx" code="# Getting started" />
