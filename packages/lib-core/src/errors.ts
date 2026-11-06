@@ -5,7 +5,7 @@
 export class NextGuideError extends Error {
   readonly code: string
 
-  constructor(message: string, code = "ARIADOCS_ERROR", options?: { cause?: unknown }) {
+  constructor(message: string, code = "NEXTGUIDE_ERROR", options?: { cause?: unknown }) {
     super(message, options)
     this.name = "NextGuideError"
     this.code = code

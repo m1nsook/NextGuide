@@ -8,6 +8,7 @@
   },
   "files": [
     "bin/",
+    "lib/",
     "dist/",
     "README.md",
     "LICENSE",
@@ -15,9 +16,9 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test test/doctor.test.mjs",
+    "test": "node --test",
     "test:dist": "node --test test/distribution.test.mjs",
-    "prepack": "node scripts/build.mjs && node --test test/distribution.test.mjs"
+    "prepack": "node scripts/build.mjs && node --test"
   },
   "engines": {
     "node": ">=20"
