@@ -316,3 +316,37 @@ test('parses jsconfig path mappings with JSONC comments without changing configu
     assert.match(read(d, 'lib/nextguide.js'), /from "@\/nextguide\.config\.json"/)
   } finally { clear(d) }
 })
+
+
+test('App Router generated pages expose breadcrumbs, Markdown copy, Ask AI and optional edit source', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']))
+    const route = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    const lib = read(d, 'src/lib/nextguide.ts')
+    assert.match(route, /DocsBreadcrumbs/)
+    assert.match(route, /DocsPageActions/)
+    assert.match(route, /await docs\.read\(\{ slug \}\)/)
+    assert.match(route, /editBase \? editBase/)
+    assert.match(lib, /export const editBase/)
+    assert.match(lib, /editBaseRaw\.endsWith/)
+    assert.match(route, /href: "\/docs"/)
+  } finally { clear(d) }
+})
+
+test('Pages Router generated pages also receive raw Markdown and safe breadcrumbs at both base paths', () => {
+  for (const basePath of ['/docs', '/']) {
+    const d = fixture({ folder: 'src/pages' })
+    try {
+      initDeveloper(d, inspect(d, ['src/pages']), { basePath })
+      const file = 'src/pages/' + (basePath === '/' ? '[[...slug]].tsx' : 'docs/[[...slug]].tsx')
+      const route = read(d, file)
+      assert.match(route, /DocsBreadcrumbs/)
+      assert.match(route, /DocsPageActions/)
+      assert.match(route, /markdown: await docs\.read\(\{ slug \}\)/)
+      assert.match(route, /editBase \? editBase/)
+      assert.match(route, /title: i === segments\.length - 1/)
+      assert.match(route, /slug\.split\("\/"\)\.filter\(Boolean\)/)
+    } finally { clear(d) }
+  }
+})
