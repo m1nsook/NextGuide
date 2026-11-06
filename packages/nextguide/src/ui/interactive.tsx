@@ -191,3 +191,10 @@ export function SheetContent({ side = "right", className, children, ...props }:
 }
 export const SheetTitle = DialogTitle
 export const SheetDescription = DialogDescription
+
+export function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("ng-sheet-header", className)} {...props} />
+}
+export function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("ng-sheet-footer", className)} {...props} />
+}

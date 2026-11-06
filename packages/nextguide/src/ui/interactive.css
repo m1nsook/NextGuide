@@ -44,3 +44,6 @@
 .ng-sheet-content[data-side=left]{top:0;left:0;height:100dvh;width:min(90vw,27rem)}
 .ng-sheet-content[data-side=top]{top:0;left:0;width:100%;max-height:80dvh}
 .ng-sheet-content[data-side=bottom]{bottom:0;left:0;width:100%;max-height:80dvh}
+
+.ng-sheet-header{display:flex;flex-direction:column;gap:.4rem}
+.ng-sheet-footer{display:flex;justify-content:flex-end;align-items:center;gap:.6rem;margin-top:auto}

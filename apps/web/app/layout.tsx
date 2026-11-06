@@ -4,7 +4,7 @@ import { Providers } from "@/components/providers"
 import { SearchProvider } from "@/components/search"
 import { getSearchIndex } from "@/lib/search-index"
 import { site } from "@/lib/site"
-import "@workspace/ui/globals.css"
+import "./globals.css"
 import "nextguide/styles.css"
 import "./site.css"
 
