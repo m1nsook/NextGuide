@@ -62,3 +62,10 @@
 .ng-link-card>span{flex:1;display:flex;flex-direction:column;gap:.25rem}
 .ng-link-card>span>span{font-size:.82rem;color:var(--ng-muted)}
 .ng-link-card>svg{flex-shrink:0;color:var(--ng-muted)}
+
+/* Compact file-language picker for TypeScript, JavaScript, JSON and MDX examples. */
+.ng-code-tabs-bar--select { justify-content:flex-end; gap:.7rem; overflow:visible!important; }
+.ng-code-tabs-bar--select>.ng-code-title { flex:1; }
+.ng-code-tabs-bar--select>svg { width:16px; height:16px; color:var(--ng-accent); flex-shrink:0; }
+.ng-code-language-select { min-width:9rem!important; width:auto!important; min-height:2.2rem!important; }
+.ng-code-header>svg[aria-label] { color:var(--ng-accent); }

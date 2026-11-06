@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/interactive.js"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/interactive.js"
 import {
   AlertCircle, Check, CheckCircle2, ChevronRight, Code2, Copy, FileArchive,
   FileCode2, FileJson2, FileText, Folder, Info, Lightbulb, ListTree, Terminal,
@@ -71,10 +71,21 @@ export function CopyButton({ value, className, label = "Copy" }: {
   )
 }
 
+function LanguageIcon({ language }: { language: string }) {
+  const kind = language.toLowerCase()
+  if (["ps1", "powershell", "pwsh", "bash", "shell", "sh", "cmd"].includes(kind))
+    return <Terminal aria-label="Terminal" size={16} />
+  if (["json", "jsonc"].includes(kind)) return <FileJson2 aria-label="JSON" size={16} />
+  if (["md", "mdx", "markdown"].includes(kind)) return <FileText aria-label="Markdown" size={16} />
+  if (["typescript", "javascript", "ts", "tsx", "js", "jsx"].includes(kind))
+    return <FileCode2 aria-label={kind === "ts" || kind === "tsx" ? "TypeScript" : kind === "js" || kind === "jsx" ? "JavaScript" : kind} size={16} />
+  return <Code2 aria-label="Code" size={16} />
+}
+
 const languageLabels: Record<string, string> = {
   ps1: "PowerShell", powershell: "PowerShell", pwsh: "PowerShell",
   shell: "Shell", sh: "Shell", bash: "Shell", cmd: "Command Prompt",
-  ts: "TypeScript", tsx: "TSX", js: "JavaScript", jsx: "JSX",
+  ts: "TypeScript", tsx: "TSX", typescript: "TypeScript", js: "JavaScript", jsx: "JSX", javascript: "JavaScript",
   json: "JSON", yaml: "YAML", yml: "YAML", rust: "Rust", rs: "Rust",
   css: "CSS", html: "HTML", mdx: "MDX", text: "Plain text",
 }
@@ -92,9 +103,7 @@ export function CodeWindow({ code, title, language = "text", description, lineNu
   return (
     <figure className={"ng-code-window " + className}>
       <figcaption className="ng-code-header">
-        {["ps1", "powershell", "pwsh", "bash", "shell", "sh"].includes(language.toLowerCase())
-          ? <Terminal aria-hidden="true" size={16} />
-          : <Code2 aria-hidden="true" size={16} />}
+        <LanguageIcon language={language} />
         <span className="ng-code-title">{title ?? label}</span>
         {title ? <span className="ng-code-language">{label}</span> : null}
         <CopyButton value={code} />
@@ -110,23 +119,42 @@ export function CodeWindow({ code, title, language = "text", description, lineNu
 }
 
 export type CodeTab = { label: string; code: string; language?: string; title?: string }
-export function CodeTabs({ items, defaultIndex = 0, className = "" }: {
+export function CodeTabs({ items, defaultIndex = 0, className = "", presentation = "tabs" }: {
   items: CodeTab[]
   defaultIndex?: number
   className?: string
+  /** Use a keyboard-accessible language selector instead of tab buttons. */
+  presentation?: "tabs" | "select"
 }) {
   const [index, setIndex] = React.useState(defaultIndex)
   const active = items[index] ?? items[0]
   if (!active) return null
   return (
     <div className={"ng-code-tabs " + className}>
-      <div className="ng-code-tabs-bar" role="tablist" aria-label="Code examples">
-        {items.map((item, i) => (
-          <button key={item.label + i} type="button" role="tab"
-            aria-selected={i === index} aria-controls={"ng-code-tab-" + i}
-            className="ng-code-tab" onClick={() => setIndex(i)}>{item.label}</button>
-        ))}
-      </div>
+      {presentation === "select" ? (
+        <div className="ng-code-tabs-bar ng-code-tabs-bar--select">
+          <span className="ng-code-title">Code example</span>
+          <LanguageIcon language={active.language ?? "text"} />
+          <Select value={String(index)} onValueChange={(value) => setIndex(Number(value))}>
+            <SelectTrigger aria-label="Choose code language" className="ng-code-language-select">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              {items.map((item, i) => (
+                <SelectItem key={item.label + i} value={String(i)}>{item.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : (
+        <div className="ng-code-tabs-bar" role="tablist" aria-label="Code examples">
+          {items.map((item, i) => (
+            <button key={item.label + i} type="button" role="tab"
+              aria-selected={i === index} aria-controls={"ng-code-tab-" + i}
+              className="ng-code-tab" onClick={() => setIndex(i)}>{item.label}</button>
+          ))}
+        </div>
+      )}
       <div role="tabpanel" id={"ng-code-tab-" + index} className="ng-code-tabs-panel">
         <CodeWindow code={active.code} language={active.language ?? "text"} title={active.title ?? active.label} />
       </div>
