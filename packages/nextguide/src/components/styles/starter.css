@@ -54,6 +54,8 @@
 .ng-site-nav-link svg{opacity:0;flex:none}
 .ng-site-nav-link:hover,.ng-site-nav-link:focus-visible{background:var(--ng-surface);color:var(--ng-fg)!important}
 .ng-site-nav-link:hover svg{opacity:1}
+.ng-site-nav-current{background:var(--ng-surface);color:var(--ng-accent)!important;font-weight:650}
+.ng-site-nav-current svg{opacity:1;color:var(--ng-accent)}
 .ng-site-sidebar-footer{margin-top:auto;padding:20px 10px 3px;border-top:1px solid var(--ng-border);font-size:12px;color:var(--ng-muted)}
 .ng-site-sidebar-footer a{text-decoration:none}
 .ng-site-sidebar-footer a:hover{text-decoration:underline}
