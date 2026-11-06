@@ -79,8 +79,8 @@ export default async function DocumentationPage(${propType}) {
     const { MDX, frontmatter } = await docs.parse({ slug })
     return (
       <article className="ng-starter-prose">
-        <h1>{frontmatter.title ?? "Documentation"}</h1>
-        {frontmatter.description ? <p className="ng-starter-description">{frontmatter.description}</p> : null}
+        <h1>{String(frontmatter.title ?? "Documentation")}</h1>
+        {frontmatter.description ? <p className="ng-starter-description">{String(frontmatter.description)}</p> : null}
         {MDX}
       </article>
     )
