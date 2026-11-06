@@ -20,6 +20,16 @@ bunx nextguide doctor --json
 
 The installer never silently overwrites project files. When both routers exist, select `--router app` or `--router pages`.
 
+## Add documentation pages
+
+```powershell
+bunx nextguide page add changelog --title Changelog
+bunx nextguide page add guides/windows --title "Windows setup"
+bunx nextguide page add guides/api --dry-run
+```
+
+`page add` creates editable MDX files and their nested `_meta.json` navigation, using the existing project's configured `contentDir`. It preserves custom sidebar entries, never overwrites existing pages, and supports `--project <path>`, `--description <text>`, and `--json`.
+
 **Minimum version:** `0.0.1-alpha.2` for the working Developer Mode initializer and expanded UI components. Earlier alpha versions do not include these features. Account Mode, `/setup`, and `/admin` remain in development.
 
 ## Use the built-in components

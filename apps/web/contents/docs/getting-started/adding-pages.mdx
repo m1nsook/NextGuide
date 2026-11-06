@@ -1,49 +1,56 @@
 ---
-title: Write your first MDX page
-description: Add a page and place it in NextGuide navigation without touching route code.
+title: Add documentation pages
+description: Create pages and update nested sidebar navigation automatically with the NextGuide CLI.
 ---
 
-# Write your first page
+# Add a documentation page
 
-After running `bunx nextguide init --developer`, your docs live in `content/docs/`.
+Once you have initialized Developer Mode, you can create pages without hunting for folders, editing route files, or manually updating the sidebar.
 
-## 1. Create a file
+## 1. Create a page
 
-Create `content/docs/changelog.mdx`:
+Run this command from the root of your Next.js project:
 
-```
----
-title: Changelog
-description: Release notes for our project.
----
+<CodeWindow title="Generate a page" language="powershell" code={"bunx nextguide page add changelog --title \"Changelog\" --description \"Release notes for our project\""} />
 
-# Changelog
+NextGuide creates `content/docs/changelog.mdx` and adds its entry to `content/docs/_meta.json`. It **never overwrites an existing MDX page**. The command prints every file created or updated.
 
-## November 2026
+<FileTree title="After adding changelog" items={[{name:"content",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"_meta.json",kind:"json",detail:"Updated sidebar order"},{name:"index.mdx",kind:"code"},{name:"getting-started.mdx",kind:"code"},{name:"changelog.mdx",kind:"code",detail:"Your new page"}]}]}]} />
 
-We published our first documentation site using NextGuide.
-```
+The generated page includes a title, description and editable MDX body. The route `/docs/changelog` works automatically; no new `page.tsx` file is required.
 
-## 2. Order it in the sidebar
+## 2. Create nested documentation
 
-Open the generated `content/docs/_meta.json` and add the new slug:
+Directories are created automatically as you add pages:
 
-```json
-[
-  { "slug": "index", "title": "Introduction" },
-  { "slug": "getting-started", "title": "Getting started" },
-  { "slug": "changelog", "title": "Changelog" }
-]
-```
+<CodeWindow title="Create a nested page" language="powershell" code={"bunx nextguide page add guides/windows/installation --title \"Install on Windows\""} />
 
-There are no route files to create for each new page. The NextGuide docs route automatically handles `/docs/changelog`.
+The command creates `content/docs/guides/windows/installation.mdx`, creates `_meta.json` inside each new section, and adds the `guides` section to the root navigation metadata. The page URL is `/docs/guides/windows/installation`.
 
-## 3. Preview it
+To create a section's index page at `/docs/guides`, use:
 
-While your Next.js development server is running, visit `http://localhost:3000/docs/changelog` (use your actual dev port).
+<CodeWindow title="Create a section homepage" language="powershell" code="bunx nextguide page add guides/index --title Guides" />
 
-## 4. Use components in MDX
+## 3. Preview before changing files
 
-NextGuide ships a separate component library that you can import into your own Next.js components and pass into the MDX renderer. [Browse demos and matching source examples](/components/ui).
+<CodeWindow title="Dry-run a page addition" language="powershell" code="bunx nextguide page add api/authentication --dry-run" />
 
-<Callout kind="info" title="MDX security">Trusted local MDX may include expressions. Content imported from untrusted accounts or a CMS must be treated differently; see [Rendering & security](/docs/mdx/rendering).</Callout>
+Dry-run prints the exact files that **would be created or modified** and makes no changes. For tooling and scripts, add `--json` to receive machine-readable paths and the URL.
+
+## 4. Edit the page and run Next.js
+
+Open the generated `.mdx` file in your editor, replace the placeholder content, then start your existing Next.js dev server:
+
+<CodeWindow title="Start the documentation site" language="powershell" code="bun run dev" />
+
+Go to the URL printed by `nextguide page add` on the port reported by Next.js.
+
+## How navigation metadata works
+
+NextGuide reads `_meta.json` in each folder to control ordering, labels and visibility. The generator appends missing entries and preserves your existing navigation settings, including custom titles and hidden items. You can still rearrange `_meta.json` manually when you want a particular order.
+
+The command reads the `contentDir` from `nextguide.config.json`, so a customized content directory is supported. If the file already exists, or metadata is invalid, the command stops instead of replacing your work.
+
+<Callout kind="info" title="Developer Mode only">The page generator edits local project files. It needs no account, database or online service. Account Mode and the browser editor are separate features still in development.</Callout>
+
+[Generated project files](/docs/getting-started/generated-files) · [Developer Mode](/docs/getting-started/developer-mode) · [Component library](/components/ui)

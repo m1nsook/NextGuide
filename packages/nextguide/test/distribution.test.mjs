@@ -80,3 +80,9 @@ test("all engine modules live in the single NextGuide source package", () => {
       "Missing NextGuide source module: " + module)
   }
 })
+
+test("Developer Mode page creation ships in the CLI package", () => {
+  for (const filename of ["bin/nextguide.mjs", "lib/init.mjs", "lib/page.mjs", "lib/page-cli.mjs"]) {
+    assert.ok(existsSync(join(root, filename)), filename + " is required in the npm package")
+  }
+})

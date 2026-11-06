@@ -166,6 +166,14 @@ export default async function DocumentationPage({ params }: { params: Promise<{ 
 }
 ```
 
+## Files added when you create another page
+
+After running the initializer, you can use `bunx nextguide page add guides/setup` to generate new MDX pages. The command uses the `contentDir` configured in `nextguide.config.json`.
+
+For the example `guides/setup`, NextGuide creates `content/docs/guides/setup.mdx`, creates `content/docs/guides/_meta.json` if missing, and appends the `guides` section to the existing root `_meta.json`. An existing page is never replaced, and the sidebar settings already stored in metadata are preserved.
+
+[Create your first page](/docs/getting-started/adding-pages).
+
 ## Overwrite protection
 
 NextGuide checks the full proposed file list **before writing**. If one of the names already exists, the operation fails instead of replacing user code. Use `--dry-run` to see the paths first.
