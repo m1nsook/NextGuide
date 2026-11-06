@@ -164,3 +164,13 @@ test("language-aware code windows include TypeScript and JavaScript icons and a 
   assert.match(docs, /language="typescript"/)
   assert.match(docs, /language: "javascript"/)
 })
+
+
+test("reusable page actions do not depend on Next.js module resolution or unavailable brand icons", () => {
+  const source = readFileSync(join(root, "src/components/docs/page-tools.tsx"), "utf8")
+  assert.doesNotMatch(source, /from ["']next\/link["']/)
+  assert.doesNotMatch(source, /\bGithub\b/)
+  assert.match(source, /import \{ siGithub \} from "simple-icons"/)
+  assert.match(source, /siGithub\.path/)
+  assert.match(source, /<a href=\{item.href\}/)
+})

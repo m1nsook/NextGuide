@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { Check, ChevronDown, ChevronRight, Copy, Github, MessageCircleQuestion, Pencil } from "lucide-react"
+import { Check, ChevronDown, ChevronRight, Copy, MessageCircleQuestion, Pencil } from "lucide-react"
+import { siGithub } from "simple-icons"
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator,
@@ -22,7 +22,7 @@ export function DocsBreadcrumbs({ items }: { items: DocsBreadcrumbItem[] }) {
           <li key={(item.href ?? item.title) + index}>
             {index !== 0 ? <ChevronRight size={14} aria-hidden="true" /> : null}
             {item.href && index < items.length - 1
-              ? <Link href={item.href}>{item.title}</Link>
+              ? <a href={item.href}>{item.title}</a>
               : <span aria-current={index === items.length - 1 ? "page" : undefined}>{item.title}</span>}
           </li>
         ))}
@@ -89,7 +89,7 @@ export function DocsPageActions({ markdown, title, editUrl }: DocsPageActionsPro
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <a href={editUrl} target="_blank" rel="noopener noreferrer">
-                  {gitHubLink ? <Github size={15} aria-hidden="true" /> : <Pencil size={15} aria-hidden="true" />}
+                  {gitHubLink ? <svg width={15} height={15} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d={siGithub.path} /></svg> : <Pencil size={15} aria-hidden="true" />}
                   {gitHubLink ? "Edit on GitHub" : "Edit source"}
                 </a>
               </DropdownMenuItem>
