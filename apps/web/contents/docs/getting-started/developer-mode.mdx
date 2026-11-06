@@ -11,6 +11,12 @@ Developer Mode keeps content and configuration **inside your Next.js project**. 
 
 The initializer detects your Next.js router and places files in the correct `app/`, `src/app/`, `pages/`, or `src/pages/` folder. It does not require SQLite, a user account, or a hosted NextGuide server.
 
+## Add pages without manually wiring navigation
+
+<CodeWindow title="Create a documentation page" language="powershell" code="bunx nextguide page add guides/setup --title Setup" />
+
+This creates the MDX file and updates the relevant `_meta.json` files automatically. Use `--dry-run` to preview the changes or `--json` for scripts. [Read the complete page creation guide](/docs/getting-started/adding-pages).
+
 ## What changes at build time?
 
 Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.

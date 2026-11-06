@@ -16,7 +16,14 @@ bun run dev
 
 The initializer creates working documentation routes, MDX pages, sidebar navigation, a JSON config and CSS. It detects `app/`, `src/app/`, `pages/`, and `src/pages/`, and handles JavaScript and TypeScript projects. Existing files are not overwritten. Use `--dry-run` to preview the generated files.
 
-Open `/docs` on your application's local Next.js server.
+Open `/docs` on your application's local Next.js server. To create additional MDX pages and update navigation automatically, use:
+
+```powershell
+bunx nextguide page add guides/setup --title Setup
+bunx nextguide page add guides/advanced --dry-run
+```
+
+The new command reads `nextguide.config.json`, preserves existing pages and sidebar entries, and creates nested directories safely.
 
 For new applications, first create a Next.js project with `bunx create-next-app@latest my-docs`. See [the complete installation guide](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/) and [the generated-file explanation](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
 
