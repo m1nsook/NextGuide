@@ -4,6 +4,7 @@ import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { initDeveloper } from "../lib/init.mjs";
+import { upgradeDeveloper } from "../lib/upgrade.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
 
@@ -28,6 +29,10 @@ Usage:
   nextguide init --replace-home    Back up an existing homepage for root install
   nextguide init --yes             Use defaults noninteractively
   nextguide init --dry-run     Preview files without writing
+  nextguide upgrade [path]     Upgrade unchanged starter files; keep edits
+  nextguide upgrade --dry-run  Preview upgrade operations
+  nextguide upgrade --adopt-legacy  Back up and migrate pre-manifest starters
+  nextguide init --upgrade    Alias for nextguide upgrade
   nextguide page add <slug>   Create MDX page and update navigation
   nextguide page --help       Show page creation options
 
@@ -122,7 +127,50 @@ async function ask(question) {
   finally { rl.close(); }
 }
 
+
+function upgrade(args) {
+  let project;
+  let dryRun = false;
+  let adoptLegacy = false;
+  let router;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--dry-run") dryRun = true;
+    else if (arg === "--adopt-legacy") adoptLegacy = true;
+    else if (arg === "--yes") { /* operations are noninteractive */ }
+    else if (arg === "--router" && args[i + 1]) router = args[++i];
+    else if (!arg.startsWith("-") && !project) project = arg;
+    else {
+      process.stderr.write("Unknown upgrade argument: " + arg + "\n");
+      process.exitCode = 2;
+      return;
+    }
+  }
+  try {
+    const directory = project ?? process.cwd();
+    const report = upgradeDeveloper(directory, inspectProject(directory), { dryRun, adoptLegacy, router });
+    process.stdout.write("NextGuide " + (dryRun ? "upgrade preview" : "upgrade") + "\n");
+    process.stdout.write("Project: " + report.directory + "\n");
+    for (const action of report.changes) {
+      process.stdout.write("  " + (dryRun ? "WOULD " : "") + action.kind.toUpperCase() + " " + action.name + "\n");
+      if (action.backup) process.stdout.write("    Backup: " + action.backup + "\n");
+    }
+    for (const item of report.skipped) {
+      process.stdout.write("  PRESERVE " + item.name + " — " + item.reason + "\n");
+    }
+    if (report.legacy && !adoptLegacy) {
+      process.stdout.write("Note: This is a pre-manifest installation. Unchanged old files are preserved by default.\n");
+      process.stdout.write("To migrate generated legacy files with backups, inspect --dry-run --adopt-legacy first.\n");
+    }
+    if (!dryRun) process.stdout.write("Upgrade finished. No user-modified files were overwritten without an explicit backup.\n");
+  } catch (error) {
+    process.stderr.write("NextGuide upgrade failed: " + error.message + "\n");
+    process.exitCode = 1;
+  }
+}
+
 async function init(args) {
+  if (args.includes("--upgrade")) return upgrade(args.filter((arg) => arg !== "--upgrade"));
   let projectPath;
   let router;
   let basePath;
@@ -242,6 +290,9 @@ switch (command) {
     break;
   case "init":
     await init(args);
+    break;
+  case "upgrade":
+    upgrade(args);
     break;
   case "page":
     pageCommand(args);

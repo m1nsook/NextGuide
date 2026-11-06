@@ -43,12 +43,12 @@ const UI = [
 export function componentMapSource(typed) {
   const names = [...BLOCKS, ...UI, "Docs", "OpenAPI", "Pre", "CodeBlock", "Markdown", "MethodBadge"]
   return SIGNATURE +
-    'import { ' + BLOCKS.join(", ") + ' } from "nextguide/blocks"\\n' +
-    'import { ' + UI.join(", ") + ' } from "nextguide/ui"\\n' +
-    'import { Docs, OpenAPI, Pre, CodeBlock, Markdown, MethodBadge } from "nextguide/components"\\n' +
-    (typed ? 'import type { MDXComponents } from "nextguide/mdx"\\n' : "") +
+    'import { ' + BLOCKS.join(", ") + ' } from "nextguide/blocks"\n' +
+    'import { ' + UI.join(", ") + ' } from "nextguide/ui"\n' +
+    'import { Docs, OpenAPI, Pre, CodeBlock, Markdown, MethodBadge } from "nextguide/components"\n' +
+    (typed ? 'import type { MDXComponents } from "nextguide/mdx"\n' : "") +
     'export const mdxComponents = { ' + names.join(", ") + ', pre: Pre }' +
-    (typed ? ' as unknown as MDXComponents' : "") + '\\n'
+    (typed ? ' as unknown as MDXComponents' : "") + '\n'
 }
 
 export function appSiteLayoutSource(typed, { docsImport, shellImport, cssImport, basePath }) {
