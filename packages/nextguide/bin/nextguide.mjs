@@ -116,18 +116,18 @@ function init(args) {
     else if (arg === "--yes") { /* noninteractive by default */ }
     else if (!arg.startsWith("-") && !projectPath) projectPath = arg;
     else {
-      process.stderr.write("Invalid init argument: " + arg + "\\n");
+      process.stderr.write("Invalid init argument: " + arg + "\n");
       process.exitCode = 2;
       return;
     }
   }
   if (mode !== "developer") {
-    process.stderr.write("Account Mode is not implemented. Use nextguide init --developer for the file-first, static-capable mode.\\n");
+    process.stderr.write("Account Mode is not implemented. Use nextguide init --developer for the file-first, static-capable mode.\n");
     process.exitCode = 2;
     return;
   }
   if (router && router !== "app" && router !== "pages") {
-    process.stderr.write("Invalid router. Use --router app or --router pages.\\n");
+    process.stderr.write("Invalid router. Use --router app or --router pages.\n");
     process.exitCode = 2;
     return;
   }
@@ -135,14 +135,14 @@ function init(args) {
   try {
     const status = inspectProject(directory);
     const result = initDeveloper(directory, status, { router, dryRun });
-    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\\n");
-    process.stdout.write("Project: " + result.projectDirectory + "\\n");
-    process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\\n");
-    for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\\n");
-    for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\\n");
-    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open /docs.\\n");
+    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
+    process.stdout.write("Project: " + result.projectDirectory + "\n");
+    process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
+    for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
+    for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
+    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open /docs.\n");
   } catch (error) {
-    process.stderr.write("NextGuide init failed: " + error.message + "\\n");
+    process.stderr.write("NextGuide init failed: " + error.message + "\n");
     process.exitCode = 1;
   }
 }
