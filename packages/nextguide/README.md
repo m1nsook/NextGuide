@@ -18,7 +18,6 @@ Replace the path with the actual absolute path to the generated file. The applic
 
 ## Install from npm (after Account Mode release)
 
-
 ```powershell
 bun add nextguide
 bunx nextguide init --developer
