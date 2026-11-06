@@ -23,7 +23,7 @@ export function fullAppPageSource(typed, basePath, docsImport) {
 }
 export function fullPagesPageSource(typed, basePath, docsImport, mdxImport) {
   const types = typed ? [
-    'type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; navigation: import("nextguide/mdx").NavItem[]; searchIndex: import("nextguide/components").DocsSearchItem[]; toc: import("nextguide/mdx").TocItem[]; siteName: string; markdown: string; slug: string; editBase: string; appearanceMode: "light" | "dark" | "system"; appearanceAccent: string; githubUrl: string | null; releaseUrl: string | null; version: string; neighbours: { previous?: { href: string; title: string }; next?: { href: string; title: string } } }',
+    'type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; navigation: import("nextguide/mdx").NavItem[]; searchIndex: import("nextguide/site").DocsSiteSearchEntry[]; toc: import("nextguide/mdx").TocItem[]; siteName: string; markdown: string; slug: string; editBase: string; appearanceMode: "light" | "dark" | "system"; appearanceAccent: string; githubUrl: string | null; releaseUrl: string | null; version: string; neighbours: { previous?: { href: string; title: string }; next?: { href: string; title: string } } }',
     '',
   ].join("\n") : ""
   return replaceTokens(PAGES_TEMPLATE, {
