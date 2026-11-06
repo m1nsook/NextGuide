@@ -425,3 +425,15 @@
 @media(prefers-reduced-motion:reduce){
   .ng-site-content .ng-link-card,.ng-landing-actions a{transition:none!important;transform:none!important}
 }
+
+/* Respect the host application's loaded Next.js fonts, without fetching
+   fonts or requiring a separate NextGuide font package. */
+.ng-starter {
+  font-family:var(--ng-font-inter,var(--font-geist-sans,"Inter")),
+    ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+.ng-site-content :is(code,pre,kbd),.ng-site-search-trigger kbd,.ng-site-sidebar-search kbd,
+.ng-landing-preview-code {
+  font-family:var(--ng-font-jetbrains-mono,var(--font-geist-mono,"JetBrains Mono")),
+    ui-monospace,"Cascadia Code",Consolas,monospace;
+}
