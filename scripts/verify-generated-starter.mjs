@@ -72,7 +72,7 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
     const homepage = readFileSync(join(folder, "out", basePath === "/" ? "index.html" : "docs/index.html"), "utf8")
     // Verify actual rendered output, not an outdated example-page heading.
     assert.match(homepage, /Welcome to your docs/, "Starter MDX homepage must render")
-    assert.match(homepage, /Documentation navigation|Documentation pages/, "Starter sidebar must render")
+    assert.match(homepage, /data-slot="docs-nav"/, "Official shared sidebar must render")
     assert.match(homepage, /Start building/, "Starter MDX sections must render")
     assert.match(homepage, /Component showcase/, "Starter's bundled MDX link cards must render")
   }
