@@ -19,15 +19,36 @@ export function shellSource(typed, theme = "system") {
     "__ENTRIES_RESULT__": typed ? ": { href: string; title: string }[]" : "",
     "__SHELL_PROPS__": typed ? ": { children: ReactNode; navigation: NavItem[]; siteName: string; basePath: string }" : "",
     "__KEY_TYPE__": typed ? ": KeyboardEvent" : "",
-    "__THEME_TYPE__": typed ? ': "light" | "dark"' : "",
+    "__THEME_TYPE__": typed ? ': "light" | "dark" | "system"' : "",
   })
 }
 
+const BLOCKS = ["Callout", "CodeWindow", "CodeTabs", "FileTree", "Steps", "Step", "LinkCards", "LinkCard"]
+const UI = [
+  "Button", "Badge", "Alert", "AlertTitle", "AlertDescription",
+  "Card", "CardHeader", "CardTitle", "CardContent", "CardFooter",
+  "Table", "TableHeader", "TableBody", "TableRow", "TableHead", "TableCell",
+  "Progress", "Kbd", "Input", "Textarea", "Label", "Switch", "Checkbox",
+  "Separator", "Skeleton", "Spinner", "Breadcrumb", "BreadcrumbList",
+  "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator", "BreadcrumbPage",
+  "ScrollArea", "ScrollAreaViewport", "ScrollBar",
+  "Select", "SelectTrigger", "SelectValue", "SelectContent", "SelectItem",
+  "Tooltip", "TooltipTrigger", "TooltipContent",
+  "DropdownMenu", "DropdownMenuTrigger", "DropdownMenuContent", "DropdownMenuItem",
+  "DropdownMenuLabel", "DropdownMenuSeparator",
+  "Accordion", "AccordionItem", "AccordionTrigger", "AccordionContent",
+  "Dialog", "DialogTrigger", "DialogContent", "DialogTitle", "DialogDescription",
+  "DialogClose", "NativeSelect", "Tabs", "TabsList", "TabsTrigger", "TabsContent"
+]
 export function componentMapSource(typed) {
-  return SIGNATURE + fill(templates.map, {
-    "__MDX_TYPE_IMPORT__": typed ? 'import type { MDXComponents } from "nextguide/mdx"' : "",
-    "__MDX_CAST__": typed ? " as unknown as MDXComponents" : "",
-  })
+  const names = [...BLOCKS, ...UI, "Docs", "OpenAPI", "Pre", "CodeBlock", "Markdown", "MethodBadge"]
+  return SIGNATURE +
+    'import { ' + BLOCKS.join(", ") + ' } from "nextguide/blocks"\\n' +
+    'import { ' + UI.join(", ") + ' } from "nextguide/ui"\\n' +
+    'import { Docs, OpenAPI, Pre, CodeBlock, Markdown, MethodBadge } from "nextguide/components"\\n' +
+    (typed ? 'import type { MDXComponents } from "nextguide/mdx"\\n' : "") +
+    'export const mdxComponents = { ' + names.join(", ") + ', pre: Pre }' +
+    (typed ? ' as unknown as MDXComponents' : "") + '\\n'
 }
 
 export function appSiteLayoutSource(typed, { docsImport, shellImport, cssImport, basePath }) {
