@@ -1,38 +1,32 @@
 ---
 title: File trees
-description: Expandable project structures with icons and a copyable text representation.
+description: Collapsible project layouts with types, icons and copyable plain-text trees.
 ---
 
 # File trees
 
-`FileTree` renders an interactive, keyboard-accessible project tree. Folder nodes expand and collapse using native HTML details elements.
+## Project layout
 
 <Preview>
-  <FileTree title="NextGuide project structure" items={[{
-    name: "my-documentation", kind: "folder", children: [
-      { name: "app", kind: "folder", children: [{ name: "page.tsx", kind: "code" }, { name: "layout.tsx", kind: "code" }] },
-      { name: "content", kind: "folder", children: [{ name: "index.mdx", kind: "code" }, { name: "getting-started.mdx", kind: "code" }] },
-      { name: "public", kind: "folder", children: [{ name: "favicon.svg", kind: "file" }] },
-      { name: "nextguide.config.json", kind: "json" }
-    ]
-  }]} />
+<FileTree title="NextGuide project" items={[{
+  name:"my-docs",kind:"folder",children:[
+    {name:"content",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"index.mdx",kind:"code"},{name:"getting-started.mdx",kind:"code"}]}]},
+    {name:"nextguide.config.json",kind:"json"},
+    {name:"src",kind:"folder",children:[{name:"app",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"layout.tsx",kind:"code"},{name:"[[...slug]]",kind:"folder",children:[{name:"page.tsx",kind:"code"}]}]}]}]}
+  ]
+}]} />
 </Preview>
 
 ```tsx
-import { FileTree } from "nextguide/blocks";
+import { FileTree } from "nextguide/blocks"
 
-<FileTree
-  title="NextGuide project structure"
-  items={[{
-    name: "my-documentation",
-    kind: "folder",
-    children: [
-      { name: "app", kind: "folder", children: [{ name: "page.tsx", kind: "code" }] },
-      { name: "content", kind: "folder", children: [{ name: "index.mdx", kind: "code" }] },
-      { name: "nextguide.config.json", kind: "json" },
-    ],
-  }]}
-/>;
+<FileTree title="NextGuide project" items={[{
+  name:"my-docs",kind:"folder",children:[
+    {name:"content",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"index.mdx",kind:"code"},{name:"getting-started.mdx",kind:"code"}]}]},
+    {name:"nextguide.config.json",kind:"json"},
+    {name:"src",kind:"folder",children:[{name:"app",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"layout.tsx",kind:"code"},{name:"[[...slug]]",kind:"folder",children:[{name:"page.tsx",kind:"code"}]}]}]}]}
+  ]
+}]} />
 ```
 
-Nodes support `name`, optional `kind` (`folder`, `file`, `code`, `json`, `archive`, `executable`), optional `detail`, and nested `children`. The copy action produces a plain-text directory tree.
+Nodes accept `name`, optional `kind`, `detail` and nested `children`. Folders expand with native keyboard-accessible `<details>` markup.

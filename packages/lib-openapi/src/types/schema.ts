@@ -1,7 +1,7 @@
-import type { JsonObject, JsonValue } from "@ariadocs/core";
+import type { JsonObject, JsonValue } from "@nextguide-internal/core";
 
 /**
- * JSON-Schema-flavored schema model used across the Ariadocs OpenAPI pipeline.
+ * JSON-Schema-flavored schema model used across the NextGuide OpenAPI pipeline.
  *
  * Designed around OpenAPI 3.1's full JSON Schema vocabulary (which is a
  * superset of the 3.0 subset). Schemas that originated from a `$ref` keep the

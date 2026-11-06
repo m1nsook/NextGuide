@@ -1,4 +1,4 @@
-import type { NavItem } from "@ariadocs/core"
+import type { NavItem } from "@nextguide-internal/core"
 import type { ParseOpenAPIOptions } from "./options.js"
 import { parseOpenAPI } from "./parse.js"
 import type { APIOperation, APISchema, APISearchResult, APISpec } from "./types/index.js"
@@ -13,7 +13,7 @@ export type OpenAPIConfig = ParseOpenAPIOptions
 export interface OpenAPIInstance {
   /** Parse the document. The result is cached; failures are not, so a retry re-reads the source. */
   parse: () => Promise<APISpec>
-  /** Sidebar navigation (`NavItem[]`, same shape as `@ariadocs/mdx`). */
+  /** Sidebar navigation (`NavItem[]`, same shape as `@nextguide-internal/mdx`). */
   getNavigation: (options?: GetNavigationOptions) => Promise<NavItem[]>
   /** Every operation page path, e.g. `["/listPets"]`, for static generation. */
   getPagePaths: () => Promise<string[]>
@@ -31,7 +31,7 @@ export interface OpenAPIInstance {
 
 /**
  * Create an OpenAPI instance with its options set once — the OpenAPI
- * counterpart of `createDocs` in `@ariadocs/mdx`.
+ * counterpart of `createDocs` in `@nextguide-internal/mdx`.
  *
  * ```ts
  * export const openapi = createOpenAPI({ source: "./openapi.yaml" });

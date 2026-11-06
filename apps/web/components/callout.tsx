@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { AlertTriangle, Info, Lightbulb, ShieldAlert } from "lucide-react"
-import { cn } from "@ariadocs/components"
+import { cn } from "nextguide/components"
 
 const STYLES = {
   info: { icon: Info, className: "border-blue-500/30 bg-blue-500/5 [&_svg]:text-blue-500" },

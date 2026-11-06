@@ -2,6 +2,7 @@
 
 import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
+import { initDeveloper } from "../lib/init.mjs";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const help = `NextGuide ${version} — early alpha
@@ -11,9 +12,12 @@ Usage:
   nextguide --version          Show the published version
   nextguide doctor [path]      Inspect a local Next.js project
   nextguide doctor --json      Print machine-readable diagnostics
+  nextguide init [path]        Scaffold Developer Mode in a Next.js project
+  nextguide init --router app  Select App Router when both routers exist
+  nextguide init --dry-run     Preview files without writing
 
 Next.js is mandatory. NextGuide aims to support App Router and Pages Router.
-The setup wizard, editor, and init command are not available in this alpha.
+Developer Mode initialization is available. Account Mode, /setup and /admin are not yet implemented.
 Docs: https://m1nsook.github.io/NextGuide/
 `;
 
@@ -91,9 +95,56 @@ function doctor(args) {
     } else {
       process.stdout.write("OK: Next.js and a supported router directory were detected.\n");
     }
-    process.stdout.write("Note: /setup, /admin and init are not implemented in this alpha.\n");
+    process.stdout.write("Note: Account Mode, /setup and /admin are not yet implemented. Developer Mode init is available.\n");
   }
   if (!result.ok) process.exitCode = 1;
+}
+
+
+function init(args) {
+  let projectPath;
+  let router;
+  let dryRun = false;
+  let mode = "developer";
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+    if (arg === "--developer") mode = "developer";
+    else if (arg === "--account") mode = "account";
+    else if (arg === "--mode" && args[index + 1]) mode = args[++index];
+    else if (arg === "--router" && args[index + 1]) router = args[++index];
+    else if (arg === "--dry-run") dryRun = true;
+    else if (arg === "--yes") { /* noninteractive by default */ }
+    else if (!arg.startsWith("-") && !projectPath) projectPath = arg;
+    else {
+      process.stderr.write("Invalid init argument: " + arg + "\n");
+      process.exitCode = 2;
+      return;
+    }
+  }
+  if (mode !== "developer") {
+    process.stderr.write("Account Mode is not implemented. Use nextguide init --developer for the file-first, static-capable mode.\n");
+    process.exitCode = 2;
+    return;
+  }
+  if (router && router !== "app" && router !== "pages") {
+    process.stderr.write("Invalid router. Use --router app or --router pages.\n");
+    process.exitCode = 2;
+    return;
+  }
+  const directory = projectPath ?? process.cwd();
+  try {
+    const status = inspectProject(directory);
+    const result = initDeveloper(directory, status, { router, dryRun });
+    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
+    process.stdout.write("Project: " + result.projectDirectory + "\n");
+    process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
+    for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
+    for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
+    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open /docs.\n");
+  } catch (error) {
+    process.stderr.write("NextGuide init failed: " + error.message + "\n");
+    process.exitCode = 1;
+  }
 }
 
 const [command, ...args] = process.argv.slice(2);
@@ -112,8 +163,7 @@ switch (command) {
     doctor(args);
     break;
   case "init":
-    process.stderr.write("NextGuide init is not implemented in " + version + ". This release supports 'nextguide doctor' only.\n");
-    process.exitCode = 2;
+    init(args);
     break;
   default:
     process.stderr.write(`Unknown NextGuide command: ${command}\nRun 'nextguide --help' to see available commands.\n`);

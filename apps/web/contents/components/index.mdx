@@ -1,44 +1,26 @@
 ---
 title: Components
-description: Components for docs pages and API references.
+subtitle: Real UI building blocks and documentation primitives, included in NextGuide.
 ---
 
-<Install packages="nextguide@alpha" />
+# Build beyond Markdown
 
-There are two groups. `Docs.*` lays out MDX pages: the sidebar, the table of contents and the page itself. `OpenAPI.*` renders endpoints from a parsed spec.
+The NextGuide component library is **built into the package**. It includes shadcn-style UI primitives, accessible Radix-backed interactions, and documentation-specific blocks.
 
-Each component works on its own. You can also pass children to choose which parts it shows. Here's Resend's "List emails" endpoint with only its header and parameters:
+<LinkCards>
+  <LinkCard title="Component catalog" href="/components/ui" description="Browse shipped UI and documentation primitives" />
+  <LinkCard title="Code blocks" href="/components/ui/code-windows" description="Language headers, tabs, copy buttons" />
+  <LinkCard title="File trees" href="/components/ui/file-trees" description="Collapsible folders and project structures" />
+  <LinkCard title="All exports" href="/components/ui/reference" description="A searchable-by-name inventory of available exports" />
+</LinkCards>
 
-<ApiPreview>
-  <OpenAPI.Operation id="emails-list">
-    <OpenAPI.Operation.Header />
-    <OpenAPI.Operation.Parameters className="mt-6" />
-  </OpenAPI.Operation>
-</ApiPreview>
+## One import path per group
 
 ```tsx
-<OpenAPI.Root api={api}>
-  <OpenAPI.Operation id="emails-list">
-    <OpenAPI.Operation.Header />
-    <OpenAPI.Operation.Parameters />
-  </OpenAPI.Operation>
-</OpenAPI.Root>
+import { Button, Card, Tabs, Dialog } from "nextguide/ui"
+import { CodeWindow, CodeTabs, FileTree, Callout } from "nextguide/blocks"
+import { BrandIcon, UIIcon } from "nextguide/icons"
+import "nextguide/styles.css"
 ```
 
-Leave out the children and you get the full endpoint page.
-
-## Setup
-
-The components use Tailwind CSS v4. Let Tailwind scan the package, then import the styles once:
-
-```css title="app/globals.css"
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-@source "../node_modules/nextguide/dist/**/*.{js,mjs}";
-```
-
-```ts title="app/layout.tsx"
-import "nextguide/styles.css";
-```
-
-NextGuide includes shadcn-style UI components; no separate shadcn installer is required. You can render them from Server or Client Components.
+The gallery uses live, working examples. Every JSX snippet beneath a demo represents **the same props and content** as the demo shown above it. No pseudocode disguised as a reusable implementation.

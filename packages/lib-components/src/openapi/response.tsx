@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react"
 import { Minus, Plus } from "lucide-react"
-import type { APIResponse } from "@ariadocs/openapi"
+import type { APIResponse } from "@nextguide-internal/openapi"
 import { cn } from "../lib/utils.js"
 import { Markdown } from "../markdown.js"
 import { ResponseProvider, useOptionalOperation, useOptionalResponse, useResponse } from "./context.js"
@@ -46,7 +46,7 @@ export function StatusCode({ response, className }: { response: APIResponse; cla
       <span
         aria-hidden
         className="size-1.5 rounded-full"
-        style={{ backgroundColor: `var(--aria-status-${family === "1" ? "default" : family}, var(--muted-foreground))` }}
+        style={{ backgroundColor: `var(--ng-status-${family === "1" ? "default" : family}, var(--muted-foreground))` }}
       />
       {response.status}
     </span>
@@ -88,7 +88,7 @@ export function ResponseHeaders({ className }: { className?: string }) {
   if (headers.length === 0) return null
   return (
     <div className={className}>
-      <p className="text-foreground mb-1 text-(length:--aria-text-sm) font-medium">Headers</p>
+      <p className="text-foreground mb-1 text-(length:--ng-text-sm) font-medium">Headers</p>
       <div className="divide-border divide-y">
         {headers.map((header) => (
           <div key={header.name} className="py-2">
@@ -157,8 +157,8 @@ function ResponseRow({ response, id }: { response: APIResponse; id: string }) {
       <div className="flex items-baseline gap-4">
         <AnchorLink id={id} className="w-14 shrink-0">
           <span
-            className="font-mono text-(length:--aria-text-sm)"
-            style={{ color: `var(--aria-status-${response.isDefault ? "default" : response.status[0]}, var(--muted-foreground))` }}
+            className="font-mono text-(length:--ng-text-sm)"
+            style={{ color: `var(--ng-status-${response.isDefault ? "default" : response.status[0]}, var(--muted-foreground))` }}
           >
             {label}
           </span>
@@ -170,7 +170,7 @@ function ResponseRow({ response, id }: { response: APIResponse; id: string }) {
               type="button"
               aria-expanded={open}
               onClick={() => setOpen((value) => !value)}
-              className="text-muted-foreground hover:text-foreground mt-1.5 inline-flex items-center gap-1.5 text-(length:--aria-text-xs) transition-colors"
+              className="text-muted-foreground hover:text-foreground mt-1.5 inline-flex items-center gap-1.5 text-(length:--ng-text-xs) transition-colors"
             >
               {open ? <Minus className="size-3" /> : <Plus className="size-3" />}
               {open ? "Hide" : "Show"} {response.content.length > 0 ? "response body" : "headers"}

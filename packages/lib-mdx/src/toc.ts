@@ -1,6 +1,6 @@
 import { remark } from "remark"
 import remarkFlexibleToc, { type TocItem as FlexibleTocItem } from "remark-flexible-toc"
-import type { TocItem } from "@ariadocs/core"
+import type { TocItem } from "@nextguide-internal/core"
 
 /** Extract headings as `{ value, href, depth }` (the shared `TocItem` shape). */
 export async function extractToc(content: string): Promise<TocItem[]> {

@@ -1,7 +1,7 @@
 "use client"
 
 import { Children, isValidElement, useState, type ReactElement, type ReactNode } from "react"
-import { CodeBlock, CodeTabs } from "@ariadocs/components"
+import { CodeBlock, CodeTabs } from "nextguide/components"
 
 const MANAGERS = ["pnpm", "npm", "yarn", "bun"] as const
 type Manager = (typeof MANAGERS)[number]
@@ -54,7 +54,7 @@ export function Tabs({ items, children }: { items: string[]; children?: ReactNod
   const current = panels.find((panel) => panel.props.value === value) ?? panels[0]
 
   return (
-    <div className="not-prose bg-[var(--aria-code-background)] my-6 overflow-hidden rounded-xl border [&_[data-slot=pre]_pre]:m-0 [&_[data-slot=pre]_pre]:rounded-none [&_[data-slot=pre]_pre]:border-0 [&_pre]:overflow-x-auto [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-relaxed [&_.rehype-code-title]:hidden">
+    <div className="not-prose bg-[var(--ng-code-background)] my-6 overflow-hidden rounded-xl border [&_[data-slot=pre]_pre]:m-0 [&_[data-slot=pre]_pre]:rounded-none [&_[data-slot=pre]_pre]:border-0 [&_pre]:overflow-x-auto [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-relaxed [&_.rehype-code-title]:hidden">
       <div className="flex h-10 items-center border-b pl-1">
         <CodeTabs label="Code" value={value} options={items.map((item) => ({ value: item, label: item }))} onChange={setValue} />
       </div>

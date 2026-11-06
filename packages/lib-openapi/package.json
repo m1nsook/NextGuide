@@ -1,13 +1,10 @@
 {
-  "name": "@ariadocs/openapi",
-  "version": "1.0.2",
+  "name": "@nextguide-internal/openapi",
+  "version": "0.0.1-alpha.2",
   "type": "module",
-  "author": {
-    "name": "Nisab Mohd",
-    "email": "nisabmohd@gmail.com"
-  },
+  "author": "NextGuide contributors",
   "license": "MIT",
-  "description": "Headless OpenAPI parser for Ariadocs. Turns OpenAPI 3.0/3.1 documents (JSON or YAML) into a typed, UI-ready model. Runs in Node.js, Bun, Deno, the browser and edge runtimes.",
+  "description": "NextGuide internal openapi build module (not published separately).",
   "keywords": [
     "openapi",
     "swagger",
@@ -15,7 +12,7 @@
     "parser",
     "api",
     "headless",
-    "ariadocs"
+    "nextguide"
   ],
   "exports": {
     ".": {
@@ -27,12 +24,11 @@
     "lint": "eslint . --max-warnings 0",
     "build": "node ../../scripts/clean-dist.mjs && tsc",
     "test": "vitest run",
-    "check-types": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "check-types": "tsc --noEmit"
   },
   "packageManager": "bun@1.4.4",
   "dependencies": {
-    "@ariadocs/core": "workspace:*",
+    "@nextguide-internal/core": "workspace:*",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
@@ -52,22 +48,20 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nisabmohd/Aria-Docs.git",
+    "url": "git+https://github.com/m1nsook/NextGuide.git",
     "directory": "packages/lib-openapi"
   },
   "bugs": {
-    "url": "https://github.com/nisabmohd/Aria-Docs/issues"
+    "url": "https://github.com/m1nsook/NextGuide/issues"
   },
-  "homepage": "https://github.com/nisabmohd/Aria-Docs#readme",
+  "homepage": "https://m1nsook.github.io/NextGuide/",
   "imports": {
     "#read-file": {
       "node": "./dist/load/read-file.node.js",
       "default": "./dist/load/read-file.browser.js"
     }
-  }
+  },
+  "private": true
 }

@@ -1,4 +1,4 @@
-import { getOwn } from "@ariadocs/core"
+import { getOwn } from "@nextguide-internal/core"
 import type { APIServer } from "../types/index.js"
 
 /**

@@ -1,4 +1,4 @@
-import { getOwn } from "@ariadocs/core"
+import { getOwn } from "@nextguide-internal/core"
 import { generateSchemaExample } from "../normalize/schema.js"
 import type {
   APIContent,

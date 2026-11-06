@@ -1,4 +1,4 @@
-import { isRecord } from "@ariadocs/core"
+import { isRecord } from "@nextguide-internal/core"
 import { stringifyValue as stringify, type APIRequestSample } from "./request-sample.js"
 
 export type CodeSampleLanguage =
@@ -392,7 +392,7 @@ function toJava(sample: APIRequestSample): string {
 
   if (kind === "multipart") {
     // java.net.http has no multipart builder; write the body by hand.
-    const boundary = "AriadocsBoundary"
+    const boundary = "NextGuideBoundary"
     const parts = formFields(sample)
       .map(([name, value]) => `--${boundary}\r\nContent-Disposition: form-data; name="${name.replace(/"/g, "%22")}"\r\n\r\n${value}\r\n`)
       .join("")

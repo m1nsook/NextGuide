@@ -1,0 +1,20 @@
+---
+title: Typography
+subtitle: Font families and the visual font selector included in NextGuide.
+---
+
+# Typography
+
+The package includes a `FontPicker` React component and a small catalog of families: Inter, Geist, IBM Plex Sans, Segoe UI, JetBrains Mono, Geist Mono, IBM Plex Mono and system fallbacks.
+
+```tsx
+import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
+
+export function TypographySettings() {
+  return <FontPicker defaultValue={DEFAULT_FONTS} onChange={(fonts) => console.log(fonts)} />
+}
+```
+
+The preview is interactive, but **saving choices and applying font files to the whole site is the host application's responsibility** until the Account Mode setup wizard is implemented. The docs site uses Next.js font loading. System fonts such as Segoe UI are never redistributed with NextGuide.
+
+For a static site, use `next/font/google` to self-host open fonts and connect the chosen CSS variables to your theme.

@@ -1,4 +1,4 @@
-import { getOwn, isRecord } from "@ariadocs/core"
+import { getOwn, isRecord } from "@nextguide-internal/core"
 import { parsePointer } from "../refs/pointer.js"
 import type { APISchema, APISchemaProperty } from "../types/index.js"
 

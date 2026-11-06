@@ -37,7 +37,8 @@ test("--help lists actual commands", () => {
   const result = run("--help");
   assert.equal(result.status, 0);
   assert.match(result.stdout, /doctor/);
-  assert.match(result.stdout, /not available/);
+  assert.match(result.stdout, /init/);
+  assert.match(result.stdout, /Account Mode/);
 });
 
 test("doctor accepts an App Router project", () => {
@@ -98,8 +99,28 @@ test("doctor rejects missing router folders", () => {
   }
 });
 
-test("init is not misleadingly offered as working", () => {
-  const result = run("init");
+test("init rejects running outside a Next.js project", () => {
+  const directory = mkdtempSync(join(tmpdir(), "nextguide-not-next-"));
+  try {
+    const result = run("init", directory);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /No readable package.json/);
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("init refuses Account Mode instead of pretending it's ready", () => {
+  const result = run("init", "--account");
   assert.equal(result.status, 2);
-  assert.match(result.stderr, /not implemented/);
+  assert.match(result.stderr, /Account Mode is not implemented/);
+});
+
+test("init CLI writes Developer Mode files and prints their locations", () => {
+  const directory = fixture();
+  try {
+    const result = run("init", directory, "--developer");
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /CREATE src\\app\\docs|CREATE src\/app\/docs/);
+    assert.ok(existsSync(join(directory, "src/app/docs/layout.jsx")));
+    assert.ok(existsSync(join(directory, "nextguide.config.json")));
+  } finally { rmSync(directory, { recursive: true, force: true }); }
 });

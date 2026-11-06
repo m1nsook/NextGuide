@@ -33,7 +33,7 @@ export interface DocsInstance {
   getFrontmatter: <T = BaseFrontmatter>(options: DocsPageOptions) => Promise<T>
   /** A page's table of contents. */
   getToc: (options: DocsPageOptions) => Promise<TocItem[]>
-  /** Sidebar navigation (`NavItem[]`, same shape as `@ariadocs/openapi`). */
+  /** Sidebar navigation (`NavItem[]`, same shape as `@nextguide-internal/openapi`). */
   getNavigation: () => Promise<NavItem[]>
   /** Every page path, for static generation. */
   getPagePaths: () => Promise<string[]>
@@ -43,7 +43,7 @@ export interface DocsInstance {
 
 /**
  * Create a docs instance with its options set once — the MDX counterpart of
- * `createOpenAPI` in `@ariadocs/openapi`.
+ * `createOpenAPI` in `@nextguide-internal/openapi`.
  *
  * ```ts
  * export const docs = createDocs({ contentDir: "content/docs", rehypePlugins: [rehypeSlug] });

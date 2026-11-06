@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { getOperationTitle, getServerUrl, type APIOperation } from "@ariadocs/openapi"
+import { getOperationTitle, getServerUrl, type APIOperation } from "@nextguide-internal/openapi"
 import { CopyButton } from "../code/code-block.js"
 import { cn } from "../lib/utils.js"
 import { Markdown } from "../markdown.js"
@@ -58,7 +58,7 @@ export function OpenAPIOperation({ operation: operationProp, id, headingLevel = 
                 <OpenAPIRequestBody />
                 <OperationResponses />
               </div>
-              <div className="min-w-0 space-y-4 xl:sticky xl:top-[calc(var(--aria-header-height,0px)+1.5rem)] xl:self-start">
+              <div className="min-w-0 space-y-4 xl:sticky xl:top-[calc(var(--ng-header-height,0px)+1.5rem)] xl:self-start">
                 <RequestExample />
                 <ResponseExample />
               </div>
@@ -77,7 +77,7 @@ export function OperationTag({ className }: { className?: string }) {
   const name = operation.tags[0]
   if (name === undefined) return null
   const tag = root?.api.tags.find((item) => item.name === name)
-  return <p className={cn("text-muted-foreground mb-2 text-(length:--aria-text-sm)", className)}>{tag?.title ?? name}</p>
+  return <p className={cn("text-muted-foreground mb-2 text-(length:--ng-text-sm)", className)}>{tag?.title ?? name}</p>
 }
 
 /** Title from `summary` (falls back to `METHOD /path`), with a deprecated marker. */
@@ -88,7 +88,7 @@ export function OperationTitle({ level = 2, className }: { level?: 1 | 2 | 3; cl
     <Heading
       className={cn(
         "text-foreground font-semibold tracking-tight",
-        level === 1 ? "text-(length:--aria-text-2xl) leading-tight" : level === 2 ? "text-(length:--aria-text-xl)" : "text-(length:--aria-text-xl)",
+        level === 1 ? "text-(length:--ng-text-2xl) leading-tight" : level === 2 ? "text-(length:--ng-text-xl)" : "text-(length:--ng-text-xl)",
         operation.deprecated && "line-through decoration-2 opacity-70",
         className
       )}
@@ -107,10 +107,10 @@ export function OperationHeader({ className }: { className?: string }) {
   return (
     <div
       data-slot="openapi-operation-header"
-      className={cn("bg-[var(--aria-code-background)] flex items-center gap-3 rounded-xl border py-1.5 pr-1.5 pl-3.5", className)}
+      className={cn("bg-[var(--ng-code-background)] flex items-center gap-3 rounded-xl border py-1.5 pr-1.5 pl-3.5", className)}
     >
       <MethodBadge method={operation.method} variant="text" />
-      <code className="min-w-0 flex-1 truncate font-mono text-(length:--aria-text-sm)">
+      <code className="min-w-0 flex-1 truncate font-mono text-(length:--ng-text-sm)">
         {base !== "" ? <span className="text-muted-foreground">{base}</span> : null}
         <OperationPathText path={operation.path} />
       </code>
@@ -125,7 +125,7 @@ function OperationPathText({ path }: { path: string }) {
     <>
       {path.split(/(\{[^{}]+\})/g).map((part, index) =>
         part.startsWith("{") ? (
-          <span key={index} className="text-[var(--aria-accent)]">
+          <span key={index} className="text-[var(--ng-accent)]">
             {part}
           </span>
         ) : (
@@ -158,7 +158,7 @@ export function OperationMethod({ className }: { className?: string }) {
  */
 export function OperationPath({ className }: { className?: string }) {
   return (
-    <code className={cn("font-mono text-(length:--aria-text-sm) break-all", className)}>
+    <code className={cn("font-mono text-(length:--ng-text-sm) break-all", className)}>
       <OperationPathText path={useOperation().path} />
     </code>
   )
@@ -174,7 +174,7 @@ export function OperationPath({ className }: { className?: string }) {
 export function OperationDeprecated({ className }: { className?: string }) {
   if (!useOperation().deprecated) return null
   return (
-    <span className={cn("bg-muted text-muted-foreground rounded-md border px-1.5 py-0.5 text-(length:--aria-text-xs) font-medium", className)}>
+    <span className={cn("bg-muted text-muted-foreground rounded-md border px-1.5 py-0.5 text-(length:--ng-text-xs) font-medium", className)}>
       Deprecated
     </span>
   )
@@ -201,7 +201,7 @@ export function OperationSummary({ className }: { className?: string }) {
  * ```
  */
 export function OperationDescription({ className }: { className?: string }) {
-  return <Markdown className={cn("max-w-2xl text-(length:--aria-text-base)", className)}>{useOperation().description}</Markdown>
+  return <Markdown className={cn("max-w-2xl text-(length:--ng-text-base)", className)}>{useOperation().description}</Markdown>
 }
 
 /** Request and response examples side by side (stacked on small screens). */

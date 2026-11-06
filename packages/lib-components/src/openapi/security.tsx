@@ -1,7 +1,7 @@
 "use client"
 
-import type { APISecurityRequirement, APISecurityScheme } from "@ariadocs/openapi"
-import { getOwn } from "@ariadocs/core"
+import type { APISecurityRequirement, APISecurityScheme } from "@nextguide-internal/openapi"
+import { getOwn } from "@nextguide-internal/core"
 import { cn } from "../lib/utils.js"
 import { Markdown } from "../markdown.js"
 import { useOptionalOperation, useOptionalOpenAPI } from "./context.js"
@@ -34,12 +34,12 @@ export function OpenAPISecurity({ security, className }: OpenAPISecurityProps) {
       title="Authorization"
       id={anchorId(operation?.id, "authorization")}
       className={className}
-      aside={optional ? <span className="text-muted-foreground text-(length:--aria-text-xs)">optional</span> : null}
+      aside={optional ? <span className="text-muted-foreground text-(length:--ng-text-xs)">optional</span> : null}
     >
       <div className="divide-border divide-y">
         {alternatives.map((requirement, index) => (
           <div key={index} className="py-3 first:pt-1 last:pb-1">
-            {index > 0 ? <p className="text-muted-foreground mb-2 text-(length:--aria-text-xs) uppercase">or</p> : null}
+            {index > 0 ? <p className="text-muted-foreground mb-2 text-(length:--ng-text-xs) uppercase">or</p> : null}
             <div className="space-y-3">
               {requirement.schemes.map(({ name, scopes }) => (
                 <SecuritySchemeField
@@ -65,10 +65,10 @@ function SecuritySchemeField({ name, scheme, scopes }: { name: string; scheme?: 
       <Markdown className="mt-1">{hint}</Markdown>
       <Markdown className="mt-1">{scheme?.description}</Markdown>
       {scopes.length > 0 ? (
-        <p className="text-muted-foreground mt-1 text-(length:--aria-text-xs)">
+        <p className="text-muted-foreground mt-1 text-(length:--ng-text-xs)">
           Scopes:{" "}
           {scopes.map((scope) => (
-            <code key={scope} className="bg-muted text-foreground mr-1 rounded px-1 font-mono text-(length:--aria-text-xs)">
+            <code key={scope} className="bg-muted text-foreground mr-1 rounded px-1 font-mono text-(length:--ng-text-xs)">
               {scope}
             </code>
           ))}
@@ -105,7 +105,7 @@ export function SecurityBadges({ className }: { className?: string }) {
   const names = [...new Set((operation?.security ?? []).flatMap((r) => r.schemes.map((s) => s.name)))]
   if (names.length === 0) return null
   return (
-    <span className={cn("text-muted-foreground inline-flex gap-1 text-(length:--aria-text-xs)", className)}>
+    <span className={cn("text-muted-foreground inline-flex gap-1 text-(length:--ng-text-xs)", className)}>
       {names.map((name) => (
         <span key={name} className="rounded border px-1.5 py-px font-mono">
           {name}

@@ -1,58 +1,49 @@
 # NextGuide
 
-An independent, all-in-one Next.js documentation framework with MDX, OpenAPI, themes, icons, and an integrated component library.
-
-**Current branch target: `0.0.1-alpha.2` (not automatically published).** The publicly available version may be older. The project initializer, Account Mode, `/setup`, and `/admin` are not implemented yet.
+**An all-in-one Next.js documentation framework** with MDX, OpenAPI, UI components, icons, and site typography.
 
 ## Install
 
 ```powershell
 bun add nextguide@alpha
+bunx nextguide init --developer
+bun run dev
 ```
 
-Next.js and React are required peers. NextGuide bundles its own documentation engine and UI library; a separate shadcn setup is unnecessary.
+The initializer generates a real `/docs` route, starter MDX, sidebar navigation, editable project CSS, and a JSON config. It supports both **App Router** and **Pages Router**, with or without `src/`, in TypeScript or JavaScript projects. Run in the root of an existing Next.js application.
 
-## Rendering and content
+```powershell
+bunx nextguide init --developer --dry-run
+bunx nextguide init --developer --router app
+bunx nextguide doctor --json
+```
+
+The installer never silently overwrites project files. When both routers exist, select `--router app` or `--router pages`.
+
+**Minimum version:** `0.0.1-alpha.2` for the working Developer Mode initializer and expanded UI components. Earlier alpha versions do not include these features. Account Mode, `/setup`, and `/admin` remain in development.
+
+## Use the built-in components
 
 ```tsx
 import { createDocs } from "nextguide/mdx"
 import { createOpenAPI } from "nextguide/openapi"
 import { Docs, OpenAPI } from "nextguide/components"
+import { Button, Card, Dialog, Table } from "nextguide/ui"
+import { CodeWindow, CodeTabs, FileTree, Callout, Steps } from "nextguide/blocks"
+import { UIIcon, BrandIcon } from "nextguide/icons"
+import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
 import "nextguide/styles.css"
 ```
 
-For client-side MDX rendering, use `nextguide/mdx/client`; for standalone server rendering, use `nextguide/mdx/server`.
+Next.js and React are peer dependencies. All NextGuide documentation modules and UI components are part of the one `nextguide` package; no separate registry installation is necessary.
 
-## Built-in UI (alpha.2)
+## Documentation
 
-```tsx
-import { Button, Card, Tabs, Table, Dialog, Input } from "nextguide/ui"
-import { CodeWindow, CodeTabs, FileTree, Callout, Steps, Step, LinkCards, LinkCard } from "nextguide/blocks"
-import { UIIcon, BrandIcon } from "nextguide/icons"
-import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
-```
+- [Install and start the server](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/)
+- [Generated project files, with the full code](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/)
+- [Component gallery with exact live demos](https://m1nsook.github.io/NextGuide/components/ui/)
+- [MDX and OpenAPI](https://m1nsook.github.io/NextGuide/docs/)
 
-These additional components and their documentation gallery are part of the `alpha.2` source branch. Older releases may not export `nextguide/blocks`.
+## License and credit
 
-The UI uses shadcn-style tokens with Radix-backed interactive elements. The documentation blocks include copyable/titled code windows, tabs, collapsible file trees, callouts, steps and links. Default CSS is included in `nextguide/styles.css`.
-
-## Fonts
-
-NextGuide will allow first-run selection of independent body, heading, and code fonts, with visual previews: Inter, Geist, IBM Plex Sans, system/Segoe UI, JetBrains Mono, Geist Mono, IBM Plex Mono, and system monospace. Host applications self-host their chosen open fonts via `next/font/google`. Segoe UI is used only when installed as a system font.
-
-## CLI
-
-```powershell
-bunx nextguide@alpha --version
-bunx nextguide@alpha doctor --json
-```
-
-`nextguide init` is planned and will not claim to work before implementation.
-
-## Links
-
-- [Documentation and live component examples](https://m1nsook.github.io/NextGuide/)
-- [Repository](https://github.com/m1nsook/NextGuide)
-- [License and third-party notices](https://github.com/m1nsook/NextGuide/blob/main/packages/nextguide/THIRD_PARTY_NOTICES.md)
-
-NextGuide is MIT licensed. Original third-party copyrights and permission notices are preserved in `THIRD_PARTY_NOTICES.md`.
+NextGuide is MIT licensed. The full original upstream MIT copyright and permission notice is included in `THIRD_PARTY_NOTICES.md`, alongside other third-party licensing information. Brand assets remain trademarks of their respective owners.

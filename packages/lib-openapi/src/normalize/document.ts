@@ -5,7 +5,7 @@ import {
   sanitizeUrl,
   setOwn,
   slugify,
-} from "@ariadocs/core"
+} from "@nextguide-internal/core"
 import { OpenAPIError } from "../errors.js"
 import type {
   APICallback,

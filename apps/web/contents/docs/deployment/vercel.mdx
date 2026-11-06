@@ -1,0 +1,23 @@
+---
+title: Deploy to Vercel
+subtitle: Deploy NextGuide using the Next.js application you already have.
+---
+
+# Deploy NextGuide to Vercel
+
+NextGuide runs inside your Next.js application. A Next.js project using Developer Mode can deploy through Vercel's normal Next.js build pipeline.
+
+## Before deploying
+
+1. Run `bun run build` in your project and check for TypeScript or MDX errors.
+2. Commit the files created by `nextguide init`, including `content/docs/`, the docs route, `nextguide.config.json`, and CSS.
+3. Import the repository in the Vercel dashboard, select the Next.js framework, and deploy.
+
+The Next.js build compiles MDX into routes. No NextGuide-specific server or database is required for Developer Mode.
+
+## Custom domains and environment
+
+Manage domains, HTTPS, deployment permissions and environment variables through your normal Next.js hosting settings. There are no special NextGuide credentials in Developer Mode.
+
+Account Mode will need persistent storage, authentication, and additional deployment instructions once released; do not assume a stateless deployment provides a persistent SQLite database.
+

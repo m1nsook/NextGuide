@@ -1,38 +1,30 @@
 ---
-title: NextGuide UI library
-description: Built-in shadcn-style UI and documentation components, ready without a registry installer.
+title: Component catalog
+description: Live components with matching copyable source, bundled directly in NextGuide.
 ---
 
-# NextGuide components
+# The component catalog
 
-NextGuide includes **documentation components and a reusable UI library**. Every component is available through the same npm package, with TypeScript types and bundled default styling. No separate shadcn installation is necessary.
+This is the actual NextGuide component library—not a list of components users must copy from another UI system. **The previews on these pages render the same JSX as the code samples.**
 
-<Install packages="nextguide@alpha" />
+<CodeWindow title="Install the complete component library" language="powershell" code="bun add nextguide@alpha" />
 
 ```tsx
-import { Button, Card, Dialog, Tabs, Table } from "nextguide/ui";
-import { CodeWindow, CodeTabs, FileTree, Steps } from "nextguide/blocks";
-import { Docs, OpenAPI } from "nextguide/components";
-import "nextguide/styles.css";
+import { Button, Card, Dialog, Tabs } from "nextguide/ui"
+import { CodeWindow, CodeTabs, FileTree } from "nextguide/blocks"
+import "nextguide/styles.css"
 ```
 
-The current public release is still in alpha. These additional UI and documentation blocks are being prepared for **0.0.1-alpha.2** and will not appear in previous versions.
-
-## Explore the components
-
 <LinkCards>
-  <LinkCard title="Code windows & tabs" description="Tabbed snippets, language headers and copy actions" href="/components/ui/code-windows" />
-  <LinkCard title="File trees" description="Collapsible folders and copyable structures" href="/components/ui/file-trees" />
-  <LinkCard title="Buttons & feedback" description="Badges, alerts, progress and skeletons" href="/components/ui/buttons-and-feedback" />
-  <LinkCard title="Forms & inputs" description="Fields, switches and selection controls" href="/components/ui/forms" />
-  <LinkCard title="Tabs & accordion" description="Accessible interactive sections" href="/components/ui/tabs-and-accordion" />
-  <LinkCard title="Dialogs & overlays" description="Dialog, sheet, popover and menus" href="/components/ui/dialogs" />
-  <LinkCard title="Tables & navigation" description="Structured data and breadcrumbs" href="/components/ui/tables-and-navigation" />
-  <LinkCard title="Documentation blocks" description="Callouts, steps and navigation cards" href="/components/ui/documentation-blocks" />
+  <LinkCard title="Code windows" href="/components/ui/code-windows" description="Tabbed, copyable command and source panels" />
+  <LinkCard title="File trees" href="/components/ui/file-trees" description="Expandable folders and custom file icons" />
+  <LinkCard title="Buttons & feedback" href="/components/ui/buttons-and-feedback" description="Buttons, badges, alerts and progress" />
+  <LinkCard title="Forms & inputs" href="/components/ui/forms" description="Labeled controls and selects" />
+  <LinkCard title="Tabs & accordion" href="/components/ui/tabs-and-accordion" description="Accessible sections" />
+  <LinkCard title="Dialogs & overlays" href="/components/ui/dialogs" description="Modal and popup surfaces" />
+  <LinkCard title="Tables & navigation" href="/components/ui/tables-and-navigation" description="Tables and breadcrumbs" />
+  <LinkCard title="Documentation blocks" href="/components/ui/documentation-blocks" description="Callouts, steps and cards" />
+  <LinkCard title="All exports" href="/components/ui/reference" description="Every public UI and docs block export" />
 </LinkCards>
 
-## Design and accessibility
-
-Interactive components use Radix primitives where appropriate. Others use accessible native HTML elements. UI styles are namespaced under `ng-` classes and can be customized with `--ng-*` CSS tokens. Import only the components you need; tree-shaking is supported by the ESM exports.
-
-The library is growing toward broad BSIS.dev/shadcn component coverage. Some more complex widgets (charts, calendars, rich text editors, command palettes, and data grids) are not complete yet. The docs distinguish shipped components from upcoming ones.
+The public package includes normal React/Next.js TypeScript definitions. Import only the components you use. Account administration and rich-editor components are not shipped yet; this page does not present them as working.

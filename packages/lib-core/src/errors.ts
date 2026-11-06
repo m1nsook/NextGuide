@@ -1,18 +1,18 @@
 /**
- * Base class for every error thrown by Ariadocs packages. Catch this to
- * handle any Ariadocs failure, or check `code` for the specific case.
+ * Base class for every error thrown by NextGuide packages. Catch this to
+ * handle any NextGuide failure, or check `code` for the specific case.
  */
-export class AriadocsError extends Error {
+export class NextGuideError extends Error {
   readonly code: string
 
-  constructor(message: string, code = "ARIADOCS_ERROR", options?: { cause?: unknown }) {
+  constructor(message: string, code = "NEXTGUIDE_ERROR", options?: { cause?: unknown }) {
     super(message, options)
-    this.name = "AriadocsError"
+    this.name = "NextGuideError"
     this.code = code
   }
 }
 
-/** True for errors thrown by Ariadocs packages. */
-export function isAriadocsError(error: unknown): error is AriadocsError {
-  return error instanceof AriadocsError
+/** True for errors thrown by NextGuide packages. */
+export function isNextGuideError(error: unknown): error is NextGuideError {
+  return error instanceof NextGuideError
 }

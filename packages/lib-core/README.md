@@ -1,30 +1,19 @@
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nisabmohd/Aria-Docs/master/assets/logo-mark-dark.svg">
-    <img alt="Ariadocs" src="https://raw.githubusercontent.com/nisabmohd/Aria-Docs/master/assets/logo-mark-light.svg" width="48">
-  </picture>
-</p>
+# NextGuide core — internal workspace module
 
-# @ariadocs/core
+Private internal core module used to compile NextGuide's `nextguide/core` export. Includes navigation/TOC types, slug helpers and URL validation.
 
-Types and helpers shared by the [Ariadocs](https://github.com/nisabmohd/Aria-Docs) packages. You don't usually install it yourself.
+**Do not install or publish this workspace package separately.** The public, all-in-one API ships as [`nextguide`](https://www.npmjs.com/package/nextguide):
 
-```bash
-pnpm add @ariadocs/core
+```powershell
+bun add nextguide
 ```
 
-It defines `NavItem`, the sidebar format returned by both `@ariadocs/mdx` and `@ariadocs/openapi`, and `TocItem`, a heading in the table of contents.
+```ts
+import * as core from "nextguide/core"
+```
 
-It also has a few helpers:
-
-| Export | What it does |
-| --- | --- |
-| `sanitizeUrl(url)` | Returns the URL if it's safe for a link, otherwise `undefined` |
-| `isExternalUrl(href)` | `true` for links to another site |
-| `slugify(text)` | `"Pets & Owners"` becomes `"pets-owners"` |
-| `slugToTitle(slug)` | `"getting-started"` becomes `"Getting Started"` |
-| `AriadocsError` | The error class the other packages extend |
+The official documentation and component gallery are at https://m1nsook.github.io/NextGuide/.
 
 ## License
 
-MIT © [Nisab Mohd](https://github.com/nisabmohd)
+NextGuide is MIT licensed. This internal module retains original upstream MIT copyright and permission notices in its `LICENSE`, and the published package retains the required third-party attribution in `THIRD_PARTY_NOTICES.md`.

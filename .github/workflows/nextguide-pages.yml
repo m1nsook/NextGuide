@@ -46,6 +46,10 @@ jobs:
           bun run build
           bun run test:dist
 
+      - name: Smoke-build generated App Router and Pages Router sites
+        if: github.event_name == 'pull_request'
+        run: node scripts/verify-generated-starter.mjs
+
       - name: Build NextGuide documentation
         run: bun run build:web
 

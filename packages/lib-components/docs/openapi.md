@@ -1,11 +1,11 @@
 # OpenAPI components
 
-Render an API reference from `@ariadocs/openapi`. The parts are Client Components that take plain data, so Server Components can render them.
+Render an API reference from `nextguide/openapi`. The parts are Client Components that take plain data, so Server Components can render them.
 
 `OpenAPI.Root` is required for `OpenAPI.Docs`, `OpenAPI.Info`, `OpenAPI.Sidebar`, and for looking items up by `id` or `name`. Parts given their data directly (`<OpenAPI.Operation operation={op} />`, `<OpenAPI.Schema schema={schema} />`) also work without it.
 
 ```tsx
-import { OpenAPI } from "@ariadocs/components"
+import { OpenAPI } from "nextguide/components"
 import { openapi } from "@/lib/openapi" // createOpenAPI({ source: "./openapi.yaml" })
 
 const api = await openapi.parse()
@@ -81,7 +81,7 @@ Use the hooks inside the matching component:
 
 ```tsx
 "use client"
-import { useOperation } from "@ariadocs/components"
+import { useOperation } from "nextguide/components"
 
 export function OperationId() {
   return <code>{useOperation().id}</code>

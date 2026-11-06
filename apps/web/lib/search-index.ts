@@ -1,5 +1,5 @@
-import type { NavItem } from "@ariadocs/core"
-import { getOperationTitle } from "@ariadocs/openapi"
+import type { NavItem } from "nextguide/core"
+import { getOperationTitle } from "nextguide/openapi"
 import { getSidebar } from "./navigation"
 import { openapi, REFERENCE_BASE } from "./source"
 

@@ -1,4 +1,4 @@
-import type { JsonObject, JsonValue } from "@ariadocs/core"
+import type { JsonObject, JsonValue } from "@nextguide-internal/core"
 import type { APIServer } from "./api.js"
 import type { APISecurityRequirement } from "./security.js"
 import type { APISchema } from "./schema.js"

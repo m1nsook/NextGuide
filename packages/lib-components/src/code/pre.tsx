@@ -5,7 +5,7 @@ import { cn } from "../lib/utils.js"
 import { CopyButton } from "./code-block.js"
 
 export interface PreProps extends ComponentProps<"pre"> {
-  /** Raw code, set by `rehypeCodeRaw` from `@ariadocs/mdx/plugins`. */
+  /** Raw code, set by `rehypeCodeRaw` from `@nextguide-internal/mdx/plugins`. */
   raw?: string
 }
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { OpenAPI } from "@ariadocs/components"
+import { OpenAPI } from "nextguide/components"
 import { edgeCases, openapi, REFERENCE_BASE } from "@/lib/source"
 
 /** A framed live preview inside MDX. */

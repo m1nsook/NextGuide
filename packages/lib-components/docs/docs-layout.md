@@ -3,7 +3,7 @@
 Use `Docs.Layout` for the page shell instead of writing your own grid. It covers the usual cases:
 
 - **Columns follow the slots present.** `Docs.Sidebar` adds the left column (from `lg`). `Docs.Aside` adds the right column (from `xl`), but only when it renders something, so pages without a table of contents (API reference pages, for example) get no empty strip.
-- **Sizes are CSS variables:** `--aria-docs-max-width` (90rem), `--aria-sidebar-width` (17rem), `--aria-toc-width` (15rem), `--aria-header-height` (0px).
+- **Sizes are CSS variables:** `--nextguide-max-width` (90rem), `--ng-sidebar-width` (17rem), `--ng-toc-width` (15rem), `--ng-header-height` (0px).
 - **Mobile:** `Docs.Sidebar` is hidden below `lg`. Put the same nav in `Docs.MobileNav`, a menu button with a drawer.
 
 The slots (`Docs.Sidebar`, `Docs.Content`, `Docs.Aside`) must be **direct children** of `Docs.Layout`. Don't wrap them in a `div`.
@@ -14,7 +14,7 @@ The sidebar belongs in `layout.tsx` (it persists across pages), and the table of
 
 ```tsx
 // app/docs/layout.tsx
-import { Docs } from "@ariadocs/components"
+import { Docs } from "nextguide/components"
 import { docs } from "@/lib/docs"
 import { Nav } from "./nav"
 
@@ -44,8 +44,8 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Docs } from "@ariadocs/components"
-import type { NavItem } from "@ariadocs/core"
+import { Docs } from "nextguide/components"
+import type { NavItem } from "nextguide/core"
 
 export function Nav({ items }: { items: NavItem[] }) {
   return <Docs.Nav items={items} baseHref="/docs" activeHref={usePathname()} linkAs={Link} />
@@ -55,8 +55,8 @@ export function Nav({ items }: { items: NavItem[] }) {
 ```tsx
 // app/docs/[[...slug]]/page.tsx
 import { notFound } from "next/navigation"
-import { isMdxNotFound } from "@ariadocs/mdx"
-import { Docs } from "@ariadocs/components"
+import { isMdxNotFound } from "nextguide/mdx"
+import { Docs } from "nextguide/components"
 import { docs } from "@/lib/docs"
 
 export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
@@ -87,7 +87,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 With a sticky header, set its height so the sidebar and TOC sit below it:
 
 ```css
-:root { --aria-header-height: 3.5rem; }
+:root { --ng-header-height: 3.5rem; }
 ```
 
 An API reference page under the same layout returns only `Docs.Content`. With no `Docs.Aside`, the content takes the full width:
@@ -130,7 +130,7 @@ When one route component renders the whole page, put everything in one tree:
 
 | Part | Props | Notes |
 | --- | --- | --- |
-| `Docs.Layout` | `children`, `className` | Grid. Override the width with `--aria-docs-max-width` or `className`. |
+| `Docs.Layout` | `children`, `className` | Grid. Override the width with `--nextguide-max-width` or `className`. |
 | `Docs.Sidebar` | `children`, `className` | `<aside>`, sticky, scrolls on its own, `lg` and up. |
 | `Docs.MobileNav` | `children`, `title?`, `trigger?`, `open?`, `onOpenChange?`, `triggerClassName?`, `className?` | Client. Button hides from `lg`. Drawer closes when a link inside is clicked. |
 | `Docs.Content` | `children`, `className` | `<main>`. |

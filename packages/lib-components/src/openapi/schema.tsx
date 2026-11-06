@@ -1,14 +1,14 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import { isRecord } from "@ariadocs/core"
+import { isRecord } from "@nextguide-internal/core"
 import {
   getSchemaName,
   getSchemaProperties,
   getSchemaTypeLabel,
   type APISchema,
   type APISchemaProperty,
-} from "@ariadocs/openapi"
+} from "@nextguide-internal/openapi"
 import { Minus, Plus } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs.js"
 import { cn } from "../lib/utils.js"
@@ -46,7 +46,7 @@ export function OpenAPISchema({ schema: schemaProp, name, mode, children, classN
 
   return (
     <SchemaProvider value={{ schema, name: name ?? (schemaProp === undefined ? inherited?.name : undefined) }}>
-      <div data-slot="openapi-schema" className={cn("text-(length:--aria-text-sm)", className)}>
+      <div data-slot="openapi-schema" className={cn("text-(length:--ng-text-sm)", className)}>
         {children ?? (
           <>
             <SchemaDescription />
@@ -74,7 +74,7 @@ export function SchemaTitle({ id, className }: { /** Anchor id; the title links 
       <AnchorLink id={id}>
         <span className="text-foreground font-mono font-semibold">{title}</span>
       </AnchorLink>
-      <span className="text-muted-foreground font-mono text-(length:--aria-text-xs)">{getSchemaTypeLabel(schema)}</span>
+      <span className="text-muted-foreground font-mono text-(length:--ng-text-xs)">{getSchemaTypeLabel(schema)}</span>
     </div>
   )
 }
@@ -136,7 +136,7 @@ function SchemaBody({
 
   return (
     <div className="flex flex-wrap items-center gap-2 py-2">
-      <span className="text-muted-foreground font-mono text-(length:--aria-text-xs)">{getSchemaTypeLabel(schema)}</span>
+      <span className="text-muted-foreground font-mono text-(length:--ng-text-xs)">{getSchemaTypeLabel(schema)}</span>
       <Constraints schema={schema} />
     </div>
   )
@@ -171,7 +171,7 @@ function SchemaField({
       <Markdown className="mt-1">{property.description}</Markdown>
       <Constraints schema={schema} className="mt-1.5" />
       {recursive ? (
-        <p className="text-muted-foreground mt-1.5 text-(length:--aria-text-xs)">↻ Recursive reference to {recursiveName(schema)}</p>
+        <p className="text-muted-foreground mt-1.5 text-(length:--ng-text-xs)">↻ Recursive reference to {recursiveName(schema)}</p>
       ) : null}
       {expandable ? (
         <div className="mt-2">
@@ -179,7 +179,7 @@ function SchemaField({
             type="button"
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-(length:--aria-text-xs) transition-colors"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-(length:--ng-text-xs) transition-colors"
           >
             {open ? <Minus className="size-3" /> : <Plus className="size-3" />}
             {childLabel(schema, mode)}
@@ -213,14 +213,14 @@ export function FieldHeader({ name, id, schema, type, required, deprecated, read
   return (
     <div id={id} className="flex scroll-mt-24 flex-wrap items-baseline gap-x-2 gap-y-1">
       <AnchorLink id={id}>
-        <code className={cn("text-foreground font-mono text-(length:--aria-text-code) font-semibold", deprecated && "line-through opacity-70")}>
+        <code className={cn("text-foreground font-mono text-(length:--ng-text-code) font-semibold", deprecated && "line-through opacity-70")}>
           {name}
         </code>
       </AnchorLink>
-      <span className="text-muted-foreground font-mono text-(length:--aria-text-xs)">
+      <span className="text-muted-foreground font-mono text-(length:--ng-text-xs)">
         {type ?? (schema !== undefined ? getSchemaTypeLabel(schema) : "any")}
       </span>
-      {required ? <span className="text-[var(--aria-required)] text-(length:--aria-text-xs)">required</span> : null}
+      {required ? <span className="text-[var(--ng-required)] text-(length:--ng-text-xs)">required</span> : null}
       {deprecated ? <Chip>deprecated</Chip> : null}
       {readOnly ? <Chip>read-only</Chip> : null}
       {writeOnly ? <Chip>write-only</Chip> : null}
@@ -230,7 +230,7 @@ export function FieldHeader({ name, id, schema, type, required, deprecated, read
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="bg-muted text-muted-foreground rounded px-1.5 py-px text-(length:--aria-text-xs) font-medium tracking-wide uppercase">
+    <span className="bg-muted text-muted-foreground rounded px-1.5 py-px text-(length:--ng-text-xs) font-medium tracking-wide uppercase">
       {children}
     </span>
   )
@@ -240,7 +240,7 @@ function Chip({ children }: { children: ReactNode }) {
 export function Constraints({ schema, className }: { schema: APISchema; className?: string }) {
   const items: ReactNode[] = []
   const value = (v: unknown) => (
-    <code className="bg-muted text-foreground rounded px-1 font-mono text-(length:--aria-text-xs)">{formatValue(v)}</code>
+    <code className="bg-muted text-foreground rounded px-1 font-mono text-(length:--ng-text-xs)">{formatValue(v)}</code>
   )
 
   if (schema.default !== undefined) items.push(<>Default: {value(schema.default)}</>)
@@ -273,7 +273,7 @@ export function Constraints({ schema, className }: { schema: APISchema; classNam
 
   if (items.length === 0) return null
   return (
-    <div className={cn("text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-(length:--aria-text-xs)", className)}>
+    <div className={cn("text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-(length:--ng-text-xs)", className)}>
       {items.map((item, i) => (
         <span key={i}>{item}</span>
       ))}
@@ -297,11 +297,11 @@ function SchemaVariants({
 
   return (
     <div className="py-2">
-      <p className="text-muted-foreground mb-2 text-(length:--aria-text-xs)">{variants.kind === "oneOf" ? "One of" : "Any of"}</p>
+      <p className="text-muted-foreground mb-2 text-(length:--ng-text-xs)">{variants.kind === "oneOf" ? "One of" : "Any of"}</p>
       <Tabs defaultValue="0" className="gap-3">
         <TabsList className="h-auto flex-wrap">
           {options.map((option, i) => (
-            <TabsTrigger key={i} value={String(i)} className="text-(length:--aria-text-xs)">
+            <TabsTrigger key={i} value={String(i)} className="text-(length:--ng-text-xs)">
               {option.title ?? getSchemaName(option.ref ?? option.$ref) ?? getSchemaTypeLabel(option)}
             </TabsTrigger>
           ))}
@@ -310,7 +310,7 @@ function SchemaVariants({
           <TabsContent key={i} value={String(i)} className="rounded-lg border px-3">
             <Markdown className="pt-2">{option.description}</Markdown>
             {isRecursive(option, seen) ? (
-              <p className="text-muted-foreground py-2 text-(length:--aria-text-xs)">↻ Recursive reference to {recursiveName(option)}</p>
+              <p className="text-muted-foreground py-2 text-(length:--ng-text-xs)">↻ Recursive reference to {recursiveName(option)}</p>
             ) : (
               <SchemaBody schema={option} mode={mode} depth={depth + 1} seen={nextSeen(seen, option)} />
             )}

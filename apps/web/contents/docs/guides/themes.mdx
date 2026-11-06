@@ -1,37 +1,29 @@
 ---
-title: Syntax themes
-description: Colors for code blocks.
+title: Colors & styles
+subtitle: NextGuide's own CSS variables and a theme you can adapt.
 ---
 
-The same theme colors your MDX code blocks and the generated API examples. Importing the component styles includes the default theme:
+# Own your documentation design
 
-```ts
-import "nextguide/styles.css";
-```
+The `nextguide` package provides namespaced component CSS and editable starter styles. The built-in components use **`--ng-*` variables**, not the original renderer's legacy token names.
 
-To use a different theme, import the base styles and the theme file:
+<CodeWindow title="Import component styles" language="tsx" code={'import "nextguide/styles.css"'} />
 
-```ts
-import "nextguide/components/styles/theme.css";
-import "nextguide/styles.cssss";
-```
-
-| Theme | File |
-| --- | --- |
-| Default | `styles/syntax/default.css` |
-| GitHub | `styles/syntax/github.css` |
-| Nord | `styles/syntax/nord.css` |
-| Minimal | `styles/syntax/minimal.css` |
-
-Every theme has dark colors that apply under a `.dark` class.
-
-## Your own theme
-
-Themes style Prism's token classes:
+## Override a token
 
 ```css
-.token.keyword { color: #c678dd; }
-.token.string { color: #98c379; }
-.token.property { color: #e06c75; }
-.dark .token.keyword { color: #d19af0; }
+:root {
+  --ng-accent: #2196f3;
+  --ng-radius: 0.4rem;
+}
+
+[data-theme="dark"] {
+  --ng-accent: #64b5f6;
+}
 ```
+
+The Developer Mode initializer creates `styles/nextguide.css` (or `src/styles/nextguide.css`) containing the page layout, sidebar and typography. It is yours to edit and commit.
+
+Individual interactive and layout components use `ng-` classes in the generated stylesheet. You can adopt your own CSS or integrate Tailwind independently; NextGuide does not force a specific design preset.
+
+[Component catalog](/components/ui) · [Typography](/docs/guides/fonts)

@@ -1,8 +1,8 @@
 "use client"
 
-import type { SerializeResult } from "@ariadocs/mdx"
-import { MdxClient } from "@ariadocs/mdx/client"
-import { Pre } from "@ariadocs/components"
+import type { SerializeResult } from "nextguide/mdx"
+import { MdxClient } from "nextguide/mdx/client"
+import { Pre } from "nextguide/components"
 import { Callout, Card, Cards } from "./callout"
 import { Install, Tab, Tabs } from "./install"
 

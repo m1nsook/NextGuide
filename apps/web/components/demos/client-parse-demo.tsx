@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { OpenAPI } from "@ariadocs/components"
-import { parseOpenAPI, type APISpec } from "@ariadocs/openapi"
+import { OpenAPI } from "nextguide/components"
+import { parseOpenAPI, type APISpec } from "nextguide/openapi"
 
 const INITIAL = `openapi: 3.1.0
 info:
@@ -37,8 +37,8 @@ paths:
 `
 
 /**
- * Parses YAML in the browser with @ariadocs/openapi and renders it with
- * @ariadocs/components — no server involved. File and network access are
+ * Parses YAML in the browser with nextguide/openapi and renders it with
+ * nextguide/components — no server involved. File and network access are
  * disabled because the text is user input.
  */
 export function ClientParseDemo() {

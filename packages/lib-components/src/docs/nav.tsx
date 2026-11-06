@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react"
-import type { NavItem } from "@ariadocs/core"
-import { isExternalUrl } from "@ariadocs/core"
+import type { NavItem } from "@nextguide-internal/core"
+import { isExternalUrl } from "@nextguide-internal/core"
 import { ChevronRight } from "lucide-react"
 import { cn } from "../lib/utils.js"
 import { MethodBadge } from "../openapi/method.js"
@@ -35,7 +35,7 @@ export interface DocsNavProps {
 /**
  * Sidebar navigation for the shared `NavItem` tree. Top-level folders become
  * section headings; deeper folders collapse. Items with a `badge` (HTTP
- * methods from `@ariadocs/openapi`) show it next to the title.
+ * methods from `@nextguide-internal/openapi`) show it next to the title.
  *
  * `linkAs` and `activeHref={usePathname()}` need a Client Component, so wrap
  * it in a small `"use client"` file:
@@ -54,14 +54,14 @@ export function DocsNav({ items, activeHref, baseHref = "", linkAs, onNavigate, 
   const context: NavContext = { activeHref, baseHref, Link: linkAs ?? DefaultLink, onNavigate }
 
   return (
-    <nav data-slot="docs-nav" className={cn("text-(length:--aria-text-sm)", className)}>
+    <nav data-slot="docs-nav" className={cn("text-(length:--ng-text-sm)", className)}>
       <ul className="space-y-0.5">
         {items
           .filter((item) => item.nav)
           .map((item) =>
             item.items.length > 0 ? (
               <li key={item.href} className="pt-6 first:pt-0">
-                <p className="text-foreground mb-1.5 px-2 text-(length:--aria-text-sm) font-medium">{item.title}</p>
+                <p className="text-foreground mb-1.5 px-2 text-(length:--ng-text-sm) font-medium">{item.title}</p>
                 <NavList items={item.items} context={context} depth={1} />
               </li>
             ) : (
@@ -151,7 +151,7 @@ function NavLink({ item, context }: { item: NavItem; context: NavContext }) {
         className={cn(
           "flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors",
           active
-            ? "bg-[color-mix(in_oklab,var(--aria-accent)_12%,transparent)] font-medium text-[var(--aria-accent)]"
+            ? "bg-[color-mix(in_oklab,var(--ng-accent)_12%,transparent)] font-medium text-[var(--ng-accent)]"
             : "text-muted-foreground hover:text-foreground"
         )}
       >

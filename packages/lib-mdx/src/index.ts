@@ -5,12 +5,12 @@ export { createDocs, type DocsConfig, type DocsInstance, type DocsPageOptions } 
 export { parseMdx, serializeMdx, readMdx, getFrontmatter, getToc } from "./parse.js"
 export { getNavigation, getPagePaths } from "./nav.js"
 export { MdxError, isMdxNotFound, type MdxErrorCode } from "./errors.js"
-export { slugToTitle } from "@ariadocs/core"
+export { slugToTitle } from "@nextguide-internal/core"
 
 // ---------- Components ----------
 export { MdxServer } from "./components/server.js"
 // `MdxClient` is also available here for Server Components that pass it
-// along; inside Client Components import it from "@ariadocs/mdx/client".
+// along; inside Client Components import it from "@nextguide-internal/mdx/client".
 export { MdxClient } from "./components/client.js"
 
 // ---------- Types ----------

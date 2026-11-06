@@ -1,7 +1,7 @@
 [
   {
     "slug": "index",
-    "title": "Introduction"
+    "title": "Overview"
   },
   {
     "slug": "getting-started",
@@ -9,23 +9,23 @@
   },
   {
     "slug": "mdx",
-    "title": "MDX"
+    "title": "Writing MDX"
   },
   {
     "slug": "openapi",
     "title": "OpenAPI"
   },
   {
-    "slug": "core",
-    "title": "Core utilities"
+    "slug": "guides",
+    "title": "Guides"
   },
   {
     "slug": "deployment",
     "title": "Deployment"
   },
   {
-    "slug": "guides",
-    "title": "Guides"
+    "slug": "core",
+    "title": "Core utilities"
   },
   {
     "slug": "credits",

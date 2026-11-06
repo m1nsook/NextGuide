@@ -1,4 +1,4 @@
-import { isRecord, optionalString, sanitizeUrl } from "@ariadocs/core"
+import { isRecord, optionalString, sanitizeUrl } from "@nextguide-internal/core"
 import type {
   APIContent,
   APIExample,

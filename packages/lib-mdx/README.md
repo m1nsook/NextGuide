@@ -1,56 +1,19 @@
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nisabmohd/Aria-Docs/master/assets/logo-mark-dark.svg">
-    <img alt="Ariadocs" src="https://raw.githubusercontent.com/nisabmohd/Aria-Docs/master/assets/logo-mark-light.svg" width="48">
-  </picture>
-</p>
+# NextGuide mdx — internal workspace module
 
-# @ariadocs/mdx
+Private internal MDX module used to compile NextGuide's `nextguide/mdx`, `nextguide/mdx/server`, `nextguide/mdx/client` and `nextguide/mdx/plugins` exports.
 
-Turn a folder of MDX files into pages, a table of contents and a sidebar. Part of [Ariadocs](https://github.com/nisabmohd/Aria-Docs). This package replaces `@ariadocs/react`.
+**Do not install or publish this workspace package separately.** The public, all-in-one API ships as [`nextguide`](https://www.npmjs.com/package/nextguide):
 
-```bash
-pnpm add @ariadocs/mdx
+```powershell
+bun add nextguide
 ```
-
-## Usage
 
 ```ts
-import { createDocs } from "@ariadocs/mdx";
-import { remarkGfm, rehypeSlug, rehypePrism } from "@ariadocs/mdx/plugins";
-
-export const docs = createDocs({
-  contentDir: "content/docs",
-  remarkPlugins: [remarkGfm],
-  rehypePlugins: [rehypeSlug, rehypePrism],
-});
-
-const { MDX, frontmatter, toc } = await docs.parse({ slug: "intro" }); // for Server Components
-const { serialized } = await docs.serialize({ slug: "intro" }); // for MdxClient
-const sidebar = await docs.getNavigation();
-const paths = await docs.getPagePaths();
+import * as mdx from "nextguide/mdx"
 ```
 
-MDX can also come from a string, for example from a CMS:
-
-```ts
-import { parseMdx } from "@ariadocs/mdx";
-
-const { MDX } = await parseMdx({ source: textFromCms, blockJs: true });
-```
-
-In Client Components, import `MdxClient` from `@ariadocs/mdx/client`. The main entry reads files and won't bundle for the browser.
-
-## Safety
-
-- Slugs can't point outside the content folder, so `../../etc/passwd` is rejected.
-- JavaScript frontmatter (`---js`) is refused.
-- MDX `import` and `export` are switched off. `blockJs: true` also removes `{expressions}`, for MDX you don't trust.
-
-## Docs
-
-[ariadocs.vercel.app/docs/mdx](https://ariadocs.vercel.app/docs/mdx). Upgrading from `@ariadocs/react`? See the [migration guide](https://ariadocs.vercel.app/docs/guides/migration).
+The official documentation and component gallery are at https://m1nsook.github.io/NextGuide/.
 
 ## License
 
-MIT © [Nisab Mohd](https://github.com/nisabmohd)
+NextGuide is MIT licensed. This internal module retains original upstream MIT copyright and permission notices in its `LICENSE`, and the published package retains the required third-party attribution in `THIRD_PARTY_NOTICES.md`.

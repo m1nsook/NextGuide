@@ -1,27 +1,26 @@
 ---
-title: Developer mode
-description: File-first, database-free NextGuide sites, including our GitHub Pages documentation.
+title: Developer Mode
+description: Git-native documentation with MDX files, without accounts or a database.
 ---
 
-# Developer mode
+# Developer Mode
 
-**Status: installer in development.** The official website already follows the file-first, read-only static-export architecture.
+Developer Mode keeps content and configuration **inside your Next.js project**. It is available in the NextGuide CLI and works well for developer tools, libraries and product documentation maintained in Git.
 
-Developer mode manages MDX pages, navigation, themes, and OpenAPI specifications as versioned files. **It does not require SQLite, an owner account, sessions, or an admin backend.**
+<CodeWindow title="Initialize Developer Mode" language="powershell" code="bunx nextguide init --developer" />
 
-## Intended CLI workflow
+The initializer detects your Next.js router and places files in the correct `app/`, `src/app/`, `pages/`, or `src/pages/` folder. It does not require SQLite, a user account, or a hosted NextGuide server.
 
-~~~sh
-bun add nextguide
-bunx nextguide init --developer
-~~~
+## What changes at build time?
 
-These initialization commands are planned and not available in the published alpha.0 package yet.
+Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.
 
-## NextGuide's official documentation
+## GitHub Pages
 
-The documentation at https://m1nsook.github.io/NextGuide/ is a **Developer Mode-style build**. The Next.js app exports static HTML and assets through GitHub Actions; it has no owner setup, database, or admin routes.
+NextGuide's official documentation uses this file-first architecture and publishes a static Next.js export. GitHub Pages cannot run Account Mode because it has no persistent backend.
 
-Today the project uses the NEXTGUIDE_PAGES=1 flag to enable static export and a /NextGuide base path. Once the developer-mode CLI can generate the same application, the site can adopt it without introducing server storage.
+## What Developer Mode is not
 
-See [GitHub Pages](/docs/deployment/github-pages) for build details.
+It does not provide `/setup`, `/admin`, passwords, a database, staff roles, uploads, or editing in the browser. Those belong to **Account Mode**, which is still in development.
+
+[Installation](/docs/getting-started/installation) · [Generated files](/docs/getting-started/generated-files) · [GitHub Pages](/docs/deployment/github-pages)

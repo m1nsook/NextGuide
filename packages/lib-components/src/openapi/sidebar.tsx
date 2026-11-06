@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, type ComponentType } from "react"
-import { getNavigation } from "@ariadocs/openapi"
+import { getNavigation } from "@nextguide-internal/openapi"
 import { DocsNav, type LinkComponentProps } from "../docs/nav.js"
 import { useOpenAPI } from "./context.js"
 

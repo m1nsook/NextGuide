@@ -1,8 +1,8 @@
-# @ariadocs/components
+# nextguide/components
 
-React components for docs pages (`Docs.*`) and API references (`OpenAPI.*`). They render what `@ariadocs/mdx` and `@ariadocs/openapi` return. Tailwind CSS v4 and shadcn/ui color tokens.
+React components for docs pages (`Docs.*`) and API references (`OpenAPI.*`). They render what `nextguide/mdx` and `nextguide/openapi` return. Tailwind CSS v4 and shadcn/ui color tokens.
 
-These files ship with the package at `node_modules/@ariadocs/components/docs/`:
+These files ship with the package at `node_modules/nextguide/components/docs/`:
 
 - [index.md](index.md): every export, what's not included, and setup (this file)
 - [docs-layout.md](docs-layout.md): `Docs.*` layout, with recipes for Next.js App Router and other frameworks
@@ -29,14 +29,14 @@ Also not included: a site header, search, a theme toggle, breadcrumbs and previo
 ```css
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@source "../node_modules/@ariadocs/components/dist"; /* relative to this CSS file */
+@source "../node_modules/nextguide/components/dist"; /* relative to this CSS file */
 ```
 
 ```ts
-import "@ariadocs/components/styles.css" // once, in the root layout
+import "nextguide/components/styles.css" // once, in the root layout
 ```
 
-Other syntax themes: import `@ariadocs/components/styles/theme.css` and one of `styles/syntax/{default,github,nord,minimal}.css`.
+Other syntax themes: import `nextguide/components/styles/theme.css` and one of `styles/syntax/{default,github,nord,minimal}.css`.
 
 ## Every export
 
@@ -102,9 +102,9 @@ Other syntax themes: import `@ariadocs/components/styles/theme.css` and one of `
 
 | Variable | Default | Used by |
 | --- | --- | --- |
-| `--aria-header-height` | `0px` | Sticky offset of `Docs.Sidebar` and `Docs.Aside` below your site header |
-| `--aria-docs-max-width` | `90rem` | Max width of `Docs.Layout` |
-| `--aria-sidebar-width` | `17rem` | Width of the `Docs.Sidebar` column |
-| `--aria-toc-width` | `15rem` | Width of the `Docs.Aside` column |
-| `--aria-accent` | `var(--primary)` | Active nav and TOC items |
-| `--aria-text-*`, `--aria-method-*`, `--aria-status-*`, `--aria-code-background` | see `styles/theme.css` | Type scale and colors |
+| `--ng-header-height` | `0px` | Sticky offset of `Docs.Sidebar` and `Docs.Aside` below your site header |
+| `--nextguide-max-width` | `90rem` | Max width of `Docs.Layout` |
+| `--ng-sidebar-width` | `17rem` | Width of the `Docs.Sidebar` column |
+| `--ng-toc-width` | `15rem` | Width of the `Docs.Aside` column |
+| `--ng-accent` | `var(--primary)` | Active nav and TOC items |
+| `--ng-text-*`, `--ng-method-*`, `--ng-status-*`, `--ng-code-background` | see `styles/theme.css` | Type scale and colors |

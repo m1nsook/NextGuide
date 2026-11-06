@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
-import type { NavItem } from "@ariadocs/core"
-import type { DocsInstance } from "@ariadocs/mdx"
+import type { NavItem } from "nextguide/core"
+import type { DocsInstance } from "nextguide/mdx"
 import { componentDocs, docs, openapi, REFERENCE_BASE } from "./source"
 import { site } from "./site"
 

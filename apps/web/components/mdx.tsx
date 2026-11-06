@@ -1,12 +1,12 @@
-import type { MDXComponents } from "@ariadocs/mdx"
-import { CodeBlock, Docs, Markdown, MethodBadge, OpenAPI, Pre } from "@ariadocs/components"
+import type { MDXComponents } from "nextguide/mdx"
+import { CodeBlock, Docs, Markdown, MethodBadge, OpenAPI, Pre } from "nextguide/components"
 import { Callout, Card, Cards } from "./callout"
 import { ClientParseDemo } from "./demos/client-parse-demo"
 import { ApiPreview, EdgeCasePreview, Preview } from "./demos/preview"
 import { Install, Tab, Tabs } from "./install"
 import { MdxLink } from "./mdx-link"
 import { CodeWindow, CodeTabs, FileTree, Steps, Step, LinkCards, LinkCard } from "nextguide/blocks"
-import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "nextguide/ui"
+import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, Textarea, NativeSelect, Spinner, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
 
 /**
  * Components available in server-rendered MDX (live demos included).
@@ -76,4 +76,13 @@ export const mdxComponents = {
   DialogTitle,
   DialogDescription,
   DialogClose,
+  Textarea,
+  NativeSelect,
+  Spinner,
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
 } as unknown as MDXComponents

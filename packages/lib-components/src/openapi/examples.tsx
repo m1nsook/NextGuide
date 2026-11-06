@@ -9,7 +9,7 @@ import {
   type APIOperation,
   type APIResponse,
   type CodeSampleLanguage,
-} from "@ariadocs/openapi"
+} from "@nextguide-internal/openapi"
 import { ChevronDown } from "lucide-react"
 import { CodeBlock, CodeTabs } from "../code/code-block.js"
 import { useOperation, useOptionalOpenAPI } from "./context.js"
@@ -48,7 +48,7 @@ export function RequestExample({ languages, className }: RequestExampleProps) {
             <select
               value={current.id}
               onChange={(event) => setLanguage(event.target.value as CodeSampleLanguage)}
-              className="text-foreground cursor-pointer appearance-none bg-transparent pr-5 text-(length:--aria-text-sm) outline-none"
+              className="text-foreground cursor-pointer appearance-none bg-transparent pr-5 text-(length:--ng-text-sm) outline-none"
             >
               {options.map((option) => (
                 <option key={option.id} value={option.id}>

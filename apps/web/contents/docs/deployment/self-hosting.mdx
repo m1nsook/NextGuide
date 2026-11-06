@@ -1,19 +1,22 @@
 ---
-title: Self-hosting
-description: Server-based deployment requirements for NextGuide's planned Account mode.
+title: Self-host a NextGuide site
+subtitle: Run the same Developer Mode documentation application on your own infrastructure.
 ---
 
-# Self-hosting NextGuide
+# Self-hosting
 
-NextGuide's current documentation renderer is a standard Next.js application. The **planned** Account mode will require server-side features that static hosting cannot provide.
+Developer Mode is part of your existing Next.js application. It doesn't require a separate NextGuide daemon.
 
-## Production server requirements
+## Production build
 
-- A supported Node.js/Bun environment for your Next.js version.
-- Persistent filesystem or database storage for administrator accounts, settings, and uploaded content.
-- HTTPS and a trusted reverse proxy when publicly accessible.
-- Secure backups, administrator authentication, and first-run ownership verification.
+```powershell
+bun install
+bun run build
+bun run start
+```
 
-The NextGuide CMS and its storage configuration are **not implemented yet**. This page describes the intended architecture rather than a deployable Account mode.
+Configure your reverse proxy and domain to point to the Next.js application. Keep `content/docs/` and the generated configuration tracked in your source repository.
 
-If you only need static documentation, see [GitHub Pages](/docs/deployment/github-pages).
+For static hosting without a Node.js process, use Next.js `output: "export"` and deploy the `out/` directory. For dynamic Next.js hosting, run the production server normally.
+
+Account Mode is planned separately and will require SQLite backups, secure admin sessions, and a persistent writable storage path. These account features are **not available in this alpha**.

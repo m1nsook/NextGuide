@@ -1,13 +1,14 @@
 {
   "name": "nextguide",
   "version": "0.0.1-alpha.2",
-  "description": "NextGuide: the all-in-one Next.js documentation framework with MDX, OpenAPI, integrated UI components and icons.",
+  "description": "NextGuide — independent all-in-one Next.js documentation framework with MDX, OpenAPI, UI components, icons and themes.",
   "type": "module",
   "bin": {
     "nextguide": "bin/nextguide.mjs"
   },
   "files": [
     "bin/",
+    "lib/",
     "dist/",
     "README.md",
     "LICENSE",
@@ -15,9 +16,9 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test test/doctor.test.mjs",
+    "test": "node --test",
     "test:dist": "node --test test/distribution.test.mjs",
-    "prepack": "node scripts/build.mjs && node --test test/distribution.test.mjs"
+    "prepack": "node scripts/build.mjs && node --test"
   },
   "engines": {
     "node": ">=20"

@@ -33,7 +33,7 @@ export function OpenAPIDocs({ showSidebar = true, showSchemas = true, className 
     >
       {showSidebar ? (
         <aside className="hidden lg:block">
-          <div className="sticky top-[calc(var(--aria-header-height,0px)+1.5rem)] max-h-[calc(100dvh-var(--aria-header-height,0px)-3rem)] overflow-y-auto">
+          <div className="sticky top-[calc(var(--ng-header-height,0px)+1.5rem)] max-h-[calc(100dvh-var(--ng-header-height,0px)-3rem)] overflow-y-auto">
             <OpenAPISidebar />
           </div>
         </aside>
@@ -45,7 +45,7 @@ export function OpenAPIDocs({ showSidebar = true, showSchemas = true, className 
         {api.tags.map((tag) => (
           <section key={tag.id} id={tag.id} className="scroll-mt-24 space-y-12">
             <header className="space-y-2 border-b pb-4">
-              <h2 className="text-foreground text-(length:--aria-text-xl) font-semibold tracking-tight">
+              <h2 className="text-foreground text-(length:--ng-text-xl) font-semibold tracking-tight">
                 <AnchorLink id={tag.id}>{tag.title}</AnchorLink>
               </h2>
               <Markdown>{tag.description}</Markdown>
@@ -58,7 +58,7 @@ export function OpenAPIDocs({ showSidebar = true, showSchemas = true, className 
 
         {showSchemas && schemaNames.length > 0 ? (
           <section id="schemas" className="scroll-mt-24 space-y-6">
-            <h2 className="text-foreground border-b pb-4 text-(length:--aria-text-xl) font-semibold tracking-tight">Schemas</h2>
+            <h2 className="text-foreground border-b pb-4 text-(length:--ng-text-xl) font-semibold tracking-tight">Schemas</h2>
             {schemaNames.map((name) => (
               <OpenAPISchema key={name} schema={api.schemas[name]} name={name} className="rounded-xl border p-4">
                 <SchemaTitle className="mb-2" />

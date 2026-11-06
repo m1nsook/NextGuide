@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { getOperationTitle } from "@ariadocs/openapi"
-import { MethodBadge, OpenAPI } from "@ariadocs/components"
+import { getOperationTitle } from "nextguide/openapi"
+import { MethodBadge, OpenAPI } from "nextguide/components"
 import { PageNav } from "@/components/page-footer"
 import { openapi, REFERENCE_BASE } from "@/lib/source"
 
@@ -17,8 +17,8 @@ export default async function ReferenceOverview() {
         <a href="https://github.com/resend/resend-openapi" className="text-foreground underline underline-offset-4">
           Resend&apos;s public OpenAPI spec
         </a>{" "}
-        (MIT) with <code className="font-mono text-[13px]">@ariadocs/openapi</code> and{" "}
-        <code className="font-mono text-[13px]">@ariadocs/components</code>. It is an example, not Resend&apos;s official
+        (MIT) with <code className="font-mono text-[13px]">nextguide/openapi</code> and{" "}
+        <code className="font-mono text-[13px]">nextguide/components</code>. It is an example, not Resend&apos;s official
         documentation.
       </p>
 
