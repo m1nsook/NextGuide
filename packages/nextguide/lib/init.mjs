@@ -37,7 +37,7 @@ import "../../styles/nextguide.css"
 ${typeNav}function renderNavigation${navigationType} {
   return items.filter((item) => item.nav).map((item) => (
     <li key={item.href}>
-      <Link href={${JSON.stringify(basePath)} + (item.href === "/" ? "" : item.href)}>{item.title}</Link>
+      <Link href={item.href === "/" ? ${JSON.stringify(basePath)} : ${JSON.stringify(basePath === "/" ? "" : basePath)} + item.href}>{item.title}</Link>
       {item.items.length ? <ul>{renderNavigation(item.items)}</ul> : null}
     </li>
   ))
@@ -148,7 +148,7 @@ export const getStaticProps${propsType} = async ({ params }) => {
 function renderNavigation${navigationType} {
   return items.filter((item) => item.nav).map((item) => (
     <li key={item.href}>
-      <Link href={${JSON.stringify(basePath)} + (item.href === "/" ? "" : item.href)}>{item.title}</Link>
+      <Link href={item.href === "/" ? ${JSON.stringify(basePath)} : ${JSON.stringify(basePath === "/" ? "" : basePath)} + item.href}>{item.title}</Link>
       {item.items.length ? <ul>{renderNavigation(item.items)}</ul> : null}
     </li>
   ))
