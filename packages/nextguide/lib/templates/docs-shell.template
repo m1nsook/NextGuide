@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Docs } from "nextguide/components"
-import { BookOpen, Moon, Search, Sun, X } from "nextguide/icons"
+import { BookOpen, Command, Moon, Palette, Search, Sun, X } from "nextguide/icons"
 __TYPE_IMPORT__
 
 const noSubscribe = () => () => {}
@@ -22,7 +22,7 @@ function collect(items__NAV_ARG__, base__BASE_ARG__)__ENTRIES_RESULT__ {
 
 export function NextGuideShell({ children, navigation, siteName, basePath }__SHELL_PROPS__) {
   const pathname = usePathname()
-  const [theme, setTheme] = useState("dark")
+  const [theme, setTheme] = useState("__DEFAULT_THEME__")
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState("")
   const mac = useSyncExternalStore(noSubscribe, isMac, serverSnapshot)
@@ -35,7 +35,7 @@ export function NextGuideShell({ children, navigation, siteName, basePath }__SHE
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem("nextguide-theme")
-      if (saved === "light" || saved === "dark") setTheme(saved)
+      if (saved === "light" || saved === "dark" || saved === "system") setTheme(saved)
     } catch {}
   }, [])
 
@@ -69,7 +69,7 @@ export function NextGuideShell({ children, navigation, siteName, basePath }__SHE
             <button type="button" className="ng-site-search-button" onClick={() => setSearchOpen(true)}>
               <Search size={16} />
               <span>Search documentation</span>
-              <kbd aria-label={mac ? "Command plus K" : "Control plus K"}>{mac ? "⌘" : "Ctrl"} K</kbd>
+              <kbd aria-label={mac ? "Command plus K" : "Control plus K"}>{mac ? <Command size={13} aria-hidden="true" /> : "Ctrl"} K</kbd>
             </button>
           </div>
           <div className="ng-site-sidebar-scroll">{nav}</div>
@@ -80,6 +80,8 @@ export function NextGuideShell({ children, navigation, siteName, basePath }__SHE
                 onClick={() => changeTheme("light")}><Sun size={15} /></button>
               <button type="button" aria-label="Dark mode" aria-pressed={theme === "dark"}
                 onClick={() => changeTheme("dark")}><Moon size={15} /></button>
+              <button type="button" aria-label="System theme" aria-pressed={theme === "system"}
+                onClick={() => changeTheme("system")}><Palette size={15} /></button>
             </div>
           </footer>
         </aside>

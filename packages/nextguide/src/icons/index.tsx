@@ -3,7 +3,7 @@
 import * as React from "react"
 import {
   ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight,
-  Code2, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
+  Code2, Command, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
   Moon, Palette, Search, Settings, Sun, Terminal, X,
 } from "lucide-react"
 import {
@@ -13,7 +13,7 @@ import {
 
 export {
   ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight,
-  Code2, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
+  Code2, Command, Copy, ExternalLink, FileText, Home, Info, Link, Menu,
   Moon, Palette, Search, Settings, Sun, Terminal, X,
 }
 export type { LucideIcon, LucideProps } from "lucide-react"

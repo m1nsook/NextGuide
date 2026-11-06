@@ -6,11 +6,13 @@ const templates = {"layout":"import { Suspense } from \"react\"\n__TYPE_IMPORT__
 
 const fill = (source, values) => Object.entries(values).reduce((s, [key, value]) => s.replaceAll(key, value), source)
 
-export function starterStyles() { return readFileSync(new URL("./templates/docs-site.css", import.meta.url), "utf8") }
+import { themeTokens } from "./appearance.mjs"
+export function starterStyles(appearance) { return readFileSync(new URL("./templates/docs-site.css", import.meta.url), "utf8") + themeTokens(appearance) }
 
-export function shellSource(typed) {
+export function shellSource(typed, theme = "system") {
   const src = readFileSync(new URL("./templates/docs-shell.template", import.meta.url), "utf8")
   return SIGNATURE + fill(src, {
+    "__DEFAULT_THEME__": theme,
     "__TYPE_IMPORT__": typed ? 'import type { ReactNode } from "react"\nimport type { NavItem } from "nextguide/core"' : "",
     "__NAV_ARG__": typed ? ": NavItem[]" : "",
     "__BASE_ARG__": typed ? ": string" : "",
