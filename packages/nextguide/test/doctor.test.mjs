@@ -120,7 +120,7 @@ test("init CLI writes Developer Mode files and prints their locations", () => {
     const result = run("init", directory, "--developer");
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /CREATE src\\app\\docs|CREATE src\/app\/docs/);
-    assert.ok(existsSync(join(directory, "src/app/docs/layout.tsx")));
+    assert.ok(existsSync(join(directory, "src/app/docs/layout.jsx")));
     assert.ok(existsSync(join(directory, "nextguide.config.json")));
   } finally { rmSync(directory, { recursive: true, force: true }); }
 });
