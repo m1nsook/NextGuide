@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { useRouter } from "next/navigation"
 import { CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
-import { ScrollArea, ScrollAreaViewport, ScrollBar } from "nextguide/ui"
+import { ScrollArea, ScrollAreaViewport, ScrollBar, Tooltip, TooltipTrigger, TooltipContent } from "nextguide/ui"
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})
@@ -37,17 +37,22 @@ export function SearchButton({ compact = false, className }: { compact?: boolean
 
   if (compact) {
     return (
-      <button
-        type="button"
-        aria-label="Search"
-        onClick={open}
-        className={cn(
-          "text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-md transition-colors",
-          className
-        )}
-      >
-        <Search className="size-[18px]" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label="Search documentation"
+            onClick={open}
+            className={cn(
+              "text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-md transition-colors",
+              className
+            )}
+          >
+            <Search className="size-[18px]" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">Search documentation</TooltipContent>
+      </Tooltip>
     )
   }
 

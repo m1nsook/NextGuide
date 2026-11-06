@@ -65,3 +65,8 @@
 @media(prefers-reduced-motion:reduce){.ng-select-content,.ng-tooltip-content,.ng-menu-content{transition:none;animation:none}}
 
 .ng-scrollbar[data-orientation=horizontal] .ng-scroll-thumb{min-height:0;min-width:24px}
+
+/* Concentric menu corners: each highlighted item is inset from its popover. */
+.ng-menu-item,.ng-select-item{
+  border-radius:max(0px,calc(var(--ng-radius) - .25rem));
+}
