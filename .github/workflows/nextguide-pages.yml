@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 50
     env:
       NEXTGUIDE_PAGES: "1"
       NEXT_PUBLIC_NEXTGUIDE_SITE_URL: "https://m1nsook.github.io/NextGuide"
@@ -37,18 +38,13 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Test NextGuide CLI
-        run: node --test packages/nextguide/test/doctor.test.mjs
+      - name: Test full NextGuide package and CLI
+        run: bun run --cwd packages/nextguide test
 
-      - name: Validate NextGuide all-in-one npm distribution
-        run: |
-          cd packages/nextguide
-          bun run build
-          bun run test:dist
-          bun run test:unit
+      - name: Test NextGuide component behavior
+        run: bun run --cwd packages/nextguide test:unit
 
-      - name: Smoke-build generated App Router and Pages Router sites
-        if: github.event_name == 'pull_request'
+      - name: Smoke-build packed NextGuide in fresh App/Pages Router consumers
         run: node scripts/verify-generated-starter.mjs
 
       - name: Build NextGuide documentation
