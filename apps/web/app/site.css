@@ -24,6 +24,15 @@
   --ng-accent: #2196f3;
   --ng-required: oklch(0.6 0.17 30);
   --ng-header-height: 0px;
+  --ng-bg: var(--background);
+  --ng-fg: var(--foreground);
+  --ng-muted: var(--muted-foreground);
+  --ng-surface: var(--secondary);
+  --ng-border: var(--border);
+  --ng-on-accent: #ffffff;
+  --ng-radius: var(--radius);
+  --ng-scroll-thumb: #9b9ba4;
+  color-scheme: light;
 }
 
 .dark {
@@ -48,6 +57,9 @@
   --ng-code-background: #111113;
   --ng-accent: #64b5f6;
   --ng-required: oklch(0.78 0.11 35);
+  --ng-scroll-thumb: #696e7a;
+  --ng-on-accent: #0e1014;
+  color-scheme: dark;
 }
 
 html {
