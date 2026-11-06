@@ -1,0 +1,98 @@
+name: Manual Next.js compatibility and update
+
+# Runs only when a maintainer manually chooses Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      release_channel:
+        description: "Next.js npm dist-tag to test"
+        required: true
+        default: latest
+        type: choice
+        options:
+          - latest
+          - canary
+      create_pull_request:
+        description: "Propose verified dependency updates as a PR (never merge)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXTGUIDE_PAGES: "0"
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Configure Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.4"
+
+      - name: Install NextGuide workspaces
+        run: bun install
+
+      - name: Update Next.js dependency in official docs
+        shell: bash
+        env:
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
+        run: |
+          set -euo pipefail
+          cd apps/web
+          bun add "next@${RELEASE_CHANNEL}"
+          cd ../..
+          cd packages/eslint-config
+          bun add -d "@next/eslint-plugin-next@${RELEASE_CHANNEL}"
+          cd ../..
+          echo "NEXTGUIDE_NEXT_VERSION=$(node -p 'require("./apps/web/package.json").dependencies.next')" >> "$GITHUB_ENV"
+          echo "Testing Next.js version: $(node -p 'require("./apps/web/package.json").dependencies.next')"
+
+      - name: Run NextGuide package tests
+        run: bun run --cwd packages/nextguide test
+
+      - name: Test packaged Developer Mode on selected Next.js
+        run: node scripts/verify-generated-starter.mjs
+
+      - name: Build official NextGuide documentation
+        run: bun run build:web
+
+      - name: Propose upgrade PR (only when manually selected)
+        if: ${{ inputs.create_pull_request }}
+        shell: bash
+        env:
+          RELEASE_CHANNEL: ${{ inputs.release_channel }}
+        run: |
+          set -euo pipefail
+          git config user.name "nextguide-compat-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/web/package.json packages/eslint-config/package.json
+          if git diff --cached --quiet; then
+            echo "Dependencies already match the selected channel; no PR needed."
+            exit 0
+          fi
+          branch="maintenance/nextjs-${RELEASE_CHANNEL}-${GITHUB_RUN_ID}"
+          git checkout -b "$branch"
+          git commit -m "build(deps): update Next.js ${RELEASE_CHANNEL} after compatibility checks [skip ci]"
+          git push origin "$branch"
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "build(deps): propose Next.js ${RELEASE_CHANNEL} update" \
+            --body "Manual compatibility review. Package tests, packaged App/Pages Router smoke tests, and docs build completed successfully. Review changes and test Windows before merging. No automatic merge or npm publish."
