@@ -70,7 +70,11 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
       assert.ok(existsSync(join(folder, "out", page)), `Missing ${router} output: ${page}`)
     }
     const homepage = readFileSync(join(folder, "out", basePath === "/" ? "index.html" : "docs/index.html"), "utf8")
-    assert.match(homepage, /Welcome to NextGuide/)
+    // Verify actual rendered output, not an outdated example-page heading.
+    assert.match(homepage, /Welcome to your docs/, "Starter MDX homepage must render")
+    assert.match(homepage, /Documentation navigation|Documentation pages/, "Starter sidebar must render")
+    assert.match(homepage, /Start building/, "Starter MDX sections must render")
+    assert.match(homepage, /Component showcase/, "Starter's bundled MDX link cards must render")
   }
   if (basePath === "/") {
     const backup = router === "app" ? "src/app/page.tsx.nextguide-backup" : "src/pages/index.tsx.nextguide-backup"
