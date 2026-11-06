@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@source "../**/*.{ts,tsx}";
-@source "../../components/**/*.{ts,tsx}";
-@source "../**/*.{ts,tsx}";
+@source "../app/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+@source "../contents/**/*.mdx";
 @source "../../../packages/nextguide/dist/**/*.js";
 
 @plugin "@tailwindcss/typography";
