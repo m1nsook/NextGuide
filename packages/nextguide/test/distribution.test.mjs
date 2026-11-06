@@ -35,7 +35,7 @@ test("every published export resolves to a compiled file", () => {
   }
 })
 test("compiled code contains no internal workspace imports", () => {
-  for (const filename of walk(output).filter(x => /\.(?:js|d\.ts)$/.test(x))) {
+  for (const filename of walk(output).filter(x => /\.(?:js|d\.ts|css)$/.test(x))) {
     const source = readFileSync(filename, "utf8")
     assert.doesNotMatch(source, /@(?:ariadocs|nextguide-internal)\/(?:core|mdx|openapi|components)/, filename)
     assert.doesNotMatch(source, /@workspace\//, filename)

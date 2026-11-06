@@ -1,73 +1,69 @@
 # NextGuide
 
-**NextGuide is an independent, open-source documentation framework for Next.js.** It includes MDX, OpenAPI, documentation blocks, an integrated UI library, icons, and typography in one npm package.
+NextGuide is an **independent, all-in-one documentation framework for Next.js**. Build file-based MDX guides, API references, and documentation websites with a built-in component library.
 
-**Official documentation:** https://m1nsook.github.io/NextGuide/
+**Documentation:** https://m1nsook.github.io/NextGuide/
 
-**Repository:** https://github.com/m1nsook/NextGuide
+## Get started
 
-## Current development status
-
-NextGuide is in alpha. The all-in-one renderer, OpenAPI tools, documentation components and static website exist. The expanded UI library and live component gallery are in development for **0.0.1-alpha.2**. The project initializer, authenticated admin, SQLite storage, and first-run ownership verification are not implemented yet.
-
-The public documentation is built from Developer Mode-style **static content**. It is deployed through GitHub Pages and does not need accounts or a database.
-
-## Install
-
-Inside an existing Next.js application:
+Inside an existing Next.js project:
 
 ```powershell
 bun add nextguide@alpha
+bunx nextguide init --developer
+bun run dev
 ```
 
-The currently published version determines which exports are available. The full component gallery requires version 0.0.1-alpha.2 or newer.
+The initializer creates working documentation routes, MDX pages, sidebar navigation, a JSON config and CSS. It detects `app/`, `src/app/`, `pages/`, and `src/pages/`, and handles JavaScript and TypeScript projects. Existing files are not overwritten. Use `--dry-run` to preview the generated files.
+
+Open `/docs` on your application's local Next.js server.
+
+For new applications, first create a Next.js project with `bunx create-next-app@latest my-docs`. See [the complete installation guide](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/) and [the generated-file explanation](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
+
+**Release note:** `nextguide init` requires `0.0.1-alpha.2` or later. The package is manually published to npm after its release checks pass; earlier alphas are CLI/renderer previews.
+
+## One npm package
 
 ```tsx
 import { createDocs } from "nextguide/mdx"
 import { createOpenAPI } from "nextguide/openapi"
 import { Docs, OpenAPI } from "nextguide/components"
-import { Button, Card, Dialog, Table, Tabs } from "nextguide/ui"
-import { CodeWindow, CodeTabs, FileTree, Callout, Steps } from "nextguide/blocks"
+import { Button, Dialog, Table, Tabs } from "nextguide/ui"
+import { CodeWindow, CodeTabs, FileTree } from "nextguide/blocks"
 import { UIIcon, BrandIcon } from "nextguide/icons"
-import { FontPicker } from "nextguide/fonts"
 import "nextguide/styles.css"
 ```
 
-Next.js and React are peer dependencies. NextGuide itself is one npm package—no separate documentation-core or shadcn registry installation is required.
+No separate renderer packages or shadcn registry installer are required. React and Next.js are host framework peer dependencies.
 
-## Local development
+## Developer Mode and Account Mode
 
-Clone the repository using GitHub Desktop. From its root on Windows:
+**Developer Mode** is file-first, database-free, and suitable for static hosting or regular Next.js deployment. NextGuide's official documentation uses this model on GitHub Pages.
+
+**Account Mode** is planned. The protected ownership wizard, SQLite database, authenticated editor, and `/admin` are not implemented yet and are not advertised as working.
+
+## Develop NextGuide
+
+Clone the project with GitHub Desktop and run:
 
 ```powershell
 bun install
 bun run dev
 ```
 
-Open `http://localhost:4310`.
+Documentation preview: http://localhost:4310
 
-To verify before merging:
+Before a release, validate the CLI, bundled distribution and documentation build:
 
 ```powershell
+bun run --cwd packages/nextguide test
 bun run --cwd packages/nextguide build
 bun run --cwd packages/nextguide test:dist
 bun run build:web
 ```
 
-GitHub Actions checks the AIO package and static documentation export on PRs, and deploys Pages when changes merge to `main`.
+The npm release is manual and requires an authenticated maintainer. The GitHub Pages workflow publishes a read-only static export; it does not publish to npm.
 
-## Installation modes
+## License
 
-**Developer Mode:** MDX/configuration files, Git-native changes and static export. This is how NextGuide's official documentation runs.
-
-**Account Mode (planned):** Persistent Next.js server with embedded SQLite, a single-use terminal-issued ownership token, a protected `/setup` wizard, visual font selection, and `/admin` page management. The server implementation isn't ready for local testing yet.
-
-The planned `bunx nextguide init` and `bunx nextguide init --developer` commands are **not implemented**. The existing CLI supports `doctor` for inspecting Next.js App Router and Pages Router projects.
-
-## Publishing
-
-Release packaging is manual and requires an authenticated npm account. Do not publish directly from the CI workflow. From `packages/nextguide` on Windows use `npm.cmd pack --dry-run` to validate the tarball and `npm.cmd publish --tag alpha --access public` only once packaging and local tests pass.
-
-## License and attribution
-
-NextGuide is MIT licensed. Some original rendering code was adapted from MIT-licensed upstream source; its original copyright and complete permission notice remain in `LICENSE.txt` and `packages/nextguide/THIRD_PARTY_NOTICES.md`. See [License & attribution](https://m1nsook.github.io/NextGuide/docs/credits/).
+NextGuide is MIT licensed. Third-party MIT copyright and permission notices, including the original renderer source attribution, are preserved in the repository and npm package notices. See [License & attribution](https://m1nsook.github.io/NextGuide/docs/credits/).
