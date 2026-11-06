@@ -1,214 +1,64 @@
 ---
 title: What NextGuide creates
-description: An actual file-by-file map of the generated Next.js documentation starter.
+description: A complete documentation website with working components, search, navigation, and editable project files.
 ---
 
 # Every generated file, explained
 
-The installer writes **real files** into your existing project and prints their paths. This example is for a TypeScript Next.js application with `src/app/`.
+The Developer Mode installer now generates **a complete documentation website, not a skeleton**. The new starter has a responsive sidebar, mobile navigation, local search with Ctrl/Cmd+K, light/dark/system appearance, clickable breadcrumbs, page actions and a sticky page table of contents.
 
-<FileTree title="Files created in a TypeScript src/app project" items={[{
-  name:"my-docs",kind:"folder",children:[
-    {name:"nextguide.config.json",kind:"json"},
-    {name:"content",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"_meta.json",kind:"json"},{name:"index.mdx",kind:"code"},{name:"getting-started.mdx",kind:"code"}]}]},
-    {name:"src",kind:"folder",children:[
-      {name:"lib",kind:"folder",children:[{name:"nextguide.ts",kind:"code"}]},
-      {name:"styles",kind:"folder",children:[{name:"nextguide.css",kind:"file"}]},
-      {name:"app",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"layout.tsx",kind:"code"},{name:"[[...slug]]",kind:"folder",children:[{name:"page.tsx",kind:"code"}]}]}]}
-    ]}
-  ]
-}]} />
+<FileTree title="TypeScript src/app project" items={[{name:"my-docs",kind:"folder",children:[
+  {name:"nextguide.config.json",kind:"json"},
+  {name:"content",kind:"folder",children:[{name:"docs",kind:"folder",children:[
+    {name:"_meta.json",kind:"json"},{name:"index.mdx",kind:"code"},{name:"getting-started.mdx",kind:"code"},
+    {name:"api-reference.mdx",kind:"code"},
+    {name:"guides",kind:"folder",children:[{name:"_meta.json",kind:"json"},{name:"writing.mdx",kind:"code"},{name:"customization.mdx",kind:"code"}]},
+    {name:"components",kind:"folder",children:[{name:"_meta.json",kind:"json"},{name:"index.mdx",kind:"code"},{name:"examples.mdx",kind:"code"}]}
+  ]}]}]},
+  {name:"src",kind:"folder",children:[
+    {name:"lib",kind:"folder",children:[{name:"nextguide.ts",kind:"code"},{name:"nextguide-mdx-components.tsx",kind:"code"}]},
+    {name:"styles",kind:"folder",children:[{name:"nextguide.css",kind:"file"}]},
+    {name:"app",kind:"folder",children:[{name:"docs",kind:"folder",children:[{name:"layout.tsx",kind:"code"},{name:"[[...slug]]",kind:"folder",children:[{name:"page.tsx",kind:"code"}]}]}]}
+  ]}
+]}]} />
 
-## What each file does
+## What the files do
 
-| File | Purpose |
+| Path | Purpose |
 | --- | --- |
-| `nextguide.config.json` | Site title, description, content folder and active mode |
-| `content/docs/index.mdx` | Your `/docs` homepage; editable Markdown + JSX |
-| `content/docs/getting-started.mdx` | A second page so you can test navigation immediately |
-| `content/docs/_meta.json` | Sidebar order and labels (one entry per page) |
-| `src/lib/nextguide.ts` | Creates the MDX source, enables plugins and exposes the site configuration |
-| `src/app/docs/layout.tsx` | Renders your documentation header and sidebar and imports CSS |
-| `src/app/docs/[[...slug]]/page.tsx` | Turns an MDX filename into `/docs/...` routes and static paths |
-| `src/styles/nextguide.css` | Editable, responsive starter design scoped under `ng-starter` |
+| `nextguide.config.json` | Name, description, base URL, default theme and accent |
+| `content/docs/index.mdx` | Documentation homepage with live blocks |
+| `content/docs/getting-started.mdx` | Onboarding guide with component examples |
+| `content/docs/guides/` | Writing and customization tutorials |
+| `content/docs/components/` | Component gallery that actually renders tabs, cards, accordions and more |
+| `content/docs/api-reference.mdx` | Starting point for an API reference |
+| `content/docs/**/_meta.json` | Navigation section names and ordering |
+| `src/lib/nextguide.ts` | MDX source, plugins, code highlighting, searchable page index |
+| `src/lib/nextguide-mdx-components.tsx` | Editable registry of built-in NextGuide MDX components |
+| `src/app/docs/layout.tsx` | Connects the full responsive shell to Next.js |
+| `src/app/docs/[[...slug]]/page.tsx` | Builds documentation routes, headings, breadcrumbs, page actions and TOC |
+| `src/styles/nextguide.css` | Project-specific CSS overrides; full base layout lives in the package |
 
-### App Router vs Pages Router
+## Components work on first install
 
-For `app/` without `src/`, NextGuide uses `app/docs/...`, `lib/nextguide.ts`, and `styles/nextguide.css` instead. JavaScript projects receive `.jsx` and `.js` files.
+The installer automatically registers NextGuide's actual components with the MDX engine. You can use them in new pages immediately:
 
-For the **Pages Router**, the CLI creates `pages/docs/[[...slug]].tsx` (or the `src/pages` equivalent) using `getStaticPaths` and `getStaticProps`. It creates `pages/_app.tsx` if missing, or adds only the required CSS imports to your existing `_app` without discarding the rest of your code.
+<CodeWindow title="content/docs/guide.mdx" language="mdx" code={'<Callout kind="tip" title="Ready">No separate registry installation.</Callout>\n\n<CodeWindow language="bash" code="bun run dev" />'} />
 
-## The actual generated code
+The registry includes callouts, code windows and tabs, file trees, steps, link cards, buttons, cards, tabs, accordions, input fields, tables, alerts and more. Edit `nextguide-mdx-components.tsx` to add your own.
 
-These examples are taken directly from the template emitted by `nextguide init`, not pseudocode. They are editable after generation.
+## Where the design comes from
 
-### Site configuration
+The package includes `DocsStarterShell`, a standalone layout with CSS shipped through `nextguide/styles.css`. It does not require Tailwind to scan `node_modules` or copy styles from the NextGuide documentation website. The generated layout passes its local navigation and search index to this component.
 
-`nextguide.config.json`
+## App Router and Pages Router
 
-```json
-{
-  "schemaVersion": 1,
-  "mode": "developer",
-  "contentDir": "content/docs",
-  "basePath": "/docs",
-  "site": {
-    "name": "My Documentation",
-    "description": "Documentation built with NextGuide"
-  }
-}
-```
+The installer supports both routers, JavaScript or TypeScript, with and without `src/`. For Pages Router, it generates `pages/docs/[[...slug]].tsx` and adds the required imports to `_app`. Documentation can live at `/docs` or at the site root using `--base-path /`.
 
-### Navigation order
+## Updating an existing site
 
-`content/docs/_meta.json`
+New installations receive the full site immediately. Existing users should first preview `bunx nextguide upgrade --refresh-generated --dry-run`. A confirmed refresh backs up generated layouts and styles, preserves custom MDX and navigation, and never overwrites files without the NextGuide-generated marker.
 
-```json
-[
-  {
-    "slug": "index",
-    "title": "Introduction"
-  },
-  {
-    "slug": "getting-started",
-    "title": "Getting started"
-  }
-]
-```
+<CodeWindow title="Preview generated files" language="bash" code="bunx nextguide init --developer --dry-run" />
 
-### MDX source
-
-`src/lib/nextguide.ts`
-
-```ts
-// Generated by NextGuide CLI. Edit freely; NextGuide never overwrites these files.
-import { createDocs } from "nextguide/mdx"
-import { remarkGfm, rehypeSlug } from "nextguide/mdx/plugins"
-import config from "../../nextguide.config.json"
-
-export const site = config.site
-export const docs = createDocs({
-  contentDir: config.contentDir,
-  remarkPlugins: [remarkGfm],
-  rehypePlugins: [rehypeSlug],
-})
-```
-
-### Header and sidebar
-
-`src/app/docs/layout.tsx`
-
-```tsx
-// Generated by NextGuide CLI. Edit freely; NextGuide never overwrites these files.
-import Link from "next/link"
-import { Suspense } from "react"
-import type { ReactNode } from "react"
-import { docs, site } from "@/lib/nextguide"
-import "nextguide/styles.css"
-import "@/styles/nextguide.css"
-
-type LinkItem = { title: string; href: string; nav: boolean; items: LinkItem[] }
-function renderNavigation(items: LinkItem[]) {
-  return items.filter((item) => item.nav).map((item) => (
-    <li key={item.href}>
-      <Link href={item.href === "/" ? "/docs" : "/docs" + item.href}>{item.title}</Link>
-      {item.items.length ? <ul>{renderNavigation(item.items)}</ul> : null}
-    </li>
-  ))
-}
-
-async function DocumentationNavigation() {
-  const navigation = await docs.getNavigation()
-  return <nav aria-label="Documentation pages"><ul>{renderNavigation(navigation)}</ul></nav>
-}
-
-export default function DocumentationLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="ng-starter">
-      <header className="ng-starter-header"><Link href="/docs">{site.name}</Link><span>Documentation</span></header>
-      <div className="ng-starter-body">
-        <aside className="ng-starter-sidebar" aria-label="Documentation navigation">
-          <Suspense fallback={<p className="ng-starter-loading">Loading navigation…</p>}>
-            <DocumentationNavigation />
-          </Suspense>
-        </aside>
-        <main className="ng-starter-main">{children}</main>
-      </div>
-    </div>
-  )
-}
-```
-
-### Routing and MDX rendering
-
-`src/app/docs/[[...slug]]/page.tsx`
-
-```tsx
-// Generated by NextGuide CLI. Edit freely; NextGuide never overwrites these files.
-import { Suspense } from "react"
-import { notFound } from "next/navigation"
-import { isMdxNotFound } from "nextguide/mdx"
-import { docs } from "@/lib/nextguide"
-
-export async function generateStaticParams() {
-  const paths = await docs.getPagePaths()
-  return paths.map((path) => ({ slug: path.split("/").filter(Boolean) }))
-}
-
-async function DocumentationBody({ params }: { params: Promise<{ slug?: string[] }> }) {
-  const slug = ((await params).slug ?? []).join("/")
-  try {
-    const { MDX, frontmatter } = await docs.parse({ slug })
-    return (
-      <article className="ng-starter-prose">
-        <h1>{String(frontmatter.title ?? "Documentation")}</h1>
-        {frontmatter.description ? <p className="ng-starter-description">{String(frontmatter.description)}</p> : null}
-        {MDX}
-      </article>
-    )
-  } catch (error) {
-    if (isMdxNotFound(error)) notFound()
-    throw error
-  }
-}
-
-export default function DocumentationPage({ params }: { params: Promise<{ slug?: string[] }> }) {
-  return (
-    <Suspense fallback={<article className="ng-starter-prose ng-starter-loading">Loading documentation…</article>}>
-      <DocumentationBody params={params} />
-    </Suspense>
-  )
-}
-```
-
-## Files added when you create another page
-
-After running the initializer, you can use `bunx nextguide page add guides/setup` to generate new MDX pages. The command uses the `contentDir` configured in `nextguide.config.json`.
-
-For the example `guides/setup`, NextGuide creates `content/docs/guides/setup.mdx`, creates `content/docs/guides/_meta.json` if missing, and appends the `guides` section to the existing root `_meta.json`. An existing page is never replaced, and the sidebar settings already stored in metadata are preserved.
-
-[Create your first page](/docs/getting-started/adding-pages).
-
-## Website root instead of /docs
-
-`nextguide init` now allows a route choice. With `--base-path /`, App Router documentation is created beneath `src/app/(nextguide)/` (a route group, invisible in the URL), while Pages Router uses `pages/[[...slug]].tsx`. An existing homepage is backed up with a `.nextguide-backup` suffix only after confirmation or explicit `--replace-home`.
-
-The chosen `basePath` is recorded in `nextguide.config.json`; it controls links created by `nextguide page add`.
-
-## Cache Components and import paths
-
-New App Router pages omit the `dynamicParams` route export and wrap asynchronous filesystem reads for navigation and MDX inside React `<Suspense>` boundaries. This avoids the blocking route error reported by Next.js 16.4.5.
-
-NextGuide resolves **all generated local imports** from the importing file and your existing `tsconfig.json` or `jsconfig.json`. With a standard `@/*` alias pointing to `src/`, generated routes import `@/lib/nextguide` and `@/styles/nextguide.css`. With a custom `~/*` alias, they use `~/lib/nextguide` and `~/styles/nextguide.css` instead. When no alias covers a target, NextGuide calculates the correct relative path.
-
-For example, `src/lib/nextguide.ts` imports the project-root `nextguide.config.json` with `../../nextguide.config.json` when `@/*` maps only to `src/*`; a source-only alias cannot safely reference the configuration outside `src/`. When the alias maps to the project root, the config can use `@/nextguide.config.json`.
-
-The generated Pages Router `_app` CSS imports follow the same rules, including when NextGuide patches an existing `_app` file. No custom aliases are added to or overwritten in your project configuration.
-
-## Overwrite protection
-
-NextGuide checks the full proposed file list **before writing**. If one of the names already exists, the operation fails instead of replacing user code. Use `--dry-run` to see the paths first.
-
-<CodeWindow title="Preview before writing" language="powershell" code="bunx nextguide init --developer --dry-run" />
-
-[Next: write your own documentation page](/docs/getting-started/adding-pages).
+[Installation](/docs/getting-started/installation) · [Upgrade safely](/docs/getting-started/upgrading)

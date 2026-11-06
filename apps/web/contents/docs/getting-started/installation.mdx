@@ -8,6 +8,10 @@ description: Test the current GitHub build inside a separate Next.js application
 **The source of truth during development is GitHub `main`, not the old npm alpha.** You can test the current build without copying any repository files or workspace packages into your Next.js application.
 
 
+## What you get after one install
+
+The Developer Mode initializer creates a **fully designed, working documentation website** with local search, navigation, responsive sidebar, theme controls, breadcrumbs, page actions and table of contents. It automatically registers bundled MDX components and generates a working component gallery—no copying component source or manually wiring a layout. [See the exact generated files](/docs/getting-started/generated-files).
+
 ## Existing NextGuide projects
 
 Do **not** initialize again after installing a newer NextGuide package. Instead use `bunx nextguide upgrade --dry-run` followed by `bunx nextguide upgrade`. This preserves existing pages, navigation and project files. [See the safe upgrade guide](/docs/getting-started/upgrading).
