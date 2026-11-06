@@ -8,14 +8,14 @@ import type { MdxClientProps } from "../types.js"
  *
  * ```tsx
  * "use client";
- * import { MdxClient } from "@ariadocs/mdx/client";
+ * import { MdxClient } from "@nextguide-internal/mdx/client";
  *
  * export function Page({ serialized }) {
  *   return <MdxClient serialized={serialized} components={{ Callout }} />;
  * }
  * ```
  *
- * Import it from `@ariadocs/mdx/client`: the main entry also exports
+ * Import it from `@nextguide-internal/mdx/client`: the main entry also exports
  * file-system helpers that can't be bundled for the browser.
  */
 export function MdxClient({ serialized, components }: MdxClientProps) {

@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react"
 import Link from "next/link"
-import { isExternalUrl } from "@ariadocs/core"
+import { isExternalUrl } from "nextguide/core"
 
 /** Internal links use Next.js routing; external links open in a new tab. */
 export function MdxLink({ href = "", ...props }: ComponentProps<"a">) {

@@ -1,4 +1,4 @@
-import { setOwn } from "@ariadocs/core"
+import { setOwn } from "@nextguide-internal/core"
 import { OpenAPIError } from "../errors.js"
 import { DEFAULT_MAX_DEPTH } from "../options.js"
 import type { OpenAPIDocument } from "../types/index.js"

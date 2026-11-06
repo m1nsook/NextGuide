@@ -1,4 +1,4 @@
-import { isRecord, optionalString, sanitizeUrl, setOwn } from "@ariadocs/core"
+import { isRecord, optionalString, sanitizeUrl, setOwn } from "@nextguide-internal/core"
 import type {
   APIKeyLocation,
   APISecurityRequirement,

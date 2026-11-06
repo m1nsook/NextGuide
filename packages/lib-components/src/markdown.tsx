@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { isExternalUrl, sanitizeUrl } from "@ariadocs/core"
+import { isExternalUrl, sanitizeUrl } from "@nextguide-internal/core"
 import { CodeBlock } from "./code/code-block.js"
 import { cn } from "./lib/utils.js"
 
@@ -22,7 +22,7 @@ export function Markdown({ children, className }: MarkdownProps) {
   if (children === undefined || children.trim() === "") return null
 
   return (
-    <div data-slot="markdown" className={cn("text-muted-foreground space-y-3 text-(length:--aria-text-sm) leading-relaxed", className)}>
+    <div data-slot="markdown" className={cn("text-muted-foreground space-y-3 text-(length:--ng-text-sm) leading-relaxed", className)}>
       {parseBlocks(children)}
     </div>
   )

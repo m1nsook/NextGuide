@@ -1,4 +1,4 @@
-import { createDocs, type DocsConfig } from "@ariadocs/mdx"
+import { createDocs, type DocsConfig } from "nextguide/mdx"
 import {
   rehypeAutolinkHeadings,
   rehypeCodeRaw,
@@ -6,8 +6,8 @@ import {
   rehypePrism,
   rehypeSlug,
   remarkGfm,
-} from "@ariadocs/mdx/plugins"
-import { createOpenAPI } from "@ariadocs/openapi"
+} from "nextguide/mdx/plugins"
+import { createOpenAPI } from "nextguide/openapi"
 import { mdxComponents } from "@/components/mdx"
 
 const shared: Omit<DocsConfig, "contentDir"> = {

@@ -46,7 +46,7 @@ export {
 } from "./normalize/schema.js"
 
 // ---------- Types ----------
-export type { NavItem } from "@ariadocs/core"
+export type { NavItem } from "@nextguide-internal/core"
 export type {
   OpenAPIDocument,
   APISpec,

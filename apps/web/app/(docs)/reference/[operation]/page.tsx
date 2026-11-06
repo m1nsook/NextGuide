@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { getOperationTitle, type APIOperation } from "@ariadocs/openapi"
-import { OpenAPI } from "@ariadocs/components"
+import { getOperationTitle, type APIOperation } from "nextguide/openapi"
+import { OpenAPI } from "nextguide/components"
 import { PageNav } from "@/components/page-footer"
 import { openapi, REFERENCE_BASE } from "@/lib/source"
 

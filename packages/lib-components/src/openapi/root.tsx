@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import type { APISpec } from "@ariadocs/openapi"
+import type { APISpec } from "@nextguide-internal/openapi"
 import { OpenAPIProvider } from "./context.js"
 
 export interface OpenAPIRootProps {

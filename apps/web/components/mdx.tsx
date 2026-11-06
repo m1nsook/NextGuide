@@ -1,5 +1,5 @@
-import type { MDXComponents } from "@ariadocs/mdx"
-import { CodeBlock, Docs, Markdown, MethodBadge, OpenAPI, Pre } from "@ariadocs/components"
+import type { MDXComponents } from "nextguide/mdx"
+import { CodeBlock, Docs, Markdown, MethodBadge, OpenAPI, Pre } from "nextguide/components"
 import { Callout, Card, Cards } from "./callout"
 import { ClientParseDemo } from "./demos/client-parse-demo"
 import { ApiPreview, EdgeCasePreview, Preview } from "./demos/preview"

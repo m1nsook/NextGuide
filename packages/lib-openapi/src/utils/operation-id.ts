@@ -1,4 +1,4 @@
-import { slugify } from "@ariadocs/core"
+import { slugify } from "@nextguide-internal/core"
 import type { HTTPMethod } from "../types/index.js"
 
 export interface OperationIdInput {

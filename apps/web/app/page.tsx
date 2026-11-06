@@ -53,7 +53,7 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ title, description, href, icon: Icon }) => (
               <Link key={title} href={href} className="group rounded-lg border bg-card p-6 transition-colors hover:bg-muted/50">
-                <Icon aria-hidden className="mb-5 size-5 text-[var(--aria-accent)]" />
+                <Icon aria-hidden className="mb-5 size-5 text-[var(--ng-accent)]" />
                 <h3 className="font-semibold">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium group-hover:underline">Read more <ArrowRight className="size-3.5" /></span>

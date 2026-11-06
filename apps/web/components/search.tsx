@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { CornerDownLeft, FileText, Search } from "lucide-react"
-import { cn, MethodBadge } from "@ariadocs/components"
+import { cn, MethodBadge } from "nextguide/components"
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})

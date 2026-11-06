@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import path from "node:path"
-import { slugToTitle } from "@ariadocs/core"
+import { slugToTitle } from "@nextguide-internal/core"
 import { z } from "zod"
 import { MdxError } from "./errors.js"
 import { resolveContentDir } from "./source.js"

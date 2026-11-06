@@ -1,8 +1,8 @@
 /**
- * A navigation entry, shared by every Ariadocs source.
+ * A navigation entry, shared by every NextGuide source.
  *
- * `@ariadocs/mdx` builds these from a content directory and `_meta.json`;
- * `@ariadocs/openapi` builds them from tags and operations. Because both use
+ * `@nextguide-internal/mdx` builds these from a content directory and `_meta.json`;
+ * `@nextguide-internal/openapi` builds them from tags and operations. Because both use
  * the same shape, one sidebar component can render either.
  */
 export interface NavItem {

@@ -1,4 +1,4 @@
-import { cn } from "@ariadocs/components"
+import { cn } from "nextguide/components"
 
 /**
  * Official NextGuide NG monogram, supplied by the project author.

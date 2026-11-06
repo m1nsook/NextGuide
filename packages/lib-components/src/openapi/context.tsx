@@ -9,7 +9,7 @@ import {
   type APIResponse,
   type APISchema,
   type APISpec,
-} from "@ariadocs/openapi"
+} from "@nextguide-internal/openapi"
 
 // ---------------------------------------------------------------------------
 // Root

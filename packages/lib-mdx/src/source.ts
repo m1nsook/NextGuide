@@ -1,7 +1,7 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 import matter from "gray-matter"
-import { truncate } from "@ariadocs/core"
+import { truncate } from "@nextguide-internal/core"
 import { MdxError } from "./errors.js"
 import type { MdxOptions } from "./types.js"
 

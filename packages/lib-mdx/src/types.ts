@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import type { NavItem, TocItem } from "@ariadocs/core"
+import type { NavItem, TocItem } from "@nextguide-internal/core"
 import type { MDXComponents } from "next-mdx-remote-client/rsc"
 import type { SerializeResult as CompileResult } from "next-mdx-remote-client/serialize"
 

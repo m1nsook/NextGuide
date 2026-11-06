@@ -7,7 +7,7 @@ const here = fileURLToPath(new URL("..", import.meta.url))
 const workspace = resolve(here, "../..")
 const out = join(here, "dist")
 const libraries = ["core", "openapi", "mdx", "components"]
-const internal = /@ariadocs\/(core|openapi|mdx|components)(?![\w-])/g
+const internal = /@nextguide-internal\/(core|openapi|mdx|components)(?![\w-])/g
 
 function run(command, args, cwd) {
   const result = spawnSync(command, args, { cwd, stdio: "inherit", shell: process.platform === "win32" })

@@ -1,4 +1,4 @@
-import { OpenAPI } from "@ariadocs/components"
+import { OpenAPI } from "nextguide/components"
 import { openapi } from "@/lib/source"
 
 export const metadata = { title: "Schemas" }

@@ -1,4 +1,4 @@
-import { isRecord, truncate } from "@ariadocs/core"
+import { isRecord, truncate } from "@nextguide-internal/core"
 import { readFile } from "#read-file"
 import { OpenAPIError } from "../errors.js"
 import {

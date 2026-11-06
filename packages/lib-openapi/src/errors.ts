@@ -1,4 +1,4 @@
-import { AriadocsError } from "@ariadocs/core"
+import { NextGuideError } from "@nextguide-internal/core"
 
 export interface ValidationIssue {
   /** JSON pointer to the offending node, e.g. `/info/title`. */
@@ -15,7 +15,7 @@ export type OpenAPIErrorCode =
   | "OPENAPI_TOO_DEEP"
 
 /** Thrown when an OpenAPI document cannot be loaded, parsed or validated. */
-export class OpenAPIError extends AriadocsError {
+export class OpenAPIError extends NextGuideError {
   declare readonly code: OpenAPIErrorCode
   /** Validation issues, when the error came from validation. */
   readonly issues: ValidationIssue[]

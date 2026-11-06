@@ -1,4 +1,4 @@
-import { isRecord, optionalString, optionalStringArray, setOwn } from "@ariadocs/core"
+import { isRecord, optionalString, optionalStringArray, setOwn } from "@nextguide-internal/core"
 import type { APIServer, APIServerVariable } from "../types/index.js"
 
 /**

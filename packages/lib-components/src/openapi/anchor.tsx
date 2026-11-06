@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { slugify } from "@ariadocs/core"
+import { slugify } from "@nextguide-internal/core"
 import { Hash } from "lucide-react"
 import { cn } from "../lib/utils.js"
 

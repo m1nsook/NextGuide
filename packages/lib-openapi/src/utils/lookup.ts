@@ -1,4 +1,4 @@
-import { getOwn } from "@ariadocs/core"
+import { getOwn } from "@nextguide-internal/core"
 import type { APIOperation, APISchema, APISpec } from "../types/index.js"
 
 /** Find an operation by its `id` (or original `operationId`). */

@@ -14,9 +14,9 @@ export interface SlotProps {
  * `Docs.Aside` (from `xl`, and only when it renders something). A page
  * without a table of contents gets no empty right column.
  *
- * Sizes are CSS variables: `--aria-docs-max-width` (90rem),
- * `--aria-sidebar-width` (17rem), `--aria-toc-width` (15rem) and
- * `--aria-header-height` (0px, for a sticky site header).
+ * Sizes are CSS variables: `--ng-docs-max-width` (90rem),
+ * `--ng-sidebar-width` (17rem), `--ng-toc-width` (15rem) and
+ * `--ng-header-height` (0px, for a sticky site header).
  *
  * In Next.js App Router, put the layout and sidebar in `layout.tsx` and
  * return `Docs.Content` and `Docs.Aside` from `page.tsx` as a fragment, so
@@ -43,10 +43,10 @@ export function DocsLayout({ children, className }: SlotProps) {
     <div
       data-slot="docs-layout"
       className={cn(
-        "mx-auto grid w-full max-w-[var(--aria-docs-max-width,90rem)] grid-cols-[minmax(0,1fr)]",
-        "lg:has-[>[data-slot=docs-sidebar]]:grid-cols-[var(--aria-sidebar-width,17rem)_minmax(0,1fr)]",
-        "xl:has-[>[data-slot=docs-aside]:not(:empty)]:grid-cols-[minmax(0,1fr)_var(--aria-toc-width,15rem)]",
-        "xl:has-[>[data-slot=docs-sidebar]]:has-[>[data-slot=docs-aside]:not(:empty)]:grid-cols-[var(--aria-sidebar-width,17rem)_minmax(0,1fr)_var(--aria-toc-width,15rem)]",
+        "mx-auto grid w-full max-w-[var(--ng-docs-max-width,90rem)] grid-cols-[minmax(0,1fr)]",
+        "lg:has-[>[data-slot=docs-sidebar]]:grid-cols-[var(--ng-sidebar-width,17rem)_minmax(0,1fr)]",
+        "xl:has-[>[data-slot=docs-aside]:not(:empty)]:grid-cols-[minmax(0,1fr)_var(--ng-toc-width,15rem)]",
+        "xl:has-[>[data-slot=docs-sidebar]]:has-[>[data-slot=docs-aside]:not(:empty)]:grid-cols-[var(--ng-sidebar-width,17rem)_minmax(0,1fr)_var(--ng-toc-width,15rem)]",
         className
       )}
     >
@@ -70,7 +70,7 @@ export function DocsSidebar({ children, className }: SlotProps) {
     <aside
       data-slot="docs-sidebar"
       className={cn(
-        "sticky top-[var(--aria-header-height,0px)] hidden h-[calc(100dvh-var(--aria-header-height,0px))] overflow-y-auto border-r px-4 py-8 lg:block",
+        "sticky top-[var(--ng-header-height,0px)] hidden h-[calc(100dvh-var(--ng-header-height,0px))] overflow-y-auto border-r px-4 py-8 lg:block",
         className
       )}
     >
@@ -112,7 +112,7 @@ export function DocsAside({ children, className }: SlotProps) {
     <aside
       data-slot="docs-aside"
       className={cn(
-        "sticky top-[var(--aria-header-height,0px)] hidden h-[calc(100dvh-var(--aria-header-height,0px))] overflow-y-auto py-12 pr-6 xl:block xl:empty:hidden",
+        "sticky top-[var(--ng-header-height,0px)] hidden h-[calc(100dvh-var(--ng-header-height,0px))] overflow-y-auto py-12 pr-6 xl:block xl:empty:hidden",
         className
       )}
     >
@@ -151,7 +151,7 @@ export function DocsPage({ children, className }: SlotProps) {
  */
 export function DocsPageTitle({ children, className }: SlotProps) {
   return (
-    <h1 data-slot="docs-page-title" className={cn("text-(length:--aria-text-2xl) leading-tight font-semibold tracking-tight", className)}>
+    <h1 data-slot="docs-page-title" className={cn("text-(length:--ng-text-2xl) leading-tight font-semibold tracking-tight", className)}>
       {children}
     </h1>
   )
@@ -166,7 +166,7 @@ export function DocsPageTitle({ children, className }: SlotProps) {
  */
 export function DocsPageDescription({ children, className }: SlotProps) {
   return (
-    <p data-slot="docs-page-description" className={cn("text-muted-foreground mt-3 text-(length:--aria-text-lg) leading-relaxed", className)}>
+    <p data-slot="docs-page-description" className={cn("text-muted-foreground mt-3 text-(length:--ng-text-lg) leading-relaxed", className)}>
       {children}
     </p>
   )
@@ -187,18 +187,18 @@ export function DocsPageContent({ children, className }: SlotProps) {
       className={cn(
         "prose prose-neutral dark:prose-invert max-w-none",
         // Rhythm
-        "prose-p:leading-7 prose-li:my-1 prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-(length:--aria-text-xl) prose-h3:mt-8 prose-h3:text-(length:--aria-text-lg)",
+        "prose-p:leading-7 prose-li:my-1 prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-(length:--ng-text-xl) prose-h3:mt-8 prose-h3:text-(length:--ng-text-lg)",
         // Heading anchors (rehype-autolink-headings) shouldn't look like links
         "[&_:is(h1,h2,h3,h4,h5,h6)_a]:[color:inherit] [&_:is(h1,h2,h3,h4,h5,h6)_a]:[font-weight:inherit] [&_:is(h1,h2,h3,h4,h5,h6)_a]:no-underline",
         // Links
         "prose-a:font-medium prose-a:underline-offset-4 prose-a:decoration-foreground/30 prose-a:hover:decoration-foreground",
         // Inline code
         "prose-code:before:content-none prose-code:after:content-none prose-code:rounded-md prose-code:border prose-code:bg-muted/60 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[0.85em] prose-code:font-normal prose-code:font-mono prose-pre:font-mono",
-        "[&_pre_code]:border-0 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-(length:--aria-text-code)",
+        "[&_pre_code]:border-0 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-(length:--ng-text-code)",
         // Code blocks
-        "prose-pre:rounded-xl prose-pre:border prose-pre:bg-[var(--aria-code-background)] prose-pre:text-foreground prose-pre:leading-relaxed",
+        "prose-pre:rounded-xl prose-pre:border prose-pre:bg-[var(--ng-code-background)] prose-pre:text-foreground prose-pre:leading-relaxed",
         // Tables
-        "prose-table:text-(length:--aria-text-sm) prose-th:font-medium prose-th:text-foreground prose-td:py-2.5 prose-table:my-0",
+        "prose-table:text-(length:--ng-text-sm) prose-th:font-medium prose-th:text-foreground prose-td:py-2.5 prose-table:my-0",
         "mt-10",
         className
       )}

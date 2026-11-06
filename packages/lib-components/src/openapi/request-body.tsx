@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import type { APIContent, APIRequestBody } from "@ariadocs/openapi"
+import type { APIContent, APIRequestBody } from "@nextguide-internal/openapi"
 import { cn } from "../lib/utils.js"
 import { Markdown } from "../markdown.js"
 import { useOptionalOperation } from "./context.js"
@@ -30,9 +30,9 @@ export function OpenAPIRequestBody({ requestBody: bodyProp, children, className 
       aside={
         <>
           {requestBody.content.length === 1 ? (
-            <span className="text-muted-foreground font-mono text-(length:--aria-text-xs)">{requestBody.content[0]?.mediaType}</span>
+            <span className="text-muted-foreground font-mono text-(length:--ng-text-xs)">{requestBody.content[0]?.mediaType}</span>
           ) : null}
-          {requestBody.required ? null : <span className="text-muted-foreground text-(length:--aria-text-xs)">optional</span>}
+          {requestBody.required ? null : <span className="text-muted-foreground text-(length:--ng-text-xs)">optional</span>}
         </>
       }
     >
@@ -97,7 +97,7 @@ export function ContentSchemas({
             aria-label="Content type"
             value={current.mediaType}
             onChange={(event) => setSelected(event.target.value)}
-            className="bg-background text-muted-foreground rounded-md border px-2 py-1 font-mono text-(length:--aria-text-xs)"
+            className="bg-background text-muted-foreground rounded-md border px-2 py-1 font-mono text-(length:--ng-text-xs)"
           >
             {content.map((item) => (
               <option key={item.mediaType} value={item.mediaType}>
@@ -106,7 +106,7 @@ export function ContentSchemas({
             ))}
           </select>
         ) : (
-          <span className="text-muted-foreground font-mono text-(length:--aria-text-xs)">{current.mediaType}</span>
+          <span className="text-muted-foreground font-mono text-(length:--ng-text-xs)">{current.mediaType}</span>
         )}
       </div>
       {current.schema !== undefined ? <OpenAPISchema schema={current.schema} mode={mode} /> : null}

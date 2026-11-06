@@ -1,4 +1,4 @@
-import { OpenAPI } from "@ariadocs/components"
+import { OpenAPI } from "nextguide/components"
 import { openapi, REFERENCE_BASE } from "@/lib/source"
 
 export const metadata = { title: { default: "API Reference", template: "%s · API Reference" } }

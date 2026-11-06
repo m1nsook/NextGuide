@@ -9,4 +9,4 @@ export {
 } from "./object.js"
 export { slugify, slugToTitle, createIdGenerator, truncate } from "./text.js"
 export { sanitizeUrl, isExternalUrl } from "./url.js"
-export { AriadocsError, isAriadocsError } from "./errors.js"
+export { NextGuideError, isNextGuideError } from "./errors.js"

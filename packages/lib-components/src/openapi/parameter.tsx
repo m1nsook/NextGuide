@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import type { APIParameter, ParameterLocation } from "@ariadocs/openapi"
+import type { APIParameter, ParameterLocation } from "@nextguide-internal/openapi"
 import { cn } from "../lib/utils.js"
 import { Markdown } from "../markdown.js"
 import { ParameterProvider, useOptionalOperation, useOptionalParameter, useParameter } from "./context.js"
@@ -67,7 +67,7 @@ export function ParameterHeader() {
  * ```
  */
 export function ParameterName({ className }: { className?: string }) {
-  return <code className={cn("text-foreground font-mono text-(length:--aria-text-code) font-semibold", className)}>{useParameter().name}</code>
+  return <code className={cn("text-foreground font-mono text-(length:--ng-text-code) font-semibold", className)}>{useParameter().name}</code>
 }
 
 /**
@@ -78,7 +78,7 @@ export function ParameterName({ className }: { className?: string }) {
  * ```
  */
 export function ParameterIn({ className }: { className?: string }) {
-  return <span className={cn("text-muted-foreground text-(length:--aria-text-xs)", className)}>{useParameter().in}</span>
+  return <span className={cn("text-muted-foreground text-(length:--ng-text-xs)", className)}>{useParameter().in}</span>
 }
 
 /**
@@ -91,7 +91,7 @@ export function ParameterIn({ className }: { className?: string }) {
 export function ParameterRequired({ className }: { className?: string }) {
   const { required } = useParameter()
   return (
-    <span className={cn("text-(length:--aria-text-xs) font-medium", required ? "text-[var(--aria-required)]" : "text-muted-foreground", className)}>
+    <span className={cn("text-(length:--ng-text-xs) font-medium", required ? "text-[var(--ng-required)]" : "text-muted-foreground", className)}>
       {required ? "required" : "optional"}
     </span>
   )
@@ -116,9 +116,9 @@ export function ParameterDetails({ className }: { className?: string }) {
     <div className={cn("space-y-1", className)}>
       {parameter.schema !== undefined ? <Constraints schema={parameter.schema} /> : null}
       {example !== undefined ? (
-        <p className="text-muted-foreground text-(length:--aria-text-xs)">
+        <p className="text-muted-foreground text-(length:--ng-text-xs)">
           Example:{" "}
-          <code className="bg-muted text-foreground rounded px-1 font-mono text-(length:--aria-text-xs)">
+          <code className="bg-muted text-foreground rounded px-1 font-mono text-(length:--ng-text-xs)">
             {typeof example === "string" ? example : JSON.stringify(example)}
           </code>
         </p>
@@ -147,7 +147,7 @@ export function ParameterExample({ className }: { className?: string }) {
   const example = parameter.example ?? parameter.examples[0]?.value
   if (example === undefined) return null
   return (
-    <code className={cn("bg-muted rounded px-1 py-0.5 font-mono text-(length:--aria-text-xs)", className)}>
+    <code className={cn("bg-muted rounded px-1 py-0.5 font-mono text-(length:--ng-text-xs)", className)}>
       {typeof example === "string" ? example : JSON.stringify(example)}
     </code>
   )

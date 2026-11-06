@@ -57,7 +57,7 @@ export function CodeBlock({ code, language, title, actions, className }: CodeBlo
   return (
     <figure
       data-slot="code-block"
-      className={cn("bg-[var(--aria-code-background)] overflow-hidden rounded-xl border text-(length:--aria-text-sm)", className)}
+      className={cn("bg-[var(--ng-code-background)] overflow-hidden rounded-xl border text-(length:--ng-text-sm)", className)}
     >
       <figcaption className="flex h-10 items-center gap-2 border-b pr-1.5 pl-1">
         {actions !== undefined ? (
@@ -65,7 +65,7 @@ export function CodeBlock({ code, language, title, actions, className }: CodeBlo
         ) : null}
         <span
           className={cn(
-            "text-muted-foreground truncate font-mono text-(length:--aria-text-xs)",
+            "text-muted-foreground truncate font-mono text-(length:--ng-text-xs)",
             actions === undefined ? "min-w-0 flex-1 pl-3" : "shrink-0"
           )}
         >
@@ -73,7 +73,7 @@ export function CodeBlock({ code, language, title, actions, className }: CodeBlo
         </span>
         <CopyButton value={code} />
       </figcaption>
-      <pre className="max-h-[32rem] overflow-auto p-4 font-mono text-(length:--aria-text-code) leading-relaxed">
+      <pre className="max-h-[32rem] overflow-auto p-4 font-mono text-(length:--ng-text-code) leading-relaxed">
         <code className={cn("font-mono", language !== undefined && `language-${language}`)}>
           <Highlighted code={code} language={language} />
         </code>
@@ -106,7 +106,7 @@ export function CodeTabs<T extends string>({ value, options, onChange, label }: 
           aria-selected={option.value === value}
           onClick={() => onChange(option.value)}
           className={cn(
-            "-mb-px shrink-0 border-b px-2.5 text-(length:--aria-text-sm) whitespace-nowrap transition-colors",
+            "-mb-px shrink-0 border-b px-2.5 text-(length:--ng-text-sm) whitespace-nowrap transition-colors",
             option.value === value
               ? "border-foreground text-foreground"
               : "text-muted-foreground hover:text-foreground border-transparent"

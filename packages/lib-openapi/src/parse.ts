@@ -10,7 +10,7 @@ import { validateOpenAPI } from "./validation/validate.js"
  * Load, validate, resolve and normalize an OpenAPI 3.x document.
  *
  * ```ts
- * import { parseOpenAPI } from "@ariadocs/openapi";
+ * import { parseOpenAPI } from "@nextguide-internal/openapi";
  *
  * const api = await parseOpenAPI({ source: "./openapi.yaml" });
  * api.operations[0].responses[0].isSuccess; // true

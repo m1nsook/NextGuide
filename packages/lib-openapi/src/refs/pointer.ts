@@ -1,4 +1,4 @@
-import { hasOwn } from "@ariadocs/core"
+import { hasOwn } from "@nextguide-internal/core"
 
 /** A `$ref` reference object as it appears in an OpenAPI document. */
 export interface RefObject {

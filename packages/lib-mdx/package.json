@@ -1,13 +1,10 @@
 {
-  "name": "@ariadocs/mdx",
-  "version": "3.0.2",
+  "name": "@nextguide-internal/mdx",
+  "version": "0.0.1-alpha.2",
   "type": "module",
-  "author": {
-    "name": "Nisab Mohd",
-    "email": "nisabmohd@gmail.com"
-  },
+  "author": "NextGuide contributors",
   "license": "MIT",
-  "description": "MDX content layer for Ariadocs: parse and render MDX from files or strings, build navigation from _meta.json, extract frontmatter and table of contents. Works with React Server Components and client rendering.",
+  "description": "NextGuide internal mdx build module (not published separately).",
   "keywords": [
     "mdx",
     "react",
@@ -15,7 +12,7 @@
     "documentation",
     "docs",
     "markdown",
-    "ariadocs"
+    "nextguide"
   ],
   "exports": {
     ".": {
@@ -39,12 +36,11 @@
     "lint": "eslint . --max-warnings 0",
     "build": "node ../../scripts/clean-dist.mjs && tsc",
     "test": "vitest run",
-    "check-types": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "check-types": "tsc --noEmit"
   },
   "packageManager": "bun@1.4.4",
   "dependencies": {
-    "@ariadocs/core": "workspace:*",
+    "@nextguide-internal/core": "workspace:*",
     "gray-matter": "^4.0.3",
     "next-mdx-remote-client": "^2.1.3",
     "rehype-autolink-headings": "^7.1.0",
@@ -95,16 +91,14 @@
     }
   },
   "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nisabmohd/Aria-Docs.git",
+    "url": "git+https://github.com/m1nsook/NextGuide.git",
     "directory": "packages/lib-mdx"
   },
   "bugs": {
-    "url": "https://github.com/nisabmohd/Aria-Docs/issues"
+    "url": "https://github.com/m1nsook/NextGuide/issues"
   },
-  "homepage": "https://github.com/nisabmohd/Aria-Docs#readme"
+  "homepage": "https://m1nsook.github.io/NextGuide/",
+  "private": true
 }

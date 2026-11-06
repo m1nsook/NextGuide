@@ -1,6 +1,6 @@
 import { readFile as fsReadFile, stat } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
-import { truncate } from "@ariadocs/core"
+import { truncate } from "@nextguide-internal/core"
 import { OpenAPIError } from "../errors.js"
 
 /** Node.js / Bun / Deno implementation: read a local file with a size limit. */

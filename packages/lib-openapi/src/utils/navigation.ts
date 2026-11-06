@@ -1,4 +1,4 @@
-import type { NavItem } from "@ariadocs/core"
+import type { NavItem } from "@nextguide-internal/core"
 import type { APIOperation, APISpec, APITag } from "../types/index.js"
 
 export interface GetNavigationOptions {
@@ -12,7 +12,7 @@ export interface GetNavigationOptions {
  * Sidebar navigation: one item per tag, each with its operations as
  * children. Operations carry their HTTP method as `badge`.
  *
- * Returns the same `NavItem` shape as `@ariadocs/mdx`'s `getNavigation`, so
+ * Returns the same `NavItem` shape as `@nextguide-internal/mdx`'s `getNavigation`, so
  * one sidebar component can render both.
  */
 export function getNavigation(api: APISpec, options: GetNavigationOptions = {}): NavItem[] {

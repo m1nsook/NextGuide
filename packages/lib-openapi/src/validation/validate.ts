@@ -1,4 +1,4 @@
-import { isRecord } from "@ariadocs/core"
+import { isRecord } from "@nextguide-internal/core"
 import type { ValidationIssue } from "../errors.js"
 import { isHttpMethod } from "../normalize/parameters.js"
 import { toPointer } from "../refs/pointer.js"

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
-import { Docs } from "@ariadocs/components"
-import type { TocItem } from "@ariadocs/core"
+import { Docs } from "nextguide/components"
+import type { TocItem } from "nextguide/core"
 import type { PageLink } from "@/lib/navigation"
 import { PageNav } from "./page-footer"
 

@@ -58,7 +58,7 @@ export async function parseMdx<T = BaseFrontmatter>(options: MdxOptions): Promis
 
 /**
  * Compile MDX for **client rendering**: pass `serialized` to
- * `<MdxClient />` from `@ariadocs/mdx/client`.
+ * `<MdxClient />` from `@nextguide-internal/mdx/client`.
  */
 export async function serializeMdx<T = BaseFrontmatter>(options: MdxOptions): Promise<SerializeMdxResult<T>> {
   const source = await loadSource(options)

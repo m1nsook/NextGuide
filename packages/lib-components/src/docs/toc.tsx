@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { TocItem } from "@ariadocs/core"
+import type { TocItem } from "@nextguide-internal/core"
 import { AlignLeft } from "lucide-react"
 import { cn } from "../lib/utils.js"
 
@@ -30,8 +30,8 @@ export function DocsToc({ items, title = "On this page", className }: DocsTocPro
   const minDepth = Math.min(...items.map((item) => item.depth))
 
   return (
-    <nav data-slot="docs-toc" aria-label={title} className={cn("text-(length:--aria-text-sm)", className)}>
-      <p className="text-muted-foreground mb-3 flex items-center gap-1.5 text-(length:--aria-text-sm)">
+    <nav data-slot="docs-toc" aria-label={title} className={cn("text-(length:--ng-text-sm)", className)}>
+      <p className="text-muted-foreground mb-3 flex items-center gap-1.5 text-(length:--ng-text-sm)">
         <AlignLeft className="size-3.5" />
         {title}
       </p>
@@ -42,9 +42,9 @@ export function DocsToc({ items, title = "On this page", className }: DocsTocPro
               href={item.href}
               style={{ paddingLeft: `${0.75 + (item.depth - minDepth) * 0.75}rem` }}
               className={cn(
-                "-ml-px block border-l py-1 pr-2 text-(length:--aria-text-sm) leading-snug transition-colors",
+                "-ml-px block border-l py-1 pr-2 text-(length:--ng-text-sm) leading-snug transition-colors",
                 active === item.href
-                  ? "border-[var(--aria-accent)] text-[var(--aria-accent)]"
+                  ? "border-[var(--ng-accent)] text-[var(--ng-accent)]"
                   : "text-muted-foreground hover:text-foreground border-transparent"
               )}
             >
