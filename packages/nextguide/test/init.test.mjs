@@ -207,12 +207,14 @@ test('generates @/lib/nextguide imports when the Next.js project maps @/* to src
   } finally { clear(d) }
 })
 
-test('uses the right relative fallback for custom aliases and the root Pages Router', () => {
+test('respects a custom root alias for a root-mounted Pages Router', () => {
   const d = fixture({ folder: 'pages' })
   try {
     writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({ compilerOptions: { paths: { '~/*': ['./*'] } } }))
     initDeveloper(d, inspect(d, ['pages']), { basePath: '/' })
-    assert.match(read(d, 'pages/[[...slug]].tsx'), /from "\.\.\/lib\/nextguide"/)
+    assert.match(read(d, 'pages/[[...slug]].tsx'), /from "~\/lib\/nextguide"/)
+    assert.match(read(d, 'pages/_app.tsx'), /import "~\/styles\/nextguide\.css"/)
+    assert.match(read(d, 'lib/nextguide.ts'), /import config from "~\/nextguide\.config\.json"/)
   } finally { clear(d) }
 })
 
@@ -227,5 +229,90 @@ test('app routes wrap asynchronous navigation and MDX content in Suspense', () =
     assert.match(page, /<Suspense/)
     assert.match(page, /<DocumentationBody params=\{params\}/)
     assert.doesNotMatch(page, /dynamicParams\s*=/)
+  } finally { clear(d) }
+})
+
+test('resolves every generated local import using the existing Next.js @/* source alias', () => {
+  const d = fixture()
+  try {
+    writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({
+      compilerOptions: { paths: { '@/*': ['./src/*'] } },
+    }))
+    initDeveloper(d, inspect(d, ['src/app']))
+    const layout = read(d, 'src/app/docs/layout.tsx')
+    const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    const lib = read(d, 'src/lib/nextguide.ts')
+    assert.match(layout, /from "@\/lib\/nextguide"/)
+    assert.match(layout, /import "@\/styles\/nextguide\.css"/)
+    assert.match(page, /from "@\/lib\/nextguide"/)
+    // nextguide.config.json is at the project root, outside the src/* alias.
+    assert.match(lib, /import config from "\.\.\/\.\.\/nextguide\.config\.json"/)
+    assert.doesNotMatch(layout, /from "\.\.\/\.\.\/lib\/nextguide"/)
+  } finally { clear(d) }
+})
+
+test('supports root-based @/* aliases, including the root config import', () => {
+  const d = fixture({ folder: 'app' })
+  try {
+    writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({
+      compilerOptions: { paths: { '@/*': ['./*'] } },
+    }))
+    initDeveloper(d, inspect(d, ['app']))
+    assert.match(read(d, 'app/docs/layout.tsx'), /from "@\/lib\/nextguide"/)
+    assert.match(read(d, 'app/docs/layout.tsx'), /import "@\/styles\/nextguide\.css"/)
+    assert.match(read(d, 'lib/nextguide.ts'), /import config from "@\/nextguide\.config\.json"/)
+  } finally { clear(d) }
+})
+
+test('uses custom source aliases for Pages Router files and existing _app CSS patches', () => {
+  const d = fixture({ folder: 'src/pages' })
+  try {
+    writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({
+      compilerOptions: { paths: { '~/*': ['./src/*'] } },
+    }))
+    writeFileSync(join(d, 'src/pages/_app.tsx'), 'export default function App() { return null }\n')
+    const result = initDeveloper(d, inspect(d, ['src/pages']))
+    assert.deepEqual(result.modified, ['src/pages/_app.tsx'])
+    assert.match(read(d, 'src/pages/docs/[[...slug]].tsx'), /from "~\/lib\/nextguide"/)
+    assert.match(read(d, 'src/pages/_app.tsx'), /import "~\/styles\/nextguide\.css"/)
+    assert.match(read(d, 'src/pages/_app.tsx'), /import "nextguide\/styles\.css"/)
+    assert.match(read(d, 'src/lib/nextguide.ts'), /from "\.\.\/\.\.\/nextguide\.config\.json"/)
+  } finally { clear(d) }
+})
+
+test('falls back to depth-correct relative paths when no matching alias exists', () => {
+  for (const folder of ['app', 'src/app', 'pages', 'src/pages']) {
+    const d = fixture({ folder })
+    try {
+      writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({
+        compilerOptions: { paths: { '~/*': ['./unrelated/*'] } },
+      }))
+      initDeveloper(d, inspect(d, [folder]))
+      if (folder.endsWith('app')) {
+        const layout = read(d, `${folder}/docs/layout.tsx`)
+        const page = read(d, `${folder}/docs/[[...slug]]/page.tsx`)
+        assert.match(layout, /from "\.\.\/\.\.\/lib\/nextguide"/)
+        assert.match(layout, /import "\.\.\/\.\.\/styles\/nextguide\.css"/)
+        assert.match(page, /from "\.\.\/\.\.\/\.\.\/lib\/nextguide"/)
+      } else {
+        const page = read(d, `${folder}/docs/[[...slug]].tsx`)
+        const app = read(d, `${folder}/_app.tsx`)
+        assert.match(page, /from "\.\.\/\.\.\/lib\/nextguide"/)
+        assert.match(app, /import "\.\.\/styles\/nextguide\.css"/)
+      }
+    } finally { clear(d) }
+  }
+})
+
+test('parses jsconfig path mappings with JSONC comments without changing configuration', () => {
+  const d = fixture({ folder: 'app', typescript: false })
+  try {
+    const config = '{\n  // Custom JavaScript paths\n  "compilerOptions": {\n    "paths": { "@/*": ["./*"], },\n  },\n}\n'
+    writeFileSync(join(d, 'jsconfig.json'), config)
+    initDeveloper(d, inspect(d, ['app']))
+    assert.equal(read(d, 'jsconfig.json'), config)
+    assert.match(read(d, 'app/docs/layout.jsx'), /from "@\/lib\/nextguide"/)
+    assert.match(read(d, 'app/docs/layout.jsx'), /import "@\/styles\/nextguide\.css"/)
+    assert.match(read(d, 'lib/nextguide.js'), /from "@\/nextguide\.config\.json"/)
   } finally { clear(d) }
 })
