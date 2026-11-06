@@ -81,6 +81,12 @@ test("all engine modules live in the single NextGuide source package", () => {
   }
 })
 
+test("Developer Mode page creation ships in the CLI package", () => {
+  for (const filename of ["bin/nextguide.mjs", "lib/init.mjs", "lib/page.mjs", "lib/page-cli.mjs"]) {
+    assert.ok(existsSync(join(root, filename)), filename + " is required in the npm package")
+  }
+})
+
 test("documentation site does not depend on the removed UI workspace", () => {
   const website = join(dirname(dirname(root)), "apps", "web")
   for (const file of [
