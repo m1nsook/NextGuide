@@ -33,9 +33,14 @@ function createSite(router) {
   mkdirSync(modules, { recursive: true })
   // Bun may install workspace packages under apps/web/node_modules rather than
   // the monorepo root. Link dependencies to the smoke fixture explicitly.
-  for (const packageName of ["next", "react", "react-dom", "nextguide"]) {
+  for (const packageName of [
+    "next", "react", "react-dom", "nextguide", "typescript",
+    "@types/react", "@types/react-dom", "@types/node",
+  ]) {
     const packageFile = require.resolve(packageName + "/package.json")
-    symlinkSync(dirname(packageFile), join(modules, packageName), "dir")
+    const destination = join(modules, packageName)
+    mkdirSync(dirname(destination), { recursive: true })
+    symlinkSync(dirname(packageFile), destination, "dir")
   }
   writeFileSync(join(folder, "tsconfig.json"), JSON.stringify({
     compilerOptions: {
