@@ -4,6 +4,10 @@ NextGuide is an **independent, all-in-one documentation framework for Next.js**.
 
 **Documentation:** https://m1nsook.github.io/NextGuide/
 
+## Fully equipped Developer Mode starter
+
+Running `bunx nextguide init --developer` now creates a real documentation site instead of the earlier minimal skeleton. The generated site has responsive navigation, local Ctrl/Cmd+K search, a table of contents, breadcrumbs, page actions, light/dark/system controls, a preconfigured MDX component registry and live examples. **One package:** `nextguide` provides both the layout and components. See [the generated project file map](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
+
 ## Test the current GitHub build (no npm release needed)
 
 **Use this path for Developer Mode acceptance testing.** The `main` branch is the current source of truth; the previously published npm `alpha` may not contain current changes. You do **not** need to copy NextGuide's source into your test application.
