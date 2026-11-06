@@ -180,7 +180,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
       projectImport(directory, aliases, layoutFile, stylesFile)
     )
     files[pageFile] = fullAppPageSource(
-      typed, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, '')), basePath
+      typed, basePath, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, ''))
     )
   } else {
     const pageFile = router.folder + (basePath === '/' ? '/[[...slug]].' : '/docs/[[...slug]].') + ext
