@@ -104,20 +104,21 @@ test("documentation site does not depend on the removed UI workspace", () => {
     "Removed shadcn workspace registry config should not be restored")
 })
 
-test("official site version selector cannot appear in generated docs projects", () => {
+test("official and generated documentation use the same package-owned version selector", () => {
   const projectRoot = dirname(dirname(root))
   const siteLayout = readFileSync(join(projectRoot, "apps/web/app/(docs)/layout.tsx"), "utf8")
-  const side = readFileSync(join(projectRoot, "apps/web/components/docs-sidebar.tsx"), "utf8")
-  const selector = readFileSync(join(projectRoot, "apps/web/components/version-selector.tsx"), "utf8")
+  const side = readFileSync(join(root, "src/components/site/sidebar.tsx"), "utf8")
+  const selector = readFileSync(join(root, "src/components/site/version-selector.tsx"), "utf8")
   const generated = readFileSync(join(root, "lib/init.mjs"), "utf8")
   assert.match(siteLayout, /nextguidePackage\.version/)
   assert.match(side, /DocsVersionSelector/)
   assert.match(selector, /Development/)
-  assert.doesNotMatch(generated, /DocsVersionSelector|Documentation versions/)
+  assert.match(generated, /fullLayoutSource/)
+  assert.match(readFileSync(join(root, "lib/starter-templates.mjs"), "utf8"), /DocsSiteSidebar/)
 })
 test("official documentation keyboard shortcut uses Lucide Command, not literal glyph", () => {
   const projectRoot = dirname(dirname(root))
-  const search = readFileSync(join(projectRoot, "apps/web/components/search.tsx"), "utf8")
+  const search = readFileSync(join(root, "src/components/site/search.tsx"), "utf8")
   assert.match(search, /<Command/)
   assert.doesNotMatch(search, /⌘K/)
 })
@@ -134,7 +135,7 @@ test("code window and tabbed code use only their outer border and radius", () =>
 
 test("official docs search displays OS-appropriate keyboard shortcut without hydration mismatch", () => {
   const website = join(dirname(dirname(root)), "apps/web")
-  const search = readFileSync(join(website, "components/search.tsx"), "utf8")
+  const search = readFileSync(join(root, "src/components/site/search.tsx"), "utf8")
   assert.match(search, /useSyncExternalStore\(noSubscribe, isMacPlatform, nonAppleServerSnapshot\)/)
   assert.match(search, /userAgentData\?\.platform/)
   assert.match(search, /"Command plus K" : "Control plus K"/)
