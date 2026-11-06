@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { Docs } from "nextguide/components"
+import { Docs, DocsBreadcrumbs, DocsPageActions, type DocsBreadcrumbItem } from "nextguide/components"
 import type { TocItem } from "nextguide/core"
 import type { PageLink } from "@/lib/navigation"
 import { PageNav } from "./page-footer"
@@ -9,6 +9,8 @@ export function MdxPage({
   title,
   description,
   toc,
+  markdown,
+  breadcrumbs,
   editUrl,
   previous,
   next,
@@ -17,6 +19,8 @@ export function MdxPage({
   title?: string
   description?: string
   toc: TocItem[]
+  markdown: string
+  breadcrumbs: DocsBreadcrumbItem[]
   editUrl?: string
   previous?: PageLink
   next?: PageLink
@@ -25,18 +29,10 @@ export function MdxPage({
   return (
     <div className="mx-auto flex max-w-[76rem] justify-center gap-14 px-5 pt-10 pb-24 sm:px-10 lg:pt-14">
       <article className="w-full max-w-3xl min-w-0">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <DocsBreadcrumbs items={breadcrumbs} />
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           {title !== undefined ? <Docs.Page.Title>{title}</Docs.Page.Title> : null}
-          {editUrl !== undefined ? (
-            <a
-              href={editUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground text-[13px] transition-colors"
-            >
-              Edit on GitHub
-            </a>
-          ) : null}
+          <DocsPageActions markdown={markdown} title={title ?? "Documentation"} editUrl={editUrl} />
         </div>
         {description !== undefined ? <Docs.Page.Description>{description}</Docs.Page.Description> : null}
         <Docs.Page.Content>{children}</Docs.Page.Content>
