@@ -45,6 +45,7 @@ jobs:
           cd packages/nextguide
           bun run build
           bun run test:dist
+          bun run test:unit
 
       - name: Smoke-build generated App Router and Pages Router sites
         if: github.event_name == 'pull_request'

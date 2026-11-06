@@ -5,12 +5,14 @@
   "packageManager": "bun@1.4.4",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/nextguide",
+    "packages/eslint-config",
+    "packages/typescript-config"
   ],
   "scripts": {
     "dev": "bun run --cwd packages/nextguide build && turbo dev --filter=web",
     "build": "turbo run build",
-    "build:packages": "turbo run build --filter=web^...",
+    "build:packages": "bun run --cwd packages/nextguide build",
     "build:web": "turbo run build --filter=web",
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
