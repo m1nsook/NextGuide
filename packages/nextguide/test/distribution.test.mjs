@@ -170,6 +170,7 @@ test("reusable page actions do not depend on Next.js module resolution or unavai
   const source = readFileSync(join(root, "src/components/docs/page-tools.tsx"), "utf8")
   assert.doesNotMatch(source, /from ["']next\/link["']/)
   assert.doesNotMatch(source, /\bGithub\b/)
-  assert.match(source, /\bGitBranch\b/)
+  assert.match(source, /import \{ siGithub \} from "simple-icons"/)
+  assert.match(source, /siGithub\.path/)
   assert.match(source, /<a href=\{item.href\}/)
 })
