@@ -21,6 +21,20 @@ This creates the MDX file and updates the relevant `_meta.json` files automatica
 
 Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.
 
+## Check your installed version
+
+<CodeWindow title="Installed NextGuide version" language="powershell" code="bunx nextguide --version" />
+
+This prints the version in the current local package without using the internet.
+
+To compare it against npm's public `latest` release:
+
+<CodeWindow title="Check for NextGuide releases" language="powershell" code="bunx nextguide version check" />
+
+Use `--tag alpha` to check the prerelease channel, or `--json` for machine-readable output. NextGuide never upgrades packages automatically; the check only contacts npm when you run it. Until a stable version is published, the registry might not have a `latest` tag.
+
+Our **official NextGuide documentation website** shows its development version in the sidebar. This selector is part of the official website only, and is **not** generated in the sidebars of other projects using Developer Mode.
+
 ## GitHub Pages
 
 NextGuide's official documentation uses this file-first architecture and publishes a static Next.js export. GitHub Pages cannot run Account Mode because it has no persistent backend.

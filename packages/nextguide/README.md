@@ -32,6 +32,18 @@ bunx nextguide page add guides/api --dry-run
 
 **Minimum version:** `0.0.1-alpha.2` for the working Developer Mode initializer and expanded UI components. Earlier alpha versions do not include these features. Account Mode, `/setup`, and `/admin` remain in development.
 
+## Check the installed version
+
+```powershell
+bunx nextguide --version
+bunx nextguide version check
+bunx nextguide version check --tag alpha --json
+```
+
+The first command is offline. The explicit `version check` command compares the local version against npm's `latest` tag by default, or `alpha` when requested. It reports unpublished versions and network errors clearly and does not change any packages or files.
+
+The official NextGuide documentation site's version selector is **not** generated into users' projects.
+
 ## Use the built-in components
 
 ```tsx
