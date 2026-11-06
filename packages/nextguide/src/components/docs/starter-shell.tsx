@@ -98,6 +98,17 @@ export function DocsStarterShell({
     }
   }, [searchOpen])
 
+  // Radix menus and dialogs render outside the shell, into document.body.
+  // Match their design tokens to the selected documentation theme.
+  React.useEffect(() => {
+    const previous = document.body.getAttribute("data-ng-docs-theme")
+    document.body.setAttribute("data-ng-docs-theme", dark ? "dark" : "light")
+    return () => {
+      if (previous === null) document.body.removeAttribute("data-ng-docs-theme")
+      else document.body.setAttribute("data-ng-docs-theme", previous)
+    }
+  }, [dark])
+
   const results = React.useMemo(() => {
     const term = query.trim().toLocaleLowerCase()
     const matches = term
