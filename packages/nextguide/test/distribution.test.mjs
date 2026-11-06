@@ -204,3 +204,16 @@ test("shipped Developer Mode starter contains full styles, search, navigation an
   assert.match(starter, /content\/docs\/components\/examples\.mdx/)
   assert.match(starter, /content\/docs\/guides\/writing\.mdx/)
 })
+
+test("NextGuide ships its own full-width landing component and responsive design", () => {
+  const component = readFileSync(join(root, "src/components/docs/landing-hero.tsx"), "utf8")
+  const css = readFileSync(join(root, "src/components/styles/starter.css"), "utf8")
+  const registry = readFileSync(join(root, "lib/starter-components.mjs"), "utf8")
+  assert.match(component, /export function DocsLandingHero/)
+  assert.match(component, /ng-landing-hero/)
+  assert.match(css, /ng-site-landing-layout/)
+  assert.match(css, /ng-landing-preview/)
+  assert.match(css, /ng-site-nav-current::before/)
+  assert.match(css, /prefers-reduced-motion/)
+  assert.match(registry, /DocsLandingHero/)
+})
