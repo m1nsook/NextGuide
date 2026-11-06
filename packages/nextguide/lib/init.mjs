@@ -166,7 +166,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
   files[libFile] = fullLibSource(
     projectImport(directory, aliases, libFile, 'nextguide.config.json'),
     projectImport(directory, aliases, libFile, mdxFile.replace(/\.(tsx|jsx)$/, '')),
-    basePath
+    basePath, typed
   )
   files[stylesFile] = fullStyleSource(root)
   let patch = null
