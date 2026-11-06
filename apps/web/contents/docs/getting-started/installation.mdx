@@ -7,6 +7,34 @@ description: Start from a Next.js project and let NextGuide create every require
 
 No file copying, no searching for the right folder, and no manually wiring a catch-all route. **The CLI creates the structure for you.**
 
+## Test the current GitHub source without copying the repository into your app
+
+The current Developer Mode features are on GitHub `main`, but the public npm package may still be an older alpha. **For now, test a package built from `main`, not `bun add nextguide`.**
+
+In a **separate NextGuide source checkout** (for example, opened with GitHub Desktop), run:
+
+<CodeWindow title="Build a testable package from GitHub main" language="powershell" code={"bun install\nbun run pack:dev"} />
+
+This runs the package tests and produces a single `nextguide-0.0.1-alpha.2.tgz` archive in the NextGuide repository root. It does not publish anything to npm.
+
+Now open PowerShell in your **fresh Next.js application**, in a completely different folder:
+
+<CodeWindow title="Install only the built NextGuide package" language="powershell" code={"bun add \"C:\\path\\to\\NextGuide\\nextguide-0.0.1-alpha.2.tgz\"\nbunx nextguide --version\nbunx nextguide init --developer\nbun run dev"} />
+
+Replace `C:\\path\\to\\NextGuide` with the real absolute path to the package archive. Your test application gets the complete single NextGuide package—not its source repository, workspaces, or development tools.
+
+To retest later commits, pull `main`, rerun `bun run pack:dev`, then install the newly rebuilt archive again from the test app.
+
+If you have not created a Next.js test application yet, run `bunx create-next-app@latest my-docs` in a **different folder** first.
+
+## Install a published version (after Account Mode is ready)
+
+When the normal public release is published to npm, installation will be:
+
+<CodeWindow title="Install a published NextGuide release" language="powershell" code="bun add nextguide" />
+
+This command is **not** the correct source for testing current development changes until the release has actually been published.
+
 ## 1. Make sure you have a Next.js application
 
 If your project already uses Next.js, open a terminal in its root (the directory containing `package.json`) and skip to step 2.
@@ -17,11 +45,11 @@ For a brand-new application:
 
 Follow the Next.js questions about TypeScript, App Router and `src/`. NextGuide detects the resulting structure, including Pages Router projects.
 
-## 2. Install one dependency
+## 2. Published-package installation (not the current test build)
 
-<CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha",language:"powershell"},{label:"npm",code:"npm install nextguide@alpha",language:"powershell"},{label:"pnpm",code:"pnpm add nextguide@alpha",language:"powershell"}]} />
+<CodeTabs items={[{label:"Bun",code:"bun add nextguide",language:"powershell"},{label:"npm",code:"npm install nextguide",language:"powershell"},{label:"pnpm",code:"pnpm add nextguide",language:"powershell"}]} />
 
-This installs the core renderer, MDX, OpenAPI, icons and UI components together. It **does not silently modify your application** during package installation.
+Once published, this installs the core renderer, MDX, OpenAPI, icons, and UI components together. **Until then, use the source-built tarball instructions above.**
 
 ## 3. Generate the working documentation structure
 
