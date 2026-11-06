@@ -1,7 +1,7 @@
 [
   {
     "slug": "index",
-    "title": "UI library"
+    "title": "Component catalog"
   },
   {
     "slug": "code-windows",
@@ -33,6 +33,10 @@
   },
   {
     "slug": "documentation-blocks",
-    "title": "Docs blocks"
+    "title": "Documentation blocks"
+  },
+  {
+    "slug": "reference",
+    "title": "All available exports"
   }
 ]

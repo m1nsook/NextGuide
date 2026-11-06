@@ -1,18 +1,14 @@
 [
   {
-    "slug": "server-and-client",
-    "title": "Server and client rendering"
+    "slug": "components",
+    "title": "Use built-in components"
   },
   {
     "slug": "themes",
-    "title": "Syntax themes"
+    "title": "Colors & CSS"
   },
   {
-    "slug": "component-override",
-    "title": "Custom MDX components"
-  },
-  {
-    "slug": "i18n",
-    "title": "Internationalization"
+    "slug": "fonts",
+    "title": "Typography"
   }
 ]

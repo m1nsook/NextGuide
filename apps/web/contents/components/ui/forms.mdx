@@ -1,28 +1,44 @@
 ---
 title: Forms & inputs
-description: Labels, inputs, switches, checkboxes and form feedback.
+description: Form fields and interactive controls that keep their accessible labels.
 ---
 
 # Forms & inputs
 
+## Inputs, switches and checkboxes
+
 <Preview>
-  <div className="grid max-w-md gap-5">
-    <div className="grid gap-2"><Label htmlFor="ng-title-demo">Website title</Label><Input id="ng-title-demo" defaultValue="My Documentation" /></div>
-    <div className="flex items-center gap-3"><Switch id="ng-theme-demo" defaultChecked /><Label htmlFor="ng-theme-demo">Allow theme switching</Label></div>
-    <div className="flex items-center gap-3"><Checkbox id="ng-toc-demo" defaultChecked /><Label htmlFor="ng-toc-demo">Show table of contents</Label></div>
-  </div>
+<div className="grid max-w-md gap-5">
+  <div className="grid gap-2"><Label htmlFor="ng-demo-name">Site name</Label><Input id="ng-demo-name" defaultValue="My docs" /></div>
+  <div className="flex items-center gap-3"><Switch id="ng-demo-switch" defaultChecked /><Label htmlFor="ng-demo-switch">Enable theme toggle</Label></div>
+  <div className="flex items-center gap-3"><Checkbox id="ng-demo-toc" defaultChecked /><Label htmlFor="ng-demo-toc">Show table of contents</Label></div>
+</div>
 </Preview>
 
 ```tsx
-import { Input, Label, Checkbox, Switch } from "nextguide/ui";
+import { Label, Input, Textarea, NativeSelect, Switch, Checkbox } from "nextguide/ui"
 
-<Label htmlFor="site-title">Site title</Label>
-<Input id="site-title" defaultValue="My Documentation" />
-
-<Label htmlFor="theme-switch">Allow theme switching</Label>
-<Switch id="theme-switch" defaultChecked />
-
-<Checkbox id="table-of-contents" defaultChecked aria-label="Table of contents" />
+<div className="grid max-w-md gap-5">
+  <div className="grid gap-2"><Label htmlFor="ng-demo-name">Site name</Label><Input id="ng-demo-name" defaultValue="My docs" /></div>
+  <div className="flex items-center gap-3"><Switch id="ng-demo-switch" defaultChecked /><Label htmlFor="ng-demo-switch">Enable theme toggle</Label></div>
+  <div className="flex items-center gap-3"><Checkbox id="ng-demo-toc" defaultChecked /><Label htmlFor="ng-demo-toc">Show table of contents</Label></div>
+</div>
 ```
 
-You can also use `Textarea`, `NativeSelect`, `Field`, `FieldDescription`, `FieldError`, `RadioGroup`, `RadioGroupItem`, `Select`, and related selection primitives. Use labels and descriptions for accessible forms.
+## Multiline and selection
+
+<Preview>
+<div className="grid max-w-md gap-4">
+  <div className="grid gap-2"><Label htmlFor="ng-demo-description">Description</Label><Textarea id="ng-demo-description" defaultValue="Documentation for my app." /></div>
+  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><NativeSelect id="ng-demo-language" defaultValue="en"><option value="en">English</option><option value="pl">Polish</option></NativeSelect></div>
+</div>
+</Preview>
+
+```tsx
+import { Label, Input, Textarea, NativeSelect, Switch, Checkbox } from "nextguide/ui"
+
+<div className="grid max-w-md gap-4">
+  <div className="grid gap-2"><Label htmlFor="ng-demo-description">Description</Label><Textarea id="ng-demo-description" defaultValue="Documentation for my app." /></div>
+  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><NativeSelect id="ng-demo-language" defaultValue="en"><option value="en">English</option><option value="pl">Polish</option></NativeSelect></div>
+</div>
+```

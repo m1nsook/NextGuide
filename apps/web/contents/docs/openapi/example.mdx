@@ -1,0 +1,29 @@
+---
+title: OpenAPI example
+subtitle: A complete sample specification for experimenting with the NextGuide API renderer.
+---
+
+# An API reference without a live backend
+
+The [API reference preview](/reference) reads a local YAML file with sample endpoints. It shows request methods, parameters, response types and endpoint grouping without requiring API keys or sending network requests.
+
+The illustrative API contains:
+
+- `GET /v1/articles`: list articles
+- `POST /v1/articles`: create an article
+- `GET /v1/articles/{id}`: retrieve a single article
+
+**These are demonstration endpoints.** NextGuide does not host an article service.
+
+## How to use your own specification
+
+Put a valid OpenAPI 3.x YAML or JSON file in your Next.js project, then pass its location to `createOpenAPI`:
+
+```ts
+import { createOpenAPI } from "nextguide/openapi"
+
+const api = createOpenAPI({ source: "content/api.yaml", allowRemote: false })
+const model = await api.parse()
+```
+
+See [the OpenAPI overview](/docs/openapi) for the next steps.

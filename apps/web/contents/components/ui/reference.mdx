@@ -1,0 +1,37 @@
+---
+title: All available components
+subtitle: A complete inventory of NextGuide UI and documentation block exports.
+---
+
+# Component reference
+
+Everything below is in the **single `nextguide` package**. There are no separate component installation commands or shadcn registry steps.
+
+## UI primitives — `nextguide/ui`
+
+| Category | Public exports |
+| --- | --- |
+| Buttons & display | `Button`, `buttonVariants`, `Card`, `CardHeader`, `CardTitle`, `CardContent`, `CardFooter`, `Badge`, `Kbd`, `Separator`, `Skeleton`, `Spinner` |
+| Forms | `Input`, `Textarea`, `Label`, `Field`, `FieldDescription`, `FieldError`, `NativeSelect`, `Checkbox`, `CheckboxRoot`, `Switch`, `RadioGroup`, `RadioGroupItem`, `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator` |
+| Alerts & progress | `Alert`, `AlertTitle`, `AlertDescription`, `Progress`, `EmptyState` |
+| Tabs & disclosure | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`, `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `Collapsible`, `CollapsibleTrigger`, `CollapsibleContent`, `Toggle`, `ToggleGroup`, `ToggleGroupItem` |
+| Overlays | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `Sheet`, `SheetTrigger`, `SheetContent`, `SheetClose`, `SheetTitle`, `SheetDescription`, `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverClose`, `HoverCard`, `HoverCardTrigger`, `HoverCardContent`, `TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent`, `AlertDialog`, `AlertDialogTrigger`, `AlertDialogContent` |
+| Menus | `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuCheckboxItem`, `DropdownMenuGroup`, `DropdownMenuRadioGroup`, `DropdownMenuRadioItem`, `ContextMenu`, `ContextMenuTrigger`, `ContextMenuContent`, `ContextMenuItem` |
+| Data & layout | `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`, `ScrollArea`, `ScrollAreaViewport`, `ScrollBar`, `Avatar`, `AvatarImage`, `AvatarFallback` |
+| Navigation | `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbSeparator` |
+
+## Documentation — `nextguide/blocks`
+
+| Component | Function |
+| --- | --- |
+| `CodeWindow` | Titled code blocks, language label and copy action |
+| `CodeTabs` | Switchable code snippets |
+| `CopyButton` | Copy a supplied string |
+| `FileTree` | Nested, collapsible file structure |
+| `Callout` | Informational, warning, success or danger note |
+| `Steps`, `Step` | Numbered instructional steps |
+| `LinkCards`, `LinkCard` | Clickable documentation navigation cards |
+
+The module also exports TypeScript props/types. For icons, use `nextguide/icons`. For the font catalog and preview, use `nextguide/fonts`.
+
+This is an inventory of **actual exports**, not a promise that charting, rich text, command palette or other future components are available today.

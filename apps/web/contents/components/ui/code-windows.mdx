@@ -1,40 +1,32 @@
 ---
 title: Code windows & tabs
-description: Titled code snippets, copy buttons, language labels and package manager tabs.
+description: Real tabbed code panels with copy actions and language labels.
 ---
 
 # Code windows & tabs
 
-The NextGuide `CodeWindow` supports a header, syntax label, copy button, optional line numbers and multiline content.
+## Titled, copyable snippet
 
 <Preview>
-  <CodeWindow title="PowerShell · install NextGuide" language="powershell" code={"bun add nextguide\nbunx nextguide doctor"} />
+<CodeWindow title="Install NextGuide" language="powershell" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
 </Preview>
 
 ```tsx
-import { CodeWindow } from "nextguide/blocks";
+import { CodeWindow, CodeTabs } from "nextguide/blocks"
 
-<CodeWindow
-  title="PowerShell · install NextGuide"
-  language="powershell"
-  code={"bun add nextguide\nbunx nextguide doctor"}
-/>;
+<CodeWindow title="Install NextGuide" language="powershell" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
 ```
 
-## Switch between commands
+## Switch between package managers
 
 <Preview>
-  <CodeTabs items={[{ label: "Bun", code: "bun add nextguide", language: "bash" }, { label: "npm", code: "npm install nextguide", language: "bash" }, { label: "pnpm", code: "pnpm add nextguide", language: "bash" }]} />
+<CodeTabs items={[{label:"Bun",language:"bash",code:"bun add nextguide@alpha"},{label:"npm",language:"bash",code:"npm install nextguide@alpha"},{label:"pnpm",language:"bash",code:"pnpm add nextguide@alpha"}]} />
 </Preview>
 
 ```tsx
-import { CodeTabs } from "nextguide/blocks";
+import { CodeWindow, CodeTabs } from "nextguide/blocks"
 
-<CodeTabs items={[
-  { label: "Bun", language: "bash", code: "bun add nextguide" },
-  { label: "npm", language: "bash", code: "npm install nextguide" },
-  { label: "pnpm", language: "bash", code: "pnpm add nextguide" },
-]} />;
+<CodeTabs items={[{label:"Bun",language:"bash",code:"bun add nextguide@alpha"},{label:"npm",language:"bash",code:"npm install nextguide@alpha"},{label:"pnpm",language:"bash",code:"pnpm add nextguide@alpha"}]} />
 ```
 
-You can also pass `lineNumbers`, `wrap`, or `description` to `CodeWindow`. The text is copied from the original `code` prop rather than from visually highlighted HTML.
+Both components copy the original source text, not HTML formatting. Pass a plain `code` string; `CodeTabs` receives a list of `label`, `language`, and `code` entries.

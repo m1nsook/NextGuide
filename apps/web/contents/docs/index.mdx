@@ -1,31 +1,33 @@
 ---
-title: Introduction
-description: Meet NextGuide, the all-in-one Next.js documentation framework.
+title: NextGuide documentation
+description: Build, customize and publish beautiful documentation with Next.js.
 ---
 
-# NextGuide
+# Documentation that belongs to your project
 
-NextGuide is an independent open-source **Next.js documentation framework**. Build MDX sites, publish OpenAPI references, and customize pages with reusable UI components, icons, and typography.
+NextGuide is an independent, all-in-one documentation framework for Next.js. Your pages are **MDX files in your project**, not content trapped behind an external service. NextGuide takes care of loading them, creating navigation, rendering reusable components, and building API references.
 
-Install one package: `nextguide`. Core utilities, MDX rendering, OpenAPI, and UI components are included.
+## Install it, then edit it
 
-## Available today
+<CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha
+bunx nextguide init --developer",language:"bash"},{label:"npm",code:"npm install nextguide@alpha
+npx nextguide init --developer",language:"bash"}]} />
 
-- Next.js documentation with file-based MDX, navigation, search, and syntax highlighting.
-- OpenAPI parsing and interactive API reference components.
-- An all-in-one npm distribution with documentation components, shadcn-style UI, icons, and a font picker.
-- Read-only static deployment, including this project's [GitHub Pages documentation](/docs/deployment/github-pages).
+The initializer adds the route files, MDX content, navigation, configuration, and styles to an **existing Next.js application**. It detects `app/`, `src/app/`, `pages/`, or `src/pages/`; no copying a collection of examples into random directories.
 
-## On the roadmap
+<LinkCards>
+  <LinkCard title="Installation" description="Create your first working docs site" href="/docs/getting-started/installation" />
+  <LinkCard title="Generated files" description="Understand every new file and where it lives" href="/docs/getting-started/generated-files" />
+  <LinkCard title="Components" description="Explore working previews and matching usage code" href="/components/ui" />
+  <LinkCard title="OpenAPI" description="Turn a YAML or JSON spec into an API reference" href="/docs/openapi" />
+</LinkCards>
 
-- A real `nextguide init` initializer for both Next.js routers.
-- A secure owner-token setup wizard with a visual font picker.
-- Optional Account Mode backed by embedded SQLite and an authenticated `/admin` panel.
+## The two modes
 
-**Current release:** `0.0.1-alpha.1` contains the renderer and components; the project initializer and Account Mode are not implemented.
+**Developer Mode is available in the alpha installer.** It is file-first, Git-friendly, and suitable for static builds. NextGuide's own GitHub Pages site uses this kind of architecture.
 
-## Start building
+**Account Mode is being developed.** It will add a secure first-run wizard, embedded SQLite, and an authenticated content editor. We will not pretend these features work before they do.
 
-See [Installation](/docs/getting-started/installation), [MDX](/docs/mdx), [OpenAPI](/docs/openapi), and [Components](/components).
+NextGuide is distributed as **one `nextguide` package**. Next.js and React remain peer dependencies; you do not need to install individual documentation libraries or run the shadcn registry installer.
 
-For upstream licenses and copyright notices, see [License & attribution](/docs/credits).
+<Callout kind="tip" title="Early alpha">The installer and expanded components are prepared for `0.0.1-alpha.2`. If your installed version is older, check `bunx nextguide --version` before following these instructions.</Callout>

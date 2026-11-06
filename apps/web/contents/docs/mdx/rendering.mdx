@@ -1,0 +1,32 @@
+---
+title: MDX rendering & security
+description: Choose the correct renderer and understand executable MDX content.
+---
+
+# Rendering MDX safely
+
+NextGuide supports two rendering paths:
+
+| Mode | API | When to use |
+| --- | --- | --- |
+| React Server Components | `docs.parse({ slug })` | Next.js App Router, file-based docs |
+| Serialized client output | `docs.serialize({ slug })` with `MdxClient` | Pages Router or custom client rendering |
+
+## Server rendering
+
+```tsx
+import { createDocs } from "nextguide/mdx"
+
+const docs = createDocs({ contentDir: "content/docs" })
+const { MDX, frontmatter, toc } = await docs.parse({ slug: "getting-started" })
+```
+
+## Content trust
+
+MDX supports expressions that can execute code during rendering. Trusted repository files are different from untrusted public submissions. For content not under your control, use `blockJs: true` and apply authentication/validation before displaying it. Disabling expressions is useful but does not replace sanitization or authorization for a CMS.
+
+```ts
+const docs = createDocs({ contentDir: "content/docs", blockJs: true })
+```
+
+Account Mode will need additional content and permission boundaries before it is released.

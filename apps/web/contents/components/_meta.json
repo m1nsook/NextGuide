@@ -1,22 +1,14 @@
 [
   {
     "slug": "index",
-    "title": "Overview"
+    "title": "Explore components"
   },
   {
     "slug": "ui",
-    "title": "UI library"
+    "title": "UI components"
   },
   {
     "slug": "theming",
-    "title": "Theming"
-  },
-  {
-    "slug": "docs",
-    "title": "Documentation renderer"
-  },
-  {
-    "slug": "openapi",
-    "title": "OpenAPI renderer"
+    "title": "Customize components"
   }
 ]

@@ -1,0 +1,31 @@
+---
+title: Use built-in components
+subtitle: Import UI, documentation blocks and icons from one package.
+---
+
+# Bring components into your documentation
+
+NextGuide includes its own UI layer and documentation blocks. Use them in your Next.js application without installing a separate UI registry.
+
+```tsx
+import { Button, Card, Dialog, Table, Tabs } from "nextguide/ui"
+import { CodeWindow, FileTree, Callout, Steps } from "nextguide/blocks"
+import { BrandIcon, UIIcon } from "nextguide/icons"
+import "nextguide/styles.css"
+```
+
+<Callout kind="info" title="MDX integration">To use custom JSX names directly inside MDX, pass the component mapping to `createDocs({ components })` in your MDX source configuration.</Callout>
+
+```tsx
+import { createDocs } from "nextguide/mdx"
+import { Callout, CodeWindow, FileTree } from "nextguide/blocks"
+
+const docs = createDocs({
+  contentDir: "content/docs",
+  components: { Callout, CodeWindow, FileTree },
+})
+```
+
+This mapping is optional, and the CLI starter does not install a preselected collection of MDX components into every project. Choose the components you actually use.
+
+**All examples in the [component gallery](/components/ui) show a working preview and its matching JSX.**

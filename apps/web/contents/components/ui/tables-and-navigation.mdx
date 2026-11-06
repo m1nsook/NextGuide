@@ -1,28 +1,52 @@
 ---
 title: Tables & navigation
-description: Structured data, breadcrumbs and other navigation primitives.
+description: Responsive data tables and accessible page trails.
 ---
 
 # Tables & navigation
 
+## Table
+
 <Preview>
-  <Table>
-    <TableHeader><TableRow><TableHead>Component</TableHead><TableHead>Module</TableHead></TableRow></TableHeader>
-    <TableBody>
-      <TableRow><TableCell>Button</TableCell><TableCell>nextguide/ui</TableCell></TableRow>
-      <TableRow><TableCell>FileTree</TableCell><TableCell>nextguide/blocks</TableCell></TableRow>
-      <TableRow><TableCell>Docs.Nav</TableCell><TableCell>nextguide/components</TableCell></TableRow>
-    </TableBody>
-  </Table>
+<Table>
+  <TableHeader><TableRow><TableHead>Feature</TableHead><TableHead>Import</TableHead></TableRow></TableHeader>
+  <TableBody>
+    <TableRow><TableCell>Buttons</TableCell><TableCell>nextguide/ui</TableCell></TableRow>
+    <TableRow><TableCell>FileTree</TableCell><TableCell>nextguide/blocks</TableCell></TableRow>
+    <TableRow><TableCell>OpenAPI</TableCell><TableCell>nextguide/components</TableCell></TableRow>
+  </TableBody>
+</Table>
 </Preview>
 
 ```tsx
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "nextguide/ui";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
 
 <Table>
-  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Value</TableHead></TableRow></TableHeader>
-  <TableBody><TableRow><TableCell>Site</TableCell><TableCell>NextGuide</TableCell></TableRow></TableBody>
+  <TableHeader><TableRow><TableHead>Feature</TableHead><TableHead>Import</TableHead></TableRow></TableHeader>
+  <TableBody>
+    <TableRow><TableCell>Buttons</TableCell><TableCell>nextguide/ui</TableCell></TableRow>
+    <TableRow><TableCell>FileTree</TableCell><TableCell>nextguide/blocks</TableCell></TableRow>
+    <TableRow><TableCell>OpenAPI</TableCell><TableCell>nextguide/components</TableCell></TableRow>
+  </TableBody>
 </Table>
 ```
 
-Other navigation and layout components include `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbPage`, `BreadcrumbSeparator`, `Separator`, `ScrollArea`, `ScrollAreaViewport`, and `ScrollBar`.
+## Breadcrumb
+
+<Preview>
+<Breadcrumb><BreadcrumbList>
+  <BreadcrumbItem><BreadcrumbLink href="/docs">Docs</BreadcrumbLink></BreadcrumbItem>
+  <BreadcrumbSeparator />
+  <BreadcrumbItem><BreadcrumbPage>Components</BreadcrumbPage></BreadcrumbItem>
+</BreadcrumbList></Breadcrumb>
+</Preview>
+
+```tsx
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
+
+<Breadcrumb><BreadcrumbList>
+  <BreadcrumbItem><BreadcrumbLink href="/docs">Docs</BreadcrumbLink></BreadcrumbItem>
+  <BreadcrumbSeparator />
+  <BreadcrumbItem><BreadcrumbPage>Components</BreadcrumbPage></BreadcrumbItem>
+</BreadcrumbList></Breadcrumb>
+```

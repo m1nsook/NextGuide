@@ -1,48 +1,56 @@
 ---
 title: Documentation blocks
-description: Callouts, steps and linked cards for MDX pages.
+description: Author-oriented MDX blocks for guides, callouts and navigation.
 ---
 
 # Documentation blocks
 
-A developer documentation site needs components beyond ordinary buttons and inputs. NextGuide includes purpose-built MDX blocks.
-
-## Numbered steps
+## Steps
 
 <Preview>
-  <Steps>
-    <Step title="Install the package">Run the Bun installation command.</Step>
-    <Step title="Create your pages">Add Markdown or MDX documentation content.</Step>
-    <Step title="Publish">Build your Next.js site for static hosting.</Step>
-  </Steps>
+<Steps>
+  <Step title="Install">Add NextGuide to your Next.js project.</Step>
+  <Step title="Initialize">Run the CLI to generate documentation.</Step>
+  <Step title="Write">Edit your content/docs/*.mdx files.</Step>
+</Steps>
 </Preview>
 
 ```tsx
-import { Steps, Step } from "nextguide/blocks";
+import { Steps, Step, Callout, LinkCards, LinkCard } from "nextguide/blocks"
 
 <Steps>
-  <Step title="Install">Install NextGuide.</Step>
-  <Step title="Publish">Deploy your documentation.</Step>
+  <Step title="Install">Add NextGuide to your Next.js project.</Step>
+  <Step title="Initialize">Run the CLI to generate documentation.</Step>
+  <Step title="Write">Edit your content/docs/*.mdx files.</Step>
 </Steps>
+```
+
+## Callout
+
+<Preview>
+<Callout kind="tip" title="Tip">NextGuide installs its UI through one package.</Callout>
+</Preview>
+
+```tsx
+import { Steps, Step, Callout, LinkCards, LinkCard } from "nextguide/blocks"
+
+<Callout kind="tip" title="Tip">NextGuide installs its UI through one package.</Callout>
 ```
 
 ## Navigation cards
 
 <Preview>
-  <LinkCards>
-    <LinkCard title="MDX" href="/docs/mdx" description="Documentation content and plugins" />
-    <LinkCard title="OpenAPI" href="/docs/openapi" description="Build an API reference" />
-  </LinkCards>
+<LinkCards>
+  <LinkCard title="MDX" href="/docs/mdx" description="Write documentation pages" />
+  <LinkCard title="OpenAPI" href="/docs/openapi" description="Document API endpoints" />
+</LinkCards>
 </Preview>
 
 ```tsx
-import { LinkCards, LinkCard, Callout } from "nextguide/blocks";
+import { Steps, Step, Callout, LinkCards, LinkCard } from "nextguide/blocks"
 
 <LinkCards>
-  <LinkCard title="Getting started" href="/docs" description="Documentation and examples" />
+  <LinkCard title="MDX" href="/docs/mdx" description="Write documentation pages" />
+  <LinkCard title="OpenAPI" href="/docs/openapi" description="Document API endpoints" />
 </LinkCards>
-
-<Callout kind="tip" title="Tip">NextGuide components come with the npm package.</Callout>
 ```
-
-The blocks also include `Callout` with `info`, `tip`, `warning`, `danger`, and `success` tones. Source code and TypeScript definitions are part of the main NextGuide npm package.

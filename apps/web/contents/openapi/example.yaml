@@ -1,0 +1,77 @@
+openapi: 3.1.0
+info:
+  title: Example Articles API
+  description: A fictional reference API used only to demonstrate NextGuide OpenAPI components. These endpoints are not live.
+  version: 1.0.0
+servers:
+  - url: https://api.example.invalid
+    description: Example only — not reachable
+paths:
+  /v1/articles:
+    get:
+      tags: [Articles]
+      operationId: listArticles
+      summary: List articles
+      description: Example endpoint for retrieving documentation articles.
+      responses:
+        '200':
+          description: A list of articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+    post:
+      tags: [Articles]
+      operationId: createArticle
+      summary: Create an article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleInput'
+      responses:
+        '201':
+          description: Article created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+  /v1/articles/{id}:
+    get:
+      tags: [Articles]
+      operationId: getArticle
+      summary: Get an article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of an example article.
+      responses:
+        '200':
+          description: Article found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '404':
+          description: The requested article does not exist
+components:
+  schemas:
+    Article:
+      type: object
+      required: [id, title, body]
+      properties:
+        id: { type: string, example: "article_123" }
+        title: { type: string, example: "Getting started" }
+        body: { type: string, example: "Build your documentation with NextGuide." }
+    ArticleInput:
+      type: object
+      required: [title, body]
+      properties:
+        title: { type: string }
+        body: { type: string }

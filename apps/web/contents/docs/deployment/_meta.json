@@ -1,5 +1,9 @@
 [
   {
+    "slug": "vercel",
+    "title": "Deploy to Vercel"
+  },
+  {
     "slug": "github-pages",
     "title": "GitHub Pages"
   },
