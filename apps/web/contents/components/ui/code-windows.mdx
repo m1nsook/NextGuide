@@ -1,6 +1,6 @@
 ---
 title: Code windows & tabs
-description: Real tabbed code panels with copy actions and language labels.
+description: Real tabbed code panels with copy actions and language-specific icons.
 ---
 
 # Code windows & tabs
@@ -8,14 +8,49 @@ description: Real tabbed code panels with copy actions and language labels.
 ## Titled, copyable snippet
 
 <Preview>
-<CodeWindow title="Install NextGuide" language="powershell" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
+<CodeWindow title="Install NextGuide" language="bash" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
 </Preview>
 
 ```tsx
 import { CodeWindow, CodeTabs } from "nextguide/blocks"
 
-<CodeWindow title="Install NextGuide" language="powershell" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
+<CodeWindow title="Install NextGuide" language="bash" code={"bun add nextguide@alpha\nbunx nextguide init --developer"} />
 ```
+
+
+## Choose TypeScript or JavaScript from a dropdown
+
+Provide the **real code** for each language. NextGuide does not attempt to transpile TypeScript into JavaScript. The user selects a language in a themed, keyboard-accessible dropdown, and the copy button copies the currently displayed snippet.
+
+<Preview>
+<CodeWindow
+  title="lib/docs"
+  language="typescript"
+  code={"import { createDocs, type DocsConfig } from \"nextguide/mdx\"\n\nconst options: DocsConfig = { contentDir: \"content/docs\" }\nexport const docs = createDocs(options)"}
+  alternatives={[
+    {
+      language: "javascript",
+      label: "JavaScript",
+      code: "import { createDocs } from \"nextguide/mdx\"\n\nexport const docs = createDocs({ contentDir: \"content/docs\" })",
+    },
+  ]}
+/>
+</Preview>
+
+```tsx
+import { CodeWindow } from "nextguide/blocks"
+
+<CodeWindow
+  title="lib/docs"
+  language="typescript"
+  code={'const options: DocsConfig = { contentDir: "content/docs" }'}
+  alternatives={[
+    { language: "javascript", code: 'const options = { contentDir: "content/docs" }' },
+  ]}
+/>
+```
+
+The language header uses separate TypeScript and JavaScript icons, a JSON file icon, a terminal for shell commands, and suitable icons for MDX and other source languages. The dropdown is optional; plain `CodeWindow` examples still work without changes.
 
 ## Switch between package managers
 

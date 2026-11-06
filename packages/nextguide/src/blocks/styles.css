@@ -5,6 +5,13 @@
 .ng-code-header>svg{flex-shrink:0;color:var(--ng-muted)}
 .ng-code-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .ng-code-language{color:var(--ng-muted);font-size:.72rem}
+.ng-code-file-icon{width:1rem;height:1rem;flex-shrink:0;color:var(--ng-muted)}
+.ng-code-typescript{color:#3178c6}
+.ng-code-javascript{color:#a88600}
+.ng-code-header .ng-code-language-select{width:auto;min-width:8rem;max-width:min(12rem,40vw);min-height:1.95rem;padding:.3rem .5rem;font-size:.75rem;border-radius:.4rem;flex-shrink:0}
+.ng-code-language-select [data-slot="select-value"]{overflow:hidden;text-overflow:ellipsis}
+@media(max-width:480px){.ng-code-header{gap:.4rem;padding:.4rem .55rem}.ng-code-header .ng-code-language-select{min-width:6.5rem;max-width:45vw}}
+
 .ng-copy-button{display:inline-flex;align-items:center;justify-content:center;min-width:1.75rem;min-height:1.75rem;padding:.3rem;border:1px solid var(--ng-border);border-radius:.3rem;background:var(--ng-bg);color:var(--ng-muted);cursor:pointer}
 .ng-copy-button:hover{background:var(--ng-surface);color:var(--ng-fg)}
 .ng-copy-button:focus-visible{outline:2px solid var(--ng-accent);outline-offset:2px}
