@@ -142,3 +142,35 @@ html::-webkit-scrollbar-thumb, .ng-code-pre::-webkit-scrollbar-thumb,
   border: 2px solid var(--background);
   border-radius: 999px;
 }
+
+/* Live demo frames and their nested controls share NextGuide's radius token.
+   Never mix a rounded-xl wrapper with unrelated ng-* corner sizes. */
+.ng-live-preview {
+  overflow: hidden;
+  border: 1px solid var(--ng-border);
+  border-radius: var(--ng-radius);
+  background: var(--ng-bg);
+  color: var(--ng-fg);
+}
+.ng-live-preview-heading {
+  padding: .6rem 1rem;
+  border-bottom: 1px solid var(--ng-border);
+  background: var(--ng-surface);
+  color: var(--ng-muted);
+  font-size: .75rem;
+  font-weight: 600;
+}
+.ng-live-preview-body {
+  min-width: 0;
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+  .ng-live-preview-body { padding: 1.5rem; }
+}
+.ng-live-preview-body > :is(.ng-code-window,.ng-code-tabs,.ng-file-tree) {
+  margin: 0;
+  border-radius: var(--ng-radius);
+}
+.ng-live-preview-body > :is(.ng-code-window,.ng-code-tabs,.ng-file-tree) + :is(.ng-code-window,.ng-code-tabs,.ng-file-tree) {
+  margin-top: 1rem;
+}

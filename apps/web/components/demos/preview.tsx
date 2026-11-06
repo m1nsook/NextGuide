@@ -5,9 +5,9 @@ import { edgeCases, openapi, REFERENCE_BASE } from "@/lib/source"
 /** A framed live preview inside MDX. */
 export function Preview({ children }: { children?: ReactNode }) {
   return (
-    <div className="not-prose bg-background my-6 overflow-hidden rounded-xl border">
-      <div className="text-muted-foreground border-b px-4 py-2 text-xs font-medium">Preview</div>
-      <div className="p-4 sm:p-6">{children}</div>
+    <div className="ng-live-preview not-prose my-6">
+      <div className="ng-live-preview-heading">Preview</div>
+      <div className="ng-live-preview-body">{children}</div>
     </div>
   )
 }
