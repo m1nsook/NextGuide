@@ -157,6 +157,8 @@ test("language-aware code windows include TypeScript and JavaScript icons and a 
   assert.match(source, /<Select value=\{String\(index\)\} onValueChange=/)
   assert.match(source, /<SelectTrigger aria-label="Select code language"/)
   assert.match(source, /<CopyButton value=\{selectedCode\}/)
+  assert.match(source, /tokenize\(code, language\)/)
+  assert.match(source, /highlightCode\(selectedCode, selectedLanguage\)/)
   assert.match(source, /<pre className=\{"ng-code-pre"/)
   assert.match(styles, /\.ng-code-header \.ng-code-language-select/)
   assert.match(docs, /language="typescript"/)
