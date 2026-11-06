@@ -1,0 +1,122 @@
+"use client"
+
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Docs } from "nextguide/components"
+import { BookOpen, Moon, Search, Sun, X } from "nextguide/icons"
+__TYPE_IMPORT__
+
+const noSubscribe = () => () => {}
+const serverSnapshot = () => false
+const isMac = () => typeof navigator !== "undefined" && /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)
+
+function collect(items__NAV_ARG__, base__BASE_ARG__)__ENTRIES_RESULT__ {
+  return items.flatMap((item) => {
+    if (!item.nav) return []
+    const href = item.href === "/" ? base : (base === "/" ? "" : base) + item.href
+    const own = item.items.length ? [] : [{ href, title: item.title }]
+    return [...own, ...collect(item.items, base)]
+  })
+}
+
+export function NextGuideShell({ children, navigation, siteName, basePath }__SHELL_PROPS__) {
+  const pathname = usePathname()
+  const [theme, setTheme] = useState("dark")
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [query, setQuery] = useState("")
+  const mac = useSyncExternalStore(noSubscribe, isMac, serverSnapshot)
+  const entries = useMemo(() => collect(navigation, basePath), [navigation, basePath])
+  const matches = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+    return (needle ? entries.filter((item) => item.title.toLowerCase().includes(needle)) : entries).slice(0, 30)
+  }, [entries, query])
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("nextguide-theme")
+      if (saved === "light" || saved === "dark") setTheme(saved)
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    const onKey = (event__KEY_TYPE__) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault()
+        setSearchOpen((v) => !v)
+      }
+      if (event.key === "Escape") setSearchOpen(false)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [])
+
+  function changeTheme(next__THEME_TYPE__) {
+    setTheme(next)
+    try { window.localStorage.setItem("nextguide-theme", next) } catch {}
+  }
+
+  const nav = (
+    <Docs.Nav items={navigation} baseHref={basePath === "/" ? "" : basePath}
+      activeHref={pathname || basePath} linkAs={Link} />
+  )
+  return (
+    <div className="ng-site" data-ng-theme={theme}>
+      <div className="ng-site-layout">
+        <aside className="ng-site-sidebar" aria-label="Documentation navigation">
+          <div className="ng-site-sidebar-head">
+            <Link href={basePath} className="ng-site-brand"><BookOpen size={19} />{siteName}</Link>
+            <button type="button" className="ng-site-search-button" onClick={() => setSearchOpen(true)}>
+              <Search size={16} />
+              <span>Search documentation</span>
+              <kbd aria-label={mac ? "Command plus K" : "Control plus K"}>{mac ? "⌘" : "Ctrl"} K</kbd>
+            </button>
+          </div>
+          <div className="ng-site-sidebar-scroll">{nav}</div>
+          <footer className="ng-site-footer">
+            <span>Powered by NextGuide</span>
+            <div className="ng-site-theme-buttons" role="group" aria-label="Theme">
+              <button type="button" aria-label="Light mode" aria-pressed={theme === "light"}
+                onClick={() => changeTheme("light")}><Sun size={15} /></button>
+              <button type="button" aria-label="Dark mode" aria-pressed={theme === "dark"}
+                onClick={() => changeTheme("dark")}><Moon size={15} /></button>
+            </div>
+          </footer>
+        </aside>
+        <div className="ng-site-workspace">
+          <header className="ng-site-mobile-header">
+            <Docs.MobileNav title="Documentation">
+              <Link href={basePath} className="ng-site-brand">{siteName}</Link>
+              {nav}
+            </Docs.MobileNav>
+            <Link href={basePath} className="ng-site-brand">{siteName}</Link>
+            <button type="button" aria-label="Search documentation" onClick={() => setSearchOpen(true)}>
+              <Search size={19} />
+            </button>
+          </header>
+          {children}
+        </div>
+      </div>
+      {searchOpen ? (
+        <div className="ng-site-search-overlay" onMouseDown={() => setSearchOpen(false)}>
+          <section role="dialog" aria-label="Search documentation" aria-modal="true"
+            className="ng-site-search-dialog" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="ng-site-search-input">
+              <Search size={18} />
+              <input autoFocus value={query} aria-label="Search documentation"
+                placeholder="Search documentation pages" onChange={(event) => setQuery(event.target.value)} />
+              <button type="button" aria-label="Close search" onClick={() => setSearchOpen(false)}><X size={18} /></button>
+            </div>
+            <ul className="ng-site-search-results">
+              {matches.length ? matches.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} onClick={() => { setSearchOpen(false); setQuery("") }}>{item.title}</Link>
+                </li>
+              )) : <li className="ng-site-search-empty">No results found.</li>}
+            </ul>
+          </section>
+        </div>
+      ) : null}
+    </div>
+  )
+}
