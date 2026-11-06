@@ -259,7 +259,7 @@ function docsImportPath(directory, hasSrc, relativePath) {
     const file = join(directory, name)
     if (!existsSync(file)) continue
     const contents = readFileSync(file, 'utf8')
-    const match = contents.match(/"@\/*"\s*:\s*\[\s*"([^"]+)"/)
+    const match = contents.match(/"@\/\*"\s*:\s*\[\s*"([^"]+)"/)
     if (match?.[1]?.replace(/^\.\/+/, '') === expected) return '@/lib/nextguide'
   }
   return relativePath
