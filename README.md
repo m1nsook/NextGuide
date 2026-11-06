@@ -58,6 +58,21 @@ For new applications, first create a Next.js project with `bunx create-next-app@
 
 **Development release note:** Current GitHub changes are not necessarily available under npm's `alpha` tag. Use the tarball instructions above to test what is merged into `main`. Do not publish until Account Mode is complete.
 
+## Location choice and current Next.js compatibility
+
+The installer now asks whether documentation should appear at `/docs` (default) or `/`. Existing homepages are backed up only on explicit approval. For scripts, use `--base-path /docs --yes` or `--base-path / --replace-home --yes`. Generated App Router routes support Next.js Cache Components using `<Suspense>` and omit `dynamicParams`.
+
+Local compatibility tests:
+
+```powershell
+bun install
+bun run compat:next
+```
+
+The GitHub **Manual Next.js compatibility and update** workflow can be started from the Actions tab for the latest stable or canary channel. It never runs on a schedule, push or PR, and proposes an update PR only if selected manually. It never merges or publishes anything.
+
+Upstream release notes: https://github.com/vercel/next.js/releases
+
 ## Installed version and manual update checks
 
 ```powershell

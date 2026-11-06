@@ -34,6 +34,14 @@ bunx nextguide doctor --json
 
 The installer never silently overwrites project files. When both routers exist, select `--router app` or `--router pages`.
 
+## Documentation location and compatibility
+
+The installer asks whether to use `/docs` (default) or the homepage `/`. For automated installs, use `--base-path /docs --yes` or `--base-path / --replace-home --yes`. The latter backs up an existing homepage rather than silently deleting it.
+
+Generated App Router files omit `dynamicParams` and use Suspense around asynchronous navigation and MDX rendering for Next.js 16.4 Cache Components. Generated routes use `@/lib/nextguide` when the project's standard `@/*` alias points to the source directory, and correctly relative imports otherwise.
+
+From the NextGuide source checkout, `bun run compat:next` tests packaged installations with current Next.js. A manual-only GitHub Actions workflow is available for stable/canary compatibility checks and opt-in update PRs.
+
 ## Add documentation pages
 
 ```powershell

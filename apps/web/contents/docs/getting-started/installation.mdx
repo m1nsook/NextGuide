@@ -43,15 +43,21 @@ Run these commands from the root of the test application:
 
 <CodeWindow title="Initialize Developer Mode" language="powershell" code="bunx nextguide init --developer" />
 
-The CLI creates `/docs` routes, sidebar navigation, starter MDX, an editable theme stylesheet, and `nextguide.config.json`. It prints the names of generated files and refuses to silently overwrite your code.
+The initializer now asks whether your docs should appear under **`/docs`** (default, preserving your site's homepage), or at **`/`** (documentation becomes the homepage). If an existing homepage would be replaced, NextGuide asks for confirmation and backs it up instead of deleting it.
 
-To preview without writing files, use `bunx nextguide init --developer --dry-run`. If your project has both routers, select `--router app` or `--router pages`.
+For noninteractive use, choose exactly one of these:
+
+<CodeTabs items={[{label:"Under /docs",code:"bunx nextguide init --developer --base-path /docs --yes",language:"powershell"},{label:"As website homepage",code:"bunx nextguide init --developer --base-path / --replace-home --yes",language:"powershell"}]} />
+
+The root option uses `--replace-home` to explicitly permit backing up an existing page; the original is preserved as `.nextguide-backup`. The installer also stores `basePath` in `nextguide.config.json`, which the page-creation command uses for new links.
+
+To preview without writing files, use `bunx nextguide init --developer --dry-run --yes`. If the project has both router types, select `--router app` or `--router pages`. New App Router files avoid the `dynamicParams` export rejected by Next.js Cache Components.
 
 ## 5. Start Next.js and test
 
 <CodeWindow title="Run your Next.js development server" language="powershell" code="bun run dev" />
 
-Open `/docs` on the local port reported by Next.js (typically `http://localhost:3000/docs`). You should see the Introduction and Getting started pages.
+Open the selected route on the port reported by Next.js, typically `http://localhost:3000/docs` or `http://localhost:3000/`. You should see the Introduction and Getting started pages.
 
 You can add more pages and update sidebar navigation automatically:
 

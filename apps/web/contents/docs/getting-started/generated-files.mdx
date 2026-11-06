@@ -51,6 +51,7 @@ These examples are taken directly from the template emitted by `nextguide init`,
   "schemaVersion": 1,
   "mode": "developer",
   "contentDir": "content/docs",
+  "basePath": "/docs",
   "site": {
     "name": "My Documentation",
     "description": "Documentation built with NextGuide"
@@ -141,8 +142,6 @@ import { notFound } from "next/navigation"
 import { isMdxNotFound } from "nextguide/mdx"
 import { docs } from "../../../lib/nextguide"
 
-export const dynamicParams = false
-
 export async function generateStaticParams() {
   const paths = await docs.getPagePaths()
   return paths.map((path) => ({ slug: path.split("/").filter(Boolean) }))
@@ -173,6 +172,18 @@ After running the initializer, you can use `bunx nextguide page add guides/setup
 For the example `guides/setup`, NextGuide creates `content/docs/guides/setup.mdx`, creates `content/docs/guides/_meta.json` if missing, and appends the `guides` section to the existing root `_meta.json`. An existing page is never replaced, and the sidebar settings already stored in metadata are preserved.
 
 [Create your first page](/docs/getting-started/adding-pages).
+
+## Website root instead of /docs
+
+`nextguide init` now allows a route choice. With `--base-path /`, App Router documentation is created beneath `src/app/(nextguide)/` (a route group, invisible in the URL), while Pages Router uses `pages/[[...slug]].tsx`. An existing homepage is backed up with a `.nextguide-backup` suffix only after confirmation or explicit `--replace-home`.
+
+The chosen `basePath` is recorded in `nextguide.config.json`; it controls links created by `nextguide page add`.
+
+## Cache Components and import paths
+
+New App Router pages omit the `dynamicParams` route export and wrap asynchronous filesystem reads for navigation and MDX inside React `<Suspense>` boundaries. This avoids the blocking route error reported by Next.js 16.4.5.
+
+When a Next.js project defines the standard `@/*` source alias, NextGuide generates imports such as `@/lib/nextguide`. In projects without that alias, the generator uses correctly calculated relative paths instead. Existing example code below may show the relative form.
 
 ## Overwrite protection
 
