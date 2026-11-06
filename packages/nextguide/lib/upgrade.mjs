@@ -70,7 +70,9 @@ export function planUpgrade(projectDirectory, inspection, options = {}) {
   const changes = []
   const skipped = []
   const nextHashes = { ...oldHashes }
-  const desired = Object.entries(projectPlan.files).filter(([name]) => name !== MANIFEST_FILE)
+  const desired = Object.entries(projectPlan.files).filter(([name]) =>
+    name !== MANIFEST_FILE && (config.contentDir === "content/docs" || !name.startsWith("content/"))
+  )
 
   for (const [name, content] of desired) {
     const full = safeTarget(directory, name)
@@ -82,6 +84,10 @@ export function planUpgrade(projectDirectory, inspection, options = {}) {
     if (!lstatSync(full).isFile()) throw new Error("Cannot upgrade non-file path: " + name)
     const current = readFileSync(full, "utf8")
     const currentHash = hashContent(current)
+    if (isUserContent(name)) {
+      skipped.push({ name, reason: "Documentation content and site configuration are never overwritten by upgrade" })
+      continue
+    }
     const updatedHash = hashContent(content)
     if (currentHash === updatedHash) {
       nextHashes[name] = updatedHash
@@ -89,7 +95,7 @@ export function planUpgrade(projectDirectory, inspection, options = {}) {
     }
     if (typeof oldHashes[name] === "string" && /^[a-f0-9]{64}$/.test(oldHashes[name]) &&
         currentHash === oldHashes[name]) {
-      changes.push({ kind: "update", name, content })
+      changes.push({ kind: "update", name, content, expectedHash: currentHash })
       nextHashes[name] = updatedHash
       continue
     }
@@ -115,7 +121,7 @@ export function planUpgrade(projectDirectory, inspection, options = {}) {
   }, { files: nextHashes })
   const needsManifest = !previous || stringifyManifest(record) !== stringifyManifest(previous)
   if (needsManifest) {
-    changes.push({ kind: previous ? "update" : "create", name: MANIFEST_FILE, content: stringifyManifest(record) })
+    changes.push({ kind: previous ? "update" : "create", name: MANIFEST_FILE, content: stringifyManifest(record), expectedHash: previous ? hashContent(readFileSync(safeTarget(directory, MANIFEST_FILE), "utf8")) : undefined })
   }
   return { directory, changes, skipped, legacy: !previous,
     basePath: projectPlan.basePath, router: projectPlan.router, dryRun: !!options.dryRun }
@@ -128,6 +134,9 @@ export function upgradeDeveloper(projectDirectory, inspection, options = {}) {
   for (const op of plan.changes) {
     safeTarget(plan.directory, op.name)
     if (op.backup) safeTarget(plan.directory, op.backup)
+    if (op.expectedHash && hashContent(readFileSync(safeTarget(plan.directory, op.name), "utf8")) !== op.expectedHash) {
+      throw new Error("File changed since planning, refusing to overwrite: " + op.name)
+    }
   }
   for (const op of plan.changes) {
     const path = safeTarget(plan.directory, op.name)
