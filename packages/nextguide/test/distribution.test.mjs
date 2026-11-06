@@ -86,3 +86,19 @@ test("Developer Mode page creation ships in the CLI package", () => {
     assert.ok(existsSync(join(root, filename)), filename + " is required in the npm package")
   }
 })
+
+test("documentation site does not depend on the removed UI workspace", () => {
+  const website = join(dirname(dirname(root)), "apps", "web")
+  for (const file of [
+    "package.json",
+    "next.config.mjs",
+    "postcss.config.mjs",
+    "app/layout.tsx",
+    "components/docs-sidebar.tsx",
+  ]) {
+    const source = readFileSync(join(website, file), "utf8")
+    assert.doesNotMatch(source, /@workspace\/ui|packages\/ui\//, file)
+  }
+  assert.equal(existsSync(join(website, "components.json")), false,
+    "Removed shadcn workspace registry config should not be restored")
+})

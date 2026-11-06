@@ -60,7 +60,7 @@ bun run dev
 
 Documentation preview: http://localhost:4310
 
-Before a release, validate the CLI, bundled distribution and documentation build:
+Before a release, validate the CLI, bundled distribution and documentation build (including `npm pack --dry-run` on Windows):
 
 ```powershell
 bun run --cwd packages/nextguide test
