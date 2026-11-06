@@ -11,7 +11,7 @@ import {
   Tabs as TabsPrimitive, Toggle as TogglePrimitive,
   ToggleGroup as ToggleGroupPrimitive, Tooltip as TooltipPrimitive,
 } from "radix-ui"
-import { Check, ChevronDown, ChevronRight, Circle } from "lucide-react"
+import { Check, ChevronDown, ChevronRight, ChevronUp, Circle } from "lucide-react"
 const cn = (...parts: (string | undefined)[]) => parts.filter(Boolean).join(" ")
 
 export const Tabs = TabsPrimitive.Root
@@ -142,10 +142,14 @@ export function SelectTrigger({ className, children, ...props }: React.Component
     {children}<SelectPrimitive.Icon><ChevronDown size={15} aria-hidden="true" /></SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 }
-export function SelectContent({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {
-  return <SelectPrimitive.Portal><SelectPrimitive.Content className={cn("ng-select-content", className)} {...props}>
-    <SelectPrimitive.Viewport>{props.children}</SelectPrimitive.Viewport>
-  </SelectPrimitive.Content></SelectPrimitive.Portal>
+export function SelectContent({ className, children, position = "popper", sideOffset = 5, ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+  return <SelectPrimitive.Portal>
+    <SelectPrimitive.Content position={position} sideOffset={sideOffset} className={cn("ng-select-content", className)} {...props}>
+      <SelectPrimitive.ScrollUpButton className="ng-select-scroll-button"><ChevronUp size={14} aria-hidden="true" /></SelectPrimitive.ScrollUpButton>
+      <SelectPrimitive.Viewport className="ng-select-viewport">{children}</SelectPrimitive.Viewport>
+      <SelectPrimitive.ScrollDownButton className="ng-select-scroll-button"><ChevronDown size={14} aria-hidden="true" /></SelectPrimitive.ScrollDownButton>
+    </SelectPrimitive.Content>
+  </SelectPrimitive.Portal>
 }
 export function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
   return <SelectPrimitive.Item className={cn("ng-select-item", className)} {...props}>
@@ -157,7 +161,9 @@ export const SelectGroup = SelectPrimitive.Group
 export const SelectLabel = SelectPrimitive.Label
 export const SelectSeparator = SelectPrimitive.Separator
 
-export const ScrollArea = ScrollPrimitive.Root
+export function ScrollArea({ className, type = "hover", ...props }: React.ComponentProps<typeof ScrollPrimitive.Root>) {
+  return <ScrollPrimitive.Root type={type} className={cn("ng-scroll-area", className)} {...props} />
+}
 export function ScrollAreaViewport({ className, ...props }: React.ComponentProps<typeof ScrollPrimitive.Viewport>) {
   return <ScrollPrimitive.Viewport className={cn("ng-scroll-viewport", className)} {...props} />
 }
