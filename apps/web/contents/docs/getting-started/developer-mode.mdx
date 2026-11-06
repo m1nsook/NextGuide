@@ -7,15 +7,28 @@ description: Git-native documentation with MDX files, without accounts or a data
 
 Developer Mode keeps content and configuration **inside your Next.js project**. It is available in the NextGuide CLI and works well for developer tools, libraries and product documentation maintained in Git.
 
-<CodeWindow title="Initialize Developer Mode" language="powershell" code="bunx nextguide init --developer" />
+<CodeWindow title="Initialize Developer Mode" language="bash" code="bunx nextguide init --developer" />
 
 The initializer detects your Next.js router and places files in the correct `app/`, `src/app/`, `pages/`, or `src/pages/` folder. It does not require SQLite, a user account, or a hosted NextGuide server.
 
 ## Add pages without manually wiring navigation
 
-<CodeWindow title="Create a documentation page" language="powershell" code="bunx nextguide page add guides/setup --title Setup" />
+<CodeWindow title="Create a documentation page" language="bash" code="bunx nextguide page add guides/setup --title Setup" />
 
 This creates the MDX file and updates the relevant `_meta.json` files automatically. Use `--dry-run` to preview the changes or `--json` for scripts. [Read the complete page creation guide](/docs/getting-started/adding-pages).
+
+
+## Choose a readable default appearance
+
+Pass exactly one of `--light` (default), `--dark` or `--system` when creating a site. The starter supplies accessible, high-contrast accents in blue, red, green, purple, yellow, orange, teal and pink.
+
+<CodeWindow title="Shell" language="bash" code="bunx nextguide init --developer --system --accent:teal" />
+
+The chosen mode and palette are stored in `nextguide.config.json`. Explicit light or dark mode does not change with the operating system's theme.
+
+## Upgrade your existing docs without reinstalling
+
+Use `bunx nextguide upgrade --dry-run` to inspect a legacy configuration, then `bunx nextguide upgrade` to apply it. Existing MDX files and sidebar metadata stay untouched. Updating the generated layout or CSS is an **explicit** `--refresh-generated` operation that creates backups. [Full upgrade guide](/docs/getting-started/upgrading).
 
 ## What changes at build time?
 
@@ -31,17 +44,17 @@ To test a new Next.js stable or canary release, run the **Manual Next.js compati
 
 You can also run the same packaged-project smoke tests locally, without Actions:
 
-<CodeWindow title="Local Next.js compatibility tests" language="powershell" code="bun run compat:next" />
+<CodeWindow title="Local Next.js compatibility tests" language="bash" code="bun run compat:next" />
 
 ## Check your installed version
 
-<CodeWindow title="Installed NextGuide version" language="powershell" code="bunx nextguide --version" />
+<CodeWindow title="Installed NextGuide version" language="bash" code="bunx nextguide --version" />
 
 This prints the version in the current local package without using the internet.
 
 To compare it against npm's public `latest` release:
 
-<CodeWindow title="Check for NextGuide releases" language="powershell" code="bunx nextguide version check" />
+<CodeWindow title="Check for NextGuide releases" language="bash" code="bunx nextguide version check" />
 
 Use `--tag alpha` to check the prerelease channel, or `--json` for machine-readable output. NextGuide never upgrades packages automatically; the check only contacts npm when you run it. Until a stable version is published, the registry might not have a `latest` tag.
 
