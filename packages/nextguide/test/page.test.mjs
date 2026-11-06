@@ -139,3 +139,16 @@ test("blocks Account Mode and escapes untrusted title/description as YAML string
     assert.throws(() => addPage(root, "another"), /Developer Mode/)
   } finally { cleanup(root) }
 })
+
+
+test("page creation follows root-mounted site URLs", () => {
+  const root = fixture()
+  try {
+    writeFileSync(join(root, "nextguide.config.json"), JSON.stringify({
+      schemaVersion: 1, mode: "developer", contentDir: "content/docs", basePath: "/",
+    }))
+    const result = addPage(root, "guides/windows")
+    assert.equal(result.href, "/guides/windows")
+    assert.equal(addPage(root, "index").href, "/")
+  } finally { cleanup(root) }
+})

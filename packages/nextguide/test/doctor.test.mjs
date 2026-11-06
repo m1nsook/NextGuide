@@ -124,3 +124,39 @@ test("init CLI writes Developer Mode files and prints their locations", () => {
     assert.ok(existsSync(join(directory, "nextguide.config.json")));
   } finally { rmSync(directory, { recursive: true, force: true }); }
 });
+
+
+test("init CLI supports --base-path /docs without prompts or overwriting", () => {
+  const directory = fixture()
+  try {
+    const result = run("init", directory, "--developer", "--base-path", "/docs", "--yes")
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Documentation URL: \/docs/)
+    assert.ok(existsSync(join(directory, "src/app/docs/[[...slug]]/page.jsx")))
+  } finally { rmSync(directory, { recursive: true, force: true }) }
+})
+
+test("init CLI refuses to replace a homepage without explicit approval", () => {
+  const directory = fixture()
+  try {
+    writeFileSync(join(directory, "src/app/page.jsx"), "export default function Home() { return null }\n")
+    const result = run("init", directory, "--base-path", "/", "--yes")
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /--replace-home/)
+    assert.ok(existsSync(join(directory, "src/app/page.jsx")))
+    assert.equal(existsSync(join(directory, "nextguide.config.json")), false)
+  } finally { rmSync(directory, { recursive: true, force: true }) }
+})
+
+test("init CLI accepts explicit root and backs up existing homepage", () => {
+  const directory = fixture()
+  try {
+    writeFileSync(join(directory, "src/app/page.jsx"), "export default function Home() { return null }\n")
+    const result = run("init", directory, "--base-path", "/", "--replace-home", "--yes")
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Documentation URL: \//)
+    assert.match(result.stdout, /BACKUP src\/app\/page.jsx.nextguide-backup|BACKUP src\\app\\page.jsx.nextguide-backup/)
+    assert.ok(existsSync(join(directory, "src/app/page.jsx.nextguide-backup")))
+    assert.ok(existsSync(join(directory, "src/app/(nextguide)/[[...slug]]/page.jsx")))
+  } finally { rmSync(directory, { recursive: true, force: true }) }
+})

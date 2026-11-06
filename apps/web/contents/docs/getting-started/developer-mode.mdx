@@ -21,6 +21,18 @@ This creates the MDX file and updates the relevant `_meta.json` files automatica
 
 Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.
 
+## Setup location and Next.js compatibility
+
+The initializer asks whether you want documentation under `/docs` or as the website homepage `/`. For scripts, use `--base-path` and `--yes`; use `--replace-home` only if you explicitly want to back up an existing homepage. New App Router routes no longer export the `dynamicParams` option that conflicts with Next.js 16.4's Cache Components feature.
+
+NextGuide uses `@/lib/nextguide` in generated routes when your project has the standard Next.js source alias. Projects using custom aliases keep working relative imports.
+
+To test a new Next.js stable or canary release, run the **Manual Next.js compatibility and update** workflow from GitHub Actions. It executes only when manually launched, and proposes an update PR only if the operator selects that option. It never merges or publishes automatically. See [upstream Next.js releases](https://github.com/vercel/next.js/releases).
+
+You can also run the same packaged-project smoke tests locally, without Actions:
+
+<CodeWindow title="Local Next.js compatibility tests" language="powershell" code="bun run compat:next" />
+
 ## Check your installed version
 
 <CodeWindow title="Installed NextGuide version" language="powershell" code="bunx nextguide --version" />

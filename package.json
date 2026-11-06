@@ -18,7 +18,8 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-    "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts"
+    "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts",
+    "compat:next": "bun run build:packages && node scripts/verify-generated-starter.mjs"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

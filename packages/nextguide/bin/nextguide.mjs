@@ -2,6 +2,7 @@
 
 import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
+import { createInterface } from "node:readline/promises";
 import { initDeveloper } from "../lib/init.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
@@ -18,6 +19,10 @@ Usage:
   nextguide doctor --json      Print machine-readable diagnostics
   nextguide init [path]        Scaffold Developer Mode in a Next.js project
   nextguide init --router app  Select App Router when both routers exist
+  nextguide init --base-path /docs  Use /docs as documentation path (default)
+  nextguide init --base-path /     Use documentation as website homepage
+  nextguide init --replace-home    Back up an existing homepage for root install
+  nextguide init --yes             Use defaults noninteractively
   nextguide init --dry-run     Preview files without writing
   nextguide page add <slug>   Create MDX page and update navigation
   nextguide page --help       Show page creation options
@@ -107,9 +112,18 @@ function doctor(args) {
 }
 
 
-function init(args) {
+async function ask(question) {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try { return (await rl.question(question)).trim().toLowerCase(); }
+  finally { rl.close(); }
+}
+
+async function init(args) {
   let projectPath;
   let router;
+  let basePath;
+  let replaceHome = false;
+  let yes = false;
   let dryRun = false;
   let mode = "developer";
   for (let index = 0; index < args.length; index++) {
@@ -118,8 +132,10 @@ function init(args) {
     else if (arg === "--account") mode = "account";
     else if (arg === "--mode" && args[index + 1]) mode = args[++index];
     else if (arg === "--router" && args[index + 1]) router = args[++index];
+    else if (arg === "--base-path" && args[index + 1]) basePath = args[++index];
+    else if (arg === "--replace-home") replaceHome = true;
     else if (arg === "--dry-run") dryRun = true;
-    else if (arg === "--yes") { /* noninteractive by default */ }
+    else if (arg === "--yes") yes = true;
     else if (!arg.startsWith("-") && !projectPath) projectPath = arg;
     else {
       process.stderr.write("Invalid init argument: " + arg + "\n");
@@ -137,16 +153,54 @@ function init(args) {
     process.exitCode = 2;
     return;
   }
+  if (basePath && basePath !== "/" && basePath !== "/docs") {
+    process.stderr.write("Invalid documentation location. Use --base-path / or --base-path /docs.\n");
+    process.exitCode = 2;
+    return;
+  }
+  const interactive = !yes && process.stdin.isTTY && process.stdout.isTTY;
+  if (basePath === undefined && interactive) {
+    const selection = await ask("Where should NextGuide documentation appear? [1] /docs (default)  [2] / (homepage): ");
+    if (selection === "2" || selection === "/") basePath = "/";
+    else if (selection === "" || selection === "1" || selection === "/docs") basePath = "/docs";
+    else {
+      process.stderr.write("Invalid selection. Choose 1 or 2.\n");
+      process.exitCode = 2;
+      return;
+    }
+  }
+  basePath ??= "/docs";
+  if (replaceHome && basePath !== "/") {
+    process.stderr.write("--replace-home is only valid with --base-path /.\n");
+    process.exitCode = 2;
+    return;
+  }
   const directory = projectPath ?? process.cwd();
   try {
     const status = inspectProject(directory);
-    const result = initDeveloper(directory, status, { router, dryRun });
+    if (basePath === "/" && interactive && !replaceHome) {
+      try {
+        initDeveloper(directory, status, { router, basePath, dryRun: true });
+      } catch (error) {
+        if (!String(error.message).includes("--replace-home")) throw error;
+        const approval = await ask("An existing homepage will be backed up before NextGuide takes over /. Continue? [y/N]: ");
+        if (approval !== "y" && approval !== "yes") {
+          process.stderr.write("Root installation cancelled. Use --base-path /docs to keep the current homepage.\n");
+          process.exitCode = 2;
+          return;
+        }
+        replaceHome = true;
+      }
+    }
+    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome });
     process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
     process.stdout.write("Project: " + result.projectDirectory + "\n");
     process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
+    process.stdout.write("Documentation URL: " + result.basePath + "\n");
     for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
     for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
-    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open /docs.\n");
+    for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
+    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open " + result.basePath + ".\n");
   } catch (error) {
     process.stderr.write("NextGuide init failed: " + error.message + "\n");
     process.exitCode = 1;
@@ -169,7 +223,7 @@ switch (command) {
     doctor(args);
     break;
   case "init":
-    init(args);
+    await init(args);
     break;
   case "page":
     pageCommand(args);
