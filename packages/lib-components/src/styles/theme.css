@@ -1,5 +1,5 @@
 /*
- * Theme tokens for @nextguide-internal/components.
+ * NextGuide documentation renderer theme tokens.
  *
  * The components set no fonts and no colors of their own: text uses your
  * Tailwind `font-sans` / `font-mono`, and colors come from your shadcn tokens

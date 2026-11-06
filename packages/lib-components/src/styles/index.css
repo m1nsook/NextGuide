@@ -1,3 +1,3 @@
-/* @nextguide-internal/components: theme tokens + default syntax theme. */
+/* NextGuide documentation rendering tokens and the default syntax theme. */
 @import "./theme.css";
 @import "./syntax/default.css";
