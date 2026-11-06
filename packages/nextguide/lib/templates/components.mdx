@@ -38,3 +38,18 @@ description: Reusable blocks and UI components provided by the NextGuide package
 <Button variant="outline">Example button</Button> <Badge>NextGuide</Badge>
 
 All components exported from `nextguide/ui` and `nextguide/blocks` are registered in your `nextguide-mdx` component map.
+
+## TypeScript and JavaScript
+
+Switch between the two code examples using the language dropdown. The selector uses accessible keyboard controls.
+
+<CodeTabs presentation="select" items={[
+  { label: "TypeScript", language: "ts", title: "nextguide.config.ts", code: "type SiteConfig = { name: string }\\nconst site: SiteConfig = { name: 'My Documentation' }\\nexport default site" },
+  { label: "JavaScript", language: "js", title: "nextguide.config.js", code: "const site = { name: 'My Documentation' }\\nexport default site" }
+]} />
+
+## File language icons
+
+<CodeWindow language="json" title="example.json" code="{ \\"name\\": \\"my-docs\\" }" />
+
+<CodeWindow language="mdx" title="introduction.mdx" code="# Getting started" />
