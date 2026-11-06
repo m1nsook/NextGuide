@@ -17,7 +17,7 @@
 .ng-starter[data-ng-accent="teal"]{--ng-site-accent-light:#115e59;--ng-site-accent-dark:#5eead4}
 .ng-starter[data-ng-accent="pink"]{--ng-site-accent-light:#9d174d;--ng-site-accent-dark:#f9a8d4}
 .ng-starter{--ng-accent:var(--ng-site-accent-light,#1d4ed8)}
-.ng-starter[data-ng-resolved="dark"]{
+.ng-starter[data-ng-resolved="dark"],body[data-ng-docs-theme="dark"]{
   --ng-bg:#111318;--ng-fg:#f3f4f7;--ng-muted:#a3abb9;--ng-surface:#1b1e25;
   --ng-border:#303642;--ng-site-background:#111318;--ng-site-subtle:#151920;
   --ng-accent:var(--ng-site-accent-dark,#93c5fd);--ng-on-accent:#111318;color-scheme:dark
@@ -120,3 +120,12 @@
 }
 @media(max-width:530px){.ng-site-header-content{gap:10px}.ng-site-header-actions{gap:3px}.ng-site-search-trigger{width:37px;height:37px;padding:9px;justify-content:center;background:transparent;border-color:transparent}.ng-site-search-trigger>span,.ng-site-search-trigger kbd{display:none}.ng-site-brand strong{max-width:50vw;font-size:15px}.ng-site-brand span{display:none}}
 @media(prefers-reduced-motion:reduce){.ng-site-sidebar{transition:none}.ng-site-nav-link{transition:none}}
+
+/* Honor system dark mode before hydration to prevent a light-theme flash. */
+@media(prefers-color-scheme:dark){
+  .ng-starter[data-ng-theme="system"]{
+    --ng-bg:#111318;--ng-fg:#f3f4f7;--ng-muted:#a3abb9;--ng-surface:#1b1e25;
+    --ng-border:#303642;--ng-site-background:#111318;--ng-site-subtle:#151920;
+    --ng-accent:var(--ng-site-accent-dark,#93c5fd);--ng-on-accent:#111318;color-scheme:dark
+  }
+}
