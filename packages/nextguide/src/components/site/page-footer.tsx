@@ -15,7 +15,7 @@ export function PageNav({ previous, next }: { previous?: PageLink; next?: PageLi
         <span className="hidden sm:block" />
       )}
       {next !== undefined ? (
-        <Link
+        <a
           href={next.href}
           className="hover:bg-muted/50 flex flex-col items-end gap-1 rounded-xl border px-4 py-3.5 text-right transition-colors"
         >
