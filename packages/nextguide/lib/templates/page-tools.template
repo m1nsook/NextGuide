@@ -1,0 +1,101 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import {
+  Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink,
+  BreadcrumbPage, BreadcrumbSeparator,
+} from "nextguide/ui"
+import { Check, Copy, ExternalLink, Home, Link as LinkIcon } from "nextguide/icons"
+__TYPE_IMPORT__
+
+function titleCase(slug__STRING_ARG__) {
+  return slug.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function githubLinks(repository__STRING_ARG__, branch__STRING_ARG__, pageFile__STRING_ARG__) {
+  const url = /^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/.test(repository)
+    ? repository.replace(/\/+$/, "") : ""
+  if (!url || !/^[A-Za-z0-9._/-]+$/.test(branch)) return null
+  const segments = [branch, ...pageFile.split("/")]
+  const path = segments.map(encodeURIComponent).join("/")
+  return {
+    edit: url + "/edit/" + path,
+    issue: url + "/issues/new?title=" + encodeURIComponent("Documentation feedback: " + pageFile),
+  }
+}
+
+export function NextGuidePageTools({ title, slug, basePath, source, githubUrl = "", editBranch = "main" }__PROPS__) {
+  const [copied, setCopied] = useState(false)
+  const parts = slug ? slug.split("/").filter(Boolean) : []
+  const github = githubLinks(githubUrl, editBranch, "content/docs/" + (slug || "index") + ".mdx")
+
+  async function copyPage() {
+    try {
+      await navigator.clipboard.writeText(source)
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  function askChatGPT() {
+    const pageUrl = window.location.href
+    const prompt = "Help me understand this documentation page titled \\"" + title +
+      "\\". Answer questions about it using this context and explain examples clearly.\\nPage URL: " +
+      pageUrl + "\\n\\nPage content (MDX):\\n" + source.slice(0, 4800)
+    window.open("https://chatgpt.com/?q=" + encodeURIComponent(prompt), "_blank", "noopener,noreferrer")
+  }
+
+  return (
+    <div className="ng-page-tools">
+      <Breadcrumb aria-label="Breadcrumb" className="ng-page-breadcrumbs">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            {parts.length === 0
+              ? <BreadcrumbPage><Home size={14} aria-hidden="true" /> {title}</BreadcrumbPage>
+              : <BreadcrumbLink asChild><Link href={basePath}><Home size={14} aria-hidden="true" /> Overview</Link></BreadcrumbLink>}
+          </BreadcrumbItem>
+          {parts.map((part, index) => {
+            const last = index === parts.length - 1
+            const href = (basePath === "/" ? "" : basePath) + "/" + parts.slice(0, index + 1).join("/")
+            return (
+              <BreadcrumbSeparator key={"sep-" + index}>
+                <span aria-hidden="true">/</span>
+              </BreadcrumbSeparator>
+            )
+          })}
+          {parts.map((part, index) => {
+            const last = index === parts.length - 1
+            const href = (basePath === "/" ? "" : basePath) + "/" + parts.slice(0, index + 1).join("/")
+            return (
+              <BreadcrumbItem key={href}>
+                {last ? <BreadcrumbPage>{title}</BreadcrumbPage>
+                  : <BreadcrumbLink asChild><Link href={href}>{titleCase(part)}</Link></BreadcrumbLink>}
+              </BreadcrumbItem>
+            )
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="ng-page-actions">
+        <button type="button" onClick={copyPage} className="ng-page-action" aria-label={copied ? "Page copied" : "Copy page Markdown"}>
+          {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+          <span>{copied ? "Copied" : "Copy page"}</span>
+        </button>
+        <button type="button" onClick={askChatGPT} className="ng-page-action" aria-label="Ask ChatGPT about this page">
+          <LinkIcon size={15} aria-hidden="true" /><span>Ask ChatGPT</span><ExternalLink size={12} aria-hidden="true" />
+        </button>
+        {github ? (
+          <>
+            <a className="ng-page-action" href={github.edit} target="_blank" rel="noopener noreferrer">
+              <ExternalLink size={14} aria-hidden="true" /><span>Edit on GitHub</span>
+            </a>
+            <a className="ng-page-action" href={github.issue} target="_blank" rel="noopener noreferrer">
+              <span>Feedback</span>
+            </a>
+          </>
+        ) : null}
+      </div>
+    </div>
+  )
+}
