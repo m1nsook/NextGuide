@@ -12,6 +12,7 @@ export {
   type CopyButtonProps,
 } from "./code/code-block.js"
 export { Pre, type PreProps } from "./code/pre.js"
+export { DocsBreadcrumbs, DocsPageActions, type DocsBreadcrumbItem, type DocsPageActionsProps } from "./docs/page-tools.js"
 export { Markdown, type MarkdownProps } from "./markdown.js"
 export { MethodBadge, type MethodBadgeProps } from "./openapi/method.js"
 export type { DocsNavProps, LinkComponentProps } from "./docs/nav.js"
