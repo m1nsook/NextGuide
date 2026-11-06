@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/interactive.js"
 import { siJavascript, siTypescript } from "simple-icons"
+import { tokenize } from "../components/lib/highlight.js"
 import {
   AlertCircle, Check, CheckCircle2, ChevronRight, Code2, Copy, FileArchive,
   FileCode2, FileJson2, FileText, Folder, Info, Lightbulb, ListTree, Terminal,
@@ -103,6 +104,12 @@ function CodeLanguageIcon({ language }: { language: string }) {
   return <Icon className="ng-code-file-icon" aria-hidden="true" size={16} />
 }
 
+function highlightCode(code: string, language: string): React.ReactNode {
+  return tokenize(code, language).map((token, i) =>
+    token.type ? <span key={i} className={"token " + token.type}>{token.value}</span> : token.value
+  )
+}
+
 export type CodeVariant = {
   /** The selected code is copied verbatim; NextGuide does not transpile languages. */
   language: string
@@ -156,8 +163,8 @@ export function CodeWindow({
       </figcaption>
       <pre className={"ng-code-pre" + (wrap ? " ng-code-wrap" : "")}><code>
         {lineNumbers
-          ? selectedCode.replace(/\n$/, "").split("\n").map((line, i) => <span key={i} className="ng-code-line" data-line={i + 1}>{line || " "}</span>)
-          : selectedCode}
+          ? selectedCode.replace(/\n$/, "").split("\n").map((line, i) => <span key={i} className="ng-code-line" data-line={i + 1}>{line ? highlightCode(line, selectedLanguage) : " "}</span>)
+          : highlightCode(selectedCode, selectedLanguage)}
       </code></pre>
       {description ? <p className="ng-code-description">{description}</p> : null}
     </figure>
