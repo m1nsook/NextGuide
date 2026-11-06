@@ -7,11 +7,16 @@ description: Test the current GitHub build inside a separate Next.js application
 
 **The source of truth during development is GitHub `main`, not the old npm alpha.** You can test the current build without copying any repository files or workspace packages into your Next.js application.
 
+
+## Existing NextGuide projects
+
+Do **not** initialize again after installing a newer NextGuide package. Instead use `bunx nextguide upgrade --dry-run` followed by `bunx nextguide upgrade`. This preserves existing pages, navigation and project files. [See the safe upgrade guide](/docs/getting-started/upgrading).
+
 ## 1. Prepare a Next.js application
 
 Use an existing Next.js project, or create one in a separate folder:
 
-<CodeWindow title="Create a fresh test application" language="powershell" code={"bunx create-next-app@latest my-docs\ncd my-docs"} />
+<CodeWindow title="Create a fresh test application" language="bash" code={"bunx create-next-app@latest my-docs\ncd my-docs"} />
 
 NextGuide supports both App Router and Pages Router, in TypeScript and JavaScript projects, with or without `src/`.
 
@@ -21,7 +26,7 @@ Open the [NextGuide repository](https://github.com/m1nsook/NextGuide) through Gi
 
 Open PowerShell in the NextGuide repository root and run:
 
-<CodeWindow title="Create and test a local development package" language="powershell" code={"bun install\nbun run pack:dev"} />
+<CodeWindow title="Create and test a local development package" language="bash" code={"bun install\nbun run pack:dev"} />
 
 This builds the single `nextguide` package, runs its CLI and distribution tests, and creates `nextguide-0.0.1-alpha.2.tgz` in the repository root. It does not publish to npm or upload to GitHub.
 
@@ -31,7 +36,7 @@ If a test or the compiler fails, the packaging command stops instead of giving y
 
 Return to PowerShell in your **separate Next.js application** and install the generated archive using its absolute file path:
 
-<CodeWindow title="Install the GitHub build without copying source" language="powershell" code={"bun add \"C:\\path\\to\\NextGuide\\nextguide-0.0.1-alpha.2.tgz\"\nbunx nextguide --version"} />
+<CodeWindow title="Install the GitHub build without copying source" language="bash" code={"bun add \"C:\\path\\to\\NextGuide\\nextguide-0.0.1-alpha.2.tgz\"\nbunx nextguide --version"} />
 
 Replace `C:\path\to\NextGuide` with the actual folder containing the archive. This is a local package installation. Your Next.js project does not need the NextGuide monorepo, build tools, or any `@workspace/*` dependencies.
 
@@ -41,7 +46,7 @@ Replace `C:\path\to\NextGuide` with the actual folder containing the archive. Th
 
 Run these commands from the root of the test application:
 
-<CodeWindow title="Initialize Developer Mode" language="powershell" code="bunx nextguide init --developer" />
+<CodeWindow title="Initialize Developer Mode" language="bash" code="bunx nextguide init --developer" />
 
 The initializer now asks whether your docs should appear under **`/docs`** (default, preserving your site's homepage), or at **`/`** (documentation becomes the homepage). If an existing homepage would be replaced, NextGuide asks for confirmation and backs it up instead of deleting it.
 
@@ -55,13 +60,13 @@ To preview without writing files, use `bunx nextguide init --developer --dry-run
 
 ## 5. Start Next.js and test
 
-<CodeWindow title="Run your Next.js development server" language="powershell" code="bun run dev" />
+<CodeWindow title="Run your Next.js development server" language="bash" code="bun run dev" />
 
 Open the selected route on the port reported by Next.js, typically `http://localhost:3000/docs` or `http://localhost:3000/`. You should see the Introduction and Getting started pages.
 
 You can add more pages and update sidebar navigation automatically:
 
-<CodeWindow title="Add another documentation page" language="powershell" code={"bunx nextguide page add changelog --title Changelog"} />
+<CodeWindow title="Add another documentation page" language="bash" code={"bunx nextguide page add changelog --title Changelog"} />
 
 Edit `content/docs/index.mdx` to customize the homepage, or [read about adding nested pages](/docs/getting-started/adding-pages).
 
