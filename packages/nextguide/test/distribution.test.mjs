@@ -120,3 +120,13 @@ test("official documentation keyboard shortcut uses Lucide Command, not literal 
   assert.match(search, /<Command/)
   assert.doesNotMatch(search, /⌘K/)
 })
+
+test("code window and tabbed code use only their outer border and radius", () => {
+  const styles = readFileSync(join(root, "src/blocks/styles.css"), "utf8")
+  const source = readFileSync(join(root, "src/blocks/index.tsx"), "utf8")
+  assert.match(styles, /\.ng-code-window\s*>\s*\.ng-code-pre\s*\{[^}]*border:0;[^}]*border-radius:0/)
+  assert.match(styles, /\.ng-code-tabs-panel\s*>\s*\.ng-code-window\s*>\s*\.ng-code-pre\s*\{[^}]*border:0;[^}]*border-radius:0/)
+  assert.match(styles, /\.ng-code-tabs-panel>\.ng-code-window\{margin:0;border:0;border-radius:0\}/)
+  assert.match(source, /<pre className=\{"ng-code-pre"/)
+  assert.match(source, /className="ng-code-tabs-panel"/)
+})
