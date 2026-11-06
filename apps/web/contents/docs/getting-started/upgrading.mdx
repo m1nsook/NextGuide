@@ -1,0 +1,56 @@
+---
+title: Upgrade safely
+description: Update NextGuide without recreating your Next.js project or losing edited MDX pages.
+---
+
+# Upgrade an existing NextGuide site
+
+**Do not rerun `nextguide init` on an existing site.** The `upgrade` command is designed for projects already initialized in Developer Mode. It keeps your current Next.js application and its MDX files.
+
+## 1. Update the installed package
+
+For a normal npm installation, update the single NextGuide dependency:
+
+<CodeWindow title="Shell" language="bash" code="bun update nextguide" />
+
+If you are testing an unreleased GitHub build, first rebuild the tarball in your NextGuide source checkout with `bun run pack:dev`. Then install that fresh tarball in your **separate application** using `bun add` and its actual absolute file path. No new Next.js application is necessary.
+
+## 2. Preview the upgrade
+
+From the root of the **existing application**:
+
+<CodeWindow title="Shell" language="bash" code="bunx nextguide upgrade --dry-run" />
+
+This reports which configuration files would change. It never writes anything during a dry run. An old `nextguide.config.json` with no `basePath` receives `/docs`, and older configurations without an appearance section receive the defaults `light` and `blue`.
+
+## 3. Apply the configuration upgrade
+
+<CodeWindow title="Shell" language="bash" code="bunx nextguide upgrade" />
+
+The command preserves existing site metadata, custom fields, MDX content, and `_meta.json` navigation. A numbered `.nextguide-backup` copy is written before a configuration file is changed. Re-running the command is safe when there are no changes to make.
+
+### Adopt new generated layouts and styles
+
+The files created by `nextguide init` are editable source code; NextGuide will **not silently overwrite them** in a normal upgrade. If you want new starter templates, explicitly opt in:
+
+<CodeWindow title="Preview and refresh generated files" language="bash" code={"bunx nextguide upgrade --refresh-generated --dry-run\nbunx nextguide upgrade --refresh-generated"} />
+
+This only replaces files that still contain the NextGuide-generated marker, and backs up their previous contents first. Files without that marker are protected. Custom changes in those generated layouts or CSS may need to be reapplied from the backups. Your `content/docs/**` pages and navigation are never replaced.
+
+## Set the default theme and accent
+
+You can update your theme without reinstalling:
+
+<CodeWindow title="Shell" language="bash" code="bunx nextguide upgrade --system --accent:purple" />
+
+Valid modes are `--light` (default), `--dark`, and `--system`. Accents: `blue`, `red`, `green`, `purple`, `yellow`, `orange`, `teal`, and `pink`. All presets use separate high-contrast text colors for light and dark backgrounds. Theme settings live in `nextguide.config.json` under `appearance`.
+
+For a new site you can choose them during initialization:
+
+<CodeWindow title="Shell" language="bash" code="bunx nextguide init --developer --dark --accent:teal" />
+
+**Important:** Updating only the configuration does not automatically change old, edited generated layouts. To make existing sites render the new appearance attributes, first review and run `upgrade --refresh-generated`, or integrate those attributes manually in your layout and stylesheet.
+
+## What this command does not upgrade
+
+`nextguide upgrade` is **not** the same as a dependency manager: it does not contact npm, install packages, migrate Next.js, replace user-owned files, deploy, publish, or enable Account Mode. Install the newer NextGuide package first, then use the command to reconcile the local starter.

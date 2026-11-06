@@ -11,7 +11,7 @@ NextGuide is an **independent, all-in-one documentation framework for Next.js**.
 1. Open a **separate** [NextGuide GitHub repository](https://github.com/m1nsook/NextGuide) checkout in GitHub Desktop and pull `main`.
 2. Open PowerShell in that checkout and run:
 
-```powershell
+```sh
 bun install
 bun run pack:dev
 ```
@@ -20,7 +20,7 @@ bun run pack:dev
 
 3. Open PowerShell in your **separate, existing Next.js application** and install **only the tarball**:
 
-```powershell
+```sh
 bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
 bunx nextguide --version
 bunx nextguide init --developer
@@ -37,7 +37,7 @@ If you do not have a Next.js test application yet, create one in a **different d
 
 When Account Mode is complete and a tested npm release is published, the normal installation in a Next.js project will be:
 
-```powershell
+```sh
 bun add nextguide
 bunx nextguide init --developer
 bun run dev
@@ -47,7 +47,7 @@ The initializer creates working documentation routes, MDX pages, sidebar navigat
 
 Open `/docs` on your application's local Next.js server. To create additional MDX pages and update navigation automatically, use:
 
-```powershell
+```sh
 bunx nextguide page add guides/setup --title Setup
 bunx nextguide page add guides/advanced --dry-run
 ```
@@ -64,7 +64,7 @@ The installer now asks whether documentation should appear at `/docs` (default) 
 
 Local compatibility tests:
 
-```powershell
+```sh
 bun install
 bun run compat:next
 ```
@@ -73,9 +73,21 @@ The GitHub **Manual Next.js compatibility and update** workflow can be started f
 
 Upstream release notes: https://github.com/vercel/next.js/releases
 
+
+## Developer Mode appearance and safe upgrades
+
+```sh
+bunx nextguide init --developer --system --accent:teal
+bunx nextguide upgrade --dry-run
+bunx nextguide upgrade
+bunx nextguide upgrade --refresh-generated --dry-run
+```
+
+Choose `--light` (the default), `--dark`, or `--system`. Select from blue, red, green, purple, yellow, orange, teal, and pink accessible accent presets. Existing projects use `upgrade` without recreating the Next.js application; MDX and navigation are preserved. The optional `--refresh-generated` step is explicit, makes backups, and only replaces marked NextGuide starter files. Read the [upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
+
 ## Installed version and manual update checks
 
-```powershell
+```sh
 bunx nextguide --version
 bunx nextguide version check
 bunx nextguide version check --tag alpha
@@ -109,7 +121,7 @@ No separate renderer packages or shadcn registry installer are required. React a
 
 Clone the project with GitHub Desktop and run:
 
-```powershell
+```sh
 bun install
 bun run dev
 ```
@@ -118,7 +130,7 @@ Documentation preview: http://localhost:4310
 
 Before a release, validate the CLI, bundled distribution and documentation build (including `npm pack --dry-run` on Windows):
 
-```powershell
+```sh
 bun run --cwd packages/nextguide test
 bun run --cwd packages/nextguide build
 bun run --cwd packages/nextguide test:dist
