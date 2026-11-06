@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/interactive.js"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/interactive.js"
+import { siJavascript, siTypescript } from "simple-icons"
 import {
   AlertCircle, Check, CheckCircle2, ChevronRight, Code2, Copy, FileArchive,
   FileCode2, FileJson2, FileText, Folder, Info, Lightbulb, ListTree, Terminal,
@@ -74,35 +75,89 @@ export function CopyButton({ value, className, label = "Copy" }: {
 const languageLabels: Record<string, string> = {
   ps1: "PowerShell", powershell: "PowerShell", pwsh: "PowerShell",
   shell: "Shell", sh: "Shell", bash: "Shell", cmd: "Command Prompt",
-  ts: "TypeScript", tsx: "TSX", js: "JavaScript", jsx: "JSX",
+  ts: "TypeScript", tsx: "TypeScript (TSX)", typescript: "TypeScript",
+  js: "JavaScript", jsx: "JavaScript (JSX)", javascript: "JavaScript",
   json: "JSON", yaml: "YAML", yml: "YAML", rust: "Rust", rs: "Rust",
-  css: "CSS", html: "HTML", mdx: "MDX", text: "Plain text",
+  css: "CSS", html: "HTML", mdx: "MDX", md: "Markdown", markdown: "Markdown",
+  text: "Plain text", plaintext: "Plain text",
 }
+
+const SHELL_LANGUAGES = new Set(["ps1", "powershell", "pwsh", "bash", "shell", "sh", "cmd"])
+const TYPESCRIPT_LANGUAGES = new Set(["ts", "tsx", "typescript"])
+const JAVASCRIPT_LANGUAGES = new Set(["js", "jsx", "javascript"])
+
+function CodeLanguageIcon({ language }: { language: string }) {
+  const key = language.toLowerCase()
+  const simpleIcon = TYPESCRIPT_LANGUAGES.has(key) ? siTypescript
+    : JAVASCRIPT_LANGUAGES.has(key) ? siJavascript : null
+  if (simpleIcon) return (
+    <svg viewBox="0 0 24 24" className={"ng-code-file-icon ng-code-" + (TYPESCRIPT_LANGUAGES.has(key) ? "typescript" : "javascript")}
+      fill="currentColor" focusable="false" aria-hidden="true">
+      <path d={simpleIcon.path} />
+    </svg>
+  )
+  const Icon = SHELL_LANGUAGES.has(key) ? Terminal
+    : key === "json" ? FileJson2
+      : key === "mdx" || key === "md" || key === "markdown" ? FileText
+        : ["css", "html", "yaml", "yml", "rust", "rs"].includes(key) ? FileCode2 : Code2
+  return <Icon className="ng-code-file-icon" aria-hidden="true" size={16} />
+}
+
+export type CodeVariant = {
+  /** The selected code is copied verbatim; NextGuide does not transpile languages. */
+  language: string
+  code: string
+  label?: string
+}
+
 export type CodeWindowProps = {
   code: string
   title?: string
   language?: string
+  /** Additional ready-written snippets (e.g. TypeScript and JavaScript). */
+  alternatives?: CodeVariant[]
   description?: string
   lineNumbers?: boolean
   wrap?: boolean
   className?: string
 }
-export function CodeWindow({ code, title, language = "text", description, lineNumbers = false, wrap = false, className = "" }: CodeWindowProps) {
-  const label = languageLabels[language.toLowerCase()] ?? language
+
+export function CodeWindow({
+  code, title, language = "text", alternatives, description,
+  lineNumbers = false, wrap = false, className = "",
+}: CodeWindowProps) {
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const snippets: CodeVariant[] = [{ code, language }, ...(alternatives ?? [])]
+  const index = Math.min(selectedIndex, snippets.length - 1)
+  const selected = snippets[index]
+  const selectedCode = selected.code
+  const selectedLanguage = selected.language
+  const label = languageLabels[selectedLanguage.toLowerCase()] ?? selectedLanguage
   return (
     <figure className={"ng-code-window " + className}>
       <figcaption className="ng-code-header">
-        {["ps1", "powershell", "pwsh", "bash", "shell", "sh"].includes(language.toLowerCase())
-          ? <Terminal aria-hidden="true" size={16} />
-          : <Code2 aria-hidden="true" size={16} />}
+        <CodeLanguageIcon language={selectedLanguage} />
         <span className="ng-code-title">{title ?? label}</span>
-        {title ? <span className="ng-code-language">{label}</span> : null}
-        <CopyButton value={code} />
+        {snippets.length > 1 ? (
+          <Select value={String(index)} onValueChange={(value) => setSelectedIndex(Number(value))}>
+            <SelectTrigger aria-label="Select code language" className="ng-code-language-select">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {snippets.map((snippet, i) => (
+                <SelectItem key={snippet.language + ":" + i} value={String(i)}>
+                  {snippet.label ?? languageLabels[snippet.language.toLowerCase()] ?? snippet.language}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : title ? <span className="ng-code-language">{label}</span> : null}
+        <CopyButton value={selectedCode} />
       </figcaption>
       <pre className={"ng-code-pre" + (wrap ? " ng-code-wrap" : "")}><code>
         {lineNumbers
-          ? code.replace(/\n$/, "").split("\n").map((line, i) => <span key={i} className="ng-code-line" data-line={i + 1}>{line || " "}</span>)
-          : code}
+          ? selectedCode.replace(/\n$/, "").split("\n").map((line, i) => <span key={i} className="ng-code-line" data-line={i + 1}>{line || " "}</span>)
+          : selectedCode}
       </code></pre>
       {description ? <p className="ng-code-description">{description}</p> : null}
     </figure>
