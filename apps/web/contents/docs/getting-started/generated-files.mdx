@@ -105,7 +105,7 @@ import { Suspense } from "react"
 import type { ReactNode } from "react"
 import { docs, site } from "@/lib/nextguide"
 import "nextguide/styles.css"
-import "../../styles/nextguide.css"
+import "@/styles/nextguide.css"
 
 type LinkItem = { title: string; href: string; nav: boolean; items: LinkItem[] }
 function renderNavigation(items: LinkItem[]) {
@@ -199,7 +199,11 @@ The chosen `basePath` is recorded in `nextguide.config.json`; it controls links 
 
 New App Router pages omit the `dynamicParams` route export and wrap asynchronous filesystem reads for navigation and MDX inside React `<Suspense>` boundaries. This avoids the blocking route error reported by Next.js 16.4.5.
 
-When a Next.js project defines the standard `@/*` source alias, NextGuide generates imports such as `@/lib/nextguide`. In projects without that alias, the generator uses correctly calculated relative paths instead. Existing example code below may show the relative form.
+NextGuide resolves **all generated local imports** from the importing file and your existing `tsconfig.json` or `jsconfig.json`. With a standard `@/*` alias pointing to `src/`, generated routes import `@/lib/nextguide` and `@/styles/nextguide.css`. With a custom `~/*` alias, they use `~/lib/nextguide` and `~/styles/nextguide.css` instead. When no alias covers a target, NextGuide calculates the correct relative path.
+
+For example, `src/lib/nextguide.ts` imports the project-root `nextguide.config.json` with `../../nextguide.config.json` when `@/*` maps only to `src/*`; a source-only alias cannot safely reference the configuration outside `src/`. When the alias maps to the project root, the config can use `@/nextguide.config.json`.
+
+The generated Pages Router `_app` CSS imports follow the same rules, including when NextGuide patches an existing `_app` file. No custom aliases are added to or overwritten in your project configuration.
 
 ## Overwrite protection
 

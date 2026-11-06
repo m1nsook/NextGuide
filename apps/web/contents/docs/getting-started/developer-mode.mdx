@@ -25,7 +25,7 @@ Next.js compiles your MDX pages into routes. App Router uses `generateStaticPara
 
 The initializer asks whether you want documentation under `/docs` or as the website homepage `/`. For scripts, use `--base-path` and `--yes`; use `--replace-home` only if you explicitly want to back up an existing homepage. New App Router routes no longer export the `dynamicParams` option that conflicts with Next.js 16.4's Cache Components feature.
 
-NextGuide uses `@/lib/nextguide` in generated routes when your project has the standard Next.js source alias. Projects using custom aliases keep working relative imports.
+NextGuide resolves every local import it generates, including MDX library code, the project configuration, stylesheets and Pages Router `_app` imports. It prefers the project's existing `@/*` or custom alias when that alias actually covers the target, and uses an accurate relative import otherwise. It never rewrites your TypeScript or JavaScript aliases.
 
 To test a new Next.js stable or canary release, run the **Manual Next.js compatibility and update** workflow from GitHub Actions. It executes only when manually launched, and proposes an update PR only if the operator selects that option. It never merges or publishes automatically. See [upstream Next.js releases](https://github.com/vercel/next.js/releases).
 
