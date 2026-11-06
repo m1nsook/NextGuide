@@ -130,3 +130,14 @@ test("code window and tabbed code use only their outer border and radius", () =>
   assert.match(source, /<pre className=\{"ng-code-pre"/)
   assert.match(source, /className="ng-code-tabs-panel"/)
 })
+
+test("official docs search displays OS-appropriate keyboard shortcut without hydration mismatch", () => {
+  const website = join(dirname(dirname(root)), "apps/web")
+  const search = readFileSync(join(website, "components/search.tsx"), "utf8")
+  assert.match(search, /useSyncExternalStore\(noSubscribe, isMacPlatform, nonAppleServerSnapshot\)/)
+  assert.match(search, /userAgentData\?\.platform/)
+  assert.match(search, /"Command plus K" : "Control plus K"/)
+  assert.match(search, /mac \? <Command[^>]+> : <span>Ctrl<\/span>/)
+  assert.match(search, /<SearchShortcut \/>/)
+  assert.match(search, /event\.metaKey \|\| event\.ctrlKey/)
+})

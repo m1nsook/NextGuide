@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { Command, CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
@@ -8,6 +8,30 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, Tooltip, TooltipTrigger, Too
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})
+
+type PlatformNavigator = Navigator & { userAgentData?: { platform?: string } }
+
+/** Detect the viewer's platform on the client, never from the server's OS. */
+function isMacPlatform() {
+  if (typeof navigator === "undefined") return false
+  const browser = navigator as PlatformNavigator
+  const platform = browser.userAgentData?.platform || browser.platform || browser.userAgent || ""
+  return /mac|iphone|ipad|ipod/i.test(platform)
+}
+
+/** Stable subscription and server snapshot prevent hydration mismatches. */
+const noSubscribe = () => () => {}
+const nonAppleServerSnapshot = () => false
+
+function SearchShortcut() {
+  const mac = useSyncExternalStore(noSubscribe, isMacPlatform, nonAppleServerSnapshot)
+  return (
+    <kbd aria-label={mac ? "Command plus K" : "Control plus K"} className="text-muted-foreground flex items-center gap-1 font-mono text-[11px]">
+      {mac ? <Command aria-hidden="true" className="size-3" /> : <span>Ctrl</span>}
+      <span>K</span>
+    </kbd>
+  )
+}
 
 /** Holds the Control/Command+K dialog; any `SearchButton` below can open it. */
 export function SearchProvider({ entries, children }: { entries: SearchEntry[]; children: ReactNode }) {
@@ -67,7 +91,7 @@ export function SearchButton({ compact = false, className }: { compact?: boolean
     >
       <Search className="size-[15px]" />
       <span className="flex-1 text-left">Search</span>
-      <kbd aria-label="Control or Command plus K" className="text-muted-foreground flex items-center gap-0.5 font-mono text-[11px]"><Command aria-hidden="true" className="size-3" /><span>K</span></kbd>
+      <SearchShortcut />
     </button>
   )
 }
