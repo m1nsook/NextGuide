@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { useRouter } from "next/navigation"
 import { CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
+import { ScrollArea, ScrollAreaViewport, ScrollBar } from "nextguide/ui"
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})
@@ -134,7 +135,9 @@ function SearchDialog({ entries, onClose }: { entries: SearchEntry[]; onClose: (
           />
           <kbd className="text-muted-foreground rounded border px-1.5 font-mono text-[10px]">Esc</kbd>
         </div>
-        <ul ref={listRef} className="max-h-[55vh] overflow-y-auto p-2">
+        <ScrollArea className="h-[min(55vh,26rem)]">
+          <ScrollAreaViewport className="h-full">
+            <ul ref={listRef} className="p-2">
           {results.length === 0 ? (
             <li className="text-muted-foreground px-3 py-8 text-center text-sm">No results for “{query}”</li>
           ) : (
@@ -166,7 +169,10 @@ function SearchDialog({ entries, onClose }: { entries: SearchEntry[]; onClose: (
               </li>
             ))
           )}
-        </ul>
+            </ul>
+          </ScrollAreaViewport>
+          <ScrollBar />
+        </ScrollArea>
       </div>
     </div>
   )

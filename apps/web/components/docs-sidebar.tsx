@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 import { Docs } from "nextguide/components"
 import type { NavItem } from "nextguide/core"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "nextguide/ui"
+import { ScrollArea, ScrollAreaViewport, ScrollBar, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Tooltip, TooltipContent, TooltipTrigger } from "nextguide/ui"
 import { site } from "@/lib/site"
 import { GitHubIcon } from "./icons"
 import { Logo } from "./logo"
@@ -24,11 +24,14 @@ function SidebarBody({ items, onNavigate }: { items: NavItem[]; onNavigate?: () 
         </Link>
         <SearchButton />
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
-        <Docs.Nav items={items} activeHref={pathname} linkAs={Link} onNavigate={onNavigate} />
-      </div>
+      <ScrollArea className="min-h-0 flex-1">
+        <ScrollAreaViewport className="h-full px-4 pb-6">
+          <Docs.Nav items={items} activeHref={pathname} linkAs={Link} onNavigate={onNavigate} />
+        </ScrollAreaViewport>
+        <ScrollBar />
+      </ScrollArea>
       <div className="flex items-center justify-between border-t px-6 py-3">
-        <a
+        <Tooltip><TooltipTrigger asChild><a
           href={site.github}
           target="_blank"
           rel="noopener noreferrer"
@@ -36,7 +39,7 @@ function SidebarBody({ items, onNavigate }: { items: NavItem[]; onNavigate?: () 
           className="text-muted-foreground hover:text-foreground -ml-2 inline-flex size-9 items-center justify-center rounded-md transition-colors"
         >
           <GitHubIcon />
-        </a>
+        </a></TooltipTrigger><TooltipContent side="right">View source code</TooltipContent></Tooltip>
         <ThemeToggle />
       </div>
     </div>
