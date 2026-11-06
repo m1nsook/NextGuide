@@ -2,14 +2,14 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { CornerDownLeft, FileText, Search } from "lucide-react"
+import { Command, CornerDownLeft, FileText, Search } from "lucide-react"
 import { cn, MethodBadge } from "nextguide/components"
 import { ScrollArea, ScrollAreaViewport, ScrollBar, Tooltip, TooltipTrigger, TooltipContent } from "nextguide/ui"
 import type { SearchEntry } from "@/lib/search-index"
 
 const SearchContext = createContext<() => void>(() => {})
 
-/** Holds the ⌘K dialog; any `SearchButton` below can open it. */
+/** Holds the Control/Command+K dialog; any `SearchButton` below can open it. */
 export function SearchProvider({ entries, children }: { entries: SearchEntry[]; children: ReactNode }) {
   const [open, setOpen] = useState(false)
 
@@ -67,7 +67,7 @@ export function SearchButton({ compact = false, className }: { compact?: boolean
     >
       <Search className="size-[15px]" />
       <span className="flex-1 text-left">Search</span>
-      <kbd className="text-muted-foreground font-mono text-[11px]">⌘K</kbd>
+      <kbd aria-label="Control or Command plus K" className="text-muted-foreground flex items-center gap-0.5 font-mono text-[11px]"><Command aria-hidden="true" className="size-3" /><span>K</span></kbd>
     </button>
   )
 }

@@ -29,6 +29,18 @@ For new applications, first create a Next.js project with `bunx create-next-app@
 
 **Release note:** `nextguide init` requires `0.0.1-alpha.2` or later. The package is manually published to npm after its release checks pass; earlier alphas are CLI/renderer previews.
 
+## Installed version and manual update checks
+
+```powershell
+bunx nextguide --version
+bunx nextguide version check
+bunx nextguide version check --tag alpha
+```
+
+`--version` runs offline and prints the installed package's version. `version check` contacts npm **only when requested** and compares the installed version with a published dist-tag; `--json` returns machine-readable status. It **does not automatically install or upgrade anything**. NextGuide's public npm release remains on hold until Account Mode is complete.
+
+The version selector in the official documentation sidebar is website-only. Generated Developer Mode sites do not include a NextGuide-branded version control.
+
 ## One npm package
 
 ```tsx

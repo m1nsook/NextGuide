@@ -4,13 +4,16 @@ import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { initDeveloper } from "../lib/init.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
+import { versionCommand } from "../lib/version-cli.mjs";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const help = `NextGuide ${version} — early alpha
 
 Usage:
   nextguide --help             Show this help
-  nextguide --version          Show the published version
+  nextguide --version          Show installed package version (offline)
+  nextguide version check      Check npm latest version on demand
+  nextguide version check --tag alpha  Check the alpha channel
   nextguide doctor [path]      Inspect a local Next.js project
   nextguide doctor --json      Print machine-readable diagnostics
   nextguide init [path]        Scaffold Developer Mode in a Next.js project
@@ -170,6 +173,9 @@ switch (command) {
     break;
   case "page":
     pageCommand(args);
+    break;
+  case "version":
+    await versionCommand(args, version);
     break;
   default:
     process.stderr.write(`Unknown NextGuide command: ${command}\nRun 'nextguide --help' to see available commands.\n`);

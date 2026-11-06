@@ -12,8 +12,9 @@ import { GitHubIcon } from "./icons"
 import { Logo } from "./logo"
 import { SearchButton } from "./search"
 import { ThemeToggle } from "./theme-toggle"
+import { DocsVersionSelector } from "./version-selector"
 
-function SidebarBody({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => void }) {
+function SidebarBody({ items, version, onNavigate }: { items: NavItem[]; version: string; onNavigate?: () => void }) {
   const pathname = usePathname()
 
   return (
@@ -23,6 +24,7 @@ function SidebarBody({ items, onNavigate }: { items: NavItem[]; onNavigate?: () 
           <Logo />
         </Link>
         <SearchButton />
+        <DocsVersionSelector version={version} onNavigate={onNavigate} />
       </div>
       <ScrollArea className="min-h-0 flex-1">
         <ScrollAreaViewport className="h-full px-4 pb-6">
@@ -47,13 +49,13 @@ function SidebarBody({ items, onNavigate }: { items: NavItem[]; onNavigate?: () 
 }
 
 /** Desktop: sticky sidebar. Mobile: a top bar with search and a drawer. */
-export function DocsSidebar({ items }: { items: NavItem[] }) {
+export function DocsSidebar({ items, version }: { items: NavItem[]; version: string }) {
   const [open, setOpen] = useState(false)
 
   return (
     <>
       <aside className="bg-background sticky top-0 hidden h-dvh border-r lg:block">
-        <SidebarBody items={items} />
+        <SidebarBody items={items} version={version} />
       </aside>
 
       <header className="bg-background/90 sticky top-0 z-30 flex h-14 items-center gap-1 border-b pr-2 pl-4 backdrop-blur lg:hidden">
@@ -72,7 +74,7 @@ export function DocsSidebar({ items }: { items: NavItem[] }) {
             <SheetHeader className="sr-only">
               <SheetTitle>Navigation</SheetTitle>
             </SheetHeader>
-            <SidebarBody items={items} onNavigate={() => setOpen(false)} />
+            <SidebarBody items={items} version={version} onNavigate={() => setOpen(false)} />
           </SheetContent>
         </Sheet>
       </header>
