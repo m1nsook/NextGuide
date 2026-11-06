@@ -8,7 +8,7 @@ To test a current GitHub build in a **different** Next.js application, run `bun 
 
 In the **separate application** run:
 
-```powershell
+```sh
 bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
 bunx nextguide init --developer
 bun run dev
@@ -18,7 +18,7 @@ Replace the path with the actual absolute path to the generated file. The applic
 
 ## Install from npm (after Account Mode release)
 
-```powershell
+```sh
 bun add nextguide
 bunx nextguide init --developer
 bun run dev
@@ -26,7 +26,7 @@ bun run dev
 
 The initializer generates a real `/docs` route, starter MDX, sidebar navigation, editable project CSS, and a JSON config. It supports both **App Router** and **Pages Router**, with or without `src/`, in TypeScript or JavaScript projects. Run in the root of an existing Next.js application.
 
-```powershell
+```sh
 bunx nextguide init --developer --dry-run
 bunx nextguide init --developer --router app
 bunx nextguide doctor --json
@@ -42,9 +42,21 @@ Generated App Router files omit `dynamicParams` and use Suspense around asynchro
 
 From the NextGuide source checkout, `bun run compat:next` tests packaged installations with current Next.js. A manual-only GitHub Actions workflow is available for stable/canary compatibility checks and opt-in update PRs.
 
+
+## Developer Mode appearance and safe upgrades
+
+```sh
+bunx nextguide init --developer --system --accent:teal
+bunx nextguide upgrade --dry-run
+bunx nextguide upgrade
+bunx nextguide upgrade --refresh-generated --dry-run
+```
+
+Choose `--light` (the default), `--dark`, or `--system`. Select from blue, red, green, purple, yellow, orange, teal, and pink accessible accent presets. Existing projects use `upgrade` without recreating the Next.js application; MDX and navigation are preserved. The optional `--refresh-generated` step is explicit, makes backups, and only replaces marked NextGuide starter files. Read the [upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
+
 ## Add documentation pages
 
-```powershell
+```sh
 bunx nextguide page add changelog --title Changelog
 bunx nextguide page add guides/windows --title "Windows setup"
 bunx nextguide page add guides/api --dry-run
@@ -56,7 +68,7 @@ bunx nextguide page add guides/api --dry-run
 
 ## Check the installed version
 
-```powershell
+```sh
 bunx nextguide --version
 bunx nextguide version check
 bunx nextguide version check --tag alpha --json
