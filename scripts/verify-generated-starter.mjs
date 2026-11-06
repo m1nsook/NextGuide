@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs"
 import { spawnSync } from "node:child_process"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
@@ -33,7 +33,7 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
       nextguide: "file:" + tarball
     },
     devDependencies: {
-      typescript: "^5.9.2", "@types/react": "^19.1.9",
+      typescript: "^5.9.2", tailwindcss: "^4.3.4", "@tailwindcss/postcss": "^4.3.4", "@types/react": "^19.1.9",
       "@types/react-dom": "^19.1.7", "@types/node": "^22.10.0"
     }
   }, null, 2))
@@ -47,12 +47,14 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
     include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
     exclude: ["node_modules"]
   }, null, 2))
+  writeFileSync(join(folder, "postcss.config.mjs"), 'export default { plugins: { "@tailwindcss/postcss": {} } }\n')
   writeFileSync(join(folder, "next.config.mjs"), cacheComponents
     ? 'export default { cacheComponents: true }\n'
     : 'export default { output: "export", trailingSlash: true, images: { unoptimized: true } }\n')
   if (router === "app") {
     writeFileSync(join(folder, "src", "app", "layout.tsx"),
-      'import type { ReactNode } from "react"\nexport default function RootLayout({ children }: { children: ReactNode }) { return <html lang="en"><body>{children}</body></html> }\n')
+      'import type { ReactNode } from "react"\nimport "./globals.css"\nexport default function RootLayout({ children }: { children: ReactNode }) { return <html lang="en"><body>{children}</body></html> }\n')
+    writeFileSync(join(folder, "src", "app", "globals.css"), '@import "tailwindcss";\n')
     if (basePath === "/") {
       writeFileSync(join(folder, "src", "app", "page.tsx"), "export default function Home() { return <p>Existing home</p> }\n")
     }
@@ -75,6 +77,22 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
     assert.match(homepage, /data-slot="docs-nav"/, "Official shared sidebar must render")
     assert.match(homepage, /Start building/, "Starter MDX sections must render")
     assert.match(homepage, /Component showcase/, "Starter's bundled MDX link cards must render")
+
+    // Assert production CSS actually includes the official site styling and
+    // generated Tailwind utilities. A successful HTML build alone is not enough.
+    function collectCss(dir) {
+      if (!existsSync(dir)) return ""
+      return readdirSync(dir, { withFileTypes: true }).map((entry) => {
+        const full = join(dir, entry.name)
+        return entry.isDirectory() ? collectCss(full)
+          : entry.name.endsWith(".css") ? readFileSync(full, "utf8") : ""
+      }).join("\n")
+    }
+    const css = collectCss(join(folder, "out", "_next"))
+    assert.match(css, /--ng-accent/, "Official shared accent palette must be present in built CSS")
+    assert.match(css, /--background/, "Official light/dark colors must be present in built CSS")
+    assert.match(css, /grid-template-columns/, "Official sidebar grid utilities must be compiled")
+
   }
   if (basePath === "/") {
     const backup = router === "app" ? "src/app/page.tsx.nextguide-backup" : "src/pages/index.tsx.nextguide-backup"
