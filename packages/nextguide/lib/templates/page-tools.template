@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
+import { Fragment, useState } from "react"
 import {
   Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink,
   BreadcrumbPage, BreadcrumbSeparator,
@@ -40,10 +39,11 @@ export function NextGuidePageTools({ title, slug, basePath, source, githubUrl = 
   }
 
   function askChatGPT() {
-    const pageUrl = window.location.href
-    const prompt = "Help me understand this documentation page titled \\"" + title +
-      "\\". Answer questions about it using this context and explain examples clearly.\\nPage URL: " +
-      pageUrl + "\\n\\nPage content (MDX):\\n" + source.slice(0, 4800)
+    const prompt = [
+      "Help me understand this documentation page: " + title,
+      "Page URL: " + window.location.href,
+      "Page source (Markdown/MDX):\\n" + source.slice(0, 4500),
+    ].join("\\n\\n")
     window.open("https://chatgpt.com/?q=" + encodeURIComponent(prompt), "_blank", "noopener,noreferrer")
   }
 
@@ -54,25 +54,19 @@ export function NextGuidePageTools({ title, slug, basePath, source, githubUrl = 
           <BreadcrumbItem>
             {parts.length === 0
               ? <BreadcrumbPage><Home size={14} aria-hidden="true" /> {title}</BreadcrumbPage>
-              : <BreadcrumbLink asChild><Link href={basePath}><Home size={14} aria-hidden="true" /> Overview</Link></BreadcrumbLink>}
+              : <BreadcrumbLink href={basePath}><Home size={14} aria-hidden="true" /> Overview</BreadcrumbLink>}
           </BreadcrumbItem>
           {parts.map((part, index) => {
             const last = index === parts.length - 1
             const href = (basePath === "/" ? "" : basePath) + "/" + parts.slice(0, index + 1).join("/")
             return (
-              <BreadcrumbSeparator key={"sep-" + index}>
-                <span aria-hidden="true">/</span>
-              </BreadcrumbSeparator>
-            )
-          })}
-          {parts.map((part, index) => {
-            const last = index === parts.length - 1
-            const href = (basePath === "/" ? "" : basePath) + "/" + parts.slice(0, index + 1).join("/")
-            return (
-              <BreadcrumbItem key={href}>
-                {last ? <BreadcrumbPage>{title}</BreadcrumbPage>
-                  : <BreadcrumbLink asChild><Link href={href}>{titleCase(part)}</Link></BreadcrumbLink>}
-              </BreadcrumbItem>
+              <Fragment key={href}>
+                <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                <BreadcrumbItem>
+                  {last ? <BreadcrumbPage>{title}</BreadcrumbPage>
+                    : <BreadcrumbLink href={href}>{titleCase(part)}</BreadcrumbLink>}
+                </BreadcrumbItem>
+              </Fragment>
             )
           })}
         </BreadcrumbList>
