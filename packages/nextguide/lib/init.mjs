@@ -26,7 +26,8 @@ import config from "${configImport}"
 
 export const site = config.site
 export const appearance = config.appearance
-export const editBase = "editBase" in config.site ? String(config.site.editBase).replace(/\/$/, "") : ""
+const editBaseRaw = "editBase" in config.site ? String(config.site.editBase) : ""
+export const editBase = editBaseRaw.endsWith("/") ? editBaseRaw.slice(0, -1) : editBaseRaw
 export const docs = createDocs({
   contentDir: config.contentDir,
   remarkPlugins: [remarkGfm],
@@ -151,15 +152,16 @@ function pagesPageSource(typescript, basePath = '/docs', docsImport = '../../lib
   const typeImport = typescript ? 'import type { GetStaticPaths, GetStaticProps } from "next"\n' : ''
   const pathsType = typescript ? ': GetStaticPaths' : ''
   const propsType = typescript ? ': GetStaticProps' : ''
-  const pageProps = typescript ? '{ serialized, title, description, navigation, siteName }: PageProps' : '{ serialized, title, description, navigation, siteName }'
+  const pageProps = typescript ? '{ serialized, title, description, navigation, siteName, markdown, slug, editBase }: PageProps' : '{ serialized, title, description, navigation, siteName, markdown, slug, editBase }'
   const types = typescript ? `type LinkItem = { title: string; href: string; nav: boolean; items: LinkItem[] }
-type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; siteName: string; navigation: LinkItem[] }
+type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; siteName: string; navigation: LinkItem[]; markdown: string; slug: string; editBase: string }
 ` : ''
   const navigationType = typescript ? '(items: LinkItem[])' : '(items)'
   return `// ${SIGNATURE}
 import Link from "next/link"
 ${typeImport}import { MdxClient } from "nextguide/mdx/client"
-import { docs, site, appearance } from "${docsImport}"
+import { DocsBreadcrumbs, DocsPageActions } from "nextguide/components"
+import { docs, site, appearance, editBase } from "${docsImport}"
 
 ${types}export const getStaticPaths${pathsType} = async () => {
   const paths = await docs.getPagePaths()
@@ -170,7 +172,7 @@ export const getStaticProps${propsType} = async ({ params }) => {
   const slug = Array.isArray(params?.slug) ? params.slug.join("/") : ""
   const { serialized, frontmatter } = await docs.serialize({ slug })
   const navigation = await docs.getNavigation()
-  return { props: { serialized, title: String(frontmatter.title ?? "Documentation"), description: String(frontmatter.description ?? ""), navigation, siteName: site.name } }
+  return { props: { serialized, title: String(frontmatter.title ?? "Documentation"), description: String(frontmatter.description ?? ""), navigation, siteName: site.name, markdown: await docs.read({ slug }), slug, editBase } }
 }
 
 function renderNavigation${navigationType} {
@@ -192,7 +194,18 @@ export default function DocumentationPage(${pageProps}) {
         </aside>
         <main className="ng-starter-main">
           <article className="ng-starter-prose">
-            <h1>{title}</h1>
+            <DocsBreadcrumbs items={[
+              { title: "Documentation", href: ${JSON.stringify(basePath)} },
+              ...slug.split("/").filter(Boolean).map((part, i, segments) => ({
+                title: i === segments.length - 1 ? title : part.replace(/[-_]/g, " "),
+                ...(i < segments.length - 1 ? { href: ${JSON.stringify(basePath === "/" ? "" : basePath)} + "/" + segments.slice(0, i + 1).join("/") } : {}),
+              })),
+            ]} />
+            <div className="ng-starter-page-heading">
+              <h1>{title}</h1>
+              <DocsPageActions markdown={markdown} title={title}
+                editUrl={editBase ? editBase + "/" + (slug || "index") + ".mdx" : undefined} />
+            </div>
             {description ? <p className="ng-starter-description">{description}</p> : null}
             <MdxClient serialized={serialized} />
           </article>
