@@ -129,3 +129,299 @@
     --ng-accent:var(--ng-site-accent-dark,#93c5fd);--ng-on-accent:#111318;color-scheme:dark
   }
 }
+
+
+/* ─── NextGuide signature system: considered typography, editorial layout,
+   a visible accent hierarchy, and product-grade welcome surfaces. ─── */
+.ng-starter {
+  --ng-site-surface:#f7f9fd;
+  --ng-site-raised:#fff;
+  --ng-site-ink:#111827;
+  --ng-site-shadow:0 18px 50px -30px #14244733;
+  --ng-site-header-height:68px;
+  font-size:16px;
+  line-height:1.65;
+  letter-spacing:-.008em;
+  -webkit-font-smoothing:antialiased;
+}
+.ng-starter[data-ng-resolved="dark"] {
+  --ng-site-background:#0d1017;
+  --ng-bg:#0d1017;
+  --ng-site-subtle:#121722;
+  --ng-site-surface:#171d29;
+  --ng-site-raised:#141923;
+  --ng-fg:#f3f6fc;
+  --ng-site-ink:#f5f7fc;
+  --ng-muted:#b2bccd;
+  --ng-surface:#1b2230;
+  --ng-border:#293344;
+  --ng-site-shadow:0 20px 60px -27px #000a;
+}
+.ng-site-header {
+  background:color-mix(in srgb,var(--ng-site-background) 94%, transparent);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--ng-border);
+  box-shadow:0 1px 0 color-mix(in srgb,var(--ng-accent) 9%,transparent);
+}
+.ng-site-header-content{max-width:1760px;padding-inline:clamp(20px,2.5vw,46px)}
+.ng-site-brand{gap:12px}
+.ng-site-brand>svg{
+  width:37px;height:37px;padding:9px;flex:none;
+  color:var(--ng-accent);
+  background:color-mix(in srgb,var(--ng-accent) 11%,var(--ng-site-surface));
+  border:1px solid color-mix(in srgb,var(--ng-accent) 19%,var(--ng-border));
+  border-radius:11px;
+}
+.ng-site-brand strong{font-size:17px;letter-spacing:-.04em;font-weight:770}
+.ng-site-brand span{
+  font-size:11px;font-weight:670;letter-spacing:.025em;text-transform:uppercase;
+  color:var(--ng-muted);padding-left:12px;
+}
+.ng-site-search-trigger{
+  width:272px;height:38px;min-height:38px;gap:11px;
+  border-radius:9px;padding:7px 11px;
+  font-size:13px;background:var(--ng-site-subtle);
+  white-space:nowrap;transition:border-color .16s,background .16s;
+}
+.ng-site-search-trigger:hover{border-color:color-mix(in srgb,var(--ng-accent) 30%,var(--ng-border))}
+.ng-site-search-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ng-site-icon-button{width:38px;height:38px}
+.ng-site-icon-button:hover{color:var(--ng-accent)}
+.ng-site-grid{max-width:1760px;grid-template-columns:minmax(250px,284px) minmax(0,1fr)}
+.ng-site-sidebar{
+  padding:30px 17px 24px clamp(18px,2.5vw,38px);
+  gap:20px;background:var(--ng-site-background);
+}
+.ng-site-sidebar-search{
+  min-height:42px;padding:10px 12px;background:var(--ng-site-subtle);
+  border-radius:9px;font-size:13px;
+}
+.ng-site-sidebar-search kbd{letter-spacing:-.02em}
+.ng-site-sidebar nav{margin-top:6px}
+.ng-site-nav-group{margin:22px 0!important}
+.ng-site-nav-group-label{
+  color:var(--ng-fg);font-size:11px;font-weight:760;
+  letter-spacing:.09em;text-transform:uppercase;padding:7px 12px;
+}
+.ng-site-nav-link{
+  font-size:13.5px;line-height:1.5;
+  padding:10px 12px;border-radius:8px;
+  font-weight:510;margin:2px 0;
+}
+.ng-site-nav-link:hover{color:var(--ng-fg)!important}
+.ng-site-nav-current{
+  position:relative;color:var(--ng-accent)!important;
+  background:color-mix(in srgb,var(--ng-accent) 9%,var(--ng-site-background));
+  font-weight:690;
+}
+.ng-site-nav-current::before{
+  content:"";position:absolute;left:0;top:8px;bottom:8px;
+  width:3px;border-radius:2px;background:var(--ng-accent);
+}
+.ng-site-nav-children{
+  border-left:1px solid color-mix(in srgb,var(--ng-border) 88%,transparent);
+  padding-left:11px!important;margin-left:13px!important;
+}
+.ng-site-sidebar-footer{color:var(--ng-muted);font-size:12px}
+.ng-site-sidebar-footer a:hover{color:var(--ng-accent)}
+.ng-site-main{padding:clamp(34px,4.5vw,67px) clamp(25px,4.8vw,78px) 110px}
+.ng-site-article-layout{max-width:1230px;grid-template-columns:minmax(0,1fr) 218px;gap:clamp(35px,5vw,78px)}
+.ng-site-article{max-width:830px}
+.ng-site-article-header{margin-bottom:13px;gap:16px;align-items:center}
+.ng-site-article-header h1{
+  font-size:clamp(35px,3.5vw,46px);font-weight:790;
+  line-height:1.16;letter-spacing:-.055em;
+}
+.ng-site-description{
+  color:var(--ng-muted);font-size:17px;line-height:1.8;
+  max-width:740px;margin:13px 0 35px;
+}
+.ng-site-content{font-size:15.5px;line-height:1.85}
+.ng-site-content :where(h2,h3,h4){font-weight:740;letter-spacing:-.035em}
+.ng-site-content h2{font-size:25px;margin-top:46px}
+.ng-site-content h3{font-size:20px}
+.ng-site-article-aside{
+  border-left:1px solid var(--ng-border);
+  padding:5px 0 24px 20px;top:calc(var(--ng-site-header-height) + 42px);
+}
+.ng-site-article-aside [data-slot="docs-toc"]{font-size:13px;line-height:1.6}
+.ng-site-article-aside [data-slot="docs-toc"]>p{
+  font-size:12px;font-weight:750;letter-spacing:.055em;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.ng-site-article-aside [data-slot="docs-toc"] a{font-size:12.5px;padding:7px 3px!important}
+.ng-site-article-aside [data-slot="docs-toc"] a:hover{color:var(--ng-accent)}
+.ng-site-article .ng-breadcrumbs{font-size:13px;margin-bottom:30px}
+.ng-page-actions{
+  border-radius:9px;min-height:35px;font-size:12px;
+  background:var(--ng-site-subtle);border-color:var(--ng-border)
+}
+.ng-page-actions>button{min-height:34px;padding:7px 11px}
+.ng-site-content .ng-link-cards{gap:14px;margin:22px 0 30px}
+.ng-site-content .ng-link-card{
+  border-radius:13px;min-height:124px;
+  padding:20px 19px;background:var(--ng-site-raised);
+  border-color:var(--ng-border);
+  transition:transform .17s,border-color .17s,box-shadow .17s,background .17s;
+  box-shadow:0 2px 12px -12px #0005;
+}
+.ng-site-content .ng-link-card:hover,.ng-site-content .ng-link-card:focus-visible{
+  transform:translateY(-2px);
+  box-shadow:var(--ng-site-shadow);
+  border-color:color-mix(in srgb,var(--ng-accent) 58%,var(--ng-border));
+  background:color-mix(in srgb,var(--ng-accent) 4%,var(--ng-site-raised));
+}
+.ng-site-content .ng-link-card>span{gap:9px}
+.ng-site-content .ng-link-card>span>strong{font-size:15px;font-weight:700;letter-spacing:-.02em}
+.ng-site-content .ng-link-card>span>span{font-size:13px;line-height:1.65}
+.ng-site-content .ng-link-card>svg{color:var(--ng-accent)}
+.ng-site-content .ng-steps{margin:26px 0 34px}
+.ng-site-content .ng-steps>li{padding-bottom:26px}
+.ng-site-content .ng-steps h3{font-size:15px;font-weight:725}
+.ng-site-content .ng-steps>li:before{
+  border-color:color-mix(in srgb,var(--ng-accent) 30%,var(--ng-border));
+  background:var(--ng-site-surface);color:var(--ng-accent)
+}
+.ng-site-content .ng-callout{
+  border-radius:12px;font-size:14px;padding:18px 19px;margin:22px 0;
+  background:color-mix(in srgb,var(--ng-accent) 4%,var(--ng-site-surface));
+}
+.ng-site-content .ng-code-window,.ng-site-content .ng-code-tabs,.ng-site-content .ng-file-tree{
+  border-radius:12px;box-shadow:0 5px 25px -20px #0007;
+  border-color:var(--ng-border);
+}
+.ng-site-content pre{font-size:13px}
+.ng-site-search-overlay{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.ng-site-search-dialog{border-radius:15px;box-shadow:0 24px 95px #0006}
+.ng-site-search-result{border-radius:9px;padding:14px 16px}
+.ng-site-search-active{background:color-mix(in srgb,var(--ng-accent) 9%,var(--ng-site-surface))}
+.ng-site-search-result strong{font-size:14px}
+.ng-site-search-result small{font-size:12px}
+/* Full-width showcase layout for frontmatter layout: landing */
+.ng-site-landing-layout{display:block;max-width:1230px}
+.ng-site-landing-layout .ng-site-article{max-width:none}
+.ng-site-landing-layout .ng-site-content{max-width:none}
+.ng-site-landing-layout .ng-site-content>h2{margin-top:62px}
+.ng-site-landing-utilities{display:flex;justify-content:flex-end;margin:-14px 0 16px;min-height:35px}
+.ng-site-landing-layout .ng-link-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ng-landing-hero{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(265px,.9fr);
+  align-items:center;gap:clamp(24px,4vw,50px);
+  min-height:390px;
+  margin:0 0 48px;padding:clamp(26px,4.2vw,56px);
+  border:1px solid color-mix(in srgb,var(--ng-accent) 24%,var(--ng-border));
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 84% 8%,color-mix(in srgb,var(--ng-accent) 15%,transparent),transparent 53%),
+    linear-gradient(140deg,var(--ng-site-raised) 15%,var(--ng-site-subtle) 100%);
+  box-shadow:var(--ng-site-shadow);
+}
+.ng-landing-hero-glow{
+  position:absolute;inset:auto -15% -170px -15%;height:245px;
+  pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse at 55% 30%,color-mix(in srgb,var(--ng-accent) 12%,transparent),transparent 67%);
+}
+.ng-landing-content{position:relative;z-index:2;min-width:0}
+.ng-landing-eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11px;letter-spacing:.13em;font-weight:780;
+  color:var(--ng-accent);text-transform:uppercase;
+}
+.ng-landing-eyebrow-mark{
+  width:25px;height:25px;display:grid;place-items:center;
+  border:1px solid color-mix(in srgb,var(--ng-accent) 27%,var(--ng-border));
+  background:color-mix(in srgb,var(--ng-accent) 10%,var(--ng-site-surface));
+  border-radius:8px;
+}
+.ng-landing-hero h1{
+  font-size:clamp(35px,3.65vw,56px);font-weight:810;
+  line-height:1.1;letter-spacing:-.065em;
+  color:var(--ng-fg);margin:22px 0 18px;
+  max-width:630px;text-wrap:balance;
+}
+.ng-landing-hero p{
+  font-size:clamp(14px,1.3vw,16px);line-height:1.78;
+  color:var(--ng-muted);max-width:520px;margin:0 0 26px;
+}
+.ng-landing-actions{display:flex;gap:10px;flex-wrap:wrap}
+.ng-landing-actions a{
+  min-height:44px;display:inline-flex;align-items:center;
+  gap:9px;padding:10px 16px;
+  border-radius:9px;font-size:13.5px;font-weight:700;
+  text-decoration:none!important;transition:transform .15s,filter .15s;
+}
+.ng-landing-actions a:hover{transform:translateY(-2px)}
+.ng-landing-actions .ng-landing-primary{
+  background:var(--ng-accent);color:var(--ng-on-accent);border:1px solid var(--ng-accent);
+}
+.ng-landing-actions .ng-landing-secondary{
+  border:1px solid var(--ng-border);background:var(--ng-site-raised);color:var(--ng-fg);
+}
+.ng-landing-preview{
+  min-width:0;max-width:425px;
+  height:282px;justify-self:end;align-self:center;
+  border:1px solid color-mix(in srgb,var(--ng-accent) 25%,var(--ng-border));
+  background:var(--ng-site-background);
+  border-radius:13px;overflow:hidden;
+  box-shadow:0 22px 45px -25px #0007,0 0 0 5px color-mix(in srgb,var(--ng-accent) 5%,transparent);
+  transform:perspective(1200px) rotateY(-7deg) rotateX(2deg);
+}
+.ng-landing-preview-toolbar{
+  height:35px;display:flex;align-items:center;gap:12px;padding:0 11px;
+  border-bottom:1px solid var(--ng-border);font-size:10px;color:var(--ng-muted);
+}
+.ng-landing-preview-dots{display:flex;gap:4px}
+.ng-landing-preview-dots i{display:block;width:6px;height:6px;border-radius:50%;background:var(--ng-border)}
+.ng-landing-preview-dots i:first-child{background:#e8797a}
+.ng-landing-preview-dots i:nth-child(2){background:#edc26d}
+.ng-landing-preview-dots i:nth-child(3){background:#63c49b}
+.ng-landing-preview-name{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ng-landing-preview-chip{margin-left:auto;color:var(--ng-accent);font-size:9px;font-weight:730}
+.ng-landing-preview-main{display:grid;grid-template-columns:37% 63%;height:calc(100% - 35px)}
+.ng-landing-preview-rail{padding:16px 8px;border-right:1px solid var(--ng-border);display:flex;flex-direction:column;gap:8px;white-space:nowrap;overflow:hidden}
+.ng-landing-preview-rail span{font-size:9px;font-weight:750;color:var(--ng-fg);display:inline-flex;gap:6px;align-items:center;margin-bottom:5px}
+.ng-landing-preview-rail em{font-size:9px;font-style:normal;color:var(--ng-muted);display:inline-flex;gap:5px;align-items:center;padding:6px 7px;border-radius:5px}
+.ng-landing-preview-rail em.ng-landing-preview-active{background:color-mix(in srgb,var(--ng-accent) 11%,var(--ng-site-surface));color:var(--ng-accent);font-weight:660}
+.ng-landing-preview-document{padding:20px 15px;min-width:0}
+.ng-landing-preview-path{font-size:8px;color:var(--ng-muted);white-space:nowrap}
+.ng-landing-preview-document>strong{font-size:14px;line-height:1.25;display:block;margin:12px 0 13px;letter-spacing:-.04em}
+.ng-landing-preview-paragraph{display:block;height:6px;border-radius:4px;background:var(--ng-border);margin:7px 0;opacity:.8}
+.ng-landing-preview-line-1{width:90%}.ng-landing-preview-line-2{width:64%}
+.ng-landing-preview-card{margin:18px 0 14px;padding:11px;border:1px solid var(--ng-border);border-radius:7px;background:var(--ng-site-surface)}
+.ng-landing-preview-card>span{display:inline-flex;align-items:center;gap:5px;color:var(--ng-accent);font-size:9px;font-weight:670;margin-bottom:8px}
+.ng-landing-preview-card i{display:block;width:87%;height:4px;border-radius:2px;background:var(--ng-border);margin:4px 0}
+.ng-landing-preview-card i:last-child{width:66%}
+.ng-landing-preview-code{border:1px solid var(--ng-border);background:var(--ng-site-raised);border-radius:5px;padding:7px;font:9px/1.4 ui-monospace,monospace;color:var(--ng-muted)}
+.ng-landing-preview-code span{color:var(--ng-accent);margin-right:6px}
+/* 113+ components remain package-owned and fit both design surfaces. */
+@media(max-width:1300px){
+  .ng-landing-hero{grid-template-columns:minmax(0,1fr) minmax(210px,.75fr);padding:32px}
+  .ng-landing-preview{transform:none}
+}
+@media(max-width:1120px){
+  .ng-site-article-layout{grid-template-columns:minmax(0,1fr)}
+  .ng-site-article-aside{display:none}
+  .ng-site-article{max-width:850px}
+  .ng-landing-hero{grid-template-columns:minmax(0,1fr);gap:30px}
+  .ng-landing-preview{justify-self:stretch;max-width:none;max-height:245px}
+}
+@media(max-width:920px){
+  .ng-site-sidebar{position:fixed;padding:22px;box-shadow:17px 0 55px #0004}
+  .ng-site-main{padding:33px clamp(17px,4.6vw,54px) 90px}
+  .ng-site-header-content{padding-inline:16px}
+}
+@media(max-width:660px){
+  .ng-site-landing-layout .ng-link-cards{grid-template-columns:minmax(0,1fr)}
+  .ng-landing-hero{padding:27px 23px;min-height:auto;border-radius:16px}
+  .ng-landing-hero h1{font-size:clamp(33px,8.7vw,43px)}
+  .ng-landing-preview{display:none}
+  .ng-site-landing-utilities{margin:0 0 14px}
+  .ng-site-article-header h1{font-size:33px}
+  .ng-site-content{font-size:15px}
+  .ng-site-description{font-size:15.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ng-site-content .ng-link-card,.ng-landing-actions a{transition:none!important;transform:none!important}
+}
