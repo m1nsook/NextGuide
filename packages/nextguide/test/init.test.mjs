@@ -23,7 +23,7 @@ test('initializes src/app TypeScript project with real pages and config', () => 
   const d = fixture()
   try {
     const r = initDeveloper(d, inspect(d, ['src/app']))
-    assert.equal(r.created.length, 8)
+    assert.equal(r.created.length, 16)
     assert.equal(r.mode, 'developer')
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/page.tsx')))
     assert.ok(existsSync(join(d, 'src/app/docs/layout.tsx')))
@@ -143,7 +143,7 @@ test('root mount backs up an existing homepage without destroying it', () => {
     assert.equal(existsSync(join(d, 'src/app/page.tsx')), false)
     assert.equal(JSON.parse(read(d, 'nextguide.config.json')).basePath, '/')
     assert.match(read(d, 'content/docs/index.mdx'), /\]\(\/getting-started\)/)
-    assert.match(read(d, 'src/app/(nextguide)/layout.tsx'), /href="\/"/)
+    assert.match(read(d, 'src/app/(nextguide)/layout.tsx'), /basePath=\{"\/"\}/)
   } finally { clear(d) }
 })
 
@@ -166,7 +166,7 @@ test('root Pages Router generates a catch-all and preserves the original homepag
     initDeveloper(d, inspect(d, ['pages']), { basePath: '/', replaceHome: true })
     assert.ok(existsSync(join(d, 'pages/[[...slug]].tsx')))
     assert.equal(read(d, 'pages/index.tsx.nextguide-backup').includes('Original'), true)
-    assert.match(read(d, 'pages/[[...slug]].tsx'), /href="\/"/)
+    assert.match(read(d, 'pages/[[...slug]].tsx'), /basePath=\{"\/"\}/)
     assert.equal(existsSync(join(d, 'pages/docs/[[...slug]].tsx')), false)
   } finally { clear(d) }
 })
@@ -225,7 +225,7 @@ test('app routes wrap asynchronous navigation and MDX content in Suspense', () =
     const layout = read(d, 'src/app/docs/layout.tsx')
     const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
     assert.match(layout, /<Suspense/)
-    assert.match(layout, /<DocumentationNavigation\s*\/>/)
+    assert.match(layout, /<DocumentationSite>/)
     assert.match(page, /<Suspense/)
     assert.match(page, /<DocumentationBody params=\{params\}/)
     assert.doesNotMatch(page, /dynamicParams\s*=/)
@@ -349,4 +349,45 @@ test('Pages Router generated pages also receive raw Markdown and safe breadcrumb
       assert.match(route, /slug\.split\("\/"\)\.filter\(Boolean\)/)
     } finally { clear(d) }
   }
+})
+
+
+test('first install creates a complete documentation website and wired MDX examples', () => {
+  const d = fixture()
+  try {
+    const result = initDeveloper(d, inspect(d, ['src/app']))
+    assert.ok(result.created.includes('src/lib/nextguide-mdx-components.tsx'))
+    const layout = read(d, 'src/app/docs/layout.tsx')
+    const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    const lib = read(d, 'src/lib/nextguide.ts')
+    const components = read(d, 'src/lib/nextguide-mdx-components.tsx')
+    assert.match(layout, /DocsStarterShell/)
+    assert.match(layout, /navigation=\{navigation\} searchIndex=\{searchIndex\}/)
+    assert.match(layout, /siteName=\{site.name\}/)
+    assert.match(page, /<Docs\.Toc items=\{toc\}/)
+    assert.match(page, /ng-site-article-layout/)
+    assert.match(lib, /components: nextguideMdxComponents/)
+    assert.match(lib, /getSearchIndex/)
+    for (const name of ['Callout', 'CodeWindow', 'CodeTabs', 'FileTree', 'Steps', 'Tabs', 'Accordion', 'Dialog', 'Table', 'Alert']) {
+      assert.ok(components.includes(name), name + ' is available by default in MDX')
+    }
+    assert.match(read(d, 'content/docs/index.mdx'), /<LinkCards>/)
+    assert.match(read(d, 'content/docs/components/examples.mdx'), /<Tabs defaultValue=/)
+    assert.ok(existsSync(join(d, 'content/docs/guides/writing.mdx')))
+    assert.ok(existsSync(join(d, 'content/docs/api-reference.mdx')))
+  } finally { clear(d) }
+})
+
+test('Pages Router also gets the full shell and reusable MDX components', () => {
+  const d = fixture({ folder: 'pages' })
+  try {
+    initDeveloper(d, inspect(d, ['pages']))
+    const route = read(d, 'pages/docs/[[...slug]].tsx')
+    assert.match(route, /DocsStarterShell/)
+    assert.match(route, /getSearchIndex/)
+    assert.match(route, /components=\{nextguideMdxComponents\}/)
+    assert.match(route, /<Docs\.Toc items=\{toc\}/)
+    assert.match(read(d, 'lib/nextguide.ts'), /components: nextguideMdxComponents/)
+    assert.match(read(d, 'pages/_app.tsx'), /nextguide\/styles\.css/)
+  } finally { clear(d) }
 })
