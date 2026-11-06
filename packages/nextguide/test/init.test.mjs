@@ -195,3 +195,37 @@ test('invalid mount paths are rejected before writing files', () => {
     assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
   } finally { clear(d) }
 })
+
+
+test('generates @/lib/nextguide imports when the Next.js project maps @/* to src', () => {
+  const d = fixture()
+  try {
+    writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({ compilerOptions: { paths: { '@/*': ['./src/*'] } } }))
+    initDeveloper(d, inspect(d, ['src/app']))
+    assert.match(read(d, 'src/app/docs/layout.tsx'), /from "@\/lib\/nextguide"/)
+    assert.match(read(d, 'src/app/docs/[[...slug]]/page.tsx'), /from "@\/lib\/nextguide"/)
+  } finally { clear(d) }
+})
+
+test('uses the right relative fallback for custom aliases and the root Pages Router', () => {
+  const d = fixture({ folder: 'pages' })
+  try {
+    writeFileSync(join(d, 'tsconfig.json'), JSON.stringify({ compilerOptions: { paths: { '~/*': ['./*'] } } }))
+    initDeveloper(d, inspect(d, ['pages']), { basePath: '/' })
+    assert.match(read(d, 'pages/[[...slug]].tsx'), /from "\.\.\/lib\/nextguide"/)
+  } finally { clear(d) }
+})
+
+test('app routes wrap asynchronous navigation and MDX content in Suspense', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']))
+    const layout = read(d, 'src/app/docs/layout.tsx')
+    const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    assert.match(layout, /<Suspense/)
+    assert.match(layout, /<DocumentationNavigation\s*\/>/)
+    assert.match(page, /<Suspense/)
+    assert.match(page, /<DocumentationBody params=\{params\}/)
+    assert.doesNotMatch(page, /dynamicParams\s*=/)
+  } finally { clear(d) }
+})
