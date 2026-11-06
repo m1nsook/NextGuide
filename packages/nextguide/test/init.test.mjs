@@ -112,3 +112,86 @@ test('re-running init is safe and does not modify existing files', () => {
     assert.equal(read(d, 'content/docs/index.mdx'), before)
   } finally { clear(d) }
 })
+
+test('generated App Router route supports Cache Components without dynamicParams', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']))
+    const source = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    assert.match(source, /generateStaticParams/)
+    assert.doesNotMatch(source, /dynamicParams\s*=/)
+    assert.equal(JSON.parse(read(d, 'nextguide.config.json')).basePath, '/docs')
+  } finally { clear(d) }
+})
+
+test('root mount backs up an existing homepage without destroying it', () => {
+  const d = fixture()
+  try {
+    const original = 'export default function Home() { return <div>My old homepage</div> }\n'
+    writeFileSync(join(d, 'src/app/page.tsx'), original)
+    assert.throws(
+      () => initDeveloper(d, inspect(d, ['src/app']), { basePath: '/' }),
+      /--replace-home/
+    )
+    assert.equal(read(d, 'src/app/page.tsx'), original)
+    const result = initDeveloper(d, inspect(d, ['src/app']), { basePath: '/', replaceHome: true })
+    assert.equal(result.basePath, '/')
+    assert.deepEqual(result.backedUp, ['src/app/page.tsx.nextguide-backup'])
+    assert.ok(existsSync(join(d, 'src/app/(nextguide)/layout.tsx')))
+    assert.ok(existsSync(join(d, 'src/app/(nextguide)/[[...slug]]/page.tsx')))
+    assert.equal(read(d, 'src/app/page.tsx.nextguide-backup'), original)
+    assert.equal(existsSync(join(d, 'src/app/page.tsx')), false)
+    assert.equal(JSON.parse(read(d, 'nextguide.config.json')).basePath, '/')
+    assert.match(read(d, 'content/docs/index.mdx'), /\]\(\/getting-started\)/)
+    assert.match(read(d, 'src/app/(nextguide)/layout.tsx'), /href="\/"/)
+  } finally { clear(d) }
+})
+
+test('root mount dry-run reports the backup without editing homepage', () => {
+  const d = fixture()
+  try {
+    writeFileSync(join(d, 'src/app/page.tsx'), 'my homepage')
+    const result = initDeveloper(d, inspect(d, ['src/app']), { basePath: '/', replaceHome: true, dryRun: true })
+    assert.deepEqual(result.backedUp, ['src/app/page.tsx.nextguide-backup'])
+    assert.equal(read(d, 'src/app/page.tsx'), 'my homepage')
+    assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+    assert.equal(existsSync(join(d, 'src/app/(nextguide)/layout.tsx')), false)
+  } finally { clear(d) }
+})
+
+test('root Pages Router generates a catch-all and preserves the original homepage', () => {
+  const d = fixture({ folder: 'pages' })
+  try {
+    writeFileSync(join(d, 'pages/index.tsx'), 'export default function Original() { return null }\n')
+    initDeveloper(d, inspect(d, ['pages']), { basePath: '/', replaceHome: true })
+    assert.ok(existsSync(join(d, 'pages/[[...slug]].tsx')))
+    assert.equal(read(d, 'pages/index.tsx.nextguide-backup').includes('Original'), true)
+    assert.match(read(d, 'pages/[[...slug]].tsx'), /href="\/"/)
+    assert.equal(existsSync(join(d, 'pages/docs/[[...slug]].tsx')), false)
+  } finally { clear(d) }
+})
+
+test('root mount refuses an occupied backup path, preserving all user files', () => {
+  const d = fixture()
+  try {
+    writeFileSync(join(d, 'src/app/page.tsx'), 'original')
+    writeFileSync(join(d, 'src/app/page.tsx.nextguide-backup'), 'previous backup')
+    assert.throws(
+      () => initDeveloper(d, inspect(d, ['src/app']), { basePath: '/', replaceHome: true }),
+      /already exists/
+    )
+    assert.equal(read(d, 'src/app/page.tsx'), 'original')
+    assert.equal(read(d, 'src/app/page.tsx.nextguide-backup'), 'previous backup')
+    assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+  } finally { clear(d) }
+})
+
+test('invalid mount paths are rejected before writing files', () => {
+  const d = fixture()
+  try {
+    for (const basePath of ['/blog', '/docs/', '', '../']) {
+      assert.throws(() => initDeveloper(d, inspect(d, ['src/app']), { basePath }), /Documentation path/)
+    }
+    assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+  } finally { clear(d) }
+})
