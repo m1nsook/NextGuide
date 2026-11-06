@@ -10,7 +10,6 @@ import { fileURLToPath } from "node:url"
 const forPages = process.env.NEXTGUIDE_PAGES === "1"
 
 const nextConfig = {
-  transpilePackages: ["@workspace/ui"],
   turbopack: {
     root: fileURLToPath(new URL("../../", import.meta.url)),
   },
