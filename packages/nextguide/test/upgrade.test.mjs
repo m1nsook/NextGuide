@@ -45,7 +45,7 @@ test('initialization accepts all three modes and accent options and rejects inva
   try {
     initDeveloper(f.directory, f.inspection, { appearance: { mode: 'dark', accent: 'yellow' } })
     assert.deepEqual(JSON.parse(f.read('nextguide.config.json')).appearance, { mode: 'dark', accent: 'yellow' })
-    assert.match(f.read('pages/docs/[[...slug]].tsx'), /mode=\{appearance.mode as "light"/)
+    assert.match(f.read('pages/docs/[[...slug]].tsx'), /mode=\{appearanceMode\}/)
     assert.throws(() => normalizeAppearance({ mode: 'sepia' }), /Invalid appearance mode/)
     assert.throws(() => normalizeAppearance({ accent: 'invisible' }), /Invalid accent/)
   } finally { f.clear() }
