@@ -30,6 +30,22 @@ The chosen mode and palette are stored in `nextguide.config.json`. Explicit ligh
 
 Use `bunx nextguide upgrade --dry-run` to inspect a legacy configuration, then `bunx nextguide upgrade` to apply it. Existing MDX files and sidebar metadata stay untouched. Updating the generated layout or CSS is an **explicit** `--refresh-generated` operation that creates backups. [Full upgrade guide](/docs/getting-started/upgrading).
 
+## Breadcrumbs and page actions
+
+Newly initialized documentation pages include breadcrumbs and a page action menu. **Copy page** copies the original MDX (including frontmatter), and **Ask ChatGPT** opens a new conversation with a prepared prompt containing the page title and an excerpt. Only the excerpt (up to 2,200 characters) is included in the ChatGPT URL; page text is not sent until you choose this action.
+
+You can also enable **Edit on GitHub** by adding `site.editBase` in `nextguide.config.json`. Point it at the source folder containing your MDX files:
+
+```json
+{
+  "site": {
+    "editBase": "https://github.com/owner/repository/edit/main/content/docs"
+  }
+}
+```
+
+Use your repository URL rather than the placeholder. If `site.editBase` is absent, the edit action stays hidden. For existing NextGuide sites, `nextguide upgrade --refresh-generated` can add these controls, with backups for previously generated files.
+
 ## What changes at build time?
 
 Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.
