@@ -2,6 +2,10 @@
 
 **An all-in-one Next.js documentation framework** with MDX, OpenAPI, UI components, icons, and site typography.
 
+## Fully equipped Developer Mode starter
+
+Running `bunx nextguide init --developer` now creates a real documentation site instead of the earlier minimal skeleton. The generated site has responsive navigation, local Ctrl/Cmd+K search, a table of contents, breadcrumbs, page actions, light/dark/system controls, a preconfigured MDX component registry and live examples. **One package:** `nextguide` provides both the layout and components. See [the generated project file map](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
+
 ## Install for development testing (before npm publication)
 
 To test a current GitHub build in a **different** Next.js application, run `bun install` and `bun run pack:dev` at the root of the NextGuide source checkout. This builds and tests `packages/nextguide` and writes an installable `nextguide-0.0.1-alpha.2.tgz` package archive in the source checkout's root.
