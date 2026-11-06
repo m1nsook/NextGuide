@@ -54,12 +54,15 @@ jobs:
         if: github.event_name != 'pull_request'
         run: touch apps/web/out/.nojekyll
 
+      # Keep only short-lived deployment archives; never store old site builds.
+      # upload-pages-artifact already defaults to one day. Make the policy explicit.
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: apps/web/out
           include-hidden-files: true
+          retention-days: 1
 
   deploy:
     if: github.event_name != 'pull_request'
