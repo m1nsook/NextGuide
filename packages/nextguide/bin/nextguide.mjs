@@ -3,6 +3,7 @@
 import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { initDeveloper } from "../lib/init.mjs";
+import { pageCommand } from "../lib/page-cli.mjs";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const help = `NextGuide ${version} — early alpha
@@ -15,6 +16,8 @@ Usage:
   nextguide init [path]        Scaffold Developer Mode in a Next.js project
   nextguide init --router app  Select App Router when both routers exist
   nextguide init --dry-run     Preview files without writing
+  nextguide page add <slug>   Create MDX page and update navigation
+  nextguide page --help       Show page creation options
 
 Next.js is mandatory. NextGuide aims to support App Router and Pages Router.
 Developer Mode initialization is available. Account Mode, /setup and /admin are not yet implemented.
@@ -164,6 +167,9 @@ switch (command) {
     break;
   case "init":
     init(args);
+    break;
+  case "page":
+    pageCommand(args);
     break;
   default:
     process.stderr.write(`Unknown NextGuide command: ${command}\nRun 'nextguide --help' to see available commands.\n`);
