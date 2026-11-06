@@ -23,7 +23,7 @@ test('initializes src/app TypeScript project with real pages and config', () => 
   const d = fixture()
   try {
     const r = initDeveloper(d, inspect(d, ['src/app']))
-    assert.equal(r.created.length, 8)
+    assert.equal(r.created.length, 13)
     assert.equal(r.mode, 'developer')
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/page.tsx')))
     assert.ok(existsSync(join(d, 'src/app/docs/layout.tsx')))
@@ -142,8 +142,8 @@ test('root mount backs up an existing homepage without destroying it', () => {
     assert.equal(read(d, 'src/app/page.tsx.nextguide-backup'), original)
     assert.equal(existsSync(join(d, 'src/app/page.tsx')), false)
     assert.equal(JSON.parse(read(d, 'nextguide.config.json')).basePath, '/')
-    assert.match(read(d, 'content/docs/index.mdx'), /\]\(\/getting-started\)/)
-    assert.match(read(d, 'src/app/(nextguide)/layout.tsx'), /href="\/"/)
+    assert.match(read(d, 'content/docs/index.mdx'), /href="\/getting-started"/)
+    assert.match(read(d, 'src/app/(nextguide)/layout.tsx'), /basePath=\{"\/"\}/)
   } finally { clear(d) }
 })
 
@@ -225,7 +225,7 @@ test('app routes wrap asynchronous navigation and MDX content in Suspense', () =
     const layout = read(d, 'src/app/docs/layout.tsx')
     const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
     assert.match(layout, /<Suspense/)
-    assert.match(layout, /<DocumentationNavigation\s*\/>/)
+    assert.match(layout, /<DocumentationShell>/)
     assert.match(page, /<Suspense/)
     assert.match(page, /<DocumentationBody params=\{params\}/)
     assert.doesNotMatch(page, /dynamicParams\s*=/)
@@ -314,5 +314,79 @@ test('parses jsconfig path mappings with JSONC comments without changing configu
     assert.match(read(d, 'app/docs/layout.jsx'), /from "@\/lib\/nextguide"/)
     assert.match(read(d, 'app/docs/layout.jsx'), /import "@\/styles\/nextguide\.css"/)
     assert.match(read(d, 'lib/nextguide.js'), /from "@\/nextguide\.config\.json"/)
+  } finally { clear(d) }
+})
+
+
+test('full initializer writes real shell, component map, page tools, sample pages and manifest', () => {
+  const d = fixture()
+  try {
+    const r = initDeveloper(d, inspect(d, ['src/app']), { theme: 'light', accent: 'purple' })
+    assert.equal(r.appearance.defaultTheme, 'light')
+    assert.equal(r.appearance.accent, 'purple')
+    const files = [
+      'src/components/nextguide-shell.tsx',
+      'src/components/nextguide-mdx.tsx',
+      'src/components/nextguide-page-tools.tsx',
+      'content/docs/components.mdx',
+      '.nextguide/managed-files.json',
+    ]
+    for (const file of files) assert.ok(existsSync(join(d, file)), 'Missing generated '+file)
+    assert.match(read(d, 'src/components/nextguide-shell.tsx'), /Docs\.Nav/)
+    assert.match(read(d, 'src/components/nextguide-shell.tsx'), /useSyncExternalStore/)
+    assert.match(read(d, 'src/components/nextguide-mdx.tsx'), /from "nextguide\/blocks"/)
+    assert.match(read(d, 'src/components/nextguide-mdx.tsx'), /from "nextguide\/ui"/)
+    assert.doesNotMatch(read(d, 'src/components/nextguide-mdx.tsx'), /\\nimport/)
+    assert.match(read(d, 'src/components/nextguide-page-tools.tsx'), /Copy page/)
+    assert.match(read(d, 'src/components/nextguide-page-tools.tsx'), /chatgpt\.com\/\?q=/)
+    assert.match(read(d, 'src/app/docs/[[...slug]]/page.tsx'), /NextGuidePageTools/)
+    assert.match(read(d, 'src/app/docs/[[...slug]]/page.tsx'), /frontmatter, toc, source/)
+    assert.match(read(d, 'content/docs/components.mdx'), /presentation="select"/)
+    assert.match(read(d, 'src/styles/nextguide.css'), /--ng-accent/)
+    const config = JSON.parse(read(d, 'nextguide.config.json'))
+    assert.deepEqual(config.appearance, { defaultTheme: 'light', accent: 'purple' })
+    assert.equal(config.site.githubUrl, '')
+    assert.equal(config.site.editBranch, 'main')
+    const manifest = JSON.parse(read(d, '.nextguide/managed-files.json'))
+    assert.equal(manifest.schemaVersion, 1)
+    assert.ok(manifest.files['src/components/nextguide-shell.tsx'])
+    assert.equal(manifest.files['.nextguide/managed-files.json'], undefined)
+  } finally { clear(d) }
+})
+
+test('system mode and dark accent palettes are available for generated documentation', () => {
+  for (const [theme, accent] of [['system', 'green'], ['dark', 'yellow'], ['light', 'pink']]) {
+    const d = fixture()
+    try {
+      const r = initDeveloper(d, inspect(d, ['src/app']), { theme, accent })
+      assert.equal(r.appearance.defaultTheme, theme)
+      assert.equal(r.appearance.accent, accent)
+      assert.match(read(d, 'src/components/nextguide-shell.tsx'), new RegExp('useState\\("'+theme+'"\\)'))
+      assert.match(read(d, 'src/styles/nextguide.css'), /prefers-color-scheme:dark/)
+    } finally { clear(d) }
+  }
+})
+
+test('invalid theme and accent are rejected without generating any files', () => {
+  for (const options of [{ theme: 'cyberpunk' }, { accent: 'neon-black' }]) {
+    const d = fixture()
+    try {
+      assert.throws(() => initDeveloper(d, inspect(d, ['src/app']), options))
+      assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+    } finally { clear(d) }
+  }
+})
+
+test('Pages Router starter includes MDX registry, contextual toolbar and working shell', () => {
+  const d = fixture({ folder: 'pages' })
+  try {
+    initDeveloper(d, inspect(d, ['pages']))
+    const route = read(d, 'pages/docs/[[...slug]].tsx')
+    assert.match(route, /NextGuidePageTools/)
+    assert.match(route, /MdxClient/)
+    assert.match(route, /mdxComponents/)
+    assert.match(route, /source, slug, githubUrl/)
+    assert.ok(existsSync(join(d, 'components/nextguide-shell.tsx')))
+    assert.ok(existsSync(join(d, 'components/nextguide-page-tools.tsx')))
   } finally { clear(d) }
 })
