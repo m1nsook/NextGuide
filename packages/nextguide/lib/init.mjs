@@ -166,9 +166,9 @@ export function planDeveloperProject(directory, inspection, routerOption, option
   files[libFile] = fullLibSource(
     projectImport(directory, aliases, libFile, 'nextguide.config.json'),
     projectImport(directory, aliases, libFile, mdxFile.replace(/\.(tsx|jsx)$/, '')),
-    basePath
+    basePath, typed
   )
-  files[stylesFile] = fullStyleSource()
+  files[stylesFile] = fullStyleSource(root)
   let patch = null
   if (router.name === 'App Router') {
     const docsFolder = router.folder + (basePath === '/' ? '/(nextguide)' : '/docs')
