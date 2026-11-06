@@ -32,3 +32,57 @@ import { Button, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescri
 ```
 
 NextGuide also ships Sheet, Popover, Tooltip, DropdownMenu, HoverCard and ContextMenu primitives. These are components, not account-administration features.
+
+## Tooltip
+
+<Preview>
+<TooltipProvider delayDuration={250}>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Hover for help</Button></TooltipTrigger>
+    <TooltipContent side="top">Edit your documentation files locally.</TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+</Preview>
+
+```tsx
+import { Button, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "nextguide/ui"
+
+<TooltipProvider delayDuration={250}>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Hover for help</Button></TooltipTrigger>
+    <TooltipContent side="top">Edit your documentation files locally.</TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+The tooltip uses NextGuide's own themed Radix overlay. It supports pointer hover and keyboard focus, without the browser's native `title` popup.
+
+## Dropdown menu
+
+<Preview>
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button variant="outline">Documentation links</Button></DropdownMenuTrigger>
+  <DropdownMenuContent align="start">
+    <DropdownMenuLabel>Explore NextGuide</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem asChild><a href="/docs/getting-started/installation">Installation</a></DropdownMenuItem>
+    <DropdownMenuItem asChild><a href="/components/ui">Component library</a></DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+</Preview>
+
+```tsx
+import { Button, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "nextguide/ui"
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button variant="outline">Documentation links</Button></DropdownMenuTrigger>
+  <DropdownMenuContent align="start">
+    <DropdownMenuLabel>Explore NextGuide</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem asChild><a href="/docs/getting-started/installation">Installation</a></DropdownMenuItem>
+    <DropdownMenuItem asChild><a href="/components/ui">Component library</a></DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+These menu items are real documentation links. For commands, provide an `onSelect` handler from your own Client Component.

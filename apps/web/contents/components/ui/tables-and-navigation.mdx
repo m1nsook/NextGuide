@@ -50,3 +50,45 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Breadcru
   <BreadcrumbItem><BreadcrumbPage>Components</BreadcrumbPage></BreadcrumbItem>
 </BreadcrumbList></Breadcrumb>
 ```
+
+## Scroll area
+
+Use NextGuide's Radix-backed scroll area for internal panels, drawers, navigation lists and other bounded content. The scrollbar adapts to the current theme.
+
+<Preview>
+<ScrollArea type="always" className="h-40 max-w-md rounded-lg border">
+  <ScrollAreaViewport className="h-full px-4">
+  <div className="border-b py-2 text-sm" key="0">Installation</div>
+  <div className="border-b py-2 text-sm" key="1">Generated files</div>
+  <div className="border-b py-2 text-sm" key="2">Create a page</div>
+  <div className="border-b py-2 text-sm" key="3">Navigation</div>
+  <div className="border-b py-2 text-sm" key="4">Theming</div>
+  <div className="border-b py-2 text-sm" key="5">Fonts</div>
+  <div className="border-b py-2 text-sm" key="6">Deployment</div>
+  <div className="border-b py-2 text-sm" key="7">OpenAPI</div>
+  <div className="border-b py-2 text-sm" key="8">MDX rendering</div>
+  <div className="border-b py-2 text-sm" key="9">Components</div>
+  </ScrollAreaViewport>
+  <ScrollBar />
+</ScrollArea>
+</Preview>
+
+```tsx
+import { ScrollArea, ScrollAreaViewport, ScrollBar } from "nextguide/ui"
+
+<ScrollArea type="always" className="h-40 max-w-md rounded-lg border">
+  <ScrollAreaViewport className="h-full px-4">
+  <div className="border-b py-2 text-sm" key="0">Installation</div>
+  <div className="border-b py-2 text-sm" key="1">Generated files</div>
+  <div className="border-b py-2 text-sm" key="2">Create a page</div>
+  <div className="border-b py-2 text-sm" key="3">Navigation</div>
+  <div className="border-b py-2 text-sm" key="4">Theming</div>
+  <div className="border-b py-2 text-sm" key="5">Fonts</div>
+  <div className="border-b py-2 text-sm" key="6">Deployment</div>
+  <div className="border-b py-2 text-sm" key="7">OpenAPI</div>
+  <div className="border-b py-2 text-sm" key="8">MDX rendering</div>
+  <div className="border-b py-2 text-sm" key="9">Components</div>
+  </ScrollAreaViewport>
+  <ScrollBar />
+</ScrollArea>
+```

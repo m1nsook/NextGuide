@@ -16,7 +16,7 @@ description: Form fields and interactive controls that keep their accessible lab
 </Preview>
 
 ```tsx
-import { Label, Input, Textarea, NativeSelect, Switch, Checkbox } from "nextguide/ui"
+import { Label, Input, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Switch, Checkbox } from "nextguide/ui"
 
 <div className="grid max-w-md gap-5">
   <div className="grid gap-2"><Label htmlFor="ng-demo-name">Site name</Label><Input id="ng-demo-name" defaultValue="My docs" /></div>
@@ -30,15 +30,17 @@ import { Label, Input, Textarea, NativeSelect, Switch, Checkbox } from "nextguid
 <Preview>
 <div className="grid max-w-md gap-4">
   <div className="grid gap-2"><Label htmlFor="ng-demo-description">Description</Label><Textarea id="ng-demo-description" defaultValue="Documentation for my app." /></div>
-  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><NativeSelect id="ng-demo-language" defaultValue="en"><option value="en">English</option><option value="pl">Polish</option></NativeSelect></div>
+  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><Select defaultValue="en"><SelectTrigger id="ng-demo-language"><SelectValue placeholder="Select a language" /></SelectTrigger><SelectContent><SelectItem value="en">English</SelectItem><SelectItem value="pl">Polish</SelectItem></SelectContent></Select></div>
 </div>
 </Preview>
 
 ```tsx
-import { Label, Input, Textarea, NativeSelect, Switch, Checkbox } from "nextguide/ui"
+import { Label, Input, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Switch, Checkbox } from "nextguide/ui"
 
 <div className="grid max-w-md gap-4">
   <div className="grid gap-2"><Label htmlFor="ng-demo-description">Description</Label><Textarea id="ng-demo-description" defaultValue="Documentation for my app." /></div>
-  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><NativeSelect id="ng-demo-language" defaultValue="en"><option value="en">English</option><option value="pl">Polish</option></NativeSelect></div>
+  <div className="grid gap-2"><Label htmlFor="ng-demo-language">Language</Label><Select defaultValue="en"><SelectTrigger id="ng-demo-language"><SelectValue placeholder="Select a language" /></SelectTrigger><SelectContent><SelectItem value="en">English</SelectItem><SelectItem value="pl">Polish</SelectItem></SelectContent></Select></div>
 </div>
 ```
+
+`Select` uses an accessible, keyboard-operated NextGuide dropdown with themed options. `NativeSelect` remains available only when an operating-system select menu is specifically desired.
