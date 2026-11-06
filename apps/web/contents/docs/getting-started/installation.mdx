@@ -1,54 +1,72 @@
 ---
 title: Install NextGuide
-description: Start from a Next.js project and let NextGuide create every required documentation file.
+description: Test the current GitHub build inside a separate Next.js application using one packaged dependency.
 ---
 
 # Install NextGuide
 
-No file copying, no searching for the right folder, and no manually wiring a catch-all route. **The CLI creates the structure for you.**
+**The source of truth during development is GitHub `main`, not the old npm alpha.** You can test the current build without copying any repository files or workspace packages into your Next.js application.
 
-## 1. Make sure you have a Next.js application
+## 1. Prepare a Next.js application
 
-If your project already uses Next.js, open a terminal in its root (the directory containing `package.json`) and skip to step 2.
+Use an existing Next.js project, or create one in a separate folder:
 
-For a brand-new application:
+<CodeWindow title="Create a fresh test application" language="powershell" code={"bunx create-next-app@latest my-docs\ncd my-docs"} />
 
-<CodeWindow title="Create a Next.js application" language="powershell" code={"bunx create-next-app@latest my-docs\ncd my-docs"} />
+NextGuide supports both App Router and Pages Router, in TypeScript and JavaScript projects, with or without `src/`.
 
-Follow the Next.js questions about TypeScript, App Router and `src/`. NextGuide detects the resulting structure, including Pages Router projects.
+## 2. Build a single NextGuide package from GitHub
 
-## 2. Install one dependency
+Open the [NextGuide repository](https://github.com/m1nsook/NextGuide) through GitHub Desktop and pull the latest `main` branch. **Keep this repository in its own folder.**
 
-<CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha",language:"powershell"},{label:"npm",code:"npm install nextguide@alpha",language:"powershell"},{label:"pnpm",code:"pnpm add nextguide@alpha",language:"powershell"}]} />
+Open PowerShell in the NextGuide repository root and run:
 
-This installs the core renderer, MDX, OpenAPI, icons and UI components together. It **does not silently modify your application** during package installation.
+<CodeWindow title="Create and test a local development package" language="powershell" code={"bun install\nbun run pack:dev"} />
 
-## 3. Generate the working documentation structure
+This builds the single `nextguide` package, runs its CLI and distribution tests, and creates `nextguide-0.0.1-alpha.2.tgz` in the repository root. It does not publish to npm or upload to GitHub.
+
+If a test or the compiler fails, the packaging command stops instead of giving you an untested archive.
+
+## 3. Install only the packaged dependency in your app
+
+Return to PowerShell in your **separate Next.js application** and install the generated archive using its absolute file path:
+
+<CodeWindow title="Install the GitHub build without copying source" language="powershell" code={"bun add \"C:\\path\\to\\NextGuide\\nextguide-0.0.1-alpha.2.tgz\"\nbunx nextguide --version"} />
+
+Replace `C:\path\to\NextGuide` with the actual folder containing the archive. This is a local package installation. Your Next.js project does not need the NextGuide monorepo, build tools, or any `@workspace/*` dependencies.
+
+**Do not use `bun add github:m1nsook/NextGuide`**: the repository root is a workspace, not the publishable package. Do not use `bun add nextguide@alpha` for current-source testing: that tag may contain older code.
+
+## 4. Generate documentation routes and pages
+
+Run these commands from the root of the test application:
 
 <CodeWindow title="Initialize Developer Mode" language="powershell" code="bunx nextguide init --developer" />
 
-The command detects your Next.js router and prints every created file. It creates the `/docs` page, navigation, starter MDX, site configuration and CSS. Existing project files are not overwritten.
+The CLI creates `/docs` routes, sidebar navigation, starter MDX, an editable theme stylesheet, and `nextguide.config.json`. It prints the names of generated files and refuses to silently overwrite your code.
 
-To inspect the proposed changes without writing anything:
+To preview without writing files, use `bunx nextguide init --developer --dry-run`. If your project has both routers, select `--router app` or `--router pages`.
 
-<CodeWindow title="Preview first" language="powershell" code="bunx nextguide init --developer --dry-run" />
+## 5. Start Next.js and test
 
-If the project contains both App Router and Pages Router folders, select the one you want with `--router app` or `--router pages`.
+<CodeWindow title="Run your Next.js development server" language="powershell" code="bun run dev" />
 
-## 4. Run your project
+Open `/docs` on the local port reported by Next.js (typically `http://localhost:3000/docs`). You should see the Introduction and Getting started pages.
 
-<CodeWindow title="Start Next.js" language="powershell" code="bun run dev" />
+You can add more pages and update sidebar navigation automatically:
 
-Open **`http://localhost:3000/docs`** (or the port reported by Next.js). You should see two real pages in the sidebar: Introduction and Getting started.
+<CodeWindow title="Add another documentation page" language="powershell" code={"bunx nextguide page add changelog --title Changelog"} />
 
-## 5. Start editing
+Edit `content/docs/index.mdx` to customize the homepage, or [read about adding nested pages](/docs/getting-started/adding-pages).
 
-Open `content/docs/index.mdx` in your editor. It is the homepage at `/docs`. To create another page **and register it in the sidebar automatically**, run:
+## Retest after NextGuide changes
 
-<CodeWindow title="Add a new documentation page" language="powershell" code="bunx nextguide page add changelog --title Changelog" />
+Pull `main` in your separate NextGuide source checkout, rerun `bun run pack:dev`, and rerun `bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"` in the test application. No source files need to be copied between projects.
 
-[See how to add nested pages and customize navigation](/docs/getting-started/adding-pages).
+## When NextGuide is published
 
-[See every generated file and what it does](/docs/getting-started/generated-files).
+After Account Mode is implemented and tested, the public installation will simply be `bun add nextguide`, followed by `bunx nextguide init --developer`. We are intentionally **not** publishing another npm release yet.
 
-<Callout kind="warning" title="Current alpha scope">The generated docs site is Developer Mode. Account Mode, the `/setup` ownership token and the `/admin` editor are not available in this release.</Callout>
+[See every generated file and its purpose](/docs/getting-started/generated-files).
+
+<Callout kind="warning" title="Account Mode is still in development">This installation activates the file-based Developer Mode. Account Mode, the `/setup` ownership token and the `/admin` browser editor are not yet available.</Callout>

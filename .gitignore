@@ -14,3 +14,6 @@ coverage/
 *.pem
 .DS_Store
 .vercel/
+
+# Local test package archives; never check them into the source repository.
+*.tgz

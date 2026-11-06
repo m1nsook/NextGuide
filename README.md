@@ -4,12 +4,41 @@ NextGuide is an **independent, all-in-one documentation framework for Next.js**.
 
 **Documentation:** https://m1nsook.github.io/NextGuide/
 
-## Get started
+## Test the current GitHub build (no npm release needed)
 
-Inside an existing Next.js project:
+**Use this path for Developer Mode acceptance testing.** The `main` branch is the current source of truth; the previously published npm `alpha` may not contain current changes. You do **not** need to copy NextGuide's source into your test application.
+
+1. Open a **separate** [NextGuide GitHub repository](https://github.com/m1nsook/NextGuide) checkout in GitHub Desktop and pull `main`.
+2. Open PowerShell in that checkout and run:
 
 ```powershell
-bun add nextguide@alpha
+bun install
+bun run pack:dev
+```
+
+`pack:dev` builds the one-package distribution, runs the CLI/distribution tests, then creates `nextguide-0.0.1-alpha.2.tgz` in the **repository root**. Nothing is published to npm or uploaded to GitHub.
+
+3. Open PowerShell in your **separate, existing Next.js application** and install **only the tarball**:
+
+```powershell
+bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
+bunx nextguide --version
+bunx nextguide init --developer
+bun run dev
+```
+
+Use your actual absolute path in the `bun add` command; do not paste the placeholder path unchanged. The result is one normal installed dependency, with no monorepo files or development workspaces in the test app. Open `/docs` on the port reported by Next.js.
+
+**Repeat testing after changes:** pull `main`, rerun `bun run pack:dev`, then rerun `bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"` from your test application. This uses the rebuilt package, rather than an older npm alpha.
+
+If you do not have a Next.js test application yet, create one in a **different directory** with `bunx create-next-app@latest my-docs`. Do not install `github:m1nsook/NextGuide` directly: the repository root is a private workspace, **not** the installable `nextguide` package.
+
+## Installing published releases (later)
+
+When Account Mode is complete and a tested npm release is published, the normal installation in a Next.js project will be:
+
+```powershell
+bun add nextguide
 bunx nextguide init --developer
 bun run dev
 ```
@@ -27,7 +56,7 @@ The new command reads `nextguide.config.json`, preserves existing pages and side
 
 For new applications, first create a Next.js project with `bunx create-next-app@latest my-docs`. See [the complete installation guide](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/) and [the generated-file explanation](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
 
-**Release note:** `nextguide init` requires `0.0.1-alpha.2` or later. The package is manually published to npm after its release checks pass; earlier alphas are CLI/renderer previews.
+**Development release note:** Current GitHub changes are not necessarily available under npm's `alpha` tag. Use the tarball instructions above to test what is merged into `main`. Do not publish until Account Mode is complete.
 
 ## Installed version and manual update checks
 

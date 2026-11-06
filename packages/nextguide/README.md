@@ -2,10 +2,24 @@
 
 **An all-in-one Next.js documentation framework** with MDX, OpenAPI, UI components, icons, and site typography.
 
-## Install
+## Install for development testing (before npm publication)
+
+To test a current GitHub build in a **different** Next.js application, run `bun install` and `bun run pack:dev` at the root of the NextGuide source checkout. This builds and tests `packages/nextguide` and writes an installable `nextguide-0.0.1-alpha.2.tgz` package archive in the source checkout's root.
+
+In the **separate application** run:
 
 ```powershell
-bun add nextguide@alpha
+bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
+bunx nextguide init --developer
+bun run dev
+```
+
+Replace the path with the actual absolute path to the generated file. The application installs only the packaged NextGuide dependency, not the repository or its workspace tooling. The npm `alpha` tag does **not** represent the current GitHub build.
+
+## Install from npm (after Account Mode release)
+
+```powershell
+bun add nextguide
 bunx nextguide init --developer
 bun run dev
 ```

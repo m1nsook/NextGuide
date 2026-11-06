@@ -17,7 +17,8 @@
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
+    "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
