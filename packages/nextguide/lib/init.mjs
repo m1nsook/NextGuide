@@ -140,7 +140,10 @@ export function planDeveloperProject(directory, inspection, routerOption, option
   if (basePath === '/') {
     for (const filename of Object.keys(files)) {
       if (!filename.startsWith('content/docs/') || !filename.endsWith('.mdx')) continue
-      files[filename] = files[filename].replaceAll('href="/docs/', 'href="/').replaceAll('](/docs/', '](/')
+      files[filename] = files[filename]
+        .replaceAll('href="/docs/', 'href="/')
+        .replaceAll('Href="/docs/', 'Href="/')
+        .replaceAll('](/docs/', '](/')
     }
   }
   let homeBackup = null
