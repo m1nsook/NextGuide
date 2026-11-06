@@ -56,7 +56,7 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
           className="text-muted-foreground hover:text-foreground -ml-2 inline-flex size-9 items-center justify-center rounded-md transition-colors"
         >
           <GitHubIcon />
-        </a></TooltipTrigger><TooltipContent side="right">View source code</TooltipContent></Tooltip> : <span />
+        </a></TooltipTrigger><TooltipContent side="right">View source code</TooltipContent></Tooltip> : <span />}
         <ThemeToggle />
       </div>
     </div>
@@ -76,8 +76,8 @@ export function DocsSiteSidebar(props: DocsSiteSidebarProps) {
 
       <header className="bg-background/90 sticky top-0 z-30 flex h-14 items-center gap-1 border-b pr-2 pl-4 backdrop-blur lg:hidden">
         <a href={homeHref} aria-label={`${siteName} home`} className="flex flex-1 text-base">
-          <Logo />
-        </Link>
+          <Logo name={siteName} />
+        </a>
         <SearchButton compact />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
