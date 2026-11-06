@@ -1,0 +1,22 @@
+---
+title: Getting started
+description: Create documentation pages and customize your NextGuide site.
+---
+
+## Add your first page
+
+NextGuide reads local MDX files from `content/docs`.
+
+<CodeWindow title="Create a documentation page" language="shell" code="bunx nextguide page add guides/hello --title Hello" />
+
+The command creates the page and updates `_meta.json` navigation automatically.
+
+## Edit the theme
+
+Change the CSS variables in `src/styles/nextguide.css` or `styles/nextguide.css`.
+
+## Use components in MDX
+
+<Callout kind="tip" title="No imports required">Your generated MDX registry exposes the NextGuide blocks and UI primitives. You can use them directly in any MDX file.</Callout>
+
+Explore the [component examples](/docs/components).

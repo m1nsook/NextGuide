@@ -1,0 +1,40 @@
+---
+title: Components
+description: Reusable blocks and UI components provided by the NextGuide package.
+---
+
+## Callouts
+
+<Callout kind="info" title="Already included">These components are imported from the single `nextguide` dependency. You don't need to copy their implementation into your project.</Callout>
+
+## Code tabs
+
+<CodeTabs items={[
+  { label: "Bun", language: "shell", code: "bun add nextguide" },
+  { label: "npm", language: "shell", code: "npm install nextguide" }
+]} />
+
+## File tree
+
+<FileTree title="Documentation structure" items={[
+  { name: "content", kind: "folder", children: [
+    { name: "docs", kind: "folder", children: [
+      { name: "index.mdx", kind: "code" },
+      { name: "_meta.json", kind: "json" }
+    ] }
+  ] }
+]} />
+
+## Steps
+
+<Steps>
+  <Step title="Write">Create or edit a Markdown or MDX page.</Step>
+  <Step title="Organize">Use `nextguide page add` to update navigation.</Step>
+  <Step title="Publish">Run `bun run build` to check your Next.js project.</Step>
+</Steps>
+
+## UI primitives
+
+<Button variant="outline">Example button</Button> <Badge>NextGuide</Badge>
+
+All components exported from `nextguide/ui` and `nextguide/blocks` are registered in your `nextguide-mdx` component map.
