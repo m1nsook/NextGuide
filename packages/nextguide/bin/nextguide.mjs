@@ -4,6 +4,7 @@ import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { initDeveloper } from "../lib/init.mjs";
+import { upgradeDeveloper } from "../lib/upgrade.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
 
@@ -24,6 +25,11 @@ Usage:
   nextguide init --replace-home    Back up an existing homepage for root install
   nextguide init --yes             Use defaults noninteractively
   nextguide init --dry-run     Preview files without writing
+  nextguide init --dark --accent:purple  Choose default theme and accessible accent
+  nextguide init --light|--dark|--system  Set default color mode (light by default)
+  nextguide upgrade [path]     Safely migrate existing Developer Mode configuration
+  nextguide upgrade --dry-run  Preview changes with no writes
+  nextguide upgrade --refresh-generated  Back up and refresh NextGuide-owned files
   nextguide page add <slug>   Create MDX page and update navigation
   nextguide page --help       Show page creation options
 
@@ -126,6 +132,8 @@ async function init(args) {
   let yes = false;
   let dryRun = false;
   let mode = "developer";
+  const appearance = {};
+  const chosenModes = new Set();
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
     if (arg === "--developer") mode = "developer";
@@ -133,6 +141,12 @@ async function init(args) {
     else if (arg === "--mode" && args[index + 1]) mode = args[++index];
     else if (arg === "--router" && args[index + 1]) router = args[++index];
     else if (arg === "--base-path" && args[index + 1]) basePath = args[++index];
+    else if (["--light", "--dark", "--system"].includes(arg)) {
+      appearance.mode = arg.slice(2);
+      chosenModes.add(appearance.mode);
+    }
+    else if (arg.startsWith("--accent:")) appearance.accent = arg.slice("--accent:".length);
+    else if (arg === "--accent" && args[index + 1]) appearance.accent = args[++index];
     else if (arg === "--replace-home") replaceHome = true;
     else if (arg === "--dry-run") dryRun = true;
     else if (arg === "--yes") yes = true;
@@ -142,6 +156,11 @@ async function init(args) {
       process.exitCode = 2;
       return;
     }
+  }
+  if (chosenModes.size > 1) {
+    process.stderr.write("Choose one color mode: --light, --dark or --system.\n");
+    process.exitCode = 2;
+    return;
   }
   if (mode !== "developer") {
     process.stderr.write("Account Mode is not implemented. Use nextguide init --developer for the file-first, static-capable mode.\n");
@@ -192,17 +211,71 @@ async function init(args) {
         replaceHome = true;
       }
     }
-    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome });
+    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome, appearance });
     process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
     process.stdout.write("Project: " + result.projectDirectory + "\n");
     process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
     process.stdout.write("Documentation URL: " + result.basePath + "\n");
+    process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
     for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
     for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
     for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
     if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open " + result.basePath + ".\n");
   } catch (error) {
     process.stderr.write("NextGuide init failed: " + error.message + "\n");
+    process.exitCode = 1;
+  }
+}
+
+
+function upgrade(args) {
+  let projectPath;
+  let dryRun = false;
+  let refreshGenerated = false;
+  let router;
+  const appearance = {};
+  const chosenModes = new Set();
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+    if (arg === "--dry-run") dryRun = true;
+    else if (arg === "--refresh-generated") refreshGenerated = true;
+    else if (arg === "--router" && args[index + 1]) router = args[++index];
+    else if (["--light", "--dark", "--system"].includes(arg)) {
+      appearance.mode = arg.slice(2);
+      chosenModes.add(appearance.mode);
+    }
+    else if (arg.startsWith("--accent:")) appearance.accent = arg.slice("--accent:".length);
+    else if (arg === "--accent" && args[index + 1]) appearance.accent = args[++index];
+    else if (!arg.startsWith("-") && !projectPath) projectPath = arg;
+    else {
+      process.stderr.write("Invalid upgrade argument: " + arg + "\n");
+      process.exitCode = 2;
+      return;
+    }
+  }
+  if (chosenModes.size > 1 || (router && !["app", "pages"].includes(router))) {
+    process.stderr.write("Invalid upgrade color mode or router option.\n");
+    process.exitCode = 2;
+    return;
+  }
+  const directory = projectPath ?? process.cwd();
+  try {
+    const result = upgradeDeveloper(directory, inspectProject(directory), { dryRun, refreshGenerated, router, appearance });
+    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "upgrade preview" : "upgrade complete") + "\n");
+    process.stdout.write("Project: " + result.projectDirectory + "\n");
+    process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
+    if (!result.changes.length) process.stdout.write("No configuration or generated file changes needed.\n");
+    for (const change of result.changes) {
+      process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + change.path + "\n");
+      if (change.backup) process.stdout.write("    Backup: " + change.backup + "\n");
+    }
+    if (!refreshGenerated) {
+      process.stdout.write("To adopt updated starter layout/styles, run nextguide upgrade --refresh-generated.\n");
+      process.stdout.write("This backs up existing NextGuide-generated files; MDX pages and navigation are never replaced.\n");
+    }
+    if (dryRun) process.stdout.write("No files were modified.\n");
+  } catch (error) {
+    process.stderr.write("NextGuide upgrade failed: " + error.message + "\n");
     process.exitCode = 1;
   }
 }
@@ -224,6 +297,9 @@ switch (command) {
     break;
   case "init":
     await init(args);
+    break;
+  case "upgrade":
+    upgrade(args);
     break;
   case "page":
     pageCommand(args);
