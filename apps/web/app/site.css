@@ -83,3 +83,62 @@ pre,
 :root { --ng-docs-max-width: 100%; }
 [data-slot="docs-page"] { min-width: 0; max-width: 48rem; margin-inline: auto; }
 [data-slot="docs-page-content"] pre { overflow-x: auto; }
+
+/* One palette for the docs site, NextGuide components and browser chrome. */
+:root {
+  --destructive: #dc2626;
+  --destructive-foreground: #fff;
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--secondary-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --chart-1: #2563eb;
+  --chart-2: #16a34a;
+  --chart-3: #d97706;
+  --chart-4: #9333ea;
+  --chart-5: #db2777;
+  --tracking-normal: -0.01em;
+  --shadow-2xs: 0 1px 2px #0000000d;
+  --shadow-xs: 0 1px 2px #00000014;
+  --shadow-sm: 0 1px 3px #00000014;
+  --shadow: 0 4px 12px #00000012;
+  --shadow-md: 0 6px 18px #0000001a;
+  --shadow-lg: 0 12px 28px #00000025;
+  --shadow-xl: 0 18px 42px #00000030;
+  --shadow-2xl: 0 28px 56px #00000040;
+}
+.dark {
+  --destructive: #fb7185;
+  --sidebar: var(--background);
+  --sidebar-border: var(--border);
+  --chart-1: #60a5fa;
+  --chart-2: #4ade80;
+  --chart-3: #fbbf24;
+  --chart-4: #c4b5fd;
+  --chart-5: #f9a8d4;
+}
+/* Full-page and fallback native scrollers match the active site theme.
+   Bounded panels use the NextGuide ScrollArea component instead. */
+html, .ng-code-pre, .ng-table-scroller, .ng-sheet-content {
+  scrollbar-color: var(--ng-scroll-thumb) transparent;
+  scrollbar-width: thin;
+}
+html::-webkit-scrollbar, .ng-code-pre::-webkit-scrollbar,
+.ng-table-scroller::-webkit-scrollbar, .ng-sheet-content::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+html::-webkit-scrollbar-track, .ng-code-pre::-webkit-scrollbar-track,
+.ng-table-scroller::-webkit-scrollbar-track, .ng-sheet-content::-webkit-scrollbar-track {
+  background: var(--background);
+}
+html::-webkit-scrollbar-thumb, .ng-code-pre::-webkit-scrollbar-thumb,
+.ng-table-scroller::-webkit-scrollbar-thumb, .ng-sheet-content::-webkit-scrollbar-thumb {
+  background: var(--ng-scroll-thumb);
+  border: 2px solid var(--background);
+  border-radius: 999px;
+}
