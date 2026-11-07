@@ -143,10 +143,6 @@
     "./site/next": {
       "types": "./dist/components/site/next-navigation.d.ts",
       "default": "./dist/components/site/next-navigation.js"
-    },
-    "./account/ui/*": {
-      "types": "./dist/account/ui/*.d.ts",
-      "default": "./dist/account/ui/*.js"
     }
   },
   "imports": {
