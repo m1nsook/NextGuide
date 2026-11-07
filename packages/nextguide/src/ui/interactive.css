@@ -11,7 +11,7 @@
 .ng-accordion-trigger[data-state=open] svg{transform:rotate(180deg)}
 .ng-accordion-content{overflow:hidden;padding:0 0 1rem;color:var(--ng-muted);font-size:.9rem;line-height:1.6}
 .ng-dialog-overlay{position:fixed;inset:0;z-index:1000;background:#0009}
-.ng-dialog-content{position:fixed;z-index:1001;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100vw - 2rem);max-width:30rem;max-height:calc(100dvh - 2rem);overflow:auto;padding:1.5rem;border:1px solid var(--ng-border);border-radius:var(--ng-radius);background:var(--ng-bg);color:var(--ng-fg);box-shadow:0 20px 70px #0005}
+.ng-dialog-content{font-family:var(--font-sans,"Inter","Segoe UI",system-ui,sans-serif);position:fixed;z-index:1001;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100vw - 2rem);max-width:30rem;max-height:calc(100dvh - 2rem);overflow:auto;padding:1.5rem;border:1px solid var(--ng-border);border-radius:var(--ng-radius);background:var(--ng-bg);color:var(--ng-fg);box-shadow:0 20px 70px #0005}
 .ng-dialog-title{font-size:1.15rem;font-weight:650;margin:0 0 .5rem}
 .ng-dialog-description{font-size:.875rem;color:var(--ng-muted);line-height:1.6;margin:0 0 1rem}
 .ng-dialog-footer{display:flex;justify-content:flex-end;gap:.65rem;margin-top:1.25rem}
