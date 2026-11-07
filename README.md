@@ -1,5 +1,6 @@
-# NextGuide
+<img width="100" height="100" alt="nextguide_i" src="https://github.com/user-attachments/assets/0c3ccb31-5ab0-4a18-a889-a67fe172b9d4" />
 
+# NextGuide
 **Build documentation that feels like part of your Next.js application.**
 
 NextGuide is an all-in-one documentation framework for Next.js. Write MDX guides, publish API references, and build accessible, responsive documentation with reusable components—all in one `nextguide` package.
