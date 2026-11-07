@@ -1,0 +1,18 @@
+[
+  {
+    "slug": "index",
+    "title": "Overview"
+  },
+  {
+    "slug": "setup",
+    "title": "Set up an owner"
+  },
+  {
+    "slug": "studio",
+    "title": "Use the studio"
+  },
+  {
+    "slug": "security",
+    "title": "Security & recovery"
+  }
+]

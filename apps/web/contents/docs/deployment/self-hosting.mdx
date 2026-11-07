@@ -21,11 +21,11 @@ Configure your domain, HTTPS, and reverse proxy for the Next.js process. Commit 
 
 Developer Mode is also compatible with static hosting. Configure Next.js with `output: "export"`, build the project, and deploy the resulting `out/` directory if you do not need a Node.js server.
 
-## Account Mode (unreleased preview)
+## Account Mode
 
 Account Mode requires a **persistent Node.js server**, a writable documentation directory, and private storage outside the web application directory. It cannot run as a read-only static export or rely on an ephemeral serverless filesystem.
 
-When running a local source build for development, set:
+For a persistent server deployment, set:
 
 ```bash
 NEXTGUIDE_PUBLIC_URL=https://docs.example.com
@@ -34,7 +34,7 @@ NEXTGUIDE_DATA_DIR=/var/lib/nextguide/account
 
 These are example values, not a directory you must use. Choose a private, persistent path your server process can read and write. The public URL should be your actual HTTPS origin. Back up this directory securely and store recovery codes separately.
 
-The current Account Mode authentication and editor remain **unreleased and not approved for production use**. See [Account Mode setup and limitations](/docs/getting-started/account-mode).
+The Account Mode source includes authentication and a content studio. Confirm the installed npm alpha version and test its production build before deployment. See [Account Mode setup](/docs/account/setup) and [security & recovery](/docs/account/security).
 
 ## Deployment checklist
 

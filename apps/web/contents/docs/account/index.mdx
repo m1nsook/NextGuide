@@ -1,0 +1,28 @@
+---
+title: Account Mode
+description: Create and manage NextGuide documentation in a browser.
+---
+
+# Account Mode
+
+Get a documentation site without manually editing project files. Account Mode gives one owner a protected dashboard to write pages, arrange navigation, change the theme and manage images.
+
+<CodeWindow title="Start Account Mode in an existing Next.js app" language="bash" code={"bun add nextguide@alpha\\nbunx nextguide init --account\\nbun run dev"} />
+
+<Callout kind="info" title="Version note">Account Mode exists in the current development source. Published npm alpha builds can lag behind it. Check your installed version before deploying.</Callout>
+
+## Three things to learn
+
+<LinkCards>
+  <LinkCard title="1. Set up the owner" description="Terminal token, authenticator, recovery codes, wizard" href="/docs/account/setup" />
+  <LinkCard title="2. Use the content studio" description="Edit MDX, sidebar, media and site appearance" href="/docs/account/studio" />
+  <LinkCard title="3. Keep it secure" description="HTTPS, persistent private storage and recovery" href="/docs/account/security" />
+</LinkCards>
+
+## Account Mode or Developer Mode?
+
+Account Mode needs Next.js App Router and a persistent server. It cannot run on GitHub Pages, because browser editing and authentication require server-side storage.
+
+Use [Developer Mode](/docs/getting-started/developer-mode) if you want git-based editing, Pages Router support, or static export.
+
+Add-ons are exclusive to Account Mode. The [add-on platform](/docs/addons) is an upcoming 1.0.0 module, not a working marketplace yet.

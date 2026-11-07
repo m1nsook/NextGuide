@@ -1,0 +1,33 @@
+---
+title: Add-on API roadmap
+description: Planned extension points and the boundaries for safe third-party code.
+---
+
+# Extension API roadmap
+
+The NextGuide 1.0 plan is to publish a versioned, typed add-on API from the **single** NextGuide package. The exported runtime API is **not implemented yet**, so these are contracts to design, not imports developers can already use.
+
+## Planned integration surfaces
+
+| Extension point | Purpose | Safety boundary |
+| --- | --- | --- |
+| Documentation | Add pages, metadata and reusable blocks | Sanitized content and isolated custom rendering |
+| Theme and icon packs | Design tokens and approved assets | No access to owner secrets |
+| Localization | Add locale catalogs and translated strings | Schema and fallback validation |
+| AI integrations | Connect assistants and models | Owner-approved credential scopes and request quotas |
+| OAuth integrations | Authorize external services | Server-managed secrets, callback and state validation |
+| Accessibility | Offer assistive features | Isolated UI hooks and compatibility tests |
+| External integrations | Read approved service data | Narrow permission grants and audited requests |
+
+## What a real API must provide
+
+- Add-on identity, SemVer and compatible NextGuide versions.
+- Typed and documented registration hooks per extension category.
+- An explicit permission/capability model, with owner approval and revocation.
+- Lifecycle hooks for install, activation, disable, updates and uninstall.
+- A storage namespace and safe network/secret access through host-provided APIs.
+- An isolated execution boundary for code-capable extensions; schema validation alone is not sufficient.
+
+For 1.0.0, start with a secure small set and expand rather than promise unrestricted execution. No arbitrary `postinstall` hooks, server-side dynamic code evaluation, or unreviewed package imports.
+
+[Verification, updates and registry](/docs/addons/publishing).

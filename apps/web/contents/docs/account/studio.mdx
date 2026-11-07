@@ -1,0 +1,42 @@
+---
+title: Manage your site
+description: Everyday page editing, navigation, media, appearance and account settings.
+---
+
+# Manage your site
+
+The browser editor is available at `/admin` after logging in.
+
+## Everyday tasks
+
+| Area | What you can do |
+| --- | --- |
+| Overview | Review your site and existing pages |
+| Pages | Create, edit and remove MDX pages |
+| Navigation | Rearrange or hide sidebar items using existing metadata |
+| Appearance | Change theme, accent, fonts, site identity and social details |
+| Media | Upload supported images for use in documentation |
+| Security | Manage authenticator, recovery codes and active sessions |
+
+## Write your first page
+
+1. Open **Pages** in the admin sidebar, then create a new page.
+2. Choose a short slug and title. Write in the editor, using the formatting and component insert tools.
+3. Save, then open the public documentation page to verify the final MDX output.
+
+The editor preview is a reading approximation. The published page renders NextGuide MDX components and is the final result. Page changes are saved with version protection against conflicting edits.
+
+## Organize navigation
+
+Open **Navigation** to change the order and visibility of pages. The studio updates the same `_meta.json` file format used by Developer Mode, so your content does not depend on a proprietary database.
+
+## Images and typography
+
+Upload raster images from **Media**. PNG, JPEG, WebP and GIF are supported up to 2 MB each; SVG uploads are blocked.
+
+In **Appearance**, pick light, dark or system mode and one of the accessible accent presets. Choose separate body, heading and code fonts. The login and setup pages use the same self-hosted Inter design foundation as the studio.
+
+<LinkCards>
+  <LinkCard title="Account security" description="Keep your owner account recoverable" href="/docs/account/security" />
+  <LinkCard title="Add-ons" description="Learn how reviewed extensions will work" href="/docs/addons" />
+</LinkCards>

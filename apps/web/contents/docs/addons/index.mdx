@@ -1,0 +1,32 @@
+---
+title: NextGuide add-ons
+description: A community extension platform for Account Mode.
+---
+
+# NextGuide add-ons
+
+Add-ons will extend NextGuide without giving third-party developers write access to the NextGuide repository. **They will be available only in Account Mode.**
+
+<Callout kind="info" title="Development status">The public author template and initial static validator are being prepared. The marketplace UI, add-on runtime, installation backend and hosted API are not live yet.</Callout>
+
+## Explore the future marketplace
+
+The planned `/marketplace` includes search, category filters, publisher identity, installation status and compatibility. Selecting an add-on opens a dedicated detail page with its description, permissions, screenshots, release history and supported NextGuide versions.
+
+The installed-addons view will let the owner install, enable, disable, uninstall, update or pin a compatible version. An update will never quietly add new permissions.
+
+## What developers can build
+
+- Documentation sources and custom content blocks
+- Themes, language packs and icon packs
+- Accessibility improvements
+- AI agents and assistants
+- OAuth providers and external integrations
+
+Executable extensions need a verified, permissioned runtime. Listing a category does not mean its runtime API is already available.
+
+<LinkCards>
+  <LinkCard title="Create an add-on" description="Manifest, template and first checks" href="/docs/addons/manifest" />
+  <LinkCard title="Extension API" description="Proposed integration hooks and safe boundaries" href="/docs/addons/api" />
+  <LinkCard title="Verification & updates" description="Review, registry, permissions, and rollback" href="/docs/addons/publishing" />
+</LinkCards>

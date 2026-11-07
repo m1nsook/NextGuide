@@ -8,6 +8,14 @@
     "title": "Getting started"
   },
   {
+    "slug": "account",
+    "title": "Account Mode"
+  },
+  {
+    "slug": "addons",
+    "title": "Add-ons"
+  },
+  {
     "slug": "mdx",
     "title": "Writing MDX"
   },

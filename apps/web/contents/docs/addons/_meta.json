@@ -1,0 +1,18 @@
+[
+  {
+    "slug": "index",
+    "title": "Overview"
+  },
+  {
+    "slug": "manifest",
+    "title": "Create an add-on"
+  },
+  {
+    "slug": "api",
+    "title": "Extension API roadmap"
+  },
+  {
+    "slug": "publishing",
+    "title": "Verification & updates"
+  }
+]
