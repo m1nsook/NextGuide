@@ -128,14 +128,14 @@ function writeMeta(project, folder, value) {
 }
 function yaml(text) { return JSON.stringify(text) }
 function formatPage(title, description, body, original = null) {
-  const existing = original?.match(/^---\\s*\\r?\\n([\\s\\S]*?)\\r?\\n---\\s*\\r?\\n/)
+  const existing = original?.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n/)
   if (!existing) return "---\ntitle: " + yaml(title) + "\ndescription: " + yaml(description) + "\n---\n\n" + body.trim() + "\n"
   // Keep every unknown MDX frontmatter field. The editor only owns title
   // and description, not arbitrary author-defined metadata.
   let titleSeen = false, descriptionSeen = false
-  const lines = existing[1].split(/\\r?\\n/).map(line => {
-    if (/^title\\s*:/.test(line)) { titleSeen = true; return "title: " + yaml(title) }
-    if (/^description\\s*:/.test(line)) { descriptionSeen = true; return "description: " + yaml(description) }
+  const lines = existing[1].split(/\r?\n/).map(line => {
+    if (/^title\s*:/.test(line)) { titleSeen = true; return "title: " + yaml(title) }
+    if (/^description\s*:/.test(line)) { descriptionSeen = true; return "description: " + yaml(description) }
     return line
   })
   if (!titleSeen) lines.unshift("title: " + yaml(title))
