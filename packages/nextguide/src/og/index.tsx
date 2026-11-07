@@ -1,4 +1,3 @@
-import { ImageResponse } from "next/og"
 import { NEXTGUIDE_LOGO_PATH } from "../components/site/logo.js"
 
 /** Same 1200 × 630 format as the built-in Next.js generated OG image convention. */
@@ -39,14 +38,14 @@ function limit(value: string, max: number): string {
  * Reuses the author's original logo path and the official site palette.
  * This is a server-only helper: no runtime screenshot or external API needed.
  */
-export function renderNextGuideOgImage({
+export function NextGuideOgCard({
   siteName,
   title,
   description = "",
   section = "Documentation",
   appearance = "dark",
   accent = "blue",
-}: NextGuideOgOptions): ImageResponse {
+}: NextGuideOgOptions) {
   const dark = appearance !== "light" // system falls back to dark for stable social cards
   const palette = dark ? DARK : LIGHT
   const highlight = palette[accent as NextGuideOgAccent] ?? palette.blue
@@ -59,7 +58,7 @@ export function renderNextGuideOgImage({
   const detail = limit(description, 168)
   const headingSize = heading.length > 85 ? 54 : heading.length > 55 ? 62 : 72
 
-  return new ImageResponse(
+  return (
     <div
       style={{
         display: "flex", flexDirection: "column",
@@ -113,6 +112,5 @@ export function renderNextGuideOgImage({
         <span style={{ color: highlight }}>MDX · Next.js · Documentation</span>
       </div>
     </div>,
-    NEXTGUIDE_OG_SIZE,
   )
 }
