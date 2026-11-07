@@ -21,7 +21,7 @@ Usage:
   nextguide doctor [path]      Inspect a local Next.js project
   nextguide doctor --json      Print machine-readable diagnostics
   nextguide init [path]        Scaffold documentation in a Next.js project
-  nextguide init --account     Set up passwordless Account Mode with a terminal token
+  nextguide init --account     Set up passwordless Account Mode with a terminal token\n  nextguide init --developer   Use file-first Developer Mode (static export supported)
   nextguide account token --rotate  Replace a lost setup token before owner enrollment
   nextguide init --router app  Select App Router when both routers exist
   nextguide init --base-path /docs  Use /docs as documentation path (default)
@@ -136,13 +136,14 @@ async function init(args) {
   let yes = false;
   let dryRun = false;
   let mode = "developer";
+  let explicitMode = false;
   const appearance = {};
   const chosenModes = new Set();
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
-    if (arg === "--developer") mode = "developer";
-    else if (arg === "--account") mode = "account";
-    else if (arg === "--mode" && args[index + 1]) mode = args[++index];
+    if (arg === "--developer") { mode = "developer"; explicitMode = true; }
+    else if (arg === "--account") { mode = "account"; explicitMode = true; }
+    else if (arg === "--mode" && args[index + 1]) { mode = args[++index]; explicitMode = true; }
     else if (arg === "--router" && args[index + 1]) router = args[++index];
     else if (arg === "--base-path" && args[index + 1]) basePath = args[++index];
     else if (["--light", "--dark", "--system"].includes(arg)) {
@@ -182,6 +183,19 @@ async function init(args) {
     return;
   }
   const interactive = !yes && process.stdin.isTTY && process.stdout.isTTY;
+  // Existing non-interactive installations preserve Developer Mode to avoid
+  // silently introducing server state into CI or scripted docs deployments.
+  // New interactive installations recommend browser-first Account Mode.
+  if (interactive && !explicitMode) {
+    const selected = await ask("Choose a NextGuide mode: [1] Account Mode (recommended, server)  [2] Developer Mode (files/static): ");
+    if (selected === "" || selected === "1" || selected === "account") mode = "account";
+    else if (selected === "2" || selected === "developer") mode = "developer";
+    else {
+      process.stderr.write("Invalid mode selection. Choose 1 or 2.\n");
+      process.exitCode = 2;
+      return;
+    }
+  }
   if (basePath === undefined && interactive) {
     const selection = await ask("Where should NextGuide documentation appear? [1] /docs (default)  [2] / (homepage): ");
     if (selection === "2" || selection === "/") basePath = "/";
