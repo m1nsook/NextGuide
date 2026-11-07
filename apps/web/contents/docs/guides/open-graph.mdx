@@ -18,24 +18,28 @@ These previews are intended for link sharing on Discord, Slack, LinkedIn and oth
 
 ## Customize the image
 
-Use the package's built-in server-side image renderer with the Next.js `opengraph-image.tsx` file convention. It reads the official NextGuide logo mark; your site name, title, and accent are supplied separately.
+Use the package's built-in server-safe image card component with the Next.js `opengraph-image.tsx` file convention. It reads the official NextGuide logo mark; your site name, title, and accent are supplied separately.
 
 ```tsx title="app/docs/opengraph-image.tsx"
-import { renderNextGuideOgImage } from "nextguide/og"
+import { NextGuideOgCard } from "nextguide/og"
+import { ImageResponse } from "next/og"
 
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 export const alt = "Project documentation"
 
 export default function Image() {
-  return renderNextGuideOgImage({
-    siteName: "My Documentation",
-    title: "Getting started",
-    description: "Create your first documentation page",
-    section: "Documentation",
-    appearance: "dark",
-    accent: "blue",
-  })
+  return new ImageResponse(
+    <NextGuideOgCard
+      siteName="My Documentation"
+      title="Getting started"
+      description="Create your first documentation page"
+      section="Documentation"
+      appearance="dark"
+      accent="blue"
+    />,
+    size,
+  )
 }
 ```
 
