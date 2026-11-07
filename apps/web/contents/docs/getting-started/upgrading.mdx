@@ -29,6 +29,22 @@ This reports which configuration files would change. It never writes anything du
 
 The command preserves existing site metadata, custom fields, MDX content, and `_meta.json` navigation. A numbered `.nextguide-backup` copy is written before a configuration file is changed. Re-running the command is safe when there are no changes to make.
 
+### Repair page flashes and full reloads on an installed site
+
+Older Developer Mode installations contain generated layouts with plain HTML links.
+That causes the entire document to reload between pages, briefly showing a white
+screen even if dark mode is selected. The fix is **client-side navigation**,
+not an animation or loading-screen overlay.
+
+After installing a NextGuide package version that includes this navigation fix,
+update your existing generated files using the preview and opt-in refresh below.
+This updates the sidebar, Markdown links, search, and documentation page transitions
+while keeping your `content/docs/**` files unchanged. It creates numbered
+backups of the old generated files, so customizations can be reapplied.
+
+**Updating the npm package alone will not replace previously generated layout files.**
+You do not need to recreate the Next.js project or rerun `init`.
+
 ### Adopt new generated layouts and styles
 
 The files created by `nextguide init` are editable source code; NextGuide will **not silently overwrite them** in a normal upgrade. If you want new starter templates, explicitly opt in:
