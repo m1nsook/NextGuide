@@ -19,7 +19,8 @@
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
     "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts",
-    "compat:next": "bun run build:packages && node scripts/verify-generated-starter.mjs"
+    "compat:next": "bun run build:packages && node scripts/verify-generated-starter.mjs",
+    "compat:account": "bun run build:packages && node scripts/verify-generated-account-mode.mjs"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
