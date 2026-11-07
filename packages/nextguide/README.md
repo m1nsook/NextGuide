@@ -1,124 +1,76 @@
 # NextGuide
 
-**An all-in-one Next.js documentation framework** with MDX, OpenAPI, UI components, icons, and site typography.
+**Documentation for Next.js, without a stack of separate packages.**
 
-## Fully equipped Developer Mode starter
+Create a responsive documentation site with MDX, OpenAPI references, reusable UI components, search, navigation, and customizable appearance.
 
-Running `bunx nextguide init --developer` now creates a real documentation site instead of the earlier minimal skeleton. The generated site has responsive navigation, local Ctrl/Cmd+K search, a table of contents, breadcrumbs, page actions, light/dark/system controls, a preconfigured MDX component registry and live examples. **One package:** `nextguide` provides both the layout and components. See [the generated project file map](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
+[![npm version](https://img.shields.io/npm/v/nextguide?label=npm&color=2563eb)](https://www.npmjs.com/package/nextguide)
+[![npm downloads](https://img.shields.io/npm/dw/nextguide?label=weekly%20downloads&color=64748b)](https://www.npmjs.com/package/nextguide)
+[![MIT License](https://img.shields.io/badge/license-MIT-22a06b)](https://github.com/m1nsook/NextGuide/blob/main/LICENSE)
 
-## Install for development testing (before npm publication)
+**[Documentation](https://m1nsook.github.io/NextGuide/)** · **[Components](https://m1nsook.github.io/NextGuide/components/ui/)** · **[GitHub](https://github.com/m1nsook/NextGuide)**
 
-To test a current GitHub build in a **different** Next.js application, run `bun install` and `bun run pack:dev` at the root of the NextGuide source checkout. This builds and tests `packages/nextguide` and writes an installable `nextguide-0.0.1-alpha.2.tgz` package archive in the source checkout's root.
+## Get started
 
-In the **separate application** run:
+From a Next.js project:
 
-```sh
-bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
+```bash
+bun add nextguide@alpha
 bunx nextguide init --developer
 bun run dev
 ```
 
-Replace the path with the actual absolute path to the generated file. The application installs only the packaged NextGuide dependency, not the repository or its workspace tooling. The npm `alpha` tag does **not** represent the current GitHub build.
+Open `/docs` on your local development server. The CLI creates the documentation routes, sample MDX pages, navigation, styling, and component registry, without requiring you to copy files from an example project.
 
-## Install from npm (after Account Mode release)
+Using npm? Replace the first two commands with `npm install nextguide@alpha` and `npx nextguide init --developer`.
 
-```sh
-bun add nextguide
-bunx nextguide init --developer
-bun run dev
-```
+> NextGuide is currently released on the npm alpha channel. The latest development changes and Account Mode are not guaranteed to be present in the published alpha package.
 
-The initializer generates a real `/docs` route, starter MDX, sidebar navigation, editable project CSS, and a JSON config. It supports both **App Router** and **Pages Router**, with or without `src/`, in TypeScript or JavaScript projects. Run in the root of an existing Next.js application.
+## Features
 
-```sh
-bunx nextguide init --developer --dry-run
-bunx nextguide init --developer --router app
-bunx nextguide doctor --json
-```
+- **MDX-first content:** author pages inside `content/docs` and track them with Git.
+- **Complete documentation layout:** responsive navigation, search, page actions, breadcrumbs, code samples, and table of contents.
+- **Component library:** accessible UI primitives, callouts, code windows, tabs, steps, file trees, and more.
+- **OpenAPI:** reusable API reference components and rendering tools.
+- **Flexible deployment:** Next.js App Router and Pages Router; static hosting supported in Developer Mode.
+- **One dependency:** all NextGuide modules ship under the `nextguide` package name. Next.js and React are peer dependencies.
 
-The installer never silently overwrites project files. When both routers exist, select `--router app` or `--router pages`.
+## Developer Mode
 
-## Documentation location and compatibility
+Generate your site and customize the defaults:
 
-The installer asks whether to use `/docs` (default) or the homepage `/`. For automated installs, use `--base-path /docs --yes` or `--base-path / --replace-home --yes`. The latter backs up an existing homepage rather than silently deleting it.
-
-Generated App Router files omit `dynamicParams` and use Suspense around asynchronous navigation and MDX rendering for Next.js 16.4 Cache Components. Generated files resolve **all local imports** (documentation libraries, stylesheet, project config and Pages Router `_app`) against the project's existing TypeScript/JavaScript aliases, using correct relative imports where an alias cannot reach the target.
-
-From the NextGuide source checkout, `bun run compat:next` tests packaged installations with current Next.js. A manual-only GitHub Actions workflow is available for stable/canary compatibility checks and opt-in update PRs.
-
-
-## Developer Mode appearance and safe upgrades
-
-```sh
+```bash
 bunx nextguide init --developer --system --accent:teal
-bunx nextguide upgrade --dry-run
-bunx nextguide upgrade
-bunx nextguide upgrade --refresh-generated --dry-run
+bunx nextguide page add guides/setup --title "Setup"
 ```
 
-Choose `--light` (the default), `--dark`, or `--system`. Select from blue, red, green, purple, yellow, orange, teal, and pink accessible accent presets. Existing projects use `upgrade` without recreating the Next.js application; MDX and navigation are preserved. The optional `--refresh-generated` step is explicit, makes backups, and only replaces marked NextGuide starter files. Read the [upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
+The initializer supports TypeScript and JavaScript, `app/` and `pages/`, and documentation at `/docs` or the website root. It will not silently overwrite existing project files.
 
-## Add documentation pages
+See [Developer Mode](https://m1nsook.github.io/NextGuide/docs/getting-started/developer-mode/), [generated files](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/), and [adding pages](https://m1nsook.github.io/NextGuide/docs/getting-started/adding-pages/).
 
-```sh
-bunx nextguide page add changelog --title Changelog
-bunx nextguide page add guides/windows --title "Windows setup"
-bunx nextguide page add guides/api --dry-run
-```
+## Account Mode
 
-`page add` creates editable MDX files and their nested `_meta.json` navigation, using the existing project's configured `contentDir`. It preserves custom sidebar entries, never overwrites existing pages, and supports `--project <path>`, `--description <text>`, and `--json`.
+Account Mode is an **unreleased** browser-managed workflow. Its source implementation includes authenticator-based enrollment, recovery codes, a site setup wizard, and a protected documentation editor. It requires a persistent Next.js App Router server and private storage; it is not a static-hosting feature.
 
-**Minimum version:** `0.0.1-alpha.2` for published Developer Mode. Account Mode authentication is being built on a source branch; it is **not yet published to npm**, and the visual editor is still planned.
+Read the [Account Mode preview and security considerations](https://m1nsook.github.io/NextGuide/docs/getting-started/account-mode/). Do not use the unreleased source preview for production authentication.
 
-## Check the installed version
-
-```sh
-bunx nextguide --version
-bunx nextguide version check
-bunx nextguide version check --tag alpha --json
-```
-
-The first command is offline. The explicit `version check` command compares the local version against npm's `latest` tag by default, or `alpha` when requested. It reports unpublished versions and network errors clearly and does not change any packages or files.
-
-The official NextGuide documentation site's version selector is **not** generated into users' projects.
-
-## Use the built-in components
+## Use the components
 
 ```tsx
 import { createDocs } from "nextguide/mdx"
-import { createOpenAPI } from "nextguide/openapi"
-import { Docs, OpenAPI } from "nextguide/components"
-import { Button, Card, Dialog, Table } from "nextguide/ui"
-import { CodeWindow, CodeTabs, FileTree, Callout, Steps } from "nextguide/blocks"
-import { UIIcon, BrandIcon } from "nextguide/icons"
-import { FontPicker, DEFAULT_FONTS } from "nextguide/fonts"
+import { CodeWindow, Callout, FileTree } from "nextguide/blocks"
+import { Button, Dialog, Tabs } from "nextguide/ui"
 import "nextguide/styles.css"
 ```
 
-Next.js and React are peer dependencies. All NextGuide documentation modules and UI components are part of the one `nextguide` package; no separate registry installation is necessary.
+[Browse live component examples](https://m1nsook.github.io/NextGuide/components/ui/).
 
-## Documentation
+## Upgrades and support
 
-- [Install and start the server](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/)
-- [Generated project files, with the full code](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/)
-- [Component gallery with exact live demos](https://m1nsook.github.io/NextGuide/components/ui/)
-- [MDX and OpenAPI](https://m1nsook.github.io/NextGuide/docs/)
+Preview an existing Developer Mode upgrade with `bunx nextguide upgrade --dry-run`. Generated-file updates require the explicit `--refresh-generated` flag and keep backups. Read [the upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
 
-## License and credit
+For issues and feature requests, visit [GitHub Issues](https://github.com/m1nsook/NextGuide/issues).
 
-NextGuide is MIT licensed. The full original upstream MIT copyright and permission notice is included in `THIRD_PARTY_NOTICES.md`, alongside other third-party licensing information. Brand assets remain trademarks of their respective owners.
+## License
 
-## Account Mode preview (source branch only)
-
-Account Mode combines QR-based authenticator enrollment and recovery codes with a browser-based site wizard and authenticated documentation studio. The studio manages MDX pages, sidebar ordering, site identity, fonts, accents, media, and account security. There are no passwords or mandatory emails.
-
-```sh
-# Install a locally built NextGuide package containing Account Mode first.
-bunx nextguide init --account
-bun run dev
-# Open /setup and enter the one-time token printed by the CLI.
-```
-
-This requires App Router and a **persistent Next.js server**, not `output: "export"`. For VPS hosting, configure `NEXTGUIDE_DATA_DIR` as a private persistent directory and `NEXTGUIDE_PUBLIC_URL` as the public HTTPS origin. The site wizard and CMS editor are included in source, pending packaged-install and build verification before npm publication.
-
-Read the [Account Mode setup and security notes](https://m1nsook.github.io/NextGuide/docs/getting-started/account-mode/).
+[MIT](https://github.com/m1nsook/NextGuide/blob/main/LICENSE). Third-party attribution is included in the published `THIRD_PARTY_NOTICES.md`.

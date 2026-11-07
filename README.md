@@ -1,148 +1,77 @@
 # NextGuide
 
-NextGuide is an **independent, all-in-one documentation framework for Next.js**. Build file-based MDX guides, API references, and documentation websites with a built-in component library.
+**Build documentation that feels like part of your Next.js application.**
 
-**Documentation:** https://m1nsook.github.io/NextGuide/
+NextGuide is an all-in-one documentation framework for Next.js. Write MDX guides, publish API references, and build accessible, responsive documentation with reusable components—all in one `nextguide` package.
 
-## Fully equipped Developer Mode starter
+[![npm version](https://img.shields.io/npm/v/nextguide?label=npm&color=2563eb)](https://www.npmjs.com/package/nextguide)
+[![npm downloads](https://img.shields.io/npm/dw/nextguide?label=weekly%20downloads&color=64748b)](https://www.npmjs.com/package/nextguide)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22a06b)](LICENSE)
+[![Next.js 15–16](https://img.shields.io/badge/Next.js-15%20%7C%2016-111827)](https://nextjs.org/)
 
-Running `bunx nextguide init --developer` now creates a real documentation site instead of the earlier minimal skeleton. The generated site has responsive navigation, local Ctrl/Cmd+K search, a table of contents, breadcrumbs, page actions, light/dark/system controls, a preconfigured MDX component registry and live examples. **One package:** `nextguide` provides both the layout and components. See [the generated project file map](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
+**[Documentation](https://m1nsook.github.io/NextGuide/)** · **[Components](https://m1nsook.github.io/NextGuide/components/ui/)** · **[npm](https://www.npmjs.com/package/nextguide)** · **[Report an issue](https://github.com/m1nsook/NextGuide/issues)**
 
-## Test the current GitHub build (no npm release needed)
+## Quick start
 
-**Use this path for Developer Mode acceptance testing.** The `main` branch is the current source of truth; the previously published npm `alpha` may not contain current changes. You do **not** need to copy NextGuide's source into your test application.
+Start with an existing Next.js application, or create one:
 
-1. Open a **separate** [NextGuide GitHub repository](https://github.com/m1nsook/NextGuide) checkout in GitHub Desktop and pull `main`.
-2. Open PowerShell in that checkout and run:
-
-```sh
-bun install
-bun run pack:dev
-```
-
-`pack:dev` builds the one-package distribution, runs the CLI/distribution tests, then creates `nextguide-0.0.1-alpha.2.tgz` in the **repository root**. Nothing is published to npm or uploaded to GitHub.
-
-3. Open PowerShell in your **separate, existing Next.js application** and install **only the tarball**:
-
-```sh
-bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"
-bunx nextguide --version
+```bash
+bunx create-next-app@latest my-docs
+cd my-docs
+bun add nextguide@alpha
 bunx nextguide init --developer
 bun run dev
 ```
 
-Use your actual absolute path in the `bun add` command; do not paste the placeholder path unchanged. The result is one normal installed dependency, with no monorepo files or development workspaces in the test app. Open `/docs` on the port reported by Next.js.
+Visit `/docs` on the address printed by Next.js. NextGuide generates documentation pages, navigation metadata, a component registry, and the required styles and routes. You can inspect the changes beforehand with `bunx nextguide init --developer --dry-run`.
 
-**Repeat testing after changes:** pull `main`, rerun `bun run pack:dev`, then rerun `bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"` from your test application. This uses the rebuilt package, rather than an older npm alpha.
+> **Release status:** NextGuide is currently published on the npm `alpha` channel. The published version may lag behind development; Account Mode and recent navigation fixes are not yet part of a verified stable release. See the [installation guide](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/) for the supported workflow.
 
-If you do not have a Next.js test application yet, create one in a **different directory** with `bunx create-next-app@latest my-docs`. Do not install `github:m1nsook/NextGuide` directly: the repository root is a private workspace, **not** the installable `nextguide` package.
+## What you get
 
-## Installing published releases (later)
+- **Ready-to-use documentation:** responsive sidebar, search, table of contents, breadcrumbs, page tools, and light/dark appearance.
+- **MDX authoring:** editable files inside your project, with callouts, code examples, tabs, file trees, cards, and more.
+- **API references:** OpenAPI support from the same package.
+- **Your stack, your hosting:** Next.js App Router or Pages Router, TypeScript or JavaScript; static deployment options for Developer Mode.
+- **Safe changes:** CLI commands generate files in the appropriate directories and preserve existing user-authored content.
 
-When Account Mode is complete and a tested npm release is published, the normal installation in a Next.js project will be:
+## Choose a workflow
 
-```sh
-bun add nextguide
-bunx nextguide init --developer
-bun run dev
+| Developer Mode | Account Mode |
+| --- | --- |
+| Edit MDX and configuration files using your editor and Git. | Manage content and site settings through a browser dashboard. |
+| Works with static exports and standard Next.js deployments. | Requires a persistent Next.js server and private storage. |
+| **Available in the published alpha** (features vary by alpha version). | **In development; not yet published to npm.** |
+
+Learn more: [Developer Mode](https://m1nsook.github.io/NextGuide/docs/getting-started/developer-mode/) · [Account Mode preview](https://m1nsook.github.io/NextGuide/docs/getting-started/account-mode/).
+
+## Add a page
+
+```bash
+bunx nextguide page add guides/installation --title "Installation"
 ```
 
-The initializer creates working documentation routes, MDX pages, sidebar navigation, a JSON config and CSS. It detects `app/`, `src/app/`, `pages/`, and `src/pages/`, and handles JavaScript and TypeScript projects. Existing files are not overwritten. Use `--dry-run` to preview the generated files.
+The CLI creates the MDX file and updates the sidebar metadata. [Learn about page creation](https://m1nsook.github.io/NextGuide/docs/getting-started/adding-pages/).
 
-Open `/docs` on your application's local Next.js server. To create additional MDX pages and update navigation automatically, use:
-
-```sh
-bunx nextguide page add guides/setup --title Setup
-bunx nextguide page add guides/advanced --dry-run
-```
-
-The new command reads `nextguide.config.json`, preserves existing pages and sidebar entries, and creates nested directories safely.
-
-For new applications, first create a Next.js project with `bunx create-next-app@latest my-docs`. See [the complete installation guide](https://m1nsook.github.io/NextGuide/docs/getting-started/installation/) and [the generated-file explanation](https://m1nsook.github.io/NextGuide/docs/getting-started/generated-files/).
-
-**Development release note:** Current GitHub changes are not necessarily available under npm's `alpha` tag. Use the tarball instructions above to test what is merged into `main`. Do not publish until Account Mode is complete.
-
-## Location choice and current Next.js compatibility
-
-The installer now asks whether documentation should appear at `/docs` (default) or `/`. Existing homepages are backed up only on explicit approval. For scripts, use `--base-path /docs --yes` or `--base-path / --replace-home --yes`. Generated App Router routes support Next.js Cache Components using `<Suspense>` and omit `dynamicParams`.
-
-Local compatibility tests:
-
-```sh
-bun install
-bun run compat:next
-```
-
-The GitHub **Manual Next.js compatibility and update** workflow can be started from the Actions tab for the latest stable or canary channel. It never runs on a schedule, push or PR, and proposes an update PR only if selected manually. It never merges or publishes anything.
-
-Upstream release notes: https://github.com/vercel/next.js/releases
-
-
-## Developer Mode appearance and safe upgrades
-
-```sh
-bunx nextguide init --developer --system --accent:teal
-bunx nextguide upgrade --dry-run
-bunx nextguide upgrade
-bunx nextguide upgrade --refresh-generated --dry-run
-```
-
-Choose `--light` (the default), `--dark`, or `--system`. Select from blue, red, green, purple, yellow, orange, teal, and pink accessible accent presets. Existing projects use `upgrade` without recreating the Next.js application; MDX and navigation are preserved. The optional `--refresh-generated` step is explicit, makes backups, and only replaces marked NextGuide starter files. Read the [upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
-
-## Installed version and manual update checks
-
-```sh
-bunx nextguide --version
-bunx nextguide version check
-bunx nextguide version check --tag alpha
-```
-
-`--version` runs offline and prints the installed package's version. `version check` contacts npm **only when requested** and compares the installed version with a published dist-tag; `--json` returns machine-readable status. It **does not automatically install or upgrade anything**. NextGuide's public npm release remains on hold until Account Mode is complete.
-
-The version selector in the official documentation sidebar is website-only. Generated Developer Mode sites do not include a NextGuide-branded version control.
-
-## One npm package
+## Components from one package
 
 ```tsx
+import { CodeWindow, CodeTabs, Callout, FileTree } from "nextguide/blocks"
+import { Button, Dialog, Tabs } from "nextguide/ui"
 import { createDocs } from "nextguide/mdx"
-import { createOpenAPI } from "nextguide/openapi"
-import { Docs, OpenAPI } from "nextguide/components"
-import { Button, Dialog, Table, Tabs } from "nextguide/ui"
-import { CodeWindow, CodeTabs, FileTree } from "nextguide/blocks"
-import { UIIcon, BrandIcon } from "nextguide/icons"
 import "nextguide/styles.css"
 ```
 
-No separate renderer packages or shadcn registry installer are required. React and Next.js are host framework peer dependencies.
+Explore the [component catalog](https://m1nsook.github.io/NextGuide/components/ui/) for demos and usage examples.
 
-## Developer Mode and Account Mode
+## Upgrade an existing site
 
-**Developer Mode** is file-first, database-free, and suitable for static hosting or regular Next.js deployment. NextGuide's official documentation uses this model on GitHub Pages.
+Don't reinitialize an existing project. Use `bunx nextguide upgrade --dry-run` to preview configuration changes. To adopt updated generated layouts, use `bunx nextguide upgrade --refresh-generated --dry-run` and review the backups before applying. Your MDX pages and `_meta.json` navigation are preserved. See [upgrading safely](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).
 
-**Account Mode** is planned. The protected ownership wizard, SQLite database, authenticated editor, and `/admin` are not implemented yet and are not advertised as working.
+## Contributing
 
-## Develop NextGuide
-
-Clone the project with GitHub Desktop and run:
-
-```sh
-bun install
-bun run dev
-```
-
-Documentation preview: http://localhost:4310
-
-Before a release, validate the CLI, bundled distribution and documentation build (including `npm pack --dry-run` on Windows):
-
-```sh
-bun run --cwd packages/nextguide test
-bun run --cwd packages/nextguide build
-bun run --cwd packages/nextguide test:dist
-bun run build:web
-```
-
-The npm release is manual and requires an authenticated maintainer. The GitHub Pages workflow publishes a read-only static export; it does not publish to npm.
+Bug reports, documentation improvements, and code contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for source builds, local package testing, and development commands. For 1.0.0 progress, follow the [release checklist](https://github.com/m1nsook/NextGuide/issues/31).
 
 ## License
 
-NextGuide is MIT licensed. Third-party MIT copyright and permission notices, including the original renderer source attribution, are preserved in the repository and npm package notices. See [License & attribution](https://m1nsook.github.io/NextGuide/docs/credits/).
+MIT. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](packages/nextguide/THIRD_PARTY_NOTICES.md) for third-party attribution.
