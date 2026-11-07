@@ -16,6 +16,8 @@ Instead of a password or email login, the site owner uses a standard TOTP authen
 3. Start the server, visit `/setup`, and enter the token from the terminal.
 4. Scan the QR code in an authenticator app, or enter its key manually, then confirm with a six-digit OTP.
 5. Store the ten single-use recovery codes somewhere safe. The setup token is invalidated once enrollment succeeds.
+
+If the terminal setup token is lost **before** enrollment, run `nextguide account token --rotate` locally in the project to issue a replacement. Rotation is disabled after an owner is registered.
 6. Use `/login` with a new OTP or an unused recovery code. `/admin` requires an authenticated session.
 
 ## Storage and deployment
