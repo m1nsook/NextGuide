@@ -83,7 +83,7 @@ function projectConfig(project) {
   }
 }
 function docsDir(project) { projectConfig(project); return filePath(project, "content/docs") }
-function mediaDir(project) { projectConfig(project); return filePath(project, "public/nextguide/media") }
+function mediaDir(project) { projectConfig(project); return join(dirname(accountFile(project)), "media") }
 function settingsFile(project) {
   projectConfig(project)
   return join(dirname(accountFile(project)), "site.json")
@@ -335,14 +335,30 @@ export function uploadStudioMedia(project, mime, base64) {
   const folder = mediaDir(project)
   ensureFolder(folder)
   const name = randomBytes(12).toString("hex") + MEDIA[mime]
-  const path = filePath(project, "public/nextguide/media/" + name)
-  writeFileSync(path, data, { flag: "wx", mode: 0o644 })
+  const path = join(folder, name)
+  writeFileSync(path, data, { flag: "wx", mode: 0o600 })
   return { name, url: "/nextguide/media/" + name }
 }
 export function deleteStudioMedia(project, name) {
   if (typeof name !== "string" || !/^[a-f0-9]{24}\.(png|jpg|webp|gif)$/.test(name)) throw new AccountError("Invalid media filename.", 400)
-  const path = filePath(project, "public/nextguide/media/" + name)
-  if (!existsSync(path)) throw new AccountError("Image not found.", 404)
+  const path = join(mediaDir(project), name)
+  if (!existsSync(path) || lstatSync(path).isSymbolicLink()) throw new AccountError("Image not found.", 404)
   unlinkSync(path)
   return { deleted: name }
+}
+
+export function readStudioMedia(project, name) {
+  if (typeof name !== "string" || !/^[a-f0-9]{24}\\.(png|jpg|webp|gif)$/.test(name)) {
+    throw new AccountError("Invalid media filename.", 400)
+  }
+  const file = join(mediaDir(project), name)
+  if (!existsSync(file) || lstatSync(file).isSymbolicLink() || !lstatSync(file).isFile()) {
+    throw new AccountError("Image not found.", 404)
+  }
+  const bytes = readFileSync(file)
+  if (bytes.length > MAX_MEDIA_BYTES || !bytes.length) throw new AccountError("Invalid image.", 400)
+  const ext = name.split(".").pop()
+  const mime = { png: "image/png", jpg: "image/jpeg", webp: "image/webp", gif: "image/gif" }[ext]
+  if (!validSignature(mime, bytes)) throw new AccountError("Invalid image.", 400)
+  return { bytes, mime }
 }

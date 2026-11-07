@@ -30,3 +30,4 @@ export declare function setStudioNavigation(project: string, input: StudioNaviga
 export declare function listStudioMedia(project: string): Array<{ name: string; url: string }>
 export declare function uploadStudioMedia(project: string, mime: string, base64: string): { name: string; url: string }
 export declare function deleteStudioMedia(project: string, name: string): { deleted: string }
+export declare function readStudioMedia(project: string, name: string): { bytes: Buffer; mime: string }
