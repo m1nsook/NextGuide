@@ -212,7 +212,7 @@ test('upgrade safely repairs the preexisting alpha installer hydration mismatch'
     const root = 'src/app/layout.tsx'
     const oldRoot = '<html lang="en" className="geist-text"><body>{children}</body></html>'
     f.write(root, oldRoot)
-    const customContent = '---\\ntitle: User documentation\\n---\\nKeep my changes.\\n'
+    const customContent = '---\ntitle: User documentation\n---\nKeep my changes.\n'
     f.write('content/docs/index.mdx', customContent)
     const preview = upgradeDeveloper(f.directory, f.inspection, { dryRun: true })
     assert.deepEqual(preview.changes.map((change) => change.path), [root])
