@@ -4,12 +4,12 @@ import { ArrowRight, BookOpen, LockKeyhole, PanelsTopLeft, Settings2 } from "luc
 
 export const metadata: Metadata = {
   title: "Account Mode — NextGuide",
-  description: "Account Mode authentication is in development with authenticator-based setup and recovery codes.",
+  description: "Account Mode is in development: passwordless setup and a browser-based documentation editor.",
 }
 
 const planned = [
-  { icon: Settings2, title: "Guided setup", description: "Configure your documentation site from a browser instead of editing configuration files." },
-  { icon: PanelsTopLeft, title: "Visual editing", description: "Manage documentation pages, navigation and media using an authenticated editor." },
+  { icon: Settings2, title: "Guided setup", description: "Site identity, accessible color presets, fonts, and optional owner profile, all through a browser." },
+  { icon: PanelsTopLeft, title: "Content studio", description: "Create and edit MDX pages, arrange sidebar navigation, and upload images in a protected workspace." },
   { icon: LockKeyhole, title: "Passwordless ownership", description: "A terminal token gates authenticator enrollment, with recovery codes and protected sessions." },
 ]
 
@@ -23,7 +23,7 @@ export default function AccountDocsHome() {
       <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">Account Mode</h1>
       <p className="text-muted-foreground mt-6 max-w-2xl text-lg leading-8">
         A guided, browser-first experience for creators who want documentation without editing MDX by hand.
-        Authenticator QR setup and recovery are being implemented. The visual CMS is still planned, and Account Mode is not included in the published alpha.
+        The source version includes authenticator enrollment, a site wizard, and a protected MDX editor. Account Mode has not been released to npm yet.
       </p>
       <div className="mt-9 flex flex-wrap gap-3">
         <Link href="/docs/getting-started/account-mode" className="inline-flex items-center gap-2 rounded-lg border px-5 py-3 text-sm font-medium hover:bg-muted">
@@ -43,7 +43,7 @@ export default function AccountDocsHome() {
         ))}
       </section>
       <p className="text-muted-foreground mt-10 text-sm">
-        Account authentication is an in-development source preview. The full CMS will be available after the editor and deployment security tests.
+        The CMS source implementation is under integration review. This page will publish installation commands once packaging and deployment have been verified.
       </p>
     </main>
   )

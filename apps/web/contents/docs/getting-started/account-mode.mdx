@@ -5,7 +5,7 @@ description: Passwordless NextGuide setup using a terminal token, authenticator 
 
 # Account Mode: authenticator-first setup
 
-Account Mode is being developed and **has not been published to npm**. The first source milestone includes a protected setup flow and dashboard; the visual editor and full site configuration wizard are still to come.
+Account Mode is being developed and **has not been published to npm**. The source implementation includes the passwordless setup flow, a guided site wizard, and an authenticated content studio. Installation and deployment testing are required before release.
 
 Instead of a password or email login, the site owner uses a standard TOTP authenticator app.
 
@@ -34,6 +34,30 @@ Back up your private account data and store your recovery codes separately. Losi
 
 TOTP is **not phishing-resistant**. A fraudulent login page can steal a freshly entered code. Passkeys (WebAuthn) are planned as a stronger passwordless option. This source preview is not yet approved for production use.
 
-## Upcoming milestones
+## Website setup wizard
 
-The next Account Mode steps are site title and description, accent and font configuration, visual MDX editing, navigation and file management, account device changes, and deployment-level security testing. Developer Mode remains unchanged.
+After saving your recovery codes, Account Mode opens the dashboard and guides you through:
+
+1. Site title, description, public URL, and optional owner display name and contact email.
+2. Light, dark, or system appearance; accessible accent presets; separate body, heading, and code fonts with previews.
+3. Review, finish setup, and enter the content studio.
+
+Owner contact information is optional and is not required for login.
+
+## Content studio at /admin
+
+The authenticated dashboard provides an overview, MDX page creation/editing/deletion, optimistic concurrent editing protection, navigation ordering and visibility using NextGuide's real `_meta.json` arrays, file uploads, a site appearance editor, and account security settings.
+
+The page editor includes insert tools for Markdown and NextGuide components and a draft reading preview. **MDX component rendering is authoritative on the published documentation page; the draft preview is an approximation.**
+
+Page files stay in `content/docs`, uploaded raster images stay in `public/nextguide/media`, and private account credentials and site settings stay outside the source repository. Only PNG, JPEG, WebP, and GIF assets are supported (maximum 2 MB per image). SVG uploads are intentionally blocked.
+
+Changing the authenticator requires a valid code from the existing authenticator, then verification of a new one. Recovery code renewal invalidates earlier codes, and the security page can sign out all active sessions.
+
+## Installation boundaries
+
+Account Mode currently targets a **single site owner**, one persistent Node.js server, and Next.js App Router. It requires a writable deployment directory for MDX and media and a stable private data directory. Static-only hosting such as GitHub Pages and ephemeral serverless filesystems are not compatible with the editor.
+
+It is part of the **one** `nextguide` package. No separate CMS package, hosted authentication provider, email address, or password is needed.
+
+Account Mode still requires full packaged-install and production-build validation before release. Developer Mode remains available for file-first/static workflows.

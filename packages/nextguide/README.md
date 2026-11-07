@@ -110,7 +110,7 @@ NextGuide is MIT licensed. The full original upstream MIT copyright and permissi
 
 ## Account Mode preview (source branch only)
 
-The first Account Mode implementation has a terminal ownership token, QR-based authenticator enrollment, recovery codes, and a protected dashboard. There are no passwords or mandatory emails.
+Account Mode combines QR-based authenticator enrollment and recovery codes with a browser-based site wizard and authenticated documentation studio. The studio manages MDX pages, sidebar ordering, site identity, fonts, accents, media, and account security. There are no passwords or mandatory emails.
 
 ```sh
 # Install a locally built NextGuide package containing Account Mode first.
@@ -119,6 +119,6 @@ bun run dev
 # Open /setup and enter the one-time token printed by the CLI.
 ```
 
-This requires App Router and a **persistent Next.js server**, not `output: "export"`. For VPS hosting, configure `NEXTGUIDE_DATA_DIR` as a private persistent directory and `NEXTGUIDE_PUBLIC_URL` as the public HTTPS origin. The setup wizard and `/admin` are authentication foundations, not yet a CMS.
+This requires App Router and a **persistent Next.js server**, not `output: "export"`. For VPS hosting, configure `NEXTGUIDE_DATA_DIR` as a private persistent directory and `NEXTGUIDE_PUBLIC_URL` as the public HTTPS origin. The site wizard and CMS editor are included in source, pending packaged-install and build verification before npm publication.
 
 Read the [Account Mode setup and security notes](https://m1nsook.github.io/NextGuide/docs/getting-started/account-mode/).
