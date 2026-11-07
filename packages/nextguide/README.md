@@ -68,7 +68,7 @@ bunx nextguide page add guides/api --dry-run
 
 `page add` creates editable MDX files and their nested `_meta.json` navigation, using the existing project's configured `contentDir`. It preserves custom sidebar entries, never overwrites existing pages, and supports `--project <path>`, `--description <text>`, and `--json`.
 
-**Minimum version:** `0.0.1-alpha.2` for the working Developer Mode initializer and expanded UI components. Earlier alpha versions do not include these features. Account Mode, `/setup`, and `/admin` remain in development.
+**Minimum version:** `0.0.1-alpha.2` for published Developer Mode. Account Mode authentication is being built on a source branch; it is **not yet published to npm**, and the visual editor is still planned.
 
 ## Check the installed version
 
@@ -107,3 +107,18 @@ Next.js and React are peer dependencies. All NextGuide documentation modules and
 ## License and credit
 
 NextGuide is MIT licensed. The full original upstream MIT copyright and permission notice is included in `THIRD_PARTY_NOTICES.md`, alongside other third-party licensing information. Brand assets remain trademarks of their respective owners.
+
+## Account Mode preview (source branch only)
+
+The first Account Mode implementation has a terminal ownership token, QR-based authenticator enrollment, recovery codes, and a protected dashboard. There are no passwords or mandatory emails.
+
+```sh
+# Install a locally built NextGuide package containing Account Mode first.
+bunx nextguide init --account
+bun run dev
+# Open /setup and enter the one-time token printed by the CLI.
+```
+
+This requires App Router and a **persistent Next.js server**, not `output: "export"`. For VPS hosting, configure `NEXTGUIDE_DATA_DIR` as a private persistent directory and `NEXTGUIDE_PUBLIC_URL` as the public HTTPS origin. The setup wizard and `/admin` are authentication foundations, not yet a CMS.
+
+Read the [Account Mode setup and security notes](https://m1nsook.github.io/NextGuide/docs/getting-started/account-mode/).

@@ -4,13 +4,13 @@ import { ArrowRight, BookOpen, LockKeyhole, PanelsTopLeft, Settings2 } from "luc
 
 export const metadata: Metadata = {
   title: "Account Mode — NextGuide",
-  description: "Account Mode is planned: a browser-based setup wizard and content editor for NextGuide.",
+  description: "Account Mode authentication is in development with authenticator-based setup and recovery codes.",
 }
 
 const planned = [
   { icon: Settings2, title: "Guided setup", description: "Configure your documentation site from a browser instead of editing configuration files." },
   { icon: PanelsTopLeft, title: "Visual editing", description: "Manage documentation pages, navigation and media using an authenticated editor." },
-  { icon: LockKeyhole, title: "Protected accounts", description: "A secure ownership flow and role-based publishing controls are on the roadmap." },
+  { icon: LockKeyhole, title: "Passwordless ownership", description: "A terminal token gates authenticator enrollment, with recovery codes and protected sessions." },
 ]
 
 export default function AccountDocsHome() {
@@ -18,12 +18,12 @@ export default function AccountDocsHome() {
     <main className="mx-auto min-h-dvh max-w-5xl px-5 py-16 sm:px-10 sm:py-24">
       <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex text-sm">← NextGuide</Link>
       <div className="text-muted-foreground mt-14 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-        <LockKeyhole size={14} aria-hidden /> In development — not available yet
+        <LockKeyhole size={14} aria-hidden /> Authentication preview in development
       </div>
       <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">Account Mode</h1>
       <p className="text-muted-foreground mt-6 max-w-2xl text-lg leading-8">
         A guided, browser-first experience for creators who want documentation without editing MDX by hand.
-        This mode is planned, not part of the current alpha installer.
+        Authenticator QR setup and recovery are being implemented. The visual CMS is still planned, and Account Mode is not included in the published alpha.
       </p>
       <div className="mt-9 flex flex-wrap gap-3">
         <Link href="/docs/getting-started/account-mode" className="inline-flex items-center gap-2 rounded-lg border px-5 py-3 text-sm font-medium hover:bg-muted">
@@ -43,7 +43,7 @@ export default function AccountDocsHome() {
         ))}
       </section>
       <p className="text-muted-foreground mt-10 text-sm">
-        We're documenting Account Mode as it is implemented and verified, not publishing installation commands for incomplete features.
+        Account authentication is an in-development source preview. The full CMS will be available after the editor and deployment security tests.
       </p>
     </main>
   )
