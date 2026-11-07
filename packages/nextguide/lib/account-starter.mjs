@@ -221,6 +221,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     .replace("footerEnabled={ngCopyright.enabled !== false}", "footerEnabled={settings.copyrightEnabled}")
     .replace("footerText={ngCopyright.text}", "footerText={settings.copyrightText}")
     .replace("footerHref={ngCopyright.href}", "footerHref={settings.copyrightHref}")
+  layout = layout.replace("prewarm={true}", "prewarm={false}")
   // The account wizard's font selectors must change the actual published docs,
   // not merely show sample labels in the dashboard.
   layout = layout.replace(
