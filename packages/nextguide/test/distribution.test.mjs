@@ -257,8 +257,8 @@ test("strict ESM Next.js peer subpaths compile without hoisted Next.js types", (
   assert.ok(existsSync(join(root, "src/types/next-navigation.d.ts")))
   assert.equal("next" in manifest.dependencies, false, "Next.js must remain a host peer")
   const compiled = readFileSync(join(root, "dist/components/site/next-navigation.js"), "utf8")
-  assert.match(compiled, /from ["']next\/link\\.js["']/)
-  assert.match(compiled, /from ["']next\/navigation\\.js["']/)
+  assert.match(compiled, /from ["']next\/link\.js["']/)
+  assert.match(compiled, /from ["']next\/navigation\.js["']/)
   // Next.js is a peer: this module is exercised in a packed Next.js app,
   // not imported by this isolated library distribution test.
   assert.match(compiled, /function NextDocsNavigationLink/)
