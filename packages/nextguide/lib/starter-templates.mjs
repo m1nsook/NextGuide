@@ -12,25 +12,29 @@ function replaceTokens(source, values) {
 export function fullLibSource(configImport, mdxImport, basePath, typed = true) {
   return replaceTokens(LIB_TEMPLATE, {"__CONFIG_IMPORT__":configImport,"__MDX_IMPORT__":mdxImport,"__BASE_PATH__":JSON.stringify(basePath),"__BASE_PREFIX__":JSON.stringify(basePath === "/" ? "" : basePath),"__NAV_INPUT__":typed?': import("nextguide/core").NavItem[]':"", "__NAV_RESULT__":typed?': import("nextguide/core").NavItem[]':"", "__ITEM_RESULT__":typed?': import("nextguide/core").NavItem':"", "__STR_TYPE__":typed?": string":""})
 }
-export function fullLayoutSource(typed, basePath, docsImport, stylesImport) {
+export function fullLayoutSource(typed, basePath, docsImport, stylesImport, customization = {}) {
   return replaceTokens(LAYOUT_TEMPLATE, {
     "__DOCS_IMPORT__":docsImport, "__STYLES_IMPORT__":stylesImport,"__BASE_PATH__":JSON.stringify(basePath),
     "__TYPE_IMPORT__": typed ? 'import type { ReactNode } from "react"\n' : "",
     "__CHILDREN_TYPE__": typed ? ": { children: ReactNode }" : "",
+    "__CUSTOM_FOOTER_IMPORT__": customization.importSource ? 'import CustomFooter from "' + customization.importSource + '"\n' : "",
+    "__CUSTOM_FOOTER_ELEMENT__": customization.importSource ? "<CustomFooter />" : "undefined",
     "__MODE_EXPR__":typed ? 'appearance.mode as "light" | "dark" | "system"' : "appearance.mode",
   })
 }
 export function fullAppPageSource(typed, basePath, docsImport) {
   return replaceTokens(APP_TEMPLATE, {"__DOCS_IMPORT__":docsImport,"__BASE_PATH__":JSON.stringify(basePath),"__BASE_PREFIX__":JSON.stringify(basePath === "/" ? "" : basePath),"__PARAM_TYPE__":typed?": { params: Promise<{ slug?: string[] }> }":""})
 }
-export function fullPagesPageSource(typed, basePath, docsImport, mdxImport) {
+export function fullPagesPageSource(typed, basePath, docsImport, mdxImport, customization = {}) {
   const types = typed ? [
-    'type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; navigation: import("nextguide/mdx").NavItem[]; searchIndex: import("nextguide/site").DocsSiteSearchEntry[]; toc: import("nextguide/mdx").TocItem[]; siteName: string; markdown: string; slug: string; editBase: string; appearanceMode: "light" | "dark" | "system"; appearanceAccent: string; githubUrl: string | null; releaseUrl: string | null; version: string; neighbours: { previous?: { href: string; title: string }; next?: { href: string; title: string } } }',
+    'type PageProps = { serialized: import("nextguide/mdx").SerializeResult; title: string; description: string; navigation: import("nextguide/mdx").NavItem[]; searchIndex: import("nextguide/site").DocsSiteSearchEntry[]; toc: import("nextguide/mdx").TocItem[]; siteName: string; markdown: string; slug: string; editBase: string; appearanceMode: "light" | "dark" | "system"; appearanceAccent: string; githubUrl: string | null; releaseUrl: string | null; version: string; siteLogo?: string; siteLogoAlt?: string; footerEnabled: boolean; footerText?: string; footerHref?: string; neighbours: { previous?: { href: string; title: string }; next?: { href: string; title: string } } }',
     '',
   ].join("\n") : ""
   return replaceTokens(PAGES_TEMPLATE, {
     "__DOCS_IMPORT__":docsImport, "__MDX_IMPORT__":mdxImport, "__BASE_PATH__":JSON.stringify(basePath), "__BASE_PREFIX__":JSON.stringify(basePath === "/" ? "" : basePath),
     "__TYPE_IMPORT__":typed?'import type { GetStaticPaths, GetStaticProps } from "next"\n':"",
+    "__CUSTOM_FOOTER_IMPORT__": customization.importSource ? 'import CustomFooter from "' + customization.importSource + '"\n' : "",
+    "__CUSTOM_FOOTER_ELEMENT__": customization.importSource ? "<CustomFooter />" : "undefined",
     "__PAGE_TYPES__":types, "__PAGE_PROPS_TYPE__":typed?": PageProps":"",
     "__MODE_EXPR__":typed?'appearance.mode as "light" | "dark" | "system"':"appearance.mode",
     "__PATHS_TYPE__":typed?": GetStaticPaths":"", "__PROPS_TYPE__":typed?": GetStaticProps":"",
