@@ -20,8 +20,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ sec
   const source = section === "docs" ? docs : section === "components" ? componentDocs : null
   if (!source) return new Response("Unknown section", { status: 404 })
   const parts = [...routeSlug]
-  if (!parts.at(-1)?.endsWith(".png")) return new Response("Not found", { status: 404 })
-  parts[parts.length - 1] = parts[parts.length - 1].slice(0, -4)
+  const last = parts.at(-1)
+  if (!last?.endsWith(".png")) return new Response("Not found", { status: 404 })
+  parts[parts.length - 1] = last.slice(0, -4)
   const joined = parts.join("/")
   const slug = joined === "index" ? "" : joined
   const frontmatter = await source.getFrontmatter<{ title?: string; description?: string }>({ slug })
