@@ -1,46 +1,50 @@
 "use client"
 
-import { useEffect, useState, type FormEvent } from "react"
+import * as React from "react"
+import { ArrowRight, CheckCircle2, Copy, KeyRound, LockKeyhole, ShieldCheck } from "lucide-react"
 import { LogoMark } from "../components/site/logo.js"
-import { Providers as DocsSiteProviders } from "../components/site/providers.js"
+import { AccountProviders } from "./providers.js"
 import { AccountThemeMenu } from "./theme-menu.js"
-import { Button, Card, Input } from "../ui/index.js"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert.js"
+import { Button } from "./ui/button.js"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./ui/card.js"
 import { Checkbox } from "./ui/checkbox.js"
+import { Input } from "./ui/input.js"
+import { Label } from "./ui/label.js"
+import { Separator } from "./ui/separator.js"
 
-type AccountStatus = { initialized: boolean; authenticated: boolean }
+interface AccountStatus { initialized: boolean; authenticated: boolean }
 type Phase = "token" | "verify" | "recovery" | "login"
 
-async function send(action: string, payload: Record<string, string>) {
+async function accountAction(action: string, payload: Record<string, string>): Promise<{ qrDataUrl?: string; manualKey?: string; recoveryCodes?: string[] }> {
   const response = await fetch("/api/nextguide/account/" + action, {
-    method: "POST",
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    cache: "no-store",
+    method: "POST", credentials: "same-origin", cache: "no-store",
+    headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
   })
-  const result = await response.json()
-  if (!response.ok) throw new Error(result.error || "Account request failed.")
+  const result: { error?: string; qrDataUrl?: string; manualKey?: string; recoveryCodes?: string[] } = await response.json()
+  if (!response.ok) throw new Error(result.error || `Account request failed (${response.status}).`)
   return result
 }
 
+/** Rebuilt shadcn/Base UI access screens, retaining the existing secure API. */
 export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
-  const [loading, setLoading] = useState(true)
-  const [working, setWorking] = useState(false)
-  const [error, setError] = useState("")
-  const [phase, setPhase] = useState<Phase>(mode === "setup" ? "token" : "login")
-  const [token, setToken] = useState("")
-  const [code, setCode] = useState("")
-  const [useRecovery, setUseRecovery] = useState(false)
-  const [qrDataUrl, setQrDataUrl] = useState("")
-  const [manualKey, setManualKey] = useState("")
-  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([])
-  const [saved, setSaved] = useState(false)
+  const [loading, setLoading] = React.useState(true)
+  const [busy, setBusy] = React.useState(false)
+  const [error, setError] = React.useState("")
+  const [phase, setPhase] = React.useState<Phase>(mode === "setup" ? "token" : "login")
+  const [token, setToken] = React.useState("")
+  const [code, setCode] = React.useState("")
+  const [useRecovery, setUseRecovery] = React.useState(false)
+  const [qr, setQr] = React.useState("")
+  const [manualKey, setManualKey] = React.useState("")
+  const [recoveryCodes, setRecoveryCodes] = React.useState<string[]>([])
+  const [acknowledged, setAcknowledged] = React.useState(false)
 
-  useEffect(() => {
+  React.useEffect(() => {
     let active = true
     fetch("/api/nextguide/account/status", { cache: "no-store", credentials: "same-origin" })
       .then(async response => {
-        if (!response.ok) throw new Error("Account storage is unavailable. Check the server logs.")
+        if (!response.ok) throw new Error("Account storage is unavailable. Check server logs.")
         return response.json() as Promise<AccountStatus>
       })
       .then(status => {
@@ -50,94 +54,69 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
         else if (mode === "login" && !status.initialized) window.location.replace("/setup")
         else setLoading(false)
       })
-      .catch(e => { if (active) { setError(e.message); setLoading(false) } })
+      .catch((e: unknown) => { if (active) { setError(e instanceof Error ? e.message : "Could not load account status."); setLoading(false) } })
     return () => { active = false }
   }, [mode])
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (working) return
-    setWorking(true)
-    setError("")
+    if (busy) return
+    setBusy(true); setError("")
     try {
       if (phase === "token") {
-        const result = await send("begin", { token })
-        setQrDataUrl(result.qrDataUrl)
-        setManualKey(result.manualKey)
-        setCode("")
-        setPhase("verify")
+        const result = await accountAction("begin", { token })
+        setQr(result.qrDataUrl || ""); setManualKey(result.manualKey || ""); setCode(""); setPhase("verify")
       } else if (phase === "verify") {
-        const result = await send("finish", { token, code: code.trim() })
-        setToken("")
-        setCode("")
-        setRecoveryCodes(result.recoveryCodes)
-        setPhase("recovery")
+        const result = await accountAction("finish", { token, code: code.trim() })
+        setToken(""); setCode(""); setRecoveryCodes(result.recoveryCodes || []); setPhase("recovery")
       } else if (phase === "login") {
-        await send("login", { code: code.trim() })
+        await accountAction("login", { code: code.trim() })
         window.location.replace("/admin")
       }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong.")
-    } finally { setWorking(false) }
+    } catch (e) { setError(e instanceof Error ? e.message : "Account request failed.") }
+    finally { setBusy(false) }
   }
 
-  const setup = mode === "setup"
-  return (
-    <DocsSiteProviders defaultTheme="system" enableSystem>
-    <main className="ng-account-page">
-      <div className="ng-account-background" aria-hidden="true" />
-      <Card className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
-        <div className="ng-account-theme"><AccountThemeMenu /></div>
-        <div className="ng-account-logo" aria-hidden="true"><LogoMark className="ng-account-icon" /></div>
-        <span className="ng-account-kicker">NEXTGUIDE / ACCOUNT MODE</span>
-        <h1>{setup ? "Make your docs yours." : "Welcome back."}</h1>
-        <p className="ng-account-lead">
-          {phase === "token" && "Enter the one-time setup token shown in your terminal. Only the server owner can register."}
-          {phase === "verify" && "Scan this QR code with your authenticator, then enter the current six-digit code."}
-          {phase === "recovery" && "Your authenticator is connected. Save these recovery codes before continuing."}
-          {phase === "login" && (useRecovery ? "Enter one unused recovery code to access your documentation editor." : "Open your authenticator and enter the six-digit NextGuide code.")}
-        </p>
-
-        {loading ? <p className="ng-account-note" role="status">Checking account status…</p> : null}
-        {!loading && phase === "recovery" ? (
-          <div className="ng-account-recovery">
-            <p className="ng-account-warning">Each recovery code works only once. Store them offline, separately from your phone. You will not see this list again.</p>
-            <pre className="ng-account-codes" aria-label="Single-use account recovery codes">{recoveryCodes.join("\n")}</pre>
-            <Button variant="outline" className="ng-account-secondary" type="button" onClick={() => navigator.clipboard?.writeText(recoveryCodes.join("\n"))}>Copy recovery codes</Button>
-            <div className="ng-account-check"><Checkbox id="ng-recovery-saved" checked={saved} onCheckedChange={checked => setSaved(checked === true)} /><label htmlFor="ng-recovery-saved">I saved these recovery codes in a safe place.</label></div>
-            <a className={saved ? "ng-account-submit" : "ng-account-submit ng-account-disabled"} href={saved ? "/admin" : undefined} aria-disabled={!saved}>Open dashboard</a>
-          </div>
-        ) : null}
-        {!loading && phase !== "recovery" ? (
-          <form onSubmit={submit} className="ng-account-form">
-            {phase === "verify" ? (
-              <div className="ng-account-qr">
-                {/* This QR image is generated on the server; it never contacts a third-party QR service. */}
-                <img src={qrDataUrl} width={248} height={248} alt="Authenticator setup QR code" />
-                <p>Cannot scan? Add this key manually:</p>
-                <code className="ng-account-secret">{manualKey}</code>
-              </div>
-            ) : null}
-            {phase === "token" ? (
-              <label>One-time terminal token
-                <Input value={token} onChange={e => setToken(e.target.value)} placeholder="Paste the setup token" type="password" autoComplete="off" autoFocus required />
-              </label>
-            ) : (
-              <label>{useRecovery && phase === "login" ? "Recovery code" : "Authenticator code"}
-                <Input value={code} onChange={e => setCode(e.target.value)} placeholder={useRecovery && phase === "login" ? "NG-XXXX-XXXX-XXXX-XXXX-XXXX" : "000000"} inputMode={useRecovery && phase === "login" ? "text" : "numeric"} autoComplete={useRecovery ? "off" : "one-time-code"} pattern={useRecovery && phase === "login" ? "NG-[A-Fa-f0-9]{4}(-[A-Fa-f0-9]{4}){4}" : "[0-9]{6}"} required autoFocus />
-              </label>
-            )}
-            <Button className="ng-account-submit" disabled={working || (phase === "verify" && code.length !== 6)}>
-              {working ? "Verifying…" : phase === "token" ? "Continue to QR setup" : phase === "verify" ? "Verify authenticator" : "Sign in"}
-            </Button>
-            {phase === "login" ? <button className="ng-account-link" type="button" onClick={() => { setUseRecovery(!useRecovery); setCode(""); setError("") }}>{useRecovery ? "Use authenticator instead" : "Lost your phone? Use a recovery code"}</button> : null}
-            {phase === "verify" ? <button className="ng-account-link" type="button" onClick={() => { setPhase("token"); setCode(""); setQrDataUrl(""); setManualKey("") }}>Start QR setup again</button> : null}
-          </form>
-        ) : null}
-        {error && <p className="ng-account-error" role="alert">{error}</p>}
-        <p className="ng-account-footer">No password. No email required. Protected by your authenticator.</p>
-      </Card>
+  return <AccountProviders>
+    <main className="ng-account-root flex min-h-svh flex-col bg-background px-4 py-8 text-foreground">
+      <header className="mx-auto flex w-full max-w-sm items-center justify-between pb-10">
+        <a href="/docs" className="inline-flex items-center gap-2 text-sm font-semibold tracking-tight"><LogoMark className="size-7"/>NextGuide</a>
+        <AccountThemeMenu />
+      </header>
+      <div className="mx-auto my-auto w-full max-w-sm pb-12">
+        <Card>
+          <CardHeader>
+            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-muted text-foreground">
+              {phase === "recovery" ? <ShieldCheck className="size-5" /> : phase === "verify" ? <KeyRound className="size-5" /> : <LockKeyhole className="size-5" />}
+            </div>
+            <CardTitle className="text-2xl tracking-tight">{phase === "token" ? "Set up your account" : phase === "verify" ? "Connect an authenticator" : phase === "recovery" ? "Save recovery codes" : "Sign in to NextGuide"}</CardTitle>
+            <CardDescription>{phase === "token" ? "Enter the one-time token printed in your terminal." : phase === "verify" ? "Scan the QR code, then enter your current 6-digit code." : phase === "recovery" ? "Store these single-use recovery codes somewhere safe before continuing." : useRecovery ? "Enter an unused recovery code." : "Enter the 6-digit code from your authenticator."}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {loading && <p className="text-sm text-muted-foreground" role="status">Checking account status…</p>}
+            {error && <Alert variant="destructive" role="alert"><AlertTitle>Something went wrong</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
+            {!loading && phase === "recovery" && <div className="space-y-4">
+              <div className="rounded-md border bg-muted/30 p-4"><pre className="whitespace-pre-wrap break-all font-mono text-xs leading-7" aria-label="Single-use recovery codes">{recoveryCodes.join("\n")}</pre></div>
+              <Button variant="outline" className="w-full" onClick={() => navigator.clipboard?.writeText(recoveryCodes.join("\n"))}><Copy className="size-4"/>Copy recovery codes</Button>
+              <div className="flex items-center gap-3"><Checkbox id="ng-account-saved" checked={acknowledged} onCheckedChange={checked => setAcknowledged(checked === true)}/><Label htmlFor="ng-account-saved" className="text-sm">I saved these recovery codes</Label></div>
+              <Button className="w-full" disabled={!acknowledged} onClick={() => window.location.assign("/admin")}><CheckCircle2 className="size-4"/>Open dashboard</Button>
+            </div>}
+            {!loading && phase !== "recovery" && <form onSubmit={submit} className="space-y-4">
+              {phase === "verify" && <div className="flex flex-col items-center gap-3 rounded-lg border bg-muted/20 p-4">
+                <img src={qr} width={220} height={220} alt="Authenticator enrollment QR code" className="rounded-md bg-white p-2" />
+                <p className="text-xs text-muted-foreground">Can't scan? Use the setup key below.</p>
+                <code className="max-w-full break-all text-center font-mono text-xs">{manualKey}</code>
+              </div>}
+              {phase === "token" ? <div className="space-y-2"><Label htmlFor="ng-account-token">One-time setup token</Label><Input id="ng-account-token" type="password" autoComplete="off" autoFocus value={token} onChange={e => setToken(e.target.value)} placeholder="Paste token from terminal" required /></div>
+                : <div className="space-y-2"><Label htmlFor="ng-account-code">{useRecovery && phase === "login" ? "Recovery code" : "Authenticator code"}</Label><Input id="ng-account-code" autoFocus value={code} onChange={e => setCode(e.target.value)} placeholder={useRecovery && phase === "login" ? "NG-XXXX-XXXX-XXXX-XXXX-XXXX" : "000000"} inputMode={useRecovery && phase === "login" ? "text" : "numeric"} autoComplete={useRecovery ? "off" : "one-time-code"} pattern={useRecovery && phase === "login" ? "NG-[A-Fa-f0-9]{4}(-[A-Fa-f0-9]{4}){4}" : "[0-9]{6}"} required /></div>}
+              <Button type="submit" className="w-full" disabled={busy || (phase === "verify" && code.length !== 6)}>{busy ? "Verifying…" : phase === "token" ? "Continue" : phase === "verify" ? "Verify authenticator" : "Sign in"}<ArrowRight className="size-4" /></Button>
+              {phase === "login" && <Button type="button" variant="link" className="w-full" onClick={() => { setUseRecovery(!useRecovery);setCode("");setError("") }}>{useRecovery ? "Use authenticator instead" : "Use a recovery code"}</Button>}
+              {phase === "verify" && <Button type="button" variant="link" className="w-full" onClick={() => { setPhase("token");setQr("");setManualKey("");setCode("") }}>Start setup again</Button>}
+            </form>}
+          </CardContent>
+          <CardFooter className="flex flex-col gap-3"><Separator /><p className="text-center text-xs text-muted-foreground">Protected by your authenticator. No email or password required.</p></CardFooter>
+        </Card>
+      </div>
     </main>
-    </DocsSiteProviders>
-  )
+  </AccountProviders>
 }

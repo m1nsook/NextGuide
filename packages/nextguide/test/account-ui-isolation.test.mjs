@@ -3,30 +3,37 @@ import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import test from "node:test"
 
-const accountCSS = readFileSync(fileURLToPath(new URL("../src/account/account.css", import.meta.url)), "utf8")
-const studio = readFileSync(fileURLToPath(new URL("../src/account/studio.tsx", import.meta.url)), "utf8")
-const access = readFileSync(fileURLToPath(new URL("../src/account/client.tsx", import.meta.url)), "utf8")
-const monaco = readFileSync(fileURLToPath(new URL("../src/account/mdx-editor.tsx", import.meta.url)), "utf8")
+function file(path) { return readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8") }
+const css = file("../src/account/account.css")
+const studio = file("../src/account/studio.tsx")
+const login = file("../src/account/client.tsx")
+const theme = file("../src/account/theme-menu.tsx")
+const button = file("../src/account/ui/button.tsx")
 
-test("Account Mode always uses NextGuide design tokens, not bootstrapper theme", () => {
-  assert.match(accountCSS, /@import "\.\.\/ui\/theme\.css"/)
-  assert.doesNotMatch(accountCSS, /NEXTGUIDE_ACCOUNT_SHADCN_BOOTSTRAPPER|#ffc7d4|oklch\(0\.8228/)
-  assert.doesNotMatch(accountCSS, /:root(?:\.dark)?:has\(\.ng-account-bootstrap\)/)
-  assert.match(accountCSS, /max-width:1680px/)
+// The ZIP is `shadcn init` Base UI + Vega. Do not transplant old Neko/Radix styling.
+test("Account Mode uses the fresh Vega/neutral preset, scoped to account routes", () => {
+  assert.match(css, /@import "shadcn\/tailwind\.css"/)
+  assert.match(css, /:root:has\(\.ng-account-root\)/)
+  assert.match(css, /:root\.dark:has\(\.ng-account-root\)/)
+  assert.doesNotMatch(css, /#ffc7d4|NEXTGUIDE_ACCOUNT_SHADCN_BOOTSTRAPPER|ng-studio-shell/)
 })
-
-test("Account studio does not turn every navigation control into a filled UI button", () => {
-  assert.doesNotMatch(studio, /from "\.\/ui\/button\.js"/)
-  assert.match(studio, /<button key=\{item\.id\} type="button" className=\{/)
-  assert.doesNotMatch(studio, /ng-account-bootstrap/)
-  assert.match(studio, /<StudioSelect label="Owner avatar"/)
+test("Account Mode uses shadcn Base UI controls, not the old dashboard primitives", () => {
+  assert.match(button, /@base-ui\/react\/button/)
+  assert.match(studio, /from "\.\/ui\/sidebar\.js"/)
+  assert.match(studio, /<SidebarProvider/)
   assert.match(studio, /<AccountMdxEditor/)
+  assert.doesNotMatch(studio, /DocsSiteProviders|ng-studio-shell|from "\.\.\/ui\/index\.js"/)
+  assert.match(login, /from "\.\/ui\/card\.js"/)
+  assert.match(login, /phase === "recovery"/)
+  assert.doesNotMatch(login, /DocsSiteProviders|ng-account-card/)
+  assert.match(theme, /from "\.\/ui\/dropdown-menu\.js"/)
 })
-
-test("Account access retains setup flow and local Monaco assets", () => {
-  assert.match(access, /phase === "token"/)
-  assert.match(access, /phase === "recovery"/)
-  assert.doesNotMatch(access, /ng-account-bootstrap/)
-  assert.match(monaco, /@monaco-editor\/react/)
-  assert.match(monaco, /\/_nextguide\/monaco\/vs/)
+test("UI and API remain separate and recoverable", () => {
+  const api = file("../lib/account-starter.mjs")
+  const mdx = file("../src/account/mdx-editor.tsx")
+  assert.match(api, /verifySession/)
+  assert.match(api, /sameOrigin/)
+  assert.match(api, /AccountStudio/)
+  assert.match(mdx, /@monaco-editor\/react/)
+  assert.match(mdx, /\/_nextguide\/monaco\/vs/)
 })

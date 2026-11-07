@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "./utils.js"
+import { cn } from "cn"
 import * as RechartsPrimitive from "recharts"
 import type { TooltipValueType } from "recharts"
 
