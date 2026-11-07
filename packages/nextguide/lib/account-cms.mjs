@@ -208,7 +208,17 @@ export function deleteStudioPage(project, slug, version) {
 export function getStudioNavigation(project, folder = "") {
   if (folder) guardedSlug(folder, false)
   const meta = readMeta(project, folder)
-  return { folder, items: meta.map(entry => ({
+  const location = folder ? filePath(project, "content/docs/" + folder) : docsDir(project)
+  if (!existsSync(location)) throw new AccountError("Navigation folder not found.", 404)
+  const present = readdirSync(location, { withFileTypes: true })
+    .filter(entry => !entry.isSymbolicLink() && (entry.isDirectory() || entry.isFile() && entry.name.endsWith(".mdx")))
+    .map(entry => entry.isDirectory() ? entry.name : entry.name.slice(0, -4))
+    .filter(name => /^[a-z0-9-]+$/.test(name))
+  const recognized = new Set(present)
+  const explicitlyOrdered = meta.filter(entry => recognized.has(entry.slug))
+  const seen = new Set(explicitlyOrdered.map(entry => entry.slug))
+  const remainder = present.filter(slug => !seen.has(slug)).sort().map(slug => ({ slug, title: slug }))
+  return { folder, items: [...explicitlyOrdered, ...remainder].map(entry => ({
     slug: entry.slug, title: entry.title ?? entry.slug, hidden: entry.nav === false,
   })) }
 }
