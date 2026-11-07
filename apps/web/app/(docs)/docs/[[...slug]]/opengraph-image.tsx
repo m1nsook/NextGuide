@@ -1,7 +1,6 @@
 import { NextGuideOgCard } from "nextguide/og"
 import { ImageResponse } from "next/og"
 import { site } from "@/lib/site"
-
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 export const alt = "NextGuide documentation preview"
@@ -15,10 +14,13 @@ export async function generateStaticParams() {
 export default async function Image({ params }: { params: Promise<{ slug?: string[] }> }) {
   const slug = ((await params).slug ?? []).join("/")
   const frontmatter = await docs.getFrontmatter<{ title?: string; description?: string }>({ slug })
-  return new ImageResponse(<NextGuideOgCard
-    siteName: site.name,
-    title: frontmatter.title ?? "Documentation",
-    description: frontmatter.description,
-    section: "Documentation",
-  })
+  return new ImageResponse(
+    <NextGuideOgCard
+      siteName={site.name}
+      title={frontmatter.title ?? "Documentation"}
+      description={frontmatter.description}
+      section="Documentation"
+    />,
+    size,
+  )
 }
