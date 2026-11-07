@@ -1,0 +1,29 @@
+/* NextGuide Account Mode styles are scoped to the account UI; documentation themes stay untouched. */
+.ng-account-page{font-family:Inter,ui-sans-serif,system-ui,sans-serif;position:relative;min-height:100dvh;display:grid;place-items:center;background:#090b11;color:#f3f5fc;padding:30px 18px;overflow:hidden}
+.ng-account-background{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 15%,#23345466,transparent 58%);opacity:.72}
+.ng-account-card{position:relative;width:min(100%,460px);background:#121721;border:1px solid #2a3447;border-radius:22px;box-shadow:0 28px 100px #0007;padding:36px}
+.ng-account-logo{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#8da6ff;color:#111929;font-size:24px;font-weight:800;margin-bottom:22px}
+.ng-account-kicker{color:#9baad0;font-size:11px;font-weight:700;letter-spacing:.17em}
+.ng-account-card h1{font-size:clamp(27px,5vw,38px);letter-spacing:-.045em;font-weight:700;margin:14px 0 8px}
+.ng-account-lead{color:#a9b2c6;font-size:14px;line-height:1.7;margin-bottom:25px}
+.ng-account-form{display:flex;flex-direction:column;gap:17px}
+.ng-account-form label{font-size:13px;color:#d5ddec;font-weight:600;display:flex;flex-direction:column;gap:8px}
+.ng-account-form input{width:100%;background:#0b1019;color:#f4f5f8;border:1px solid #3c4962;border-radius:11px;font:inherit;font-size:16px;padding:13px 14px;outline:none;letter-spacing:.02em}
+.ng-account-form input:focus-visible{border-color:#a7b8fa;box-shadow:0 0 0 3px #819aff44}
+.ng-account-submit{display:flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:11px;background:#c4d0ff;color:#111929;font-size:14px;font-weight:700;padding:14px 18px;min-height:48px;cursor:pointer}
+.ng-account-submit:hover:not(:disabled){background:#e0e6ff}.ng-account-submit:disabled,.ng-account-disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+.ng-account-link{background:transparent;color:#bbcaff;border:0;font:inherit;font-size:13px;cursor:pointer;padding:6px}
+.ng-account-link:hover{text-decoration:underline}
+.ng-account-error{margin-top:18px;color:#ffb5b5;border:1px solid #87474e;background:#55262d44;border-radius:9px;padding:12px;font-size:13px}
+.ng-account-qr{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:1px solid #2f3c52;border-radius:13px}
+.ng-account-qr img{display:block;border-radius:8px;max-width:100%;height:auto;background:white}
+.ng-account-qr p{color:#a9b2c6;font-size:12px;margin:8px 0 0}
+.ng-account-secret{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.09em;color:#e3eaff;word-break:break-all;text-align:center}
+.ng-account-recovery{display:flex;flex-direction:column;gap:14px}
+.ng-account-warning{font-size:13px;line-height:1.5;color:#ffdda2}
+.ng-account-codes{background:#090d15;border:1px solid #38455a;border-radius:12px;padding:18px;line-height:1.85;letter-spacing:.06em;font-size:13px;overflow:auto;color:#e3ecff}
+.ng-account-secondary{background:transparent;color:#e4eaff;border:1px solid #445370;padding:11px;border-radius:9px;cursor:pointer}
+.ng-account-check{font-size:13px;color:#d8def0;display:flex;align-items:flex-start;gap:10px}.ng-account-check input{margin-top:3px}
+.ng-account-note{font-size:14px;color:#a6b5d0}
+.ng-account-footer{font-size:12px;color:#7887a4;margin:28px 0 0}
+@media(max-width:480px){.ng-account-card{padding:25px 20px}.ng-account-codes{font-size:11px}}

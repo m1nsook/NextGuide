@@ -126,7 +126,12 @@
     "./account/server": {
       "types": "./lib/account-auth.d.mts",
       "default": "./lib/account-auth.mjs"
-    }
+    },
+    "./account/client": {
+      "types": "./dist/account/client.d.ts",
+      "default": "./dist/account/client.js"
+    },
+    "./account.css": "./dist/account/account.css"
   },
   "imports": {
     "#read-file": {
