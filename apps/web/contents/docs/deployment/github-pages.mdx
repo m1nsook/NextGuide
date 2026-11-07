@@ -1,37 +1,42 @@
 ---
 title: GitHub Pages
-subtitle: Export a read-only NextGuide documentation site using Next.js static output.
+description: Publish a static NextGuide Developer Mode documentation site.
 ---
 
-# Static docs on GitHub Pages
+# Deploy to GitHub Pages
 
-NextGuide's official documentation is deployed to GitHub Pages as a **static Next.js export**, with no database, accounts, or admin backend.
+Developer Mode can produce a static Next.js export, suitable for GitHub Pages and other file-only hosts. Account Mode cannot use GitHub Pages because it needs a running server and private persistent storage.
 
-## Configure your Next.js application
+## Configure Next.js
 
-For a repository site at `https://yourname.github.io/your-repo/`, configure Next.js's `output: "export"` option and a matching `basePath` for your repository name:
+If your site is served at a repository path such as `https://username.github.io/project/`, configure the matching Next.js base path:
 
 ```js
 // next.config.mjs
 const nextConfig = {
   output: "export",
-  basePath: "/your-repo",
+  basePath: "/project",
   trailingSlash: true,
   images: { unoptimized: true },
 }
+
 export default nextConfig
 ```
 
-If you deploy to a root domain instead of a repository subpath, omit `basePath`. NextGuide's generated catch-all routes already enumerate documentation slugs for static generation.
+Replace `/project` with your repository name. For a site on its own root domain, you generally do not need the `basePath` setting.
 
-## Build and publish
+## Build your site
 
-```powershell
+```bash
 bun run build
 ```
 
-Upload the generated `out/` directory as a GitHub Pages artifact using your project's deployment workflow. In repository Settings → Pages, select **GitHub Actions** as the publishing source.
+Next.js writes the static output to `out/`. Upload those files through a GitHub Pages deployment workflow or another publishing method supported by your repository. The build must complete successfully before you deploy.
 
-Our repository's own Pages workflow checks the package, builds its static docs, and publishes after merge to `main`. You can inspect that file at `.github/workflows/nextguide-pages.yml`.
+If you use GitHub Actions for deployment, select **GitHub Actions** in repository **Settings → Pages**. This is a hosting choice for your own repository; NextGuide does not require any Actions workflow at runtime.
 
-**Account Mode cannot run on GitHub Pages.** It needs a server and persistent storage.
+## Verify links
+
+After deployment, check the site homepage, nested documentation pages, images, component examples, and internal links. A repository `basePath` must be reflected in your generated documentation URLs as well as your Next.js configuration.
+
+[Installation](/docs/getting-started/installation) · [Self-hosting](/docs/deployment/self-hosting)
