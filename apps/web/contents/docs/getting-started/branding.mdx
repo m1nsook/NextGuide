@@ -1,0 +1,73 @@
+---
+title: Branding and social images
+description: Use your own sidebar logo, social preview, and optional attribution in Developer Mode or Account Mode.
+---
+
+# Make your documentation yours
+
+Installed NextGuide documentation does not have to display the official NextGuide monogram. The site title and logo, social card, and sidebar footer belong to your project.
+
+## Developer Mode: configure your brand
+
+Place your image in your Next.js public directory, such as `public/logo.svg` or `public/social-cover.png`. Edit `nextguide.config.json`:
+
+```json
+{
+  "schemaVersion": 1,
+  "mode": "developer",
+  "contentDir": "content/docs",
+  "basePath": "/docs",
+  "appearance": { "mode": "light", "accent": "blue" },
+  "site": {
+    "name": "My Docs",
+    "description": "Documentation for my project",
+    "logo": "/logo.svg",
+    "logoAlt": "",
+    "ogImage": "/social-cover.png"
+  },
+  "ngCopyright": {
+    "enabled": true,
+    "text": "Built with NextGuide",
+    "href": "https://m1nsook.github.io/NextGuide/"
+  }
+}
+```
+
+The sidebar shows your `site.name` and `site.logo`. If `site.logo` is empty or omitted, installed sites use a simple initial based on their name, **not** the official NextGuide monogram. An empty `logoAlt` is intentional when the adjacent site title already names the brand.
+
+`site.ogImage` replaces the default per-page generated social image in Open Graph and Twitter metadata. Use a 1200 × 630 PNG or another image supported by your social platform. If the field is empty, NextGuide generates a card with your **site identity**, page title and theme, rather than the official NextGuide logo.
+
+If you want a completely custom generated social card, edit the generated `app/og/[...slug]/route.ts` (or `src/app/og/[...slug]/route.ts`) to render your own Next.js `ImageResponse`. NextGuide backs up modified generated files during opt-in refreshes.
+
+## Optional footer attribution
+
+The bottom of the sidebar can show a small `Built with NextGuide` link. It is optional: set `ngCopyright.enabled` to `false` to hide it. The `text` and `href` fields are also customizable.
+
+You can render a React component instead of text. For example, create `src/components/CustomCopyright.tsx` with a **default export**, then add this field to `ngCopyright`:
+
+```json
+{
+  "enabled": true,
+  "custom": "src/components/CustomCopyright.tsx"
+}
+```
+
+Run the opt-in generated-template refresh to include the component's static import:
+
+<CodeWindow language="bash" title="Apply a custom footer component" code={"bunx nextguide upgrade --refresh-generated --dry-run\nbunx nextguide upgrade --refresh-generated"} />
+
+Your component remains owned by you; it is not replaced. Existing `content/docs/**` pages and navigation also remain untouched. Paths outside local `components` directories, missing files and symlinks are rejected.
+
+For a completely custom sidebar brand component, generated layouts also accept `siteBrand={<YourBrand />}` on the `NextDocsSiteSidebar` component.
+
+## Account Mode: dashboard settings
+
+In the protected `/admin` dashboard, open **Appearance & site**. Under Site identity you can choose an uploaded logo from the media library or supply a local public image path. You can also set a custom OG image URL.
+
+The Sidebar footer section lets you show or hide attribution and change its text and link. Save settings to apply them to the published docs without reinstalling the NextGuide package or rebuilding MDX pages.
+
+Advanced React component overrides remain source-code customizations in the generated App Router layout. Account Mode will not import arbitrary files from a dashboard text field, because that would require rebuilding the Next.js application and could cross a security boundary.
+
+## When to run upgrade
+
+Changing an existing `site.logo`, `site.ogImage`, or the built-in footer text/visibility only requires editing the config and restarting a running dev server if necessary. A new `ngCopyright.custom` component import requires `upgrade --refresh-generated`. That command creates numbered backups before replacing any NextGuide-generated layout file. An updated package version does not silently rewrite source files.
