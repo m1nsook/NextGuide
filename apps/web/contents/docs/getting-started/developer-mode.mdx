@@ -1,46 +1,41 @@
 ---
 title: Developer Mode
-description: Git-native documentation with MDX files, without accounts or a database.
+description: File-based Next.js documentation using MDX, version control, and your own hosting.
 ---
 
 # Developer Mode
 
-Developer Mode keeps content and configuration **inside your Next.js project**. It is available in the NextGuide CLI and works well for developer tools, libraries and product documentation maintained in Git.
+Developer Mode is NextGuide's file-first workflow. Documentation lives inside your Next.js project, so pages, navigation, and configuration can be edited in your existing editor and committed to Git.
 
 <CodeWindow title="Initialize Developer Mode" language="bash" code="bunx nextguide init --developer" />
 
-The initializer detects your Next.js router and places files in the correct `app/`, `src/app/`, `pages/`, or `src/pages/` folder. It does not require SQLite, a user account, or a hosted NextGuide server.
+## What gets installed?
 
-## A real website from the first command
+The CLI generates a responsive documentation layout, sidebar navigation, local search (Ctrl/Cmd+K), light/dark/system theme controls, breadcrumbs, a table of contents, page actions, and an MDX component registry.
 
-The generated project includes a responsive documentation shell, keyboard-searchable local content, mobile navigation, light/dark/system switcher, sticky table of contents, breadcrumbs and page actions. The MDX component registry is preconfigured with interactive tabs, callouts, code windows, cards, alerts, accordions, tables and more. You can edit everything in your own project without creating another package or installing a separate component registry.
+Your application gains real routes and starter content—not a set of snippets you must assemble manually. [See every generated file and its purpose](/docs/getting-started/generated-files).
 
-[See the complete generated file tree](/docs/getting-started/generated-files).
+## Write and organize pages
 
-## Add pages without manually wiring navigation
+<CodeWindow title="Add a guide" language="bash" code={'bunx nextguide page add guides/setup --title "Setup"'} />
 
-<CodeWindow title="Create a documentation page" language="bash" code="bunx nextguide page add guides/setup --title Setup" />
+The CLI creates an MDX file and updates the `_meta.json` navigation entries. You can edit the resulting content in any editor. Use `--dry-run` to preview a change.
 
-This creates the MDX file and updates the relevant `_meta.json` files automatically. Use `--dry-run` to preview the changes or `--json` for scripts. [Read the complete page creation guide](/docs/getting-started/adding-pages).
+[Learn how nested pages and navigation work](/docs/getting-started/adding-pages).
 
+## Choose your theme
 
-## Choose a readable default appearance
+<CodeWindow title="Initialize with system appearance and a teal accent" language="bash" code="bunx nextguide init --developer --system --accent:teal" />
 
-Pass exactly one of `--light` (default), `--dark` or `--system` when creating a site. The starter supplies accessible, high-contrast accents in blue, red, green, purple, yellow, orange, teal and pink.
+Choose `--light`, `--dark`, or `--system`, and an accent preset: blue, red, green, purple, yellow, orange, teal, or pink.
 
-<CodeWindow title="Shell" language="bash" code="bunx nextguide init --developer --system --accent:teal" />
+NextGuide saves these choices to `nextguide.config.json`. You can customize your site's own CSS afterward.
 
-The chosen mode and palette are stored in `nextguide.config.json`. Explicit light or dark mode does not change with the operating system's theme.
+## Built-in page actions
 
-## Upgrade your existing docs without reinstalling
+The documentation layout supports copying the original page Markdown, opening an AI assistant with a prepared page prompt, and optional source editing links.
 
-Use `bunx nextguide upgrade --dry-run` to inspect a legacy configuration, then `bunx nextguide upgrade` to apply it. Existing MDX files and sidebar metadata stay untouched. Updating the generated layout or CSS is an **explicit** `--refresh-generated` operation that creates backups. [Full upgrade guide](/docs/getting-started/upgrading).
-
-## Breadcrumbs and page actions
-
-Newly initialized documentation pages include breadcrumbs and a page action menu. **Copy page** copies the original MDX (including frontmatter), and **Ask ChatGPT** opens a new conversation with a prepared prompt containing the page title and an excerpt. Only the excerpt (up to 2,200 characters) is included in the ChatGPT URL; page text is not sent until you choose this action.
-
-You can also enable **Edit on GitHub** by adding `site.editBase` in `nextguide.config.json`. Point it at the source folder containing your MDX files:
+To show **Edit on GitHub**, configure your repository's edit URL:
 
 ```json
 {
@@ -50,44 +45,35 @@ You can also enable **Edit on GitHub** by adding `site.editBase` in `nextguide.c
 }
 ```
 
-Use your repository URL rather than the placeholder. If `site.editBase` is absent, the edit action stays hidden. For existing NextGuide sites, `nextguide upgrade --refresh-generated` can add these controls, with backups for previously generated files.
+This is an example field to add to your existing `nextguide.config.json`, not a replacement for the entire configuration. The edit link is hidden when no URL is configured.
 
-## What changes at build time?
+## Rendering and hosting
 
-Next.js compiles your MDX pages into routes. App Router uses `generateStaticParams`; Pages Router uses `getStaticPaths` and `getStaticProps`. The resulting site can be deployed to Vercel, your own Next.js server, or exported statically when configured for static export.
+- **App Router:** Next.js generates documentation pages from your MDX collection.
+- **Pages Router:** NextGuide generates compatible static page routes and data loaders.
+- **Static hosting:** Developer Mode can use Next.js `output: "export"`, including on GitHub Pages.
+- **Server deployment:** Deploy alongside your normal Next.js app on a managed host or your own server.
 
-## Setup location and Next.js compatibility
+Read the [Vercel](/docs/deployment/vercel), [GitHub Pages](/docs/deployment/github-pages), and [self-hosting](/docs/deployment/self-hosting) guides.
 
-The initializer asks whether you want documentation under `/docs` or as the website homepage `/`. For scripts, use `--base-path` and `--yes`; use `--replace-home` only if you explicitly want to back up an existing homepage. New App Router routes no longer export the `dynamicParams` option that conflicts with Next.js 16.4's Cache Components feature.
+## Upgrade an existing installation
 
-NextGuide resolves every local import it generates, including MDX library code, the project configuration, stylesheets and Pages Router `_app` imports. It prefers the project's existing `@/*` or custom alias when that alias actually covers the target, and uses an accurate relative import otherwise. It never rewrites your TypeScript or JavaScript aliases.
+Upgrading the npm dependency does not automatically replace the source files created by a previous `init`.
 
-To test a new Next.js stable or canary release, run the **Manual Next.js compatibility and update** workflow from GitHub Actions. It executes only when manually launched, and proposes an update PR only if the operator selects that option. It never merges or publishes automatically. See [upstream Next.js releases](https://github.com/vercel/next.js/releases).
+<CodeWindow title="Preview generated-layout updates" language="bash" code="bunx nextguide upgrade --refresh-generated --dry-run" />
 
-You can also run the same packaged-project smoke tests locally, without Actions:
+Review the proposed changes, then opt in to the refresh if appropriate. NextGuide creates backups of generated files and preserves user-authored MDX and navigation.
 
-<CodeWindow title="Local Next.js compatibility tests" language="bash" code="bun run compat:next" />
+[Read the upgrade guide](/docs/getting-started/upgrading).
 
-## Check your installed version
+## Check the installed version
 
-<CodeWindow title="Installed NextGuide version" language="bash" code="bunx nextguide --version" />
+<CodeWindow title="Installed version" language="bash" code="bunx nextguide --version" />
 
-This prints the version in the current local package without using the internet.
+Run `bunx nextguide version check --tag alpha` to compare with the published alpha channel. The check does not install anything. Version selection shown on NextGuide's **official** docs is not added to sites generated for users.
 
-To compare it against npm's public `latest` release:
+## Developer Mode vs Account Mode
 
-<CodeWindow title="Check for NextGuide releases" language="bash" code="bunx nextguide version check" />
+Developer Mode does not require passwords, user accounts, a database, or a separate content server. Editing happens in source files. If you need browser-based editing, see the [Account Mode preview](/docs/getting-started/account-mode), which is still under development.
 
-Use `--tag alpha` to check the prerelease channel, or `--json` for machine-readable output. NextGuide never upgrades packages automatically; the check only contacts npm when you run it. Until a stable version is published, the registry might not have a `latest` tag.
-
-Our **official NextGuide documentation website** shows its development version in the sidebar. This selector is part of the official website only, and is **not** generated in the sidebars of other projects using Developer Mode.
-
-## GitHub Pages
-
-NextGuide's official documentation uses this file-first architecture and publishes a static Next.js export. GitHub Pages cannot run Account Mode because it has no persistent backend.
-
-## What Developer Mode is not
-
-It does not provide `/setup`, `/admin`, passwords, a database, staff roles, uploads, or editing in the browser. Those belong to **Account Mode**, which is still in development.
-
-[Installation](/docs/getting-started/installation) · [Generated files](/docs/getting-started/generated-files) · [GitHub Pages](/docs/deployment/github-pages)
+[Installation](/docs/getting-started/installation) · [Generated files](/docs/getting-started/generated-files) · [Components](/components/ui)
