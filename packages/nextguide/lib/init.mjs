@@ -235,7 +235,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
       const original = readFileSync(join(directory, appFile), 'utf8')
       const needed = ['import "nextguide/styles.css"', 'import "' + cssImport + '"']
         .filter((line) => !original.includes(line.split('"')[1]))
-      if (needed.length) patch = { path: appFile, original, updated: needed.join('\n') + '\n' + original }
+      if (needed.length) patch = { path: appFile, original, updated: needed.join('\n') + '\n' + original, backup: appFile + '.nextguide-backup' }
     }
   }
   return { directory, router, typed, files, patch, basePath, appearance, homeBackup }
