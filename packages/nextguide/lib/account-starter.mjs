@@ -19,6 +19,7 @@ import { Suspense } from "react"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { ACCOUNT_COOKIE, verifySession } from "nextguide/account/server"
+import { DocsSiteLogoMark } from "nextguide/site"
 import "nextguide/account.css"
 
 export const runtime = "nodejs"
@@ -30,7 +31,7 @@ async function PrivateDashboard() {
   return (
     <main className="ng-account-page">
       <section className="ng-account-card" aria-label="NextGuide dashboard">
-        <div className="ng-account-logo" aria-hidden="true">N</div>
+        <div className="ng-account-logo" aria-hidden="true"><DocsSiteLogoMark className="ng-account-icon" /></div>
         <span className="ng-account-kicker">NEXTGUIDE / ACCOUNT MODE</span>
         <h1>Dashboard</h1>
         <p className="ng-account-lead">Your authenticator is connected and your account is protected. This is the first Account Mode milestone; content editing and site settings are coming next.</p>

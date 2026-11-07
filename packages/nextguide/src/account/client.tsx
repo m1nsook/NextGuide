@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, type FormEvent } from "react"
+import { LogoMark } from "../components/site/logo.js"
 
 type AccountStatus = { initialized: boolean; authenticated: boolean }
 type Phase = "token" | "verify" | "recovery" | "login"
@@ -81,7 +82,7 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
     <main className="ng-account-page">
       <div className="ng-account-background" aria-hidden="true" />
       <section className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
-        <div className="ng-account-logo" aria-hidden="true">N</div>
+        <div className="ng-account-logo" aria-hidden="true"><LogoMark className="ng-account-icon" /></div>
         <span className="ng-account-kicker">NEXTGUIDE / ACCOUNT MODE</span>
         <h1>{setup ? "Make your docs yours." : "Welcome back."}</h1>
         <p className="ng-account-lead">

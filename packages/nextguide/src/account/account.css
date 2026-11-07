@@ -3,6 +3,7 @@
 .ng-account-background{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 15%,#23345466,transparent 58%);opacity:.72}
 .ng-account-card{position:relative;width:min(100%,460px);background:#121721;border:1px solid #2a3447;border-radius:22px;box-shadow:0 28px 100px #0007;padding:36px}
 .ng-account-logo{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#8da6ff;color:#111929;font-size:24px;font-weight:800;margin-bottom:22px}
+.ng-account-icon{width:27px;height:27px;flex:none}
 .ng-account-kicker{color:#9baad0;font-size:11px;font-weight:700;letter-spacing:.17em}
 .ng-account-card h1{font-size:clamp(27px,5vw,38px);letter-spacing:-.045em;font-weight:700;margin:14px 0 8px}
 .ng-account-lead{color:#a9b2c6;font-size:14px;line-height:1.7;margin-bottom:25px}
