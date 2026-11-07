@@ -3,6 +3,9 @@
 import * as React from "react"
 import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, FileText, FolderTree, HardDriveUpload, LayoutDashboard, LockKeyhole, LogOut, Menu, Save, Search, Settings, ShieldCheck, Trash2 } from "lucide-react"
 import { LogoMark } from "../components/site/logo.js"
+import { Providers as DocsSiteProviders } from "../components/site/providers.js"
+import { ThemeToggle } from "../components/site/theme-toggle.js"
+import { Card } from "../ui/index.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
 type Site = { name: string; description: string; url: string; logo: string; ogImage: string; copyrightEnabled: boolean; copyrightText: string; copyrightHref: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
@@ -184,9 +187,9 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
   }
   const filtered=(state?.pages||[]).filter(p=>(p.title+" "+p.slug).toLowerCase().includes(query.toLowerCase()))
   const showWizard=appReady&&!site?.setupComplete
-  const to = (title:string,description:string,content:React.ReactNode) => <section className="ng-studio-section"><header><h2>{title}</h2><p>{description}</p></header>{content}</section>
+  const to = (title:string,description:string,content:React.ReactNode) => <Card className="ng-studio-section"><header><h2>{title}</h2><p>{description}</p></header>{content}</Card>
 
-  return <div className="ng-studio-shell">
+  return <DocsSiteProviders defaultTheme="system" enableSystem><div className="ng-studio-shell">
     <aside className={"ng-studio-side "+(mobileMenu?"ng-studio-side-open":"")}>
       <div className="ng-studio-brand"><span className="ng-studio-brand-icon"><LogoMark className="ng-account-icon"/></span><span>NextGuide<small>Account Mode</small></span></div>
       <span className="ng-studio-nav-label">WORKSPACE</span>
@@ -199,7 +202,7 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
       <header className="ng-studio-topbar">
         <button className="ng-studio-menu" aria-label="Toggle navigation" onClick={()=>setMobileMenu(!mobileMenu)}><Menu size={22}/></button>
         <span>{state?.site.name||"Account Mode"} <span className="ng-studio-chevron">/</span> {navigationItems.find(x=>x.id===view)?.label}</span>
-        <a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a>
+        <div className="ng-studio-header-tools"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a><ThemeToggle /></div>
       </header>
       <main className="ng-studio-workspace" aria-live="polite">
         {error&&<div className="ng-studio-alert ng-studio-error" role="alert">{error}<button type="button" onClick={()=>setError("")}>Dismiss</button></div>}
@@ -297,7 +300,7 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
         </div>}
       </main>
     </div>
-  </div>
+  </div></DocsSiteProviders>
 }
 async function accountPost<T>(action:string,data:object):Promise<T> {
   const response = await fetch("/api/nextguide/account/"+action, {method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
