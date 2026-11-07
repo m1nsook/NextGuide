@@ -9,6 +9,7 @@ import { rotateBootstrap } from "../lib/account-auth.mjs";
 import { upgradeDeveloper } from "../lib/upgrade.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
+import { cliUi } from "../lib/cli-ui.mjs";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const help = `NextGuide ${version} — early alpha
@@ -103,20 +104,14 @@ function doctor(args) {
   if (json) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   } else {
-    process.stdout.write(`NextGuide doctor ${version}\nProject: ${result.projectDirectory}\n`);
-    if (result.packageName) process.stdout.write(`Package: ${result.packageName}\n`);
-    if (result.nextVersion) process.stdout.write(`Next.js: ${result.nextVersion}\n`);
-    if (result.routers.length) {
-      for (const router of result.routers) {
-        process.stdout.write(`Router: ${router.name} (${router.folder}/)\n`);
-      }
-    }
-    if (result.issues.length) {
-      for (const issue of result.issues) process.stderr.write(`ERROR: ${issue}\n`);
-    } else {
-      process.stdout.write("OK: Next.js and a supported router directory were detected.\n");
-    }
-    process.stdout.write("Account Mode requires App Router and a persistent Next.js server; Developer Mode also supports static export.\n");
+    cliUi.heading("NextGuide doctor", "v" + version);
+    cliUi.field("Project:", result.projectDirectory);
+    if (result.packageName) cliUi.field("Package:", result.packageName);
+    if (result.nextVersion) cliUi.field("Next.js:", result.nextVersion);
+    for (const router of result.routers) cliUi.field("Router:", router.name + " (" + router.folder + "/)");
+    if (result.issues.length) for (const issue of result.issues) cliUi.fail("ERROR: " + issue);
+    else cliUi.success("OK: Next.js and a supported router directory were detected.");
+    cliUi.note("Account Mode requires App Router and a persistent Next.js server; Developer Mode also supports static export.");
   }
   if (!result.ok) process.exitCode = 1;
 }
@@ -124,7 +119,7 @@ function doctor(args) {
 
 async function ask(question) {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
-  try { return (await rl.question(question)).trim().toLowerCase(); }
+  try { return (await rl.question(cliUi.prompt(question))).trim().toLowerCase(); }
   finally { rl.close(); }
 }
 
@@ -266,24 +261,27 @@ async function init(args) {
       }
     }
     const result = (mode === "account" ? initAccount : initDeveloper)(directory, status, { router, dryRun, basePath, replaceHome, appearance });
-    process.stdout.write("NextGuide " + (mode === "account" ? "Account" : "Developer") + " Mode " + (dryRun ? "preview" : "initialized") + "\n");
-    process.stdout.write("Project: " + result.projectDirectory + "\n");
-    process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
-    process.stdout.write("Documentation URL: " + result.basePath + "\n");
-    process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
-    process.stdout.write("Upgrade templates from installed NextGuide package: " + version + "\n");
-    for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
-    for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
-    for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
+    cliUi.heading("NextGuide " + (mode === "account" ? "Account" : "Developer") + " Mode",
+      (dryRun ? "preview" : "initialized") + " · v" + version);
+    cliUi.field("Project:", result.projectDirectory);
+    cliUi.field("Router:", result.router.name + " (" + result.router.folder + ")");
+    cliUi.field("Documentation URL:", result.basePath);
+    cliUi.field("Appearance:", result.appearance.mode + " / " + result.appearance.accent);
+    cliUi.field("Templates:", "installed NextGuide package v" + version);
+    for (const name of result.created) cliUi.file(dryRun ? "WOULD CREATE" : "CREATE", name);
+    for (const name of result.modified) cliUi.file(dryRun ? "WOULD UPDATE" : "UPDATE", name);
+    for (const name of result.backedUp) cliUi.file(dryRun ? "WOULD BACK UP" : "BACKUP", name);
     if (!dryRun && mode === "account") {
-      process.stdout.write("\nONE-TIME ACCOUNT SETUP TOKEN (save until enrollment):\n" + result.bootstrapToken + "\n");
-      process.stdout.write("Private account storage: " + result.privateDirectory + "\n");
-      process.stdout.write("Next: run your Next.js server and open /setup. Never share this token.\n");
+      cliUi.blank();
+      cliUi.warn("ONE-TIME ACCOUNT SETUP TOKEN (save until enrollment):");
+      process.stdout.write(result.bootstrapToken + "\n");
+      cliUi.field("Private account storage:", result.privateDirectory);
+      cliUi.note("Next: run your Next.js server and open /setup. Never share this token.");
     } else if (!dryRun) {
-      process.stdout.write("Next: start your existing Next.js dev server and open " + result.basePath + ".\n");
+      cliUi.success("Next: start your existing Next.js dev server and open " + result.basePath + ".");
     }
   } catch (error) {
-    process.stderr.write("NextGuide init failed: " + error.message + "\n");
+    cliUi.fail("NextGuide init failed: " + error.message);
     process.exitCode = 1;
   }
 }
@@ -322,21 +320,27 @@ function upgrade(args) {
   const directory = projectPath ?? process.cwd();
   try {
     const result = upgradeDeveloper(directory, inspectProject(directory), { dryRun, refreshGenerated, router, appearance });
-    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "upgrade preview" : "upgrade complete") + "\n");
-    process.stdout.write("Project: " + result.projectDirectory + "\n");
-    process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
-    if (!result.changes.length) process.stdout.write("All files match the templates in this installed package. No changes were required.\n");
-    for (const change of result.changes) {
-      process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + change.path + "\n");
-      if (change.backup) process.stdout.write("    Backup: " + change.backup + "\n");
+    cliUi.heading("NextGuide Developer Mode", (dryRun ? "upgrade preview" : "upgrade complete") + " · v" + version);
+    cliUi.field("Project:", result.projectDirectory);
+    cliUi.field("Appearance:", result.appearance.mode + " / " + result.appearance.accent);
+    cliUi.field("Templates:", "installed NextGuide package v" + version);
+    if (!result.changes.length) {
+      cliUi.success("All files match the templates in this installed package. No changes were required.");
+      if (refreshGenerated) cliUi.note("Refresh does not download or rebuild packages; install a freshly packed archive first.");
+    } else {
+      for (const change of result.changes) {
+        cliUi.file(dryRun ? "WOULD UPDATE" : "UPDATE", change.path);
+        if (change.backup) cliUi.backup(change.backup);
+      }
+      if (!dryRun) cliUi.success("Applied " + result.changes.length + " changes. MDX pages and navigation preserved.");
     }
     if (!refreshGenerated) {
-      process.stdout.write("To adopt updated starter layout/styles, run nextguide upgrade --refresh-generated.\n");
-      process.stdout.write("This backs up existing NextGuide-generated files; MDX pages and navigation are never replaced.\n");
+      cliUi.note("To adopt new starter templates: nextguide upgrade --refresh-generated");
+      cliUi.note("Generated files are backed up; authored pages are untouched.");
     }
-    if (dryRun) process.stdout.write("No files were modified.\n");
+    if (dryRun) cliUi.note("Preview only — no files were modified.");
   } catch (error) {
-    process.stderr.write("NextGuide upgrade failed: " + error.message + "\n");
+    cliUi.fail("NextGuide upgrade failed: " + error.message);
     process.exitCode = 1;
   }
 }
@@ -351,10 +355,11 @@ function accountCommand(args) {
   try {
     const project = values[1] ?? process.cwd()
     const result = rotateBootstrap(project)
-    process.stdout.write("NextGuide Account Mode: replacement setup token\n" + result.token + "\n")
-    process.stdout.write("The previous token and unfinished QR enrollment are now invalid. Open /setup.\n")
+    cliUi.heading("NextGuide Account Mode", "replacement setup token");
+    process.stdout.write(result.token + "\n");
+    cliUi.warn("The previous token and unfinished QR enrollment are now invalid. Open /setup.");
   } catch (error) {
-    process.stderr.write("NextGuide account token rotation failed: " + error.message + "\n")
+    cliUi.fail("NextGuide account token rotation failed: " + error.message);
     process.exitCode = 1
   }
 }
@@ -365,6 +370,7 @@ switch (command) {
   case "--help":
   case "-h":
   case "help":
+    cliUi.heading("NextGuide", "v" + version);
     process.stdout.write(help);
     break;
   case "--version":

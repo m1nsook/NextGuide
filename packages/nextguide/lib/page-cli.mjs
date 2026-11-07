@@ -1,4 +1,5 @@
 import { addPage } from "./page.mjs"
+import { cliUi } from "./cli-ui.mjs"
 
 export const pageHelp = `NextGuide Developer Mode — add documentation pages
 
@@ -23,12 +24,14 @@ Run nextguide init first. The command preserves existing pages and navigation.
 
 export function pageCommand(args) {
   if (args.length === 0 || args[0] === "--help" || args[0] === "-h" || args[0] === "help") {
+    cliUi.heading("NextGuide page", "Developer Mode")
     process.stdout.write(pageHelp)
     return
   }
   const [action, ...options] = args
   if (action !== "add") {
-    process.stderr.write(`Unknown page action: ${action}\n${pageHelp}`)
+    cliUi.fail(`Unknown page action: ${action}`)
+    process.stderr.write(pageHelp)
     process.exitCode = 2
     return
   }
@@ -49,7 +52,7 @@ export function pageCommand(args) {
     else if (token === "--title" || token === "--description" || token === "--project") {
       const value = options[++i]
       if (!value || value.startsWith("--")) {
-        process.stderr.write(`${token} requires a value.\n`)
+        cliUi.fail(`${token} requires a value.`)
         process.exitCode = 2
         return
       }
@@ -58,13 +61,13 @@ export function pageCommand(args) {
       else project = value
     } else if (!token.startsWith("-") && slug === undefined) slug = token
     else {
-      process.stderr.write(`Unknown page argument: ${token}\n`)
+      cliUi.fail(`Unknown page argument: ${token}`)
       process.exitCode = 2
       return
     }
   }
   if (slug === undefined) {
-    process.stderr.write("Missing page slug. Example: nextguide page add guides/installation\n")
+    cliUi.fail("Missing page slug. Example: nextguide page add guides/installation")
     process.exitCode = 2
     return
   }
@@ -79,13 +82,15 @@ export function pageCommand(args) {
       }, null, 2) + "\n")
       return
     }
-    process.stdout.write(`NextGuide: ${dryRun ? "page preview" : "page created"}\n`)
-    process.stdout.write(`Project: ${projectDirectory}\n`)
-    for (const item of created) process.stdout.write(`  ${dryRun ? "WOULD CREATE" : "CREATE"} ${item.path}\n`)
-    for (const item of modified) process.stdout.write(`  ${dryRun ? "WOULD UPDATE" : "UPDATE"} ${item.path}\n`)
-    process.stdout.write(`URL: ${href}\n`)
+    cliUi.heading("NextGuide Developer Mode", dryRun ? "page preview" : "page created")
+    cliUi.field("Project:", projectDirectory)
+    for (const item of created) cliUi.file(dryRun ? "WOULD CREATE" : "CREATE", item.path)
+    for (const item of modified) cliUi.file(dryRun ? "WOULD UPDATE" : "UPDATE", item.path)
+    cliUi.field("URL:", href)
+    if (dryRun) cliUi.note("Preview only — no files were modified.")
+    else cliUi.success("Page created and navigation updated.")
   } catch (error) {
-    process.stderr.write(`NextGuide page add failed: ${error.message}\n`)
+    cliUi.fail(`NextGuide page add failed: ${error.message}`)
     process.exitCode = 1
   }
 }

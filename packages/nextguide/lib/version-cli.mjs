@@ -1,4 +1,5 @@
 import { checkVersion } from "./version.mjs"
+import { cliUi } from "./cli-ui.mjs"
 
 export const versionHelp = `NextGuide version commands
 
@@ -14,12 +15,14 @@ It does not install a package or modify your project.
 
 export async function versionCommand(args, installed) {
   if (args.length === 0 || args[0] === "--help" || args[0] === "-h" || args[0] === "help") {
+    cliUi.heading("NextGuide version", "commands")
     process.stdout.write(versionHelp)
     return
   }
   const [command, ...options] = args
   if (command !== "check") {
-    process.stderr.write(`Unknown version command: ${command}\n${versionHelp}`)
+    cliUi.fail(`Unknown version command: ${command}`)
+    process.stderr.write(versionHelp)
     process.exitCode = 2
     return
   }
@@ -30,13 +33,13 @@ export async function versionCommand(args, installed) {
     if (option === "--json") json = true
     else if (option === "--tag" && options[i + 1]) tag = options[++i]
     else {
-      process.stderr.write(`Unknown version argument: ${option}\n`)
+      cliUi.fail(`Unknown version argument: ${option}`)
       process.exitCode = 2
       return
     }
   }
   if (tag !== "latest" && tag !== "alpha") {
-    process.stderr.write("The version tag must be latest or alpha.\n")
+    cliUi.fail("The version tag must be latest or alpha.")
     process.exitCode = 2
     return
   }
@@ -46,21 +49,22 @@ export async function versionCommand(args, installed) {
       process.stdout.write(JSON.stringify(result, null, 2) + "\n")
       return
     }
-    process.stdout.write(`NextGuide ${result.installed} (installed)\n`)
+    cliUi.heading("NextGuide version", "check")
+    cliUi.field("Installed:", result.installed)
     if (result.status === "not-published") {
-      process.stdout.write(`No NextGuide version is tagged '${tag}' on npm yet.\n`)
+      cliUi.warn(`No NextGuide version is tagged '${tag}' on npm yet.`)
     } else {
-      process.stdout.write(`npm ${tag}: ${result.published}\n`)
+      cliUi.field(`npm ${tag}:`, result.published)
       if (result.status === "update-available") {
-        process.stdout.write(`Update available. When you choose to upgrade: bun add nextguide@${tag}\n`)
+        cliUi.warn(`Update available. When you choose to upgrade: bun add nextguide@${tag}`)
       } else if (result.status === "ahead") {
-        process.stdout.write("Your installed version is newer than this published npm channel.\n")
+        cliUi.note("Your installed version is newer than this published npm channel.")
       } else {
-        process.stdout.write("You are up to date for this npm channel.\n")
+        cliUi.success("You are up to date for this npm channel.")
       }
     }
   } catch (error) {
-    process.stderr.write(`Could not check NextGuide versions: ${error.message}\n`)
+    cliUi.fail(`Could not check NextGuide versions: ${error.message}`)
     process.exitCode = 1
   }
 }
