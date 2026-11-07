@@ -4,6 +4,7 @@ import { readFileSync, statSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { initDeveloper } from "../lib/init.mjs";
+import { initAccount } from "../lib/account-starter.mjs";
 import { upgradeDeveloper } from "../lib/upgrade.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
@@ -18,7 +19,8 @@ Usage:
   nextguide version check --tag alpha  Check the alpha channel
   nextguide doctor [path]      Inspect a local Next.js project
   nextguide doctor --json      Print machine-readable diagnostics
-  nextguide init [path]        Scaffold Developer Mode in a Next.js project
+  nextguide init [path]        Scaffold documentation in a Next.js project
+  nextguide init --account     Set up passwordless Account Mode with a terminal token
   nextguide init --router app  Select App Router when both routers exist
   nextguide init --base-path /docs  Use /docs as documentation path (default)
   nextguide init --base-path /     Use documentation as website homepage
@@ -34,7 +36,7 @@ Usage:
   nextguide page --help       Show page creation options
 
 Next.js is mandatory. NextGuide aims to support App Router and Pages Router.
-Developer Mode initialization is available. Account Mode, /setup and /admin are not yet implemented.
+Developer Mode is available. Account Mode offers a server-based authenticator setup and protected dashboard.
 Docs: https://m1nsook.github.io/NextGuide/
 `;
 
@@ -112,7 +114,7 @@ function doctor(args) {
     } else {
       process.stdout.write("OK: Next.js and a supported router directory were detected.\n");
     }
-    process.stdout.write("Note: Account Mode, /setup and /admin are not yet implemented. Developer Mode init is available.\n");
+    process.stdout.write("Account Mode requires App Router and a persistent Next.js server; Developer Mode also supports static export.\n");
   }
   if (!result.ok) process.exitCode = 1;
 }
@@ -162,8 +164,8 @@ async function init(args) {
     process.exitCode = 2;
     return;
   }
-  if (mode !== "developer") {
-    process.stderr.write("Account Mode is not implemented. Use nextguide init --developer for the file-first, static-capable mode.\n");
+  if (!["developer", "account"].includes(mode)) {
+    process.stderr.write("Invalid mode. Choose --developer or --account.\n");
     process.exitCode = 2;
     return;
   }
@@ -211,8 +213,8 @@ async function init(args) {
         replaceHome = true;
       }
     }
-    const result = initDeveloper(directory, status, { router, dryRun, basePath, replaceHome, appearance });
-    process.stdout.write("NextGuide Developer Mode " + (dryRun ? "preview" : "initialized") + "\n");
+    const result = (mode === "account" ? initAccount : initDeveloper)(directory, status, { router, dryRun, basePath, replaceHome, appearance });
+    process.stdout.write("NextGuide " + (mode === "account" ? "Account" : "Developer") + " Mode " + (dryRun ? "preview" : "initialized") + "\n");
     process.stdout.write("Project: " + result.projectDirectory + "\n");
     process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
     process.stdout.write("Documentation URL: " + result.basePath + "\n");
@@ -220,7 +222,13 @@ async function init(args) {
     for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
     for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
     for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
-    if (!dryRun) process.stdout.write("Next: start your existing Next.js dev server and open " + result.basePath + ".\n");
+    if (!dryRun && mode === "account") {
+      process.stdout.write("\nONE-TIME ACCOUNT SETUP TOKEN (save until enrollment):\n" + result.bootstrapToken + "\n");
+      process.stdout.write("Private account storage: " + result.privateDirectory + "\n");
+      process.stdout.write("Next: run your Next.js server and open /setup. Never share this token.\n");
+    } else if (!dryRun) {
+      process.stdout.write("Next: start your existing Next.js dev server and open " + result.basePath + ".\n");
+    }
   } catch (error) {
     process.stderr.write("NextGuide init failed: " + error.message + "\n");
     process.exitCode = 1;
