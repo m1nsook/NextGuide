@@ -7,10 +7,13 @@ export const contentType = "image/png"
 export const alt = "NextGuide documentation"
 
 export default function Image() {
-  return new ImageResponse(<NextGuideOgCard
-    siteName: site.name,
-    title: "Documentation that belongs to your project",
-    description: site.description,
-    section: "Next.js documentation",
-  })
+  return new ImageResponse(
+    <NextGuideOgCard
+      siteName={site.name}
+      title="Documentation that belongs to your project"
+      description={site.description}
+      section="Next.js documentation"
+    />,
+    size,
+  )
 }
