@@ -21,7 +21,7 @@ export const cliUi = {
       (detail ? " " + tint(detail, "2") : ""))
   },
   field(label, value) {
-    write("  " + tint(label.padEnd(12), "2") + " " + String(value))
+    write("  " + tint(label, "2") + " " + String(value))
   },
   file(action, path) {
     const key = action.replace(/^WOULD /, "")
