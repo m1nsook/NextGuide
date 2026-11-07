@@ -9,7 +9,7 @@ import { useTheme } from "next-themes"
 const MonacoEditor = React.lazy(async () => {
   const mod = await import("@monaco-editor/react")
   mod.loader.config({ paths: { vs: "/_nextguide/monaco/vs" } })
-  return { default: mod.default }
+  return { default: mod.Editor }
 })
 
 export interface AccountMdxEditorProps {
@@ -49,7 +49,7 @@ export function AccountMdxEditor({ value, onChange, slug }: AccountMdxEditorProp
           theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
           height="480px"
           value={value}
-          onChange={next => onChange(next ?? "")}
+          onChange={(next: string | undefined) => onChange(next ?? "")}
           loading={<div className="ng-studio-monaco-loading" role="status">Loading MDX editor…</div>}
           options={{
             automaticLayout: true,
