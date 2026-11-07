@@ -111,6 +111,6 @@ export function NextGuideOgCard({
         <span>NextGuide</span>
         <span style={{ color: highlight }}>MDX · Next.js · Documentation</span>
       </div>
-    </div>,
+    </div>
   )
 }
