@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Account Mode is in development: passwordless setup and a browser-based documentation editor.",
 }
 
-const planned = [
+const capabilities = [
   { icon: Settings2, title: "Guided setup", description: "Site identity, accessible color presets, fonts, and optional owner profile, all through a browser." },
   { icon: PanelsTopLeft, title: "Content studio", description: "Create and edit MDX pages, arrange sidebar navigation, and upload images in a protected workspace." },
   { icon: LockKeyhole, title: "Passwordless ownership", description: "A terminal token gates authenticator enrollment, with recovery codes and protected sessions." },
@@ -27,14 +27,14 @@ export default function AccountDocsHome() {
       </p>
       <div className="mt-9 flex flex-wrap gap-3">
         <Link href="/docs/getting-started/account-mode" className="inline-flex items-center gap-2 rounded-lg border px-5 py-3 text-sm font-medium hover:bg-muted">
-          Read the roadmap <ArrowRight size={16} aria-hidden />
+          Read the Account Mode guide <ArrowRight size={16} aria-hidden />
         </Link>
         <Link href="/developer-docs" className="bg-foreground text-background inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-medium">
           Use Developer Mode now <BookOpen size={16} aria-hidden />
         </Link>
       </div>
-      <section className="mt-20 grid gap-4 sm:grid-cols-3" aria-label="Planned Account Mode capabilities">
-        {planned.map(({ icon: Icon, title, description }) => (
+      <section className="mt-20 grid gap-4 sm:grid-cols-3" aria-label="Account Mode capabilities under development">
+        {capabilities.map(({ icon: Icon, title, description }) => (
           <div key={title} className="rounded-xl border bg-card p-6">
             <Icon className="mb-5 size-5 text-[var(--ng-accent)]" aria-hidden />
             <h2 className="text-base font-semibold">{title}</h2>
