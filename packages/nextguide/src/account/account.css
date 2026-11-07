@@ -247,3 +247,18 @@
   font-size:14px;font-weight:500;
 }
 .ng-studio-fields .ng-studio-radix-trigger:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+
+/* Only the editor workspace scrolls; navigation is pinned, with its own scroll
+   area for narrow desktop heights. Nothing scrolls the entire dashboard. */
+.ng-studio-font-assets{height:100dvh;min-height:0;overflow:hidden}
+.ng-studio-shell{height:100dvh;min-height:0;overflow:hidden;grid-template-rows:minmax(0,1fr);font-family:var(--ng-preview-inter),"Inter","Segoe UI",system-ui,sans-serif}
+.ng-studio-side{height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.ng-studio-main{height:100dvh;min-height:0;overflow:hidden}
+.ng-studio-workspace{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.ng-studio-topbar{position:relative;z-index:2}
+.ng-studio-font-sample{display:block;min-width:0;overflow-wrap:anywhere;line-height:1.5}
+@media(max-width:850px){
+  .ng-studio-shell{height:100dvh}
+  .ng-studio-side{position:fixed;top:0;bottom:0;height:100dvh;overscroll-behavior:contain}
+  .ng-studio-main{height:100dvh}
+}

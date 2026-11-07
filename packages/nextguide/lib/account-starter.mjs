@@ -21,13 +21,24 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { ACCOUNT_COOKIE, verifySession } from "nextguide/account/server"
 import { AccountStudio } from "nextguide/account/studio"
+import { Inter, Geist, Geist_Mono, IBM_Plex_Sans, IBM_Plex_Mono, JetBrains_Mono } from "next/font/google"
 import "nextguide/account.css"
+
+const previewInter = Inter({ subsets: ["latin"], variable: "--ng-preview-inter" })
+const previewGeist = Geist({ subsets: ["latin"], variable: "--ng-preview-geist" })
+const previewPlexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-preview-ibm-plex-sans" })
+const previewJetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--ng-preview-jetbrains-mono" })
+const previewGeistMono = Geist_Mono({ subsets: ["latin"], variable: "--ng-preview-geist-mono" })
+const previewPlexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-preview-ibm-plex-mono" })
+const previewClasses = [previewInter.variable, previewGeist.variable, previewPlexSans.variable,
+  previewJetbrains.variable, previewGeistMono.variable, previewPlexMono.variable].join(" ")
+
 
 
 async function PrivateDashboard() {
   const cookieStore = await cookies()
   if (!verifySession(process.cwd(), cookieStore.get(ACCOUNT_COOKIE)?.value)) redirect("/login")
-  return <AccountStudio basePath="__DOCS_PATH__" />
+  return <div className={previewClasses + " ng-studio-font-assets"}><AccountStudio basePath="__DOCS_PATH__" /></div>
 }
 export default function AccountDashboard() {
   return <Suspense fallback={<main className="ng-account-page"><p>Loading Account Mode…</p></main>}><PrivateDashboard /></Suspense>
