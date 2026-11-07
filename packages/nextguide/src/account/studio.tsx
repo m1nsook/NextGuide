@@ -5,7 +5,7 @@ import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, 
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
 import { ThemeToggle } from "../components/site/theme-toggle.js"
-import { Card } from "../ui/index.js"
+import { Card, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/index.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
 type Site = { name: string; description: string; url: string; logo: string; ogImage: string; copyrightEnabled: boolean; copyrightText: string; copyrightHref: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
@@ -50,6 +50,29 @@ async function request<T>(action: string, data?: object, method: "GET"|"POST" = 
   if (!response.ok) throw Error(String(result.error || "Operation failed (HTTP " + response.status + ")."))
   return result as T
 }
+
+/** Reuse the same Radix-backed selector as the documentation UI. */
+function StudioSelect({ value, onChange, options, label }: {
+  value: string
+  onChange: (value: string) => void
+  label: string
+  options: { value: string; label: string }[]
+}) {
+  const none = "__nextguide_empty__"
+  return (
+    <Select value={value || none} onValueChange={selected => onChange(selected === none ? "" : selected)}>
+      <SelectTrigger aria-label={label} className="ng-studio-radix-trigger">
+        <SelectValue placeholder={label} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map(option => (
+          <SelectItem key={option.value} value={option.value || none}>{option.label}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
 function slugHref(slug: string, basePath: string) {
   const base = basePath
   return (base === "/" ? "" : base) + (slug ? "/" + slug : "/")
@@ -263,9 +286,8 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
               <label>Title<input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label>
               <label>Description<textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label>
               <label>Public site origin (no path)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
-              <label>Sidebar logo from media library<select value={site.logo} onChange={e=>editSite("logo",e.target.value)}>
-                <option value="">Use site initial (default)</option>{state!.media.map(item=><option key={item.name} value={item.url}>{item.name}</option>)}
-              </select></label>
+              <label>Sidebar logo from media library<StudioSelect label="Sidebar logo" value={site.logo} onChange={value=>editSite("logo",value)}
+                options={[{value:"",label:"Use site initial (default)"},...state!.media.map(item=>({value:item.url,label:item.name}))]}/></label>
               <label>Sidebar logo public path<input value={site.logo} onChange={e=>editSite("logo",e.target.value)} placeholder="/logo.svg"/></label>
               <label>Custom OG image public path<input value={site.ogImage} onChange={e=>editSite("ogImage",e.target.value)} placeholder="/og-cover.png"/></label>
             </div>)}
@@ -311,9 +333,11 @@ async function accountPost<T>(action:string,data:object):Promise<T> {
 function DesignFields({site,update}:{site:Site;update:<K extends keyof Site>(key:K,value:Site[K])=>void}) {
   return <div className="ng-studio-fields">
     <fieldset className="ng-studio-colors"><legend>Accent color</legend><div>{accents.map(accent=><button type="button" key={accent} data-selected={site.accent===accent} aria-label={accent+" accent"} aria-pressed={site.accent===accent} onClick={()=>update("accent",accent)}><span style={{backgroundColor:accentColor[accent]}}/>{accent}</button>)}</div></fieldset>
-    <label>Default appearance <select value={site.theme} onChange={e=>update("theme",e.target.value)}><option value="light">Light</option><option value="dark">Dark</option><option value="system">Follow system</option></select></label>
+    <label>Default appearance <StudioSelect label="Default appearance" value={site.theme} onChange={value=>update("theme",value)}
+      options={[{value:"light",label:"Light"},{value:"dark",label:"Dark"},{value:"system",label:"Follow system"}]}/></label>
     <div className="ng-studio-font-grid">{(["bodyFont","headingFont","codeFont"] as const).map(field=><label key={field}>{field==="bodyFont"?"Body font":field==="headingFont"?"Heading font":"Code font"}
-      <select value={site[field]} onChange={e=>update(field,e.target.value as Font)}>{(field==="codeFont"?codeFonts:bodyFonts).map(font=><option key={font.id} value={font.id}>{font.name}</option>)}</select>
+      <StudioSelect value={site[field]} label={field+" font"} onChange={value=>update(field,value as Font)}
+        options={(field==="codeFont"?codeFonts:bodyFonts).map(font=>({value:font.id,label:font.name}))}/>
       <span className="ng-studio-font-sample" style={{fontFamily:[...bodyFonts,...codeFonts].find(f=>f.id===site[field])?.family}}>{field==="codeFont"?'const docs = "NextGuide";':"Build documentation that feels like yours."}</span></label>)}</div>
   </div>
 }
