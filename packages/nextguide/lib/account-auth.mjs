@@ -310,6 +310,92 @@ export function signOut(project, sessionToken) {
   })
 }
 
+function requireOwnerSession(state, token, time) {
+  if (!state.owner || typeof token !== "string" ||
+      !state.sessions.some(session => session.expiresAt > time && equal(session.hash, digest(token)))) {
+    throw new AccountError("Your session has expired. Sign in again.", 401)
+  }
+}
+
+function confirmCurrentAuthenticator(state, code, time) {
+  rateLimit(state, time)
+  const step = matchingTotpStep(state.owner.totpSecret, code, time, state.lastAcceptedStep)
+  if (step === null) {
+    failedAttempt(state, time)
+    return false
+  }
+  state.lastAcceptedStep = step
+  clearFailures(state)
+  return true
+}
+
+// Changing the authenticator always requires a fresh code from the current
+// device in addition to the signed-in session. No recovery bypass is exposed.
+export async function beginAuthenticatorRotation(project, session, code, { time = Date.now(), qr } = {}) {
+  const result = withLock(project, state => {
+    requireOwnerSession(state, session, time)
+    if (!confirmCurrentAuthenticator(state, code, time)) {
+      return { error: new AccountError("Invalid or already-used current authenticator code.", 401) }
+    }
+    const secret = base32Encode(randomBytes(20))
+    state.pendingRotation = { secret, createdAt: time }
+    return { secret, uri: otpUri(secret) }
+  })
+  if (result.error) throw result.error
+  const toDataURL = qr ?? (async uri => {
+    const module = await import("qrcode")
+    return (module.default ?? module).toDataURL(uri, { width: 248, margin: 2 })
+  })
+  return { manualKey: result.secret, qrDataUrl: await toDataURL(result.uri) }
+}
+
+export function finishAuthenticatorRotation(project, session, code, time = Date.now()) {
+  const result = withLock(project, state => {
+    requireOwnerSession(state, session, time)
+    rateLimit(state, time)
+    if (!state.pendingRotation || time - state.pendingRotation.createdAt > ENROLLMENT_MS) {
+      return { error: new AccountError("New authenticator setup expired. Start again.", 410) }
+    }
+    const step = matchingTotpStep(state.pendingRotation.secret, code, time)
+    if (step === null) {
+      failedAttempt(state, time)
+      return { error: new AccountError("Invalid new authenticator code.", 401) }
+    }
+    const codes = Array.from({ length: 10 }, () => recoveryCode())
+    state.owner.totpSecret = state.pendingRotation.secret
+    state.pendingRotation = null
+    state.recovery = codes.map(value => digest(value.replace(/-/g, "")))
+    state.lastAcceptedStep = step
+    state.sessions = []
+    clearFailures(state)
+    return { recoveryCodes: codes, session: issueSession(state, time) }
+  })
+  if (result.error) throw result.error
+  return result
+}
+
+export function renewRecoveryCodes(project, session, code, time = Date.now()) {
+  const result = withLock(project, state => {
+    requireOwnerSession(state, session, time)
+    if (!confirmCurrentAuthenticator(state, code, time)) {
+      return { error: new AccountError("Invalid or already-used authenticator code.", 401) }
+    }
+    const recoveryCodes = Array.from({ length: 10 }, () => recoveryCode())
+    state.recovery = recoveryCodes.map(value => digest(value.replace(/-/g, "")))
+    return { recoveryCodes }
+  })
+  if (result.error) throw result.error
+  return result
+}
+
+export function revokeAllSessions(project, session) {
+  return withLock(project, state => {
+    requireOwnerSession(state, session, Date.now())
+    state.sessions = []
+    return { ok: true }
+  })
+}
+
 export function sameOrigin(request, configuredUrl = process.env.NEXTGUIDE_PUBLIC_URL) {
   const origin = request.headers.get("origin")
   if (!origin) return false

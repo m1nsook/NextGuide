@@ -19,3 +19,7 @@ export declare function finishEnrollment(project: string, bootstrapToken: string
 export declare function signIn(project: string, code: string, time?: number): { session: string; usedRecovery: boolean }
 export declare function signOut(project: string, sessionToken?: string): void
 export declare function sameOrigin(request: { url: string; headers: { get(name: string): string | null } }, configuredUrl?: string): boolean
+export declare function beginAuthenticatorRotation(project: string, session: string, code: string, options?: { time?: number; qr?: (uri: string) => Promise<string> }): Promise<{ manualKey: string; qrDataUrl: string }>
+export declare function finishAuthenticatorRotation(project: string, session: string, code: string, time?: number): { session: string; recoveryCodes: string[] }
+export declare function renewRecoveryCodes(project: string, session: string, code: string, time?: number): { recoveryCodes: string[] }
+export declare function revokeAllSessions(project: string, session: string): { ok: boolean }
