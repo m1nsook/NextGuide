@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, type ReactNode } from "react"
+import { useEffect, type AnchorHTMLAttributes, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
@@ -16,6 +16,19 @@ import { SearchProvider, type SearchEntry } from "./search.js"
 export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHref" | "linkAs">) {
   const pathname = usePathname()
   return <DocsSiteSidebar {...props} activeHref={pathname ?? undefined} linkAs={Link} />
+}
+
+/**
+ * Markdown links are rendered through next/link, so they prefetch and never
+ * trigger a browser document navigation in an installed NextGuide site.
+ * Explicit external links and download links retain normal anchor behavior.
+ */
+export function NextDocsSiteMdxLink({ href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
+  if (!href || /^(?:https?:)?\/\//i.test(href) || /^(?:mailto|tel):/i.test(href) ||
+      props.download !== undefined || (props.target && props.target !== "_self")) {
+    return <a href={href} {...props} />
+  }
+  return <Link href={href} {...props} />
 }
 
 /** Search results use App Router transitions rather than location.assign. */
@@ -54,8 +67,32 @@ export function NextDocsSiteClientNavigation({ basePath = "/docs" }: { basePath?
       event.preventDefault()
       router.push(target.pathname + target.search + target.hash)
     }
+    // The docs component catalog uses ordinary anchors in cards and previous/
+    // next buttons. Warm those pages in advance just as Next's <Link> does,
+    // and prevent a hard reload when the owner follows them.
+    const warmed = new Set<string>()
+    const prefetch = (event: MouseEvent | FocusEvent) => {
+      if (!(event.target instanceof Element)) return
+      const anchor = event.target.closest("a[href]")
+      if (!(anchor instanceof HTMLAnchorElement) || !anchor.closest(".ng-official-docs") ||
+          anchor.hasAttribute("download") || (anchor.target && anchor.target !== "_self")) return
+      let url: URL
+      try { url = new URL(anchor.href, window.location.href) }
+      catch { return }
+      if (url.origin !== window.location.origin ||
+          (prefix !== "/" && url.pathname !== prefix && !url.pathname.startsWith(prefix + "/")) ||
+          url.pathname === window.location.pathname || warmed.has(url.pathname)) return
+      warmed.add(url.pathname)
+      router.prefetch(url.pathname)
+    }
     document.addEventListener("click", onClick)
-    return () => document.removeEventListener("click", onClick)
+    document.addEventListener("mouseover", prefetch, { passive: true })
+    document.addEventListener("focusin", prefetch, { passive: true })
+    return () => {
+      document.removeEventListener("click", onClick)
+      document.removeEventListener("mouseover", prefetch)
+      document.removeEventListener("focusin", prefetch)
+    }
   }, [basePath, router])
   return null
 }

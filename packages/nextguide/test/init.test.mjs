@@ -498,5 +498,9 @@ test('generated Developer Mode uses App Router links and never shows loading tex
     assert.match(layout, /fallback=\{null\}/)
     assert.match(page, /fallback=\{null\}/)
     assert.match(read(d, 'src/lib/nextguide.ts'), /getSidebar/)
+    const mdx = read(d, 'src/lib/nextguide-mdx-components.tsx')
+    assert.match(mdx, /NextDocsSiteMdxLink/)
+    assert.match(mdx, /a: NextDocsSiteMdxLink/)
+
   } finally { clear(d) }
 })
