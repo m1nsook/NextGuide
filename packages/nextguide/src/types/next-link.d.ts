@@ -7,6 +7,6 @@
  */
 import type { AnchorHTMLAttributes, ComponentType } from "react"
 
-type DocsLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
+type DocsLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; prefetch?: boolean | null }
 declare const Link: ComponentType<DocsLinkProps>
 export default Link
