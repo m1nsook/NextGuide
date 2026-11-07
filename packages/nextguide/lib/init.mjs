@@ -141,7 +141,7 @@ export function planRootLayoutHydrationPatch(directory, router) {
     throw new Error('Refusing to modify a symbolic-link root layout: ' + path)
   }
   const original = readFileSync(absolute, 'utf8')
-  const matches = [...original.matchAll(/<html(?=[\\s/>])/g)]
+  const matches = [...original.matchAll(/<html(?=[\s/>])/g)]
   if (matches.length !== 1) {
     throw new Error('Cannot safely locate the root <html> in ' + path +
       '. Add suppressHydrationWarning to that element for NextGuide themes.')
@@ -149,7 +149,7 @@ export function planRootLayoutHydrationPatch(directory, router) {
   const position = matches[0].index
   const end = original.indexOf('>', position)
   if (end < 0) throw new Error('Unclosed root <html> element in ' + path)
-  if (/\\bsuppressHydrationWarning\\b/.test(original.slice(position, end + 1))) return null
+  if (/\bsuppressHydrationWarning\b/.test(original.slice(position, end + 1))) return null
   const updated = original.slice(0, position) + '<html suppressHydrationWarning' + original.slice(position + 5)
   return { path, original, updated, backup: path + '.nextguide-backup' }
 }
