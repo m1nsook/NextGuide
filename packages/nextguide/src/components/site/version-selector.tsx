@@ -1,17 +1,21 @@
 "use client"
 
 import { Check, ChevronsUpDown, ExternalLink, Tag } from "lucide-react"
+import type { ComponentType } from "react"
+import type { LinkComponentProps } from "../docs/nav.js"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "../../ui/interactive.js"
 
-export function DocsVersionSelector({ version, onNavigate, basePath = "/docs", releaseUrl }: {
+export function DocsVersionSelector({ version, onNavigate, basePath = "/docs", releaseUrl, linkAs }: {
   version: string
   onNavigate?: () => void
   basePath?: string
   releaseUrl?: string
+  linkAs?: ComponentType<LinkComponentProps>
 }) {
+  const InternalLink = linkAs ?? "a"
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -30,11 +34,11 @@ export function DocsVersionSelector({ version, onNavigate, basePath = "/docs", r
       <DropdownMenuContent align="start" sideOffset={6} className="w-64">
         <DropdownMenuLabel>Documentation versions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
-          <a href={basePath} onClick={onNavigate}>
+          <InternalLink href={basePath} onClick={onNavigate}>
             <Check aria-hidden="true" className="size-4 text-[var(--ng-accent)]" />
             <span className="flex-1">Development</span>
             <span className="text-muted-foreground text-xs">v{version}</span>
-          </a>
+          </InternalLink>
         </DropdownMenuItem>
         {releaseUrl ? <DropdownMenuSeparator /> : null}
         {releaseUrl ? <DropdownMenuItem asChild>
