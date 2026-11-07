@@ -7,7 +7,7 @@ import {
   useMessageScrollerScrollable,
   useMessageScrollerVisibility,
 } from "@shadcn/react/message-scroller"
-import { cn } from "./utils.js"
+import { cn } from "cn"
 
 import { Button } from "./button.js"
 import { ArrowDownIcon } from "lucide-react"
@@ -57,7 +57,7 @@ function MessageScrollerContent({
   return (
     <MessageScrollerPrimitive.Content
       data-slot="message-scroller-content"
-      className={cn("flex h-max min-h-full flex-col gap-6", className)}
+      className={cn("flex h-max min-h-full flex-col gap-8", className)}
       {...props}
     />
   )
