@@ -357,7 +357,7 @@ export function deleteStudioMedia(project, name) {
 }
 
 export function readStudioMedia(project, name) {
-  if (typeof name !== "string" || !/^[a-f0-9]{24}\\.(png|jpg|webp|gif)$/.test(name)) {
+  if (typeof name !== "string" || !/^[a-f0-9]{24}\.(png|jpg|webp|gif)$/.test(name)) {
     throw new AccountError("Invalid media filename.", 400)
   }
   const file = join(mediaDir(project), name)
