@@ -4,9 +4,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
 import { AccountThemeMenu } from "./theme-menu.js"
-import { Button } from "./ui/button.js"
-import { Card } from "./ui/card.js"
-import { Input } from "./ui/input.js"
+import { Button, Card, Input } from "../ui/index.js"
 import { Checkbox } from "./ui/checkbox.js"
 
 type AccountStatus = { initialized: boolean; authenticated: boolean }
@@ -86,7 +84,7 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
   const setup = mode === "setup"
   return (
     <DocsSiteProviders defaultTheme="system" enableSystem>
-    <main className="ng-account-page ng-account-bootstrap">
+    <main className="ng-account-page">
       <div className="ng-account-background" aria-hidden="true" />
       <Card className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
         <div className="ng-account-theme"><AccountThemeMenu /></div>
