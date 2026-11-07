@@ -9,7 +9,8 @@ import { listStudioPages, readStudioPage, saveStudioPage, deleteStudioPage, getS
 function fixture(fn) {
   const root = mkdtempSync(join(tmpdir(), "nextguide-studio-"))
   const previous = process.env.NEXTGUIDE_DATA_DIR
-  process.env.NEXTGUIDE_DATA_DIR = join(root, ".private")
+  const privateRoot = mkdtempSync(join(tmpdir(), "nextguide-studio-private-"))
+  process.env.NEXTGUIDE_DATA_DIR = privateRoot
   mkdirSync(join(root, "content/docs/guides"), { recursive: true })
   mkdirSync(join(root, "public"), { recursive: true })
   writeFileSync(join(root, "nextguide.config.json"), JSON.stringify({
@@ -27,6 +28,7 @@ function fixture(fn) {
     if (previous === undefined) delete process.env.NEXTGUIDE_DATA_DIR
     else process.env.NEXTGUIDE_DATA_DIR = previous
     rmSync(root, { recursive: true, force: true })
+    rmSync(privateRoot, { recursive: true, force: true })
   }
 }
 
@@ -70,7 +72,7 @@ test("settings accept supported themes and fonts and persist outside public web 
   const newSite = { ...original, name:"Hello & goodbye", url:"https://docs.example.com", accent:"purple", theme:"system", bodyFont:"ibm-plex-sans", headingFont:"geist", codeFont:"geist-mono", setupComplete:true }
   assert.deepEqual(saveStudioSettings(root, newSite), newSite)
   assert.deepEqual(getStudioSettings(root), newSite)
-  assert.equal(existsSync(join(root, ".private/site.json")), true)
+  assert.equal(existsSync(join(process.env.NEXTGUIDE_DATA_DIR, "site.json")), true)
   assert.equal(JSON.parse(readFileSync(join(root, "nextguide.config.json"), "utf8")).site.name, "Test Docs")
   assert.throws(() => saveStudioSettings(root, { ...newSite, accent: "unknown" }), /Unsupported accent/)
   assert.throws(() => saveStudioSettings(root, { ...newSite, url: "https://docs.example.com/secret" }), /should not include a path/)
@@ -84,7 +86,7 @@ test("media accepts only verified raster signatures and randomized names", () =>
   assert.match(result.url, /^\/nextguide\/media\/[a-f0-9]{24}\.png$/)
   assert.deepEqual(listStudioMedia(root), [result])
   assert.equal(readStudioMedia(root, result.name).mime, "image/png")
-  assert.ok(existsSync(join(root, ".private/media", result.name)))
+  assert.ok(existsSync(join(process.env.NEXTGUIDE_DATA_DIR, "media", result.name)))
   assert.equal(existsSync(join(root, "public/nextguide/media", result.name)), false)
   assert.throws(() => uploadStudioMedia(root, "image/svg+xml", data), /Only PNG/)
   assert.throws(() => uploadStudioMedia(root, "image/png", Buffer.from("javascript").toString("base64")), /Invalid image file/)
