@@ -7,6 +7,7 @@ import type { NavItem } from "../../core/index.js"
 import { ScrollArea, ScrollAreaViewport, ScrollBar, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Tooltip, TooltipContent, TooltipTrigger } from "../../ui/interactive.js"
 import { GitHubIcon } from "./icons.js"
 import { Logo } from "./logo.js"
+import { NextGuideBuildBadge } from "./build-badge.js"
 import { SearchButton } from "./search.js"
 import { ThemeToggle } from "./theme-toggle.js"
 import { DocsVersionSelector } from "./version-selector.js"
@@ -46,16 +47,11 @@ function SiteHeaderBrand({ name, logo, alt, custom }: { name: string; logo?: str
     </span>
   )
 }
-function SidebarAttribution({ enabled, content, text, href }: {
-  enabled?: boolean; content?: ReactNode; text?: string; href?: string
+function SidebarCustomAttribution({ enabled, content }: {
+  enabled?: boolean; content?: ReactNode
 }) {
-  if (!enabled) return null
-  return <div className="border-t px-6 pt-3 pb-2 text-[11px] text-muted-foreground">
-    {content ?? <a href={href || "https://m1nsook.github.io/NextGuide/"} target="_blank" rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 rounded-sm underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-      {text || "Built with NextGuide"}
-    </a>}
-  </div>
+  if (!enabled || content == null) return null
+  return <div className="border-t px-5 py-3 text-xs text-muted-foreground">{content}</div>
 }
 function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", basePath = "/docs", homeHref = "/",
   githubUrl, releaseUrl, activeHref, linkAs, showVersionSelector = false,
@@ -86,17 +82,22 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
         </ScrollAreaViewport>
         <ScrollBar />
       </ScrollArea>
-      <SidebarAttribution enabled={footerEnabled} content={footerContent} text={footerText} href={footerHref} />
+      <SidebarCustomAttribution enabled={footerEnabled} content={footerContent} />
       <div className="flex items-center justify-between border-t px-6 py-3">
-        {githubUrl ? <Tooltip><TooltipTrigger asChild><a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub repository"
-          className="text-muted-foreground hover:text-foreground -ml-2 inline-flex size-9 items-center justify-center rounded-md transition-colors"
-        >
-          <GitHubIcon />
-        </a></TooltipTrigger><TooltipContent side="right">View source code</TooltipContent></Tooltip> : <span />}
+        <div className="-ml-2 flex items-center gap-2">
+          {footerEnabled && footerContent == null ? (
+            <NextGuideBuildBadge version={version} label={footerText} href={footerHref} />
+          ) : null}
+          {githubUrl ? <Tooltip><TooltipTrigger asChild><a
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub repository"
+            className="text-muted-foreground hover:text-foreground inline-flex size-9 items-center justify-center rounded-md transition-colors"
+          >
+            <GitHubIcon />
+          </a></TooltipTrigger><TooltipContent side="right">View source code</TooltipContent></Tooltip> : null}
+        </div>
         <ThemeToggle />
       </div>
     </div>
