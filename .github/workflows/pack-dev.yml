@@ -42,6 +42,17 @@ jobs:
       - name: Smoke-build installed NextGuide in App and Pages Router
         if: github.event_name == 'pull_request'
         run: bun run compat:next
+      # The official Pages workflow must not be the first place we discover
+      # broken MDX/prerendering or invalid exported links.
+      - name: Build and verify official App Router docs for GitHub Pages
+        if: github.event_name == 'pull_request'
+        env:
+          NEXTGUIDE_PAGES: "1"
+          NEXT_PUBLIC_NEXTGUIDE_SITE_URL: "https://m1nsook.github.io/NextGuide"
+        run: |
+          bun run build:web
+          node --test scripts/verify-official-links.test.mjs
+          node scripts/verify-official-links.mjs apps/web/out
       - name: Remove generated package archives
         if: always()
         shell: bash
