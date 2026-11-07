@@ -10,6 +10,7 @@ import { createHash } from "node:crypto"
 import { existsSync, readFileSync, renameSync } from "node:fs"
 import { basename, dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
+import { cliUi } from "../packages/nextguide/lib/cli-ui.mjs"
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const { name, version } = JSON.parse(readFileSync(join(root, "packages/nextguide/package.json"), "utf8"))
@@ -23,13 +24,16 @@ const newName = `${name.replace(/^@/, "").replaceAll("/", "-")}-${version}-${dig
 const newPath = join(root, newName)
 renameSync(oldPath, newPath)
 
-process.stdout.write("\n◆ NextGuide development package ready\n")
-process.stdout.write("  Version   " + version + "\n")
-process.stdout.write("  Archive   " + basename(newPath) + "\n")
-process.stdout.write("  SHA-256   " + digest + " (filename prefix)\n")
-process.stdout.write("\nInstall in your Next.js project:\n")
+cliUi.blank()
+cliUi.heading("NextGuide development package", "ready")
+cliUi.field("Version:", version)
+cliUi.field("Archive:", basename(newPath))
+cliUi.field("SHA-256:", digest + " (filename prefix)")
+cliUi.blank()
+cliUi.note("Install this exact archive in your Next.js project:")
 process.stdout.write('  bun add "' + newPath + '"\n')
-process.stdout.write("\nThen update an existing Developer Mode installation:\n")
+cliUi.blank()
+cliUi.note("Then refresh an existing Developer Mode installation:")
 process.stdout.write("  bunx nextguide upgrade --refresh-generated --dry-run\n")
 process.stdout.write("  bunx nextguide upgrade --refresh-generated\n")
-process.stdout.write("\nDo not install the older nextguide-" + version + ".tgz archive.\n")
+cliUi.warn("Old nextguide-" + version + ".tgz files are not this verified build.")

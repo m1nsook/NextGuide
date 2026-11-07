@@ -27,7 +27,7 @@ Use a **separate Next.js project** for installation testing. From the NextGuide 
 bun run pack:dev
 ```
 
-This builds and tests the package and produces a `nextguide-<version>.tgz` archive in the repository root. In your separate application, install the archive using its actual path (relative or absolute), then run:
+This builds and tests the package and produces a **fingerprinted** `nextguide-<version>-<hash>.tgz` archive in the repository root. The command prints the exact `bun add` command for that archive. Every rebuilt package has a distinct filename, so a stale alpha tarball cannot be mistaken for the current source build. In your separate application, install the archive using its actual path (relative or absolute), then run:
 
 ```bash
 bunx nextguide init --developer
@@ -60,6 +60,8 @@ Every pull request and push to `main` runs the [NextGuide pack:dev workflow](.gi
 A separate [build reporter](.github/workflows/pack-dev-report.yml) creates a `[pack:dev] PASS` or `[pack:dev] FAIL` issue for each completed run. Failure issues include an excerpt of the failing job's log and a link to its full Actions run. These results receive CI status labels rather than a triage label.
 
 The automatic package build does not replace testing inside an actual Next.js consumer application, particularly for Account Mode and browser navigation.
+
+For manual tests after updating the repository, always run `bun pack:dev` again **before** installing a local tarball. Running `bun add --force` against an old `.tgz` does not rebuild it. Use the fingerprinted filename printed by the pack command.
 
 ## Pull requests
 
