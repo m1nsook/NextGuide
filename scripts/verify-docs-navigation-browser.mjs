@@ -15,7 +15,8 @@ if (!startingUrl) {
 }
 const starting = new URL(startingUrl)
 if (starting.protocol !== "http:" && starting.protocol !== "https:") throw Error("Expected a served documentation website.")
-const prefix = starting.pathname.replace(/\/+$/, "") || "/"
+const normalize = pathname => pathname.replace(/\/+$/, "") || "/"
+const prefix = normalize(starting.pathname)
 const profile = mkdtempSync(join(tmpdir(), "nextguide-browser-"))
 const chrome = process.env.NEXTGUIDE_CHROME || process.env.CHROME_PATH || (process.platform === "win32"
   ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" : "chromium")
@@ -92,7 +93,7 @@ try {
   const candidateLinks = await evaluate('Array.from(document.querySelectorAll("[data-slot=docs-nav] a[href]")).map(a => ({href: a.href, label: a.textContent?.trim() || ""}))')
   const candidates = candidateLinks.filter(link => {
     const url = new URL(link.href)
-    return url.origin === starting.origin && url.pathname !== starting.pathname &&
+    return url.origin === starting.origin && normalize(url.pathname) !== normalize(starting.pathname) &&
       (prefix === "/" || url.pathname === prefix || url.pathname.startsWith(prefix + "/"))
   })
   assert.ok(candidates.length >= 2, "Need at least two navigable documentation pages for the release check.")
@@ -100,23 +101,25 @@ try {
   const backDestination = new URL(candidates[1].href)
   const mark = "ng-rel-" + process.pid + "-" + Date.now()
   await evaluate("window.__nextguideDocumentMarker = " + JSON.stringify(mark) +
-    '; window.__nextguideSidebarNode = document.querySelector("aside"); true')
+    '; window.__nextguideSidebarNode = document.querySelector("aside"); window.__nextguideThemeClass = document.documentElement.className; true')
 
   async function clickTo(url) {
     const found = await evaluate('(function(){const match=Array.from(document.querySelectorAll("[data-slot=docs-nav] a[href]")).find(a => new URL(a.href).pathname===' + JSON.stringify(url.pathname) + ');if(!match) return false;match.click();return true})()')
     assert.ok(found, "Missing sidebar link: " + url.pathname)
-    await until(async () => (await evaluate("location.pathname")) === url.pathname, "route " + url.pathname)
+    await until(async () => normalize(await evaluate("location.pathname")) === normalize(url.pathname), "route " + url.pathname)
     assert.equal(await evaluate("window.__nextguideDocumentMarker"), mark,
       "FULL PAGE RELOAD detected navigating to " + url.pathname + ". A Next.js client transition must preserve window state.")
     assert.equal(await evaluate('document.querySelector("aside") === window.__nextguideSidebarNode'), true,
       "Sidebar was remounted during route transition to " + url.pathname)
+    assert.equal(await evaluate('document.documentElement.className === window.__nextguideThemeClass'), true,
+      "Theme classes changed unexpectedly during route transition to " + url.pathname)
     assert.equal(await evaluate('document.body.innerText.includes("Loading documentation…")'), false,
       "Visible loading documentation placeholder leaked into the user site.")
   }
   await clickTo(destination)
   await clickTo(backDestination)
   await evaluate("history.back()")
-  await until(async () => (await evaluate("location.pathname")) === destination.pathname, "browser Back")
+  await until(async () => normalize(await evaluate("location.pathname")) === normalize(destination.pathname), "browser Back")
   assert.equal(await evaluate("window.__nextguideDocumentMarker"), mark, "Browser Back caused a full page reload.")
   console.log("PASS: Developer Mode navigation kept the same document, sidebar, and dark/light theme state.")
   console.log("Checked sidebar transitions and browser Back on " + starting.origin + " (Chrome/Chromium).")
