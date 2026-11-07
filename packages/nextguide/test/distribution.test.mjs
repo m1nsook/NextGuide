@@ -281,7 +281,19 @@ test("Account Mode shares Docs UI tokens and controls", () => {
   assert.ok(access.includes('<Card className="ng-account-card"'))
   assert.ok(access.includes("<Input"))
   assert.ok(studio.includes('<Card className="ng-studio-section"'))
-  assert.ok(studio.includes("<ThemeToggle"))
+  assert.ok(studio.includes("<AccountThemeMenu"))
+  const themeMenu = readFileSync(join(root, "src/account/theme-menu.tsx"), "utf8")
+  assert.ok(themeMenu.includes("DropdownMenuTrigger asChild"))
+  assert.ok(themeMenu.includes('value: "system"'))
+  const badge = readFileSync(join(root, "src/components/site/build-badge.tsx"), "utf8")
+  assert.ok(badge.includes("getComputedStyle(docsRoot).fontFamily"))
+  assert.ok(badge.includes("style={{ fontFamily: dialogFont }}"))
+  for (const family of ["--ng-preview-inter", "--ng-preview-geist", "--ng-preview-ibm-plex-sans",
+    "--ng-preview-jetbrains-mono", "--ng-preview-geist-mono", "--ng-preview-ibm-plex-mono"]) {
+    assert.ok(studio.includes(family), "Font preview missing " + family)
+  }
+  assert.ok(css.includes("height:100dvh;min-height:0;overflow:hidden"))
+  assert.ok(css.includes("overscroll-behavior:contain"))
   assert.ok(studio.includes("function StudioSelect"))
   assert.ok(studio.includes("<SelectTrigger"))
   assert.ok(studio.includes("<SelectContent"))
