@@ -4,7 +4,7 @@ import * as React from "react"
 import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, FileText, FolderTree, HardDriveUpload, LayoutDashboard, LockKeyhole, LogOut, Menu, Save, Search, Settings, ShieldCheck, Trash2 } from "lucide-react"
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
-import { ThemeToggle } from "../components/site/theme-toggle.js"
+import { AccountThemeMenu } from "./theme-menu.js"
 import { Card, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/index.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
@@ -19,14 +19,14 @@ type View = "overview" | "pages" | "navigation" | "design" | "media" | "security
 const accents = ["blue", "red", "green", "purple", "yellow", "orange", "teal", "pink"]
 const accentColor: Record<string,string> = { blue:"#60a5fa", red:"#fb7185", green:"#4ade80", purple:"#c084fc", yellow:"#facc15", orange:"#fb923c", teal:"#2dd4bf", pink:"#f472b6" }
 const bodyFonts: { id: Font; name: string; family: string }[] = [
-  {id:"inter",name:"Inter",family:"Inter, sans-serif"}, {id:"geist",name:"Geist",family:"Geist, sans-serif"},
-  {id:"ibm-plex-sans",name:"IBM Plex Sans",family:"IBM Plex Sans, sans-serif"},
+  {id:"inter",name:"Inter",family:'var(--ng-preview-inter), "Inter", system-ui, sans-serif'}, {id:"geist",name:"Geist",family:'var(--ng-preview-geist), "Geist", system-ui, sans-serif'},
+  {id:"ibm-plex-sans",name:"IBM Plex Sans",family:'var(--ng-preview-ibm-plex-sans), "IBM Plex Sans", system-ui, sans-serif'},
   {id:"segoe-ui",name:"Segoe UI",family:"Segoe UI, sans-serif"}, {id:"system",name:"System UI",family:"system-ui, sans-serif"},
 ]
 const codeFonts: { id: Font; name: string; family: string }[] = [
-  {id:"jetbrains-mono",name:"JetBrains Mono",family:"JetBrains Mono, monospace"},
-  {id:"geist-mono",name:"Geist Mono",family:"Geist Mono, monospace"},
-  {id:"ibm-plex-mono",name:"IBM Plex Mono",family:"IBM Plex Mono, monospace"},
+  {id:"jetbrains-mono",name:"JetBrains Mono",family:'var(--ng-preview-jetbrains-mono), "JetBrains Mono", monospace'},
+  {id:"geist-mono",name:"Geist Mono",family:'var(--ng-preview-geist-mono), "Geist Mono", monospace'},
+  {id:"ibm-plex-mono",name:"IBM Plex Mono",family:'var(--ng-preview-ibm-plex-mono), "IBM Plex Mono", monospace'},
   {id:"system-mono",name:"System",family:"ui-monospace, monospace"},
 ]
 const navigationItems: { id: View; label: string; icon: typeof BookOpen }[] = [
@@ -225,7 +225,7 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
       <header className="ng-studio-topbar">
         <button className="ng-studio-menu" aria-label="Toggle navigation" onClick={()=>setMobileMenu(!mobileMenu)}><Menu size={22}/></button>
         <span>{state?.site.name||"Account Mode"} <span className="ng-studio-chevron">/</span> {navigationItems.find(x=>x.id===view)?.label}</span>
-        <div className="ng-studio-header-tools"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a><ThemeToggle /></div>
+        <div className="ng-studio-header-tools"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a><AccountThemeMenu /></div>
       </header>
       <main className="ng-studio-workspace" aria-live="polite">
         {error&&<div className="ng-studio-alert ng-studio-error" role="alert">{error}<button type="button" onClick={()=>setError("")}>Dismiss</button></div>}

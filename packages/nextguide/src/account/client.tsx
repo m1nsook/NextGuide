@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react"
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
-import { ThemeToggle } from "../components/site/theme-toggle.js"
+import { AccountThemeMenu } from "./theme-menu.js"
 import { Button, Card, Input } from "../ui/index.js"
 
 type AccountStatus = { initialized: boolean; authenticated: boolean }
@@ -86,7 +86,7 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
     <main className="ng-account-page">
       <div className="ng-account-background" aria-hidden="true" />
       <Card className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
-        <div className="ng-account-theme"><ThemeToggle /></div>
+        <div className="ng-account-theme"><AccountThemeMenu /></div>
         <div className="ng-account-logo" aria-hidden="true"><LogoMark className="ng-account-icon" /></div>
         <span className="ng-account-kicker">NEXTGUIDE / ACCOUNT MODE</span>
         <h1>{setup ? "Make your docs yours." : "Welcome back."}</h1>

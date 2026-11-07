@@ -15,7 +15,7 @@ jobs:
   package:
     name: Build and package (Ubuntu)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +34,9 @@ jobs:
         env:
           FORCE_COLOR: "1"
         run: bun run pack:dev
+      - name: Verify installed Account Mode consumer (Cache Components, TOTP, CMS)
+        if: github.event_name == 'pull_request'
+        run: bun run compat:account
       - name: Remove generated package archives
         if: always()
         shell: bash

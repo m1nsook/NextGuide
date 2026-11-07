@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowUpRight, X } from "lucide-react"
+import { useState } from "react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger, Tooltip, TooltipContent, TooltipTrigger } from "../../ui/interactive.js"
 import { LogoMark } from "./logo.js"
 
@@ -20,8 +21,16 @@ export function NextGuideBuildBadge({
   label?: string
   href?: string
 }) {
+  // Radix renders dialogs in a portal outside .ng-official-docs. Capture the
+  // active site's computed font on open so the portal matches documentation
+  // typography rather than falling back to the browser's Arial default.
+  const [dialogFont, setDialogFont] = useState('"Inter", "Segoe UI", system-ui, sans-serif')
   return (
-    <Dialog>
+    <Dialog onOpenChange={open => {
+      if (!open) return
+      const docsRoot = document.querySelector<HTMLElement>(".ng-official-docs")
+      if (docsRoot) setDialogFont(window.getComputedStyle(docsRoot).fontFamily)
+    }}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
@@ -36,7 +45,7 @@ export function NextGuideBuildBadge({
         </TooltipTrigger>
         <TooltipContent side="top">{label}</TooltipContent>
       </Tooltip>
-      <DialogContent className="w-[min(25rem,calc(100vw-2rem))] max-w-[25rem] overflow-hidden p-0">
+      <DialogContent style={{ fontFamily: dialogFont }} className="w-[min(25rem,calc(100vw-2rem))] max-w-[25rem] overflow-hidden p-0">
         <div className="relative border-b bg-muted/35 px-5 pt-6 pb-5">
           <div className="mb-4 inline-flex size-11 items-center justify-center rounded-xl border bg-background shadow-sm">
             <LogoMark className="size-6 text-foreground" />

@@ -97,7 +97,7 @@ async function verify() {
     exclude: ["node_modules"],
   }, null, 2))
   writeFileSync(join(project, "postcss.config.mjs"), 'export default { plugins: { "@tailwindcss/postcss": {} } }\n')
-  writeFileSync(join(project, "next.config.mjs"), "export default {}\n")
+  writeFileSync(join(project, "next.config.mjs"), "export default { cacheComponents: true }\n")
   writeFileSync(join(project, "src", "app", "layout.tsx"),
     'import type { ReactNode } from "react"\nimport "./globals.css"\nexport default function Root({children}: {children:ReactNode}){return <html lang="en"><body>{children}</body></html>}\n')
   writeFileSync(join(project, "src", "app", "globals.css"), '@import "tailwindcss";\n')
