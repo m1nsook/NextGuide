@@ -40,6 +40,7 @@ for (const asset of [
   mkdirSync(join(out, asset[1].split("/")[0]), { recursive: true })
   cpSync(join(here, asset[0]), destination)
 }
+cpSync(join(here, "src/account/account.css"), join(out, "account/account.css"))
 for (const name of ["ui/index.js", "icons/index.js", "fonts/picker.js", "blocks/index.js"]) {
   const path = join(out, name)
   const source = readFileSync(path, "utf8")

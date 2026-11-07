@@ -1,14 +1,39 @@
 ---
-title: Account Mode (in development)
-description: Planned NextGuide CMS with a protected setup wizard and embedded storage.
+title: Account Mode (early implementation)
+description: Passwordless NextGuide setup using a terminal token, authenticator app, and single-use recovery codes.
 ---
 
-# Account Mode is not released
+# Account Mode: authenticator-first setup
 
-Developer Mode is usable in the alpha. **Account Mode is still being developed** and is not a switch you can enable today.
+Account Mode is being developed and **has not been published to npm**. The first source milestone includes a protected setup flow and dashboard; the visual editor and full site configuration wizard are still to come.
 
-The planned server installation will include an embedded SQLite database, a console-issued one-time ownership token, a protected `/setup` page, admin credentials, roles, and a content editor under `/admin`. The setup wizard will include live font previews and site branding.
+Instead of a password or email login, the site owner uses a standard TOTP authenticator app.
 
-Its database will live in a configurable, server-only persistent folder. Account Mode will require a Next.js server and will not run on static-only hosts such as GitHub Pages.
+## Owner enrollment
 
-We will document the exact Account Mode installation commands only once they are implemented and tested from a locally installed `nextguide` npm package. In the meantime use [Developer Mode](/docs/getting-started/developer-mode).
+1. On a self-hosted Next.js App Router project, run `nextguide init --account` using a locally built NextGuide package. A running Next.js server is required; static export cannot host Account Mode.
+2. The CLI prints a one-time ownership token. The server stores only its hash, so nobody else can claim a new installation by visiting it first.
+3. Start the server, visit `/setup`, and enter the token from the terminal.
+4. Scan the QR code in an authenticator app, or enter its key manually, then confirm with a six-digit OTP.
+5. Store the ten single-use recovery codes somewhere safe. The setup token is invalidated once enrollment succeeds.
+
+If the terminal setup token is lost **before** enrollment, run `nextguide account token --rotate` locally in the project to issue a replacement. Rotation is disabled after an owner is registered.
+6. Use `/login` with a new OTP or an unused recovery code. `/admin` requires an authenticated session.
+
+## Storage and deployment
+
+The first implementation is for one site owner on a persistent Node.js server. The data file lives outside the project repository, under a per-project directory in the server user's home folder. It must stay private and writable by the server process.
+
+For a VPS, set `NEXTGUIDE_DATA_DIR` to an owner-only persistent directory and set `NEXTGUIDE_PUBLIC_URL` to your **HTTPS public origin**. Use a TLS reverse proxy; the server requires same-origin requests for account mutations.
+
+The setup QR is generated locally on the server; no QR-generation web service is involved. Recovery codes and session tokens are stored only as cryptographic hashes. Authenticator codes are checked in a small time window and rejected after a successful use.
+
+Back up your private account data and store your recovery codes separately. Losing the server data or both the authenticator and all recovery codes can prevent account recovery.
+
+## Security limitations
+
+TOTP is **not phishing-resistant**. A fraudulent login page can steal a freshly entered code. Passkeys (WebAuthn) are planned as a stronger passwordless option. This source preview is not yet approved for production use.
+
+## Upcoming milestones
+
+The next Account Mode steps are site title and description, accent and font configuration, visual MDX editing, navigation and file management, account device changes, and deployment-level security testing. Developer Mode remains unchanged.

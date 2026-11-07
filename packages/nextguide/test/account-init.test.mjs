@@ -1,0 +1,91 @@
+import assert from "node:assert/strict"
+import { test } from "node:test"
+import { mkdtempSync, mkdirSync, existsSync, readFileSync, writeFileSync, rmSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+import { initAccount } from "../lib/account-starter.mjs"
+
+function fixture(router = "src/app", typed = true) {
+  const project = mkdtempSync(join(tmpdir(), "nextguide-account-init-"))
+  mkdirSync(join(project, router), { recursive: true })
+  writeFileSync(join(project, "package.json"), JSON.stringify({ dependencies: { next: "16.4.5" } }))
+  if (typed) writeFileSync(join(project, "tsconfig.json"), "{}")
+  const inspection = { ok: true, issues: [], routers: [{ name: router.includes("pages") ? "Pages Router" : "App Router", folder: router }] }
+  return { project, inspection }
+}
+function isolated(f) {
+  const old = process.env.NEXTGUIDE_DATA_DIR
+  const base = mkdtempSync(join(tmpdir(), "nextguide-private-"))
+  process.env.NEXTGUIDE_DATA_DIR = join(base, "storage")
+  try { f() }
+  finally {
+    if (old === undefined) delete process.env.NEXTGUIDE_DATA_DIR
+    else process.env.NEXTGUIDE_DATA_DIR = old
+    rmSync(base, { recursive: true, force: true })
+  }
+}
+
+test("App Router Account Mode scaffolds protected routes and owner token without harming docs", () => isolated(() => {
+  const { project, inspection } = fixture()
+  try {
+    const result = initAccount(project, inspection)
+    assert.equal(result.mode, "account")
+    assert.ok(result.bootstrapToken.length >= 30)
+    assert.equal(result.created.length, 22)
+    assert.ok(existsSync(join(project, "src/app/setup/page.tsx")))
+    assert.ok(existsSync(join(project, "src/app/login/page.tsx")))
+    assert.ok(existsSync(join(project, "src/app/admin/page.tsx")))
+    assert.ok(existsSync(join(project, "src/app/api/nextguide/account/[action]/route.ts")))
+    assert.ok(existsSync(join(project, "src/app/api/nextguide/studio/[action]/route.ts")))
+    assert.match(readFileSync(join(project, "src/app/admin/page.tsx"), "utf8"), /AccountStudio/)
+    assert.match(readFileSync(join(project, "src/app/docs/layout.tsx"), "utf8"), /getStudioSettings/)
+    assert.match(readFileSync(join(project, "src/app/docs/layout.tsx"), "utf8"), /await connection/)
+    assert.match(readFileSync(join(project, "src/app/docs/layout.tsx"), "utf8"), /settings.theme/)
+    assert.match(readFileSync(join(project, "src/app/docs/[[...slug]]/page.tsx"), "utf8"), /runtimeSite.description/)
+    assert.match(readFileSync(join(project, "src/app/api/nextguide/studio/[action]/route.ts"), "utf8"), /verifySession/)
+    assert.match(readFileSync(join(project, "src/app/api/nextguide/studio/[action]/route.ts"), "utf8"), /sameOrigin/)
+    assert.match(readFileSync(join(project, "src/app/admin/page.tsx"), "utf8"), /verifySession/)
+    assert.match(readFileSync(join(project, "src/app/api/nextguide/account/[action]/route.ts"), "utf8"), /sameOrigin/)
+    assert.equal(JSON.parse(readFileSync(join(project, "nextguide.config.json"), "utf8")).mode, "account")
+    assert.ok(existsSync(join(project, "content/docs/index.mdx")))
+    assert.doesNotMatch(readFileSync(result.privateDirectory, "utf8"), new RegExp(result.bootstrapToken))
+    assert.throws(() => initAccount(project, inspection), /Refusing to overwrite/)
+  } finally { rmSync(project, { recursive: true, force: true }) }
+}))
+
+test("dry-run never writes secrets, pages or configuration", () => isolated(() => {
+  const { project, inspection } = fixture("app", false)
+  try {
+    const result = initAccount(project, inspection, { dryRun: true })
+    assert.equal(result.bootstrapToken, null)
+    assert.ok(result.created.includes("app/api/nextguide/account/[action]/route.js"))
+    assert.equal(existsSync(result.privateDirectory), false)
+    assert.equal(existsSync(join(project, "nextguide.config.json")), false)
+  } finally { rmSync(project, { recursive: true, force: true }) }
+}))
+
+test("Pages Router and static export are explicitly refused", () => isolated(() => {
+  const { project, inspection } = fixture("pages")
+  try {
+    assert.throws(() => initAccount(project, inspection), /App Router/)
+    assert.equal(existsSync(join(project, "nextguide.config.json")), false)
+  } finally { rmSync(project, { recursive: true, force: true }) }
+  const other = fixture()
+  try {
+    writeFileSync(join(other.project, "next.config.mjs"), 'export default { output: "export" }')
+    assert.throws(() => initAccount(other.project, other.inspection), /running Next.js server/)
+    assert.equal(existsSync(join(other.project, "nextguide.config.json")), false)
+  } finally { rmSync(other.project, { recursive: true, force: true }) }
+}))
+
+test("conflicting user project file rolls back bootstrap and preserves the file", () => isolated(() => {
+  const { project, inspection } = fixture()
+  try {
+    const filename = join(project, "nextguide.config.json")
+    writeFileSync(filename, '{"custom":true}')
+    const initial = initAccount(project, inspection, { dryRun: true })
+    assert.throws(() => initAccount(project, inspection), /Refusing to overwrite/)
+    assert.equal(readFileSync(filename, "utf8"), '{"custom":true}')
+    assert.equal(existsSync(initial.privateDirectory), false)
+  } finally { rmSync(project, { recursive: true, force: true }) }
+}))
