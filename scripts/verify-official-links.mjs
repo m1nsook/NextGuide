@@ -5,7 +5,8 @@
  */
 import assert from "node:assert/strict"
 import { existsSync, readFileSync, readdirSync } from "node:fs"
-import { join, relative, resolve, sep } from "node:path"
+import { join, relative, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 
 export function validateExportLinks(outputDirectory, deploymentBasePath = "/NextGuide") {
   const root = resolve(outputDirectory)
@@ -56,7 +57,7 @@ export function validateExportLinks(outputDirectory, deploymentBasePath = "/Next
   return { pages: htmlFiles.length, checked }
 }
 
-if (process.argv[1] && import.meta.url === new URL("file://" + resolve(process.argv[1])).href) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const out = process.argv[2] ?? "apps/web/out"
   const stats = validateExportLinks(out)
   console.log("NextGuide Pages links checked: " + stats.checked + " anchors across " + stats.pages + " HTML pages.")
