@@ -391,3 +391,66 @@ test('Pages Router also gets the full shell and reusable MDX components', () => 
     assert.match(read(d, 'pages/_app.tsx'), /nextguide\/styles\.css/)
   } finally { clear(d) }
 })
+
+test('initialization fixes the real create-next-app root html without changing its classes', () => {
+  const d = fixture()
+  try {
+    const root = 'src/app/layout.tsx'
+    const original = [
+      'import type { ReactNode } from "react"',
+      'export default function RootLayout({ children }: { children: ReactNode }) {',
+      '  return <html lang="en" className={`geist-variable ${"geist-mono"} h-full antialiased`}>',
+      '    <body>{children}</body></html>',
+      '}',
+      '',
+    ].join('\\n')
+    writeFileSync(join(d, root), original)
+    const result = initDeveloper(d, inspect(d, ['src/app']))
+    assert.deepEqual(result.modified, [root])
+    assert.deepEqual(result.backedUp, [root + '.nextguide-backup'])
+    const updated = read(d, root)
+    assert.match(updated, /<html suppressHydrationWarning lang="en" className=/)
+    assert.match(updated, /geist-variable/)
+    assert.equal(read(d, root + '.nextguide-backup'), original)
+    assert.equal(updated.split('suppressHydrationWarning').length - 1, 1)
+  } finally { clear(d) }
+})
+
+test('init dry-run reports the root hydration patch without modifying host files', () => {
+  const d = fixture()
+  try {
+    const root = 'src/app/layout.tsx'
+    const original = '<html lang="en"><body>test</body></html>\\n'
+    writeFileSync(join(d, root), original)
+    const result = initDeveloper(d, inspect(d, ['src/app']), { dryRun: true })
+    assert.deepEqual(result.modified, [root])
+    assert.deepEqual(result.backedUp, [root + '.nextguide-backup'])
+    assert.equal(read(d, root), original)
+    assert.equal(existsSync(join(d, root + '.nextguide-backup')), false)
+  } finally { clear(d) }
+})
+
+test('initialization leaves already hydration-safe root layouts untouched', () => {
+  const d = fixture()
+  try {
+    const root = 'src/app/layout.tsx'
+    const original = '<html lang="en" suppressHydrationWarning><body>OK</body></html>\\n'
+    writeFileSync(join(d, root), original)
+    const result = initDeveloper(d, inspect(d, ['src/app']))
+    assert.deepEqual(result.modified, [])
+    assert.equal(read(d, root), original)
+    assert.equal(existsSync(join(d, root + '.nextguide-backup')), false)
+  } finally { clear(d) }
+})
+
+test('refuses unsafe root layouts rather than changing user-owned JSX blindly', () => {
+  const d = fixture()
+  try {
+    const root = 'src/app/layout.tsx'
+    const original = 'export default function Layout({ children }) { return <CustomHtml>{children}</CustomHtml> }\\n'
+    writeFileSync(join(d, root), original)
+    assert.throws(() => initDeveloper(d, inspect(d, ['src/app'])), /Cannot safely locate the root <html>/)
+    assert.equal(read(d, root), original)
+    assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+  } finally { clear(d) }
+})
