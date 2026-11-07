@@ -17,6 +17,9 @@ export const DEFAULT_SITE = Object.freeze({
   name: "My Documentation",
   description: "Documentation built with NextGuide",
   url: "",
+  ownerName: "",
+  ownerEmail: "",
+  ownerAvatar: "",
   accent: "blue",
   theme: "light",
   bodyFont: "inter",
@@ -261,6 +264,9 @@ export function saveStudioSettings(project, input) {
     name: assertText(input.name, "site name", 100, true),
     description: assertText(input.description, "site description", 400),
     url: assertText(input.url ?? "", "site URL", 200),
+    ownerName: assertText(input.ownerName ?? "", "owner display name", 80),
+    ownerEmail: assertText(input.ownerEmail ?? "", "owner email", 254),
+    ownerAvatar: assertText(input.ownerAvatar ?? "", "owner avatar", 170),
     accent: input.accent,
     theme: input.theme,
     bodyFont: input.bodyFont,
@@ -268,6 +274,8 @@ export function saveStudioSettings(project, input) {
     codeFont: input.codeFont,
     setupComplete: Boolean(input.setupComplete),
   }
+  if (site.ownerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(site.ownerEmail)) throw new AccountError("Invalid optional contact email.", 400)
+  if (site.ownerAvatar && !/^\/nextguide\/media\/[a-f0-9]{24}\.(png|jpg|webp|gif)$/.test(site.ownerAvatar)) throw new AccountError("Choose an avatar from your uploaded media.", 400)
   if (site.url) {
     let parsed
     try { parsed = new URL(site.url) }

@@ -5,7 +5,7 @@ import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, 
 import { LogoMark } from "../components/site/logo.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
-type Site = { name: string; description: string; url: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
+type Site = { name: string; description: string; url: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
 type PageRow = { slug: string; title: string; description: string; version: string; bytes: number }
 type Page = { slug: string; title: string; description: string; body: string; version: string | null }
 type NavEntry = { slug: string; title: string; hidden: boolean }
@@ -213,6 +213,8 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
             <label>Website title<input value={site.name} maxLength={100} onChange={e=>editSite("name",e.target.value)} placeholder="Your documentation"/></label>
             <label>Description<textarea value={site.description} maxLength={400} onChange={e=>editSite("description",e.target.value)} rows={3}/></label>
             <label>Public site origin (optional)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
+            <label>Your display name (optional)<input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} placeholder="Documentation owner"/></label>
+            <label>Contact email (optional, private)<input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} placeholder="you@example.com"/></label>
           </div>:null}
           {wizardStep===1?<DesignFields site={site} update={editSite}/>:null}
           {wizardStep===2?<div className="ng-studio-summary"><ShieldCheck size={26}/><h3>{site.name}</h3><p>{site.description}</p><p>Appearance: {site.theme} · {site.accent} · {site.bodyFont}</p><p>Your admin area requires an authenticator code. Keep your recovery codes offline.</p></div>:null}
@@ -223,7 +225,7 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
         </div>:null}
         {appReady&&!showWizard&&<div className="ng-studio-content">
           {view==="overview"&&<>
-            <span className="ng-studio-eyebrow">YOUR WORKSPACE</span><h1>Good to see you again.</h1><p className="ng-studio-muted">Manage your documentation site without touching source files.</p>
+            <span className="ng-studio-eyebrow">YOUR WORKSPACE</span><h1>{site?.ownerName ? "Welcome back, "+site.ownerName+"." : "Good to see you again."}</h1><p className="ng-studio-muted">Manage your documentation site without touching source files.</p>
             <div className="ng-studio-stats"><div><FileText size={21}/><strong>{state!.pages.length}</strong><span>Documentation pages</span></div><div><FolderTree size={21}/><strong>{state!.navigation.items.length}</strong><span>Top-level items</span></div><div><HardDriveUpload size={21}/><strong>{state!.media.length}</strong><span>Uploaded images</span></div></div>
             {to("Quick actions","Everything here is stored in your own Next.js project.",<div className="ng-studio-quick"><button onClick={()=>{setPage({...emptyPage});setView("pages")}}><FilePlus size={18}/>Create a page</button><button onClick={()=>switchView("design")}><Brush size={18}/>Customize site</button><button onClick={()=>switchView("navigation")}><FolderTree size={18}/>Edit navigation</button></div>)}
             {to("Recent pages","Continue working on an existing document.",<div className="ng-studio-page-list">{state!.pages.slice(0,8).map(item=><button key={item.slug} onClick={()=>loadPage(item.slug)}><FileText size={17}/><span>{item.title}<small>{slugLabel(item.slug)}</small></span><span>Open</span></button>)}</div>)}
@@ -255,6 +257,11 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
             <h1>Website & appearance</h1><p className="ng-studio-muted">Your changes are saved on the server and used by your documentation layout.</p>
             {to("Site identity","Make your documentation recognizable.",<div className="ng-studio-fields"><label>Title<input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label><label>Description<textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label><label>Public site origin (no path)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label></div>)}
             {to("Design tokens","Accessible accent presets and typography.",<DesignFields site={site} update={editSite}/>)}
+            {to("Owner profile","Optional owner information stays in private account storage and is not displayed publicly.",<div className="ng-studio-fields">
+              <label>Display name<input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} maxLength={80}/></label>
+              <label>Contact email (not required for login)<input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} maxLength={254}/></label>
+              <label>Avatar from your media library<select value={site.ownerAvatar} onChange={e=>editSite("ownerAvatar",e.target.value)}><option value="">Default NextGuide avatar</option>{state!.media.map(item=><option key={item.name} value={item.url}>{item.name}</option>)}</select></label>
+            </div>)}
             <button className="ng-studio-button" disabled={busy} onClick={()=>run(()=>saveSite(),"Site settings saved.")}><Save size={17}/>Save settings</button>
           </>}
           {view==="media"&&<>
