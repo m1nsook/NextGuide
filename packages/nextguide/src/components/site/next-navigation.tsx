@@ -4,7 +4,19 @@ import { useEffect, type AnchorHTMLAttributes, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
+import type { LinkComponentProps } from "../docs/nav.js"
 import { SearchProvider, type SearchEntry } from "./search.js"
+
+/**
+ * Adapt Next.js Link to the docs sidebar's zero-argument onNavigate callback.
+ *
+ * A plain Next.js Link also accepts mouse event callbacks, but that wider
+ * React prop contract is not a ComponentType<LinkComponentProps> in strict TS.
+ * Keeping the adapter here avoids unsafe casts and preserves client routing.
+ */
+function NextDocsNavigationLink({ href, children, ...props }: LinkComponentProps) {
+  return <Link href={href} {...props}>{children}</Link>
+}
 
 /**
  * Next.js App Router bridge for generated documentation sites.
@@ -15,7 +27,7 @@ import { SearchProvider, type SearchEntry } from "./search.js"
  */
 export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHref" | "linkAs">) {
   const pathname = usePathname()
-  return <DocsSiteSidebar {...props} activeHref={pathname ?? undefined} linkAs={Link} />
+  return <DocsSiteSidebar {...props} activeHref={pathname ?? undefined} linkAs={NextDocsNavigationLink} />
 }
 
 /**

@@ -55,10 +55,6 @@ test("public JS modules import from the self-contained package", async () => {
   assert.equal(typeof core.slugify, "function")
   assert.equal(typeof mdx.createDocs, "function")
   assert.equal(typeof api.parseOpenAPI, "function")
-  const { NextDocsSiteMdxLink, NextDocsSiteSidebar, NextDocsSiteClientNavigation } = await import("nextguide/site/next")
-  assert.equal(typeof NextDocsSiteMdxLink, "function")
-  assert.equal(typeof NextDocsSiteSidebar, "function")
-  assert.equal(typeof NextDocsSiteClientNavigation, "function")
   assert.ok(components.Docs)
   assert.equal(typeof components.DocsStarterShell, "function")
   assert.equal(typeof ui.Button, "function")
@@ -258,4 +254,8 @@ test("next/navigation and next/link compile without hoisted Next.js types", () =
   const compiled = readFileSync(join(root, "dist/components/site/next-navigation.js"), "utf8")
   assert.match(compiled, /from ["']next\/link["']/)
   assert.match(compiled, /from ["']next\/navigation["']/)
+  // Next.js is a peer: this module is exercised in a packed Next.js app,
+  // not imported by this isolated library distribution test.
+  assert.match(compiled, /function NextDocsNavigationLink/)
+  assert.match(compiled, /linkAs: NextDocsNavigationLink/)
 })
