@@ -204,3 +204,39 @@ test('late conflict on a newly created route rolls back prior config changes saf
     assert.equal(f.read('nextguide.config.json'), before)
   } finally { f.clear() }
 })
+
+test('upgrade safely repairs the preexisting alpha installer hydration mismatch', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const root = 'src/app/layout.tsx'
+    const oldRoot = '<html lang="en" className="geist-text"><body>{children}</body></html>'
+    f.write(root, oldRoot)
+    const customContent = '---\\ntitle: User documentation\\n---\\nKeep my changes.\\n'
+    f.write('content/docs/index.mdx', customContent)
+    const preview = upgradeDeveloper(f.directory, f.inspection, { dryRun: true })
+    assert.deepEqual(preview.changes.map((change) => change.path), [root])
+    assert.equal(f.read(root), oldRoot)
+    assert.equal(existsSync(join(f.directory, root + '.nextguide-backup')), false)
+
+    const applied = upgradeDeveloper(f.directory, f.inspection)
+    assert.equal(applied.changes.length, 1)
+    assert.match(f.read(root), /<html suppressHydrationWarning lang="en" className="geist-text">/)
+    assert.equal(f.read(root + '.nextguide-backup'), oldRoot)
+    assert.equal(f.read('content/docs/index.mdx'), customContent)
+    assert.equal(upgradeDeveloper(f.directory, f.inspection).changes.length, 0)
+  } finally { f.clear() }
+})
+
+test('refresh generated files also updates the host root html without taking ownership of it', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const root = 'src/app/layout.tsx'
+    f.write(root, '<html lang="en"><body>{children}</body></html>')
+    const plan = planUpgrade(f.directory, f.inspection, { refreshGenerated: true })
+    assert.ok(plan.updates.some((item) => item.path === root && item.type === 'root-theme'))
+    upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true })
+    assert.match(f.read(root), /<html suppressHydrationWarning lang="en">/)
+  } finally { f.clear() }
+})
