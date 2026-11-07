@@ -37,6 +37,11 @@ jobs:
       - name: Verify installed Account Mode consumer (Cache Components, TOTP, CMS)
         if: github.event_name == 'pull_request'
         run: bun run compat:account
+      # The same packaged App/Pages Router smoke builds used by GitHub Pages.
+      # Run on PRs only; official docs deployment remains manual.
+      - name: Smoke-build installed NextGuide in App and Pages Router
+        if: github.event_name == 'pull_request'
+        run: bun run compat:next
       - name: Remove generated package archives
         if: always()
         shell: bash

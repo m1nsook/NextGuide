@@ -249,16 +249,16 @@ test("NextGuide OG artwork renders official branding without a Next.js runtime",
 // The Next.js navigation adapter is package-owned, but Next.js itself is a
 // host peer. Bun workspace installs do not guarantee the Next.js package will
 // be visible to the package compiler, so map type-only peer contracts.
-test("next/navigation and next/link compile without hoisted Next.js types", () => {
+test("strict ESM Next.js peer subpaths compile without hoisted Next.js types", () => {
   const project = JSON.parse(readFileSync(join(root, "tsconfig.json"), "utf8"))
-  assert.equal(project.compilerOptions.paths["next/link"][0], "./src/types/next-link.d.ts")
-  assert.equal(project.compilerOptions.paths["next/navigation"][0], "./src/types/next-navigation.d.ts")
+  assert.equal(project.compilerOptions.paths["next/link.js"][0], "./src/types/next-link.d.ts")
+  assert.equal(project.compilerOptions.paths["next/navigation.js"][0], "./src/types/next-navigation.d.ts")
   assert.ok(existsSync(join(root, "src/types/next-link.d.ts")))
   assert.ok(existsSync(join(root, "src/types/next-navigation.d.ts")))
   assert.equal("next" in manifest.dependencies, false, "Next.js must remain a host peer")
   const compiled = readFileSync(join(root, "dist/components/site/next-navigation.js"), "utf8")
-  assert.match(compiled, /from ["']next\/link["']/)
-  assert.match(compiled, /from ["']next\/navigation["']/)
+  assert.match(compiled, /from ["']next\/link\\.js["']/)
+  assert.match(compiled, /from ["']next\/navigation\\.js["']/)
   // Next.js is a peer: this module is exercised in a packed Next.js app,
   // not imported by this isolated library distribution test.
   assert.match(compiled, /function NextDocsNavigationLink/)

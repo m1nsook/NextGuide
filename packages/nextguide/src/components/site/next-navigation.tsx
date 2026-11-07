@@ -1,12 +1,18 @@
 "use client"
 
 import { Suspense, useDeferredValue, useEffect, type AnchorHTMLAttributes, type ReactNode } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link.js"
+import { usePathname, useRouter } from "next/navigation.js"
 import { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
 import type { LinkComponentProps } from "../docs/nav.js"
 import { SearchProvider, type SearchEntry } from "./search.js"
 
+/**
+ * This bridge is an external ESM module when consumed from the packed package.
+ * Node's strict ESM resolver requires the actual Next.js .js entry points.
+ * This applies to next/link AND next/navigation. The App Router and Pages
+ * Router packed-consumer smoke builds cover both routes.
+ */
 /**
  * Adapt Next.js Link to the docs sidebar's zero-argument onNavigate callback.
  *
