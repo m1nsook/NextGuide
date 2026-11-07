@@ -320,7 +320,7 @@ function upgrade(args) {
   const directory = projectPath ?? process.cwd();
   try {
     const result = upgradeDeveloper(directory, inspectProject(directory), { dryRun, refreshGenerated, router, appearance });
-    cliUi.heading("NextGuide Developer Mode", (dryRun ? "upgrade preview" : "upgrade complete") + " · v" + version);
+    cliUi.heading("NextGuide " + (result.mode === "account" ? "Account" : "Developer") + " Mode", (dryRun ? "upgrade preview" : "upgrade complete") + " · v" + version);
     cliUi.field("Project:", result.projectDirectory);
     cliUi.field("Appearance:", result.appearance.mode + " / " + result.appearance.accent);
     cliUi.field("Templates:", "installed NextGuide package v" + version);
@@ -332,7 +332,7 @@ function upgrade(args) {
         cliUi.file(dryRun ? "WOULD UPDATE" : "UPDATE", change.path);
         if (change.backup) cliUi.backup(change.backup);
       }
-      if (!dryRun) cliUi.success("Applied " + result.changes.length + " changes. MDX pages and navigation preserved.");
+      if (!dryRun) cliUi.success("Applied " + result.changes.length + " changes. MDX pages, navigation and Account Mode private state preserved.");
     }
     if (!refreshGenerated) {
       cliUi.note("To adopt new starter templates: nextguide upgrade --refresh-generated");
