@@ -18,10 +18,12 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-    "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts && node scripts/identify-pack.mjs",
+    "pack:dev": "bun run --cwd packages/nextguide test && npm pack ./packages/nextguide --ignore-scripts && node scripts/identify-pack.mjs && node --test apps/registry/test/*.test.mjs",
     "compat:next": "bun run build:packages && node scripts/verify-generated-starter.mjs",
     "compat:account": "bun run build:packages && node scripts/verify-generated-account-mode.mjs",
-    "compat:navigation": "node scripts/verify-docs-navigation-browser.mjs"
+    "compat:navigation": "node scripts/verify-docs-navigation-browser.mjs",
+    "registry:test": "node --test apps/registry/test/*.test.mjs",
+    "registry:serve": "node apps/registry/server.mjs"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

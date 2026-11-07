@@ -9,13 +9,13 @@ Passing the developer repository's CI is only a first check, **not** proof that 
 
 ## Proposed publishing flow
 
-1. The developer publishes a tagged version pointing to an immutable Git commit.
-2. A trusted NextGuide verifier fetches that specific commit, independently validates its manifest and scans the files.
-3. A reviewer approves compatibility, declared permissions, license and any privileged behavior.
-4. The registry records the approved SHA, SHA-256 content digest, version and publisher identity.
-5. Account Mode users see the reviewed release with permissions before installing it.
+1. The developer runs `bun ng-addon pack` and `bun ng-addon publish`. The CLI verifies their pushed Git repository and uploads a versioned `.tgz` to GitHub Releases.
+2. `POST /v1/submissions` receives the release URL, exact Git commit and SHA-256. NextGuide independently checks the GitHub release asset against the source commit, manifest, Markdown pages and PNG icon.
+3. A private NextGuide registry review dashboard at `ngapi.m1nsook.com/admin` lists pending submissions; the owner receives Discord notifications and accepts or rejects each version after review.
+4. Only after approval does the registry sign the release metadata (Ed25519) and include it in the catalog.
+5. The protected **Account Mode `/admin` Marketplace** presents the reviewed release, its icon, changelog, permissions and compatible versions. There is no public `/marketplace` page.
 
-The installer must verify release digests before use, store the selected version, and refuse unverified or revoked releases.
+The planned installer must verify the pinned signing key and release SHA-256 before use, remember the selected version, and reject unverified or revoked releases. **The installer is not implemented yet.**
 
 ## Updating and removing an add-on
 
@@ -25,7 +25,7 @@ Enable/disable should not delete user data. Uninstall should clearly separate pa
 
 ## Registry API proposal
 
-A separate service such as `https://ngapi.m1nsook.com` can serve versioned metadata and update checks independently of npm:
+A separate service at `https://ngapi.m1nsook.com` is planned to serve versioned metadata and update checks independently of npm:
 
 | Endpoint (proposed) | Purpose |
 | --- | --- |
@@ -34,7 +34,7 @@ A separate service such as `https://ngapi.m1nsook.com` can serve versioned metad
 | `GET /v1/addons/{id}/versions` | Reviewed releases and compatibility |
 | `GET /v1/addons/{id}/updates` | Check approved updates for a pinned version |
 
-The domain and endpoints are **proposals**, not deployed services. Use HTTPS, a restricted publisher identity, audited approvals, rate limits, content hashes and a way to revoke malicious releases.
+The standalone Node/Bun registry API is being implemented in `apps/registry`; the domain is **not deployed**. The API also plans `POST /v1/submissions` and a separate owner-only `/admin` review dashboard. Use HTTPS, a restricted publisher identity, audited approvals, rate limits, content hashes and a way to revoke malicious releases.
 
 The registry can update independently of NextGuide npm releases, but the installed runtime must still satisfy each add-on's compatibility range. No developer gets direct write access to NextGuide core.
 

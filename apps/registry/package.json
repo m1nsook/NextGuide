@@ -1,0 +1,16 @@
+{
+  "name": "nextguide-registry-service",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Private VPS registry service for reviewed NextGuide Account Mode content add-ons.",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "cli": "node cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
