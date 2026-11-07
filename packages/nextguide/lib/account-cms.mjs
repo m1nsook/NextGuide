@@ -205,8 +205,14 @@ export function saveStudioPage(project, input) {
   const name = parts.pop() || "index"
   const folder = parts.join("/")
   const nav = readMeta(project, folder)
-  if (!nav.some(entry => entry.slug === name)) {
+  const existingEntry = nav.find(entry => entry.slug === name)
+  if (!existingEntry) {
     nav.push({ slug: name, title })
+    writeMeta(project, folder, nav)
+  } else if (before && existingEntry.title === frontmatter(before).title && existingEntry.title !== title) {
+    // Keep navigation labels in sync with titles unless the owner supplied a
+    // deliberate custom label in the navigation editor.
+    existingEntry.title = title
     writeMeta(project, folder, nav)
   }
   return { slug, title, description, body, version: hash(content), created: !exists }
