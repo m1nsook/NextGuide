@@ -220,3 +220,20 @@ test("official docs site and installed sites resolve the same package UI", async
   assert.match(css, /--background: #0e1014/)
   assert.match(officialCss, /nextguide\/site.css/)
 })
+
+test("generated OG images use official NextGuide branding and produce real PNG bytes", async () => {
+  const { renderNextGuideOgImage, NEXTGUIDE_OG_SIZE } = await import("../dist/og/index.js")
+  assert.deepEqual(NEXTGUIDE_OG_SIZE, { width: 1200, height: 630 })
+  const response = renderNextGuideOgImage({
+    siteName: "Example Documentation",
+    title: "Getting started with NextGuide",
+    description: "An interactive documentation example",
+    section: "Documentation",
+    appearance: "dark",
+    accent: "purple",
+  })
+  assert.match(response.headers.get("content-type") ?? "", /image\/png/)
+  const bytes = new Uint8Array(await response.arrayBuffer())
+  assert.ok(bytes.length > 1000, "OG image renderer returned no usable image content")
+  assert.deepEqual(Array.from(bytes.slice(0, 8)), [137, 80, 78, 71, 13, 10, 26, 10])
+})
