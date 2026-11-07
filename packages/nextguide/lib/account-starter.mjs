@@ -217,7 +217,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     .replace("defaultTheme={appearance.mode}", "defaultTheme={settings.theme}")
     .replace("data-ng-accent={appearance.accent}", "data-ng-accent={settings.accent}")
     .replace("siteName={site.name}", "siteName={settings.name}")
-    .replace('siteLogo={site.logo ?? ""}', "siteLogo={settings.logo}")
+    .replace('siteLogo={branding.logo}', "siteLogo={settings.logo}")
     .replace("footerEnabled={ngCopyright.enabled !== false}", "footerEnabled={settings.copyrightEnabled}")
     .replace("footerText={ngCopyright.text}", "footerText={settings.copyrightText}")
     .replace("footerHref={ngCopyright.href}", "footerHref={settings.copyrightHref}")
@@ -260,7 +260,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     .replace('site.description ?? ""', 'runtimeSite.description ?? ""')
     .replace('"url" in site && typeof site.url === "string" && /^https?:\\/\\//.test(site.url)', 'runtimeSite.url && /^https?:\\/\\//.test(runtimeSite.url)')
     .replace('new URL(imagePath, site.url.replace', 'new URL(imagePath, runtimeSite.url.replace')
-    .replace('site.ogImage || imageUrl', 'runtimeSite.ogImage || imageUrl')
+    .replace('branding.ogImage || imageUrl', 'runtimeSite.ogImage || imageUrl')
   plan.files[pageFile] = page
   // Social preview cards should use the account owner's latest site identity.
   const ogFile = plan.router.folder + '/og/[...slug]/route.' + (plan.typed ? 'ts' : 'js')
