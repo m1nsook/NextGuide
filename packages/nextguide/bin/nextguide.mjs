@@ -355,10 +355,11 @@ function accountCommand(args) {
   try {
     const project = values[1] ?? process.cwd()
     const result = rotateBootstrap(project)
-    process.stdout.write("NextGuide Account Mode: replacement setup token\n" + result.token + "\n")
-    process.stdout.write("The previous token and unfinished QR enrollment are now invalid. Open /setup.\n")
+    cliUi.heading("NextGuide Account Mode", "replacement setup token");
+    process.stdout.write(result.token + "\n");
+    cliUi.warn("The previous token and unfinished QR enrollment are now invalid. Open /setup.");
   } catch (error) {
-    process.stderr.write("NextGuide account token rotation failed: " + error.message + "\n")
+    cliUi.fail("NextGuide account token rotation failed: " + error.message);
     process.exitCode = 1
   }
 }
