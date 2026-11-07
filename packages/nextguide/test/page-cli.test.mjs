@@ -14,7 +14,13 @@ function fixture() {
   writeFileSync(join(root, "content/docs/_meta.json"), "[]\n")
   return root
 }
-const run = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" })
+
+// Functional CLI tests assert plain text, regardless of the developer's shell.
+// Color behavior has separate FORCE_COLOR / NO_COLOR coverage in cli-ui.test.mjs.
+const plainCliEnv = { ...process.env, NO_COLOR: "1" };
+delete plainCliEnv.FORCE_COLOR;
+
+const run = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", env: plainCliEnv })
 
 test("CLI creates a named nested MDX page and reports its navigation changes", () => {
   const root = fixture()
