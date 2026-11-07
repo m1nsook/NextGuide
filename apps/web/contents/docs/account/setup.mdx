@@ -1,0 +1,38 @@
+---
+title: Set up Account Mode
+description: Create an owner and finish NextGuide setup from the browser.
+---
+
+# Set up an owner
+
+## 1. Generate your site
+
+Run these commands from an existing Next.js App Router project:
+
+<CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha\nbunx nextguide init --account\nbun run dev",language:"bash"},{label:"npm",code:"npm install nextguide@alpha\nnpx nextguide init --account\nnpm run dev",language:"bash"}]} />
+
+Keep the **one-time owner token** printed by the CLI. It is used to claim this installation; the server keeps only a hash.
+
+## 2. Enroll your authenticator
+
+1. Open `/setup` on your Next.js site and paste the terminal token.
+2. Scan the QR code using an authenticator app, or use the manual secret.
+3. Enter the six-digit code to verify ownership.
+4. Save all ten **single-use recovery codes** outside the server.
+
+After enrollment, the setup token cannot be used again. If you lose it before finishing setup, run `bunx nextguide account token --rotate` from the project root.
+
+## 3. Configure your documentation
+
+The setup wizard asks for your site title and description, public URL, theme, accent color, and fonts. Owner name, email and avatar are optional.
+
+After finishing, visit `/admin` to manage documentation. Use `/login` to sign in on subsequent visits with a current authenticator code or an unused recovery code.
+
+## Common problems
+
+- **Static export enabled?** Account Mode needs a persistent Node.js server, not `output: "export"`.
+- **Another owner already enrolled?** The one-owner initialization is intentionally locked.
+- **Lost your authenticator?** Use a recovery code. Read [Security & recovery](/docs/account/security).
+- **Unexpected appearance?** Check the site's own styles and your selected typography in the studio.
+
+[Next: edit your first page](/docs/account/studio).

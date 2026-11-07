@@ -1,0 +1,41 @@
+---
+title: Verification and updates
+description: How NextGuide will review, distribute and manage add-ons.
+---
+
+# Verification and updates
+
+Passing the developer repository's CI is only a first check, **not** proof that the add-on is safe.
+
+## Proposed publishing flow
+
+1. The developer publishes a tagged version pointing to an immutable Git commit.
+2. A trusted NextGuide verifier fetches that specific commit, independently validates its manifest and scans the files.
+3. A reviewer approves compatibility, declared permissions, license and any privileged behavior.
+4. The registry records the approved SHA, SHA-256 content digest, version and publisher identity.
+5. Account Mode users see the reviewed release with permissions before installing it.
+
+The installer must verify release digests before use, store the selected version, and refuse unverified or revoked releases.
+
+## Updating and removing an add-on
+
+Each new upstream release goes through verification again. After approval, users can be notified and choose to update. Updates that introduce new permissions require a fresh explicit approval. Failures must roll back to the previous working version.
+
+Enable/disable should not delete user data. Uninstall should clearly separate package removal from optional data deletion.
+
+## Registry API proposal
+
+A separate service such as `https://ngapi.m1nsook.com` can serve versioned metadata and update checks independently of npm:
+
+| Endpoint (proposed) | Purpose |
+| --- | --- |
+| `GET /v1/addons` | Search and filter reviewed add-ons |
+| `GET /v1/addons/{id}` | Add-on details and publisher |
+| `GET /v1/addons/{id}/versions` | Reviewed releases and compatibility |
+| `GET /v1/addons/{id}/updates` | Check approved updates for a pinned version |
+
+The domain and endpoints are **proposals**, not deployed services. Use HTTPS, a restricted publisher identity, audited approvals, rate limits, content hashes and a way to revoke malicious releases.
+
+The registry can update independently of NextGuide npm releases, but the installed runtime must still satisfy each add-on's compatibility range. No developer gets direct write access to NextGuide core.
+
+[Back to add-ons](/docs/addons).

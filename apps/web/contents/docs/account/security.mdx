@@ -1,0 +1,33 @@
+---
+title: Security and recovery
+description: Account Mode hosting requirements, credentials and backup guidance.
+---
+
+# Security and recovery
+
+Account Mode is designed for a single owner using a persistent Next.js server. Authentication uses time-based one-time codes (TOTP) and **single-use recovery codes**, without an email/password requirement.
+
+## Deployment checklist
+
+- Run Next.js behind HTTPS with an accurate public origin.
+- Set `NEXTGUIDE_PUBLIC_URL` to the real public HTTPS origin.
+- Keep `NEXTGUIDE_DATA_DIR` in a private persistent directory readable only by your server user.
+- Back up the private data directory and `content/docs`, with separate recovery-code storage.
+- Do not deploy Account Mode with static export or ephemeral read-only serverless storage.
+- Do not publish owner tokens, TOTP secrets, recovery codes or server storage in Git.
+
+<CodeWindow title="Example self-hosted environment" language="bash" code="NEXTGUIDE_PUBLIC_URL=https://docs.example.com\nNEXTGUIDE_DATA_DIR=/var/lib/nextguide/account" />
+
+These are **examples**, not values to copy unchanged.
+
+## Regain access
+
+Sign in at `/login` using an unused recovery code if your authenticator is lost. You can replace your authenticator using the current one or the supported recovery flow. Rotate recovery codes afterward; old codes become invalid.
+
+To remove active sessions, use the security section in `/admin`.
+
+## Limits to understand
+
+A TOTP code is not phishing-resistant. Only enter it on your own HTTPS site. The system enforces private sessions, one-owner setup, origin checks and protected storage, but you still need host security and backups.
+
+Future add-ons must not receive direct access to account secrets. See [Add-on security](/docs/addons/publishing).
