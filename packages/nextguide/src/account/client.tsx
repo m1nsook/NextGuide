@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
 import { AccountThemeMenu } from "./theme-menu.js"
-import { Button, Card, Input } from "../ui/index.js"
+import { Button, Card, Input, Checkbox } from "../ui/index.js"
 
 type AccountStatus = { initialized: boolean; authenticated: boolean }
 type Phase = "token" | "verify" | "recovery" | "login"
@@ -103,10 +103,7 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
             <p className="ng-account-warning">Each recovery code works only once. Store them offline, separately from your phone. You will not see this list again.</p>
             <pre className="ng-account-codes" aria-label="Single-use account recovery codes">{recoveryCodes.join("\n")}</pre>
             <Button variant="outline" className="ng-account-secondary" type="button" onClick={() => navigator.clipboard?.writeText(recoveryCodes.join("\n"))}>Copy recovery codes</Button>
-            <label className="ng-account-check">
-              <Input type="checkbox" checked={saved} onChange={e => setSaved(e.target.checked)} />
-              I saved these recovery codes in a safe place.
-            </label>
+            <div className="ng-account-check"><Checkbox id="ng-recovery-saved" checked={saved} onCheckedChange={checked => setSaved(checked === true)} /><label htmlFor="ng-recovery-saved">I saved these recovery codes in a safe place.</label></div>
             <a className={saved ? "ng-account-submit" : "ng-account-submit ng-account-disabled"} href={saved ? "/admin" : undefined} aria-disabled={!saved}>Open dashboard</a>
           </div>
         ) : null}

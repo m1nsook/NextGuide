@@ -138,6 +138,11 @@ async function verify() {
     assert.ok(cookie?.startsWith("ng_account_session="), "Session cookie missing")
     const access = await fetch(origin + "/api/nextguide/studio/overview", { headers: { Cookie: cookie } })
     assert.equal(access.status, 200)
+    const dashboard = await fetch(origin + "/admin", { headers: { Cookie: cookie } })
+    assert.equal(dashboard.status, 200, "Authenticated /admin must not fail while prerendering")
+    assert.match(await dashboard.text(), /NextGuide/)
+    const localMonaco = await fetch(origin + "/_nextguide/monaco/vs/loader.js")
+    assert.equal(localMonaco.status, 200, "Monaco must load locally without a CDN")
     const overview = await access.json()
     assert.ok(overview.pages.length >= 5)
     const configured = await api(origin, "studio/save-settings", { ...overview.site,
