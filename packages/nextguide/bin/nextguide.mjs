@@ -5,6 +5,7 @@ import { resolve, join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { initDeveloper } from "../lib/init.mjs";
 import { initAccount } from "../lib/account-starter.mjs";
+import { rotateBootstrap } from "../lib/account-auth.mjs";
 import { upgradeDeveloper } from "../lib/upgrade.mjs";
 import { pageCommand } from "../lib/page-cli.mjs";
 import { versionCommand } from "../lib/version-cli.mjs";
@@ -21,6 +22,7 @@ Usage:
   nextguide doctor --json      Print machine-readable diagnostics
   nextguide init [path]        Scaffold documentation in a Next.js project
   nextguide init --account     Set up passwordless Account Mode with a terminal token
+  nextguide account token --rotate  Replace a lost setup token before owner enrollment
   nextguide init --router app  Select App Router when both routers exist
   nextguide init --base-path /docs  Use /docs as documentation path (default)
   nextguide init --base-path /     Use documentation as website homepage
@@ -288,6 +290,24 @@ function upgrade(args) {
   }
 }
 
+function accountCommand(args) {
+  const values = args.filter(item => item !== "--rotate")
+  if (!args.includes("--rotate") || values[0] !== "token" || values.length > 2) {
+    process.stderr.write("Usage: nextguide account token --rotate [project]\n")
+    process.exitCode = 2
+    return
+  }
+  try {
+    const project = values[1] ?? process.cwd()
+    const result = rotateBootstrap(project)
+    process.stdout.write("NextGuide Account Mode: replacement setup token\n" + result.token + "\n")
+    process.stdout.write("The previous token and unfinished QR enrollment are now invalid. Open /setup.\n")
+  } catch (error) {
+    process.stderr.write("NextGuide account token rotation failed: " + error.message + "\n")
+    process.exitCode = 1
+  }
+}
+
 const [command, ...args] = process.argv.slice(2);
 switch (command) {
   case undefined:
@@ -311,6 +331,9 @@ switch (command) {
     break;
   case "page":
     pageCommand(args);
+    break;
+  case "account":
+    accountCommand(args);
     break;
   case "version":
     await versionCommand(args, version);

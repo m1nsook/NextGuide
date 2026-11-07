@@ -7,6 +7,7 @@ export declare class AccountError extends Error {
 }
 export declare function accountFile(project?: string, dataDir?: string): string
 export declare function createBootstrap(project?: string, options?: { dataDir?: string }): { token: string; file: string }
+export declare function rotateBootstrap(project?: string): { token: string; file: string }
 export declare function base32Encode(data: Uint8Array): string
 export declare function totp(secret: string, time?: number): string
 export declare function matchingTotpStep(secret: string, code: string, time?: number, minimum?: number): number | null

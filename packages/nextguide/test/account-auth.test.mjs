@@ -3,7 +3,7 @@ import { test } from "node:test"
 import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { accountFile, accountStatus, base32Encode, beginEnrollment, createBootstrap, finishEnrollment, matchingTotpStep, otpUri, sameOrigin, signIn, signOut, totp, verifySession } from "../lib/account-auth.mjs"
+import { accountFile, accountStatus, base32Encode, beginEnrollment, createBootstrap, finishEnrollment, matchingTotpStep, otpUri, sameOrigin, signIn, signOut, rotateBootstrap, totp, verifySession } from "../lib/account-auth.mjs"
 
 const make = () => mkdtempSync(join(tmpdir(), "nextguide-account-"))
 function fixture(fn) {
@@ -32,17 +32,22 @@ test("setup is terminal-token gated, owner is unique, code replay is rejected, a
   try {
     assert.deepEqual(accountStatus(root), { initialized: false, authenticated: false })
     await assert.rejects(beginEnrollment(root, "wrong", { qr: async () => "qr" }), /Invalid setup token/)
-    const first = await beginEnrollment(root, token, { qr: async uri => uri })
+    const rotation = rotateBootstrap(root)
+    assert.notEqual(rotation.token, token)
+    await assert.rejects(beginEnrollment(root, token, { qr: async uri => uri }), /Invalid setup token/)
+    const newToken = rotation.token
+    const first = await beginEnrollment(root, newToken, { qr: async uri => uri })
     assert.ok(first.manualKey.length >= 32)
     assert.match(first.qrDataUrl, /^otpauth:\/\/totp\//)
     const now = Date.now()
     const secret = JSON.parse(readFileSync(file, "utf8")).pending.secret
     const firstCode = totp(secret, now)
-    assert.throws(() => finishEnrollment(root, token, "000000", now), /Invalid authenticator code/)
-    const complete = finishEnrollment(root, token, firstCode, now)
+    assert.throws(() => finishEnrollment(root, newToken, "000000", now), /Invalid authenticator code/)
+    const complete = finishEnrollment(root, newToken, firstCode, now)
     assert.equal(complete.recoveryCodes.length, 10)
     assert.equal(verifySession(root, complete.session), true)
     assert.equal(accountStatus(root).initialized, true)
+    assert.throws(() => rotateBootstrap(root), /already registered/)
     assert.throws(() => finishEnrollment(root, token, firstCode, now), /already been registered/)
     assert.throws(() => signIn(root, firstCode, now), /already-used code/)
     const other = signIn(root, totp(secret, now + 30_000), now + 30_000)

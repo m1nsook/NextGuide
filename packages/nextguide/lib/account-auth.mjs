@@ -116,6 +116,18 @@ export function createBootstrap(project = process.cwd(), { dataDir } = {}) {
   return { token, file }
 }
 
+export function rotateBootstrap(project = process.cwd()) {
+  const token = withLock(project, state => {
+    if (state.owner) throw new AccountError("An account owner is already registered. Enrollment cannot be reset with this command.", 409)
+    const newToken = randomBytes(24).toString("base64url")
+    state.bootstrapHash = digest(newToken)
+    state.pending = null
+    clearFailures(state)
+    return newToken
+  })
+  return { token, file: accountFile(project) }
+}
+
 export function base32Encode(bytes) {
   let output = "", bits = 0, buffer = 0
   for (const byte of bytes) {
