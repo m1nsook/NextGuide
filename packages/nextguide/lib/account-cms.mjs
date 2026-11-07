@@ -100,7 +100,12 @@ function guardedSlug(input, allowHome = true) {
 function documentPath(project, slug) {
   const root = docsDir(project)
   const logical = guardedSlug(slug)
-  const target = filePath(project, "content/docs/" + logical + ".mdx")
+  let target = filePath(project, "content/docs/" + logical + ".mdx")
+  if (slug && !existsSync(target)) {
+    const folderIndex = filePath(project, "content/docs/" + logical + "/index.mdx")
+    const folder = filePath(project, "content/docs/" + logical)
+    if (existsSync(folder) && lstatSync(folder).isDirectory()) target = folderIndex
+  }
   if (!target.startsWith(root + sep)) throw new AccountError("Page outside docs directory.", 400)
   return target
 }
@@ -122,8 +127,20 @@ function writeMeta(project, folder, value) {
   atomicWrite(filePath(project, relativePath), JSON.stringify(value, null, 2) + "\n")
 }
 function yaml(text) { return JSON.stringify(text) }
-function formatPage(title, description, body) {
-  return "---\ntitle: " + yaml(title) + "\ndescription: " + yaml(description) + "\n---\n\n" + body.trim() + "\n"
+function formatPage(title, description, body, original = null) {
+  const existing = original?.match(/^---\\s*\\r?\\n([\\s\\S]*?)\\r?\\n---\\s*\\r?\\n/)
+  if (!existing) return "---\ntitle: " + yaml(title) + "\ndescription: " + yaml(description) + "\n---\n\n" + body.trim() + "\n"
+  // Keep every unknown MDX frontmatter field. The editor only owns title
+  // and description, not arbitrary author-defined metadata.
+  let titleSeen = false, descriptionSeen = false
+  const lines = existing[1].split(/\\r?\\n/).map(line => {
+    if (/^title\\s*:/.test(line)) { titleSeen = true; return "title: " + yaml(title) }
+    if (/^description\\s*:/.test(line)) { descriptionSeen = true; return "description: " + yaml(description) }
+    return line
+  })
+  if (!titleSeen) lines.unshift("title: " + yaml(title))
+  if (!descriptionSeen) lines.push("description: " + yaml(description))
+  return "---\n" + lines.join("\n") + "\n---\n\n" + body.trim() + "\n"
 }
 function frontmatter(source) {
   const match = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n/)
@@ -181,7 +198,7 @@ export function saveStudioPage(project, input) {
   if (exists && hash(before) !== input.version) throw new AccountError("This page was changed elsewhere. Reload before saving.", 409)
   if (!exists && input.version !== null) throw new AccountError("Page already exists or was removed. Reload before saving.", 409)
   if (!exists && listStudioPages(project).length >= MAX_DOCS) throw new AccountError("Page limit reached.", 413)
-  const content = formatPage(title, description, body)
+  const content = formatPage(title, description, body, before)
   if (Buffer.byteLength(content) > MAX_PAGE_BYTES) throw new AccountError("Page exceeds editor size limit.", 413)
   atomicWrite(file, content)
   const parts = slug ? slug.split("/") : []
@@ -205,7 +222,8 @@ export function deleteStudioPage(project, slug, version) {
   const name = parts.pop()
   const folder = parts.join("/")
   const nav = readMeta(project, folder)
-  writeMeta(project, folder, nav.filter(entry => entry.slug !== name))
+  const folderStillExists = existsSync(filePath(project, "content/docs/" + slug)) && lstatSync(filePath(project, "content/docs/" + slug)).isDirectory()
+  if (!folderStillExists) writeMeta(project, folder, nav.filter(entry => entry.slug !== name))
   return { deleted: slug }
 }
 export function getStudioNavigation(project, folder = "") {
