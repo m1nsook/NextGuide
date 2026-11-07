@@ -23,7 +23,9 @@ test('initializes src/app TypeScript project with real pages and config', () => 
   const d = fixture()
   try {
     const r = initDeveloper(d, inspect(d, ['src/app']))
-    assert.equal(r.created.length, 16)
+    assert.equal(r.created.length, 17)
+    assert.ok(existsSync(join(d, 'src/app/og/[...slug]/route.ts')))
+    assert.match(read(d, 'src/app/og/[...slug]/route.ts'), /NextGuideOgCard/)
     assert.equal(r.mode, 'developer')
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/page.tsx')))
     assert.ok(existsSync(join(d, 'src/app/docs/layout.tsx')))
@@ -452,5 +454,30 @@ test('refuses unsafe root layouts rather than changing user-owned JSX blindly', 
     assert.throws(() => initDeveloper(d, inspect(d, ['src/app'])), /Cannot safely locate the root <html>/)
     assert.equal(read(d, root), original)
     assert.equal(existsSync(join(d, 'nextguide.config.json')), false)
+  } finally { clear(d) }
+})
+
+test('generated OG image routes reuse NextGuide branding and support App Router root paths', () => {
+  for (const folder of ['src/app', 'app']) {
+    const d = fixture({ folder })
+    try {
+      const result = initDeveloper(d, inspect(d, [folder]), { basePath: '/docs' })
+      const image = read(d, folder + '/og/[...slug]/route.ts')
+      assert.match(image, /from "nextguide\/og"/)
+      assert.match(image, /getFrontmatter/)
+      assert.match(image, /generateStaticParams/)
+      assert.match(image, /siteName: site.name/)
+      assert.match(image, /appearance: appearance.mode/)
+      assert.equal(result.created.length, 17)
+    } finally { clear(d) }
+  }
+})
+
+test('Pages Router can still initialize without an unsupported dynamic image route', () => {
+  const d = fixture({ folder: 'src/pages' })
+  try {
+    const result = initDeveloper(d, inspect(d, ['src/pages']))
+    assert.ok(result.created.length >= 16)
+    assert.ok(!result.created.some((p) => p.includes('/og/[...slug]/route.')))
   } finally { clear(d) }
 })

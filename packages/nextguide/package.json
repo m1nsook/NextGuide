@@ -118,7 +118,11 @@
       "types": "./dist/components/site/index.d.ts",
       "default": "./dist/components/site/index.js"
     },
-    "./site.css": "./dist/components/styles/site.css"
+    "./site.css": "./dist/components/styles/site.css",
+    "./og": {
+      "types": "./dist/og/index.d.ts",
+      "default": "./dist/og/index.js"
+    }
   },
   "imports": {
     "#read-file": {

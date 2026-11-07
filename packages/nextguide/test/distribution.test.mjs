@@ -220,3 +220,23 @@ test("official docs site and installed sites resolve the same package UI", async
   assert.match(css, /--background: #0e1014/)
   assert.match(officialCss, /nextguide\/site.css/)
 })
+
+test("NextGuide OG artwork renders official branding without a Next.js runtime", async () => {
+  const { NextGuideOgCard, NEXTGUIDE_OG_SIZE } = await import("../dist/og/index.js")
+  const React = await import("react")
+  const { renderToStaticMarkup } = await import("react-dom/server")
+  assert.deepEqual(NEXTGUIDE_OG_SIZE, { width: 1200, height: 630 })
+  const html = renderToStaticMarkup(React.createElement(NextGuideOgCard, {
+    siteName: "Example Documentation",
+    title: "Getting started with NextGuide",
+    description: "An interactive documentation example",
+    section: "Documentation",
+    appearance: "dark",
+    accent: "purple",
+  }))
+  assert.match(html, /Example Documentation/)
+  assert.match(html, /Getting started with NextGuide/)
+  assert.match(html, /An interactive documentation example/)
+  assert.match(html, /<svg/)
+  assert.match(html, /viewBox="0 0 1072 1072"/)
+})

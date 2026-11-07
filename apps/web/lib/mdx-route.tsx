@@ -6,6 +6,7 @@ import { ClientMdx } from "@/components/mdx-client"
 import { MdxPage } from "@/components/mdx-page"
 import type { DocsBreadcrumbItem } from "nextguide/components"
 import { getEditUrl, getNeighbours } from "./navigation"
+import { site } from "./site"
 
 interface Frontmatter {
   title?: string
@@ -82,7 +83,15 @@ export function createMdxRoute(source: DocsInstance, base: string, getNavigation
   async function generateMetadata({ params }: MdxRouteProps): Promise<Metadata> {
     try {
       const frontmatter = await source.getFrontmatter<Frontmatter>({ slug: ((await params).slug ?? []).join("/") })
-      return { title: frontmatter.title, description: frontmatter.description }
+      const slug = ((await params).slug ?? []).join("/")
+      const imagePath = `og${base}/${slug || "index"}.png`.replace(/^\//, "")
+      const imageUrl = new URL(imagePath, site.url.replace(/\/?$/, "/")).toString()
+      const title = frontmatter.title ?? "Documentation"
+      const description = frontmatter.description
+      return { title, description,
+        openGraph: { title, description, images: [{ url: imageUrl, width: 1200, height: 630, alt: title }] },
+        twitter: { card: "summary_large_image", images: [imageUrl] },
+      }
     } catch {
       return {}
     }
