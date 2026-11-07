@@ -324,16 +324,28 @@ function requireOwnerSession(state, token, time) {
   }
 }
 
-function confirmCurrentAuthenticator(state, code, time) {
+function confirmCurrentAuthenticator(state, code, time, allowRecovery = false) {
   rateLimit(state, time)
   const step = matchingTotpStep(state.owner.totpSecret, code, time, state.lastAcceptedStep)
-  if (step === null) {
-    failedAttempt(state, time)
-    return false
+  if (step !== null) {
+    state.lastAcceptedStep = step
+    clearFailures(state)
+    return true
   }
-  state.lastAcceptedStep = step
-  clearFailures(state)
-  return true
+  // Owner recovery requires an already authenticated session *and* a second,
+  // unused recovery code. A code used at login cannot be reused here.
+  if (allowRecovery && typeof code === "string" &&
+      /^NG-(?:[\\da-fA-F]{4}-){4}[\\da-fA-F]{4}$/.test(code)) {
+    const hashed = digest(code.replace(/-/g, "").toUpperCase())
+    const index = state.recovery.findIndex(value => equal(value, hashed))
+    if (index !== -1) {
+      state.recovery.splice(index, 1)
+      clearFailures(state)
+      return true
+    }
+  }
+  failedAttempt(state, time)
+  return false
 }
 
 // Changing the authenticator always requires a fresh code from the current
@@ -341,8 +353,8 @@ function confirmCurrentAuthenticator(state, code, time) {
 export async function beginAuthenticatorRotation(project, session, code, { time = Date.now(), qr } = {}) {
   const result = withLock(project, state => {
     requireOwnerSession(state, session, time)
-    if (!confirmCurrentAuthenticator(state, code, time)) {
-      return { error: new AccountError("Invalid or already-used current authenticator code.", 401) }
+    if (!confirmCurrentAuthenticator(state, code, time, true)) {
+      return { error: new AccountError("Invalid authenticator or unused recovery code.", 401) }
     }
     const secret = base32Encode(randomBytes(20))
     state.pendingRotation = { secret, createdAt: time }
