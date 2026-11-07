@@ -28,7 +28,7 @@ export const runtime = "nodejs"
 async function PrivateDashboard() {
   const cookieStore = await cookies()
   if (!verifySession(process.cwd(), cookieStore.get(ACCOUNT_COOKIE)?.value)) redirect("/login")
-  return <AccountStudio />
+  return <AccountStudio basePath="__DOCS_PATH__" />
 }
 export default function AccountDashboard() {
   return <Suspense fallback={<main className="ng-account-page"><p>Loading Account Mode…</p></main>}><PrivateDashboard /></Suspense>

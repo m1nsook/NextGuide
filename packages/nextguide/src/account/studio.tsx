@@ -47,8 +47,8 @@ async function request<T>(action: string, data?: object, method: "GET"|"POST" = 
   if (!response.ok) throw Error(String(result.error || "Operation failed (HTTP " + response.status + ")."))
   return result as T
 }
-function slugHref(slug: string) {
-  const base = (typeof window === "undefined" ? "/docs" : document.documentElement.dataset.nextguideBasePath || "/docs")
+function slugHref(slug: string, basePath: string) {
+  const base = basePath
   return (base === "/" ? "" : base) + (slug ? "/" + slug : "/")
 }
 function slugLabel(slug: string) { return slug || "Homepage" }
@@ -67,7 +67,7 @@ function headingPreview(source: string) {
   })
 }
 
-export function AccountStudio() {
+export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
   const [view,setView] = React.useState<View>("overview")
   const [state,setState] = React.useState<Overview|null>(null)
   const [site,setSite] = React.useState<Site|null>(null)
@@ -192,13 +192,13 @@ export function AccountStudio() {
       <nav aria-label="Dashboard">
         {navigationItems.map(item=><button key={item.id} type="button" className={"ng-studio-nav-item "+(view===item.id?"ng-studio-active":"")} onClick={()=>switchView(item.id)}><item.icon size={18} aria-hidden="true"/>{item.label}</button>)}
       </nav>
-      <div className="ng-studio-side-bottom"><a href={slugHref("")} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View website</a><form method="post" action="/api/nextguide/account/logout"><button type="submit"><LogOut size={16}/>Sign out</button></form></div>
+      <div className="ng-studio-side-bottom"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View website</a><form method="post" action="/api/nextguide/account/logout"><button type="submit"><LogOut size={16}/>Sign out</button></form></div>
     </aside>
     <div className="ng-studio-main">
       <header className="ng-studio-topbar">
         <button className="ng-studio-menu" aria-label="Toggle navigation" onClick={()=>setMobileMenu(!mobileMenu)}><Menu size={22}/></button>
         <span>{state?.site.name||"Account Mode"} <span className="ng-studio-chevron">/</span> {navigationItems.find(x=>x.id===view)?.label}</span>
-        <a href={slugHref("")} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a>
+        <a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a>
       </header>
       <main className="ng-studio-workspace" aria-live="polite">
         {error&&<div className="ng-studio-alert ng-studio-error" role="alert">{error}<button type="button" onClick={()=>setError("")}>Dismiss</button></div>}
@@ -241,7 +241,7 @@ export function AccountStudio() {
                 </div>
                 {preview?<div className="ng-studio-preview"><div className="ng-studio-preview-head"><BookOpen size={16}/>Draft reading preview <span>(Markdown approximation; MDX components render on the live page)</span></div><div className="ng-studio-preview-copy"><h2>{page.title||"Untitled page"}</h2>{headingPreview(page.body)}</div></div>:null}
                 <div className="ng-studio-editor-actions">{page.version!==null&&page.slug?<button className="ng-studio-button-danger" onClick={removePage}><Trash2 size={16}/>Delete</button>:null}
-                  {page.version!==null?<a href={slugHref(page.slug)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View published page</a>:null}</div>
+                  {page.version!==null?<a href={slugHref(page.slug, basePath)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View published page</a>:null}</div>
               </div>:<div className="ng-studio-placeholder"><FileText size={32}/><h3>Select a page</h3><p>Or create a new one to start writing.</p></div>}
             </div>
           </>}
