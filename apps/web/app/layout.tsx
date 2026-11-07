@@ -13,6 +13,14 @@ const sans = Inter({ subsets: ["latin"], variable: "--font-sans" })
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: `${site.name}: Next.js documentation`,
+    description: site.description,
+  },
+  twitter: { card: "summary_large_image" },
   title: { default: `${site.name}: Next.js documentation`, template: `%s · ${site.name}` },
   description: site.description,
 }
