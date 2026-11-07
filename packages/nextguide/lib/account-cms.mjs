@@ -257,6 +257,9 @@ export function setStudioNavigation(project, input) {
   if (!existsSync(location)) throw new AccountError("Navigation folder not found.", 404)
   if (!Array.isArray(input.items) || input.items.length > 200) throw new AccountError("Invalid navigation items.", 400)
   const seen = new Set()
+  // Sidebar metadata can contain custom props (icons, grouping flags, etc).
+  // Rearranging entries must not silently erase these author-owned fields.
+  const existing = new Map(readMeta(project, folder).map(entry => [entry.slug, entry]))
   const nav = []
   for (const item of input.items) {
     assertObject(item)
@@ -264,7 +267,7 @@ export function setStudioNavigation(project, input) {
     if (!/^[a-z0-9-]+$/.test(slug) || seen.has(slug) || slug.startsWith("-")) throw new AccountError("Invalid or duplicate navigation slug.", 400)
     seen.add(slug)
     if (!existsSync(join(location, slug + ".mdx")) && !existsSync(join(location, slug))) throw new AccountError("Navigation entry has no matching page or folder.", 409)
-    nav.push({ slug, title: assertText(item.title, "navigation label", 120, true), nav: !item.hidden })
+    nav.push({ ...(existing.get(slug) ?? {}), slug, title: assertText(item.title, "navigation label", 120, true), nav: !item.hidden })
   }
   writeMeta(project, folder, nav)
   return getStudioNavigation(project, folder)
