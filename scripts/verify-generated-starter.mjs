@@ -87,6 +87,19 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
     assert.match(homepage, /data-slot="docs-nav"/, "Official shared sidebar must render")
     assert.match(homepage, /Start building/, "Starter MDX sections must render")
     assert.match(homepage, /Component showcase/, "Starter's bundled MDX link cards must render")
+    if (router === "app") {
+      assert.match(homepage, /property="og:image"/, "App Router docs must emit an Open Graph image meta tag")
+      function ogFiles(directory) {
+        if (!existsSync(directory)) return []
+        return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+          const path = join(directory, entry.name)
+          return entry.isDirectory() ? ogFiles(path)
+            : entry.name.includes("opengraph-image") && entry.name.endsWith(".png") ? [path] : []
+        })
+      }
+      assert.ok(ogFiles(join(folder, "out")).length >= 1,
+        "App Router static export must include generated OG image PNG files")
+    }
 
     // Assert production CSS actually includes the official site styling and
     // generated Tailwind utilities. A successful HTML build alone is not enough.
