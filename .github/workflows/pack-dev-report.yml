@@ -100,10 +100,19 @@ jobs:
                 }
               }
               if (!raw.trim()) throw latestError || new Error("Could not fetch job log")
-              const clean = raw.replace(/\u001b\[[0-9;]*[A-Za-z]/g, "")
-              const limited = clean.slice(-30000).replace(/\r/g, "")
+              const clean = raw.replace(/\u001b\[[0-9;]*[A-Za-z]/g, "").replace(/\r/g, "")
+              const lines = clean.split("\n")
+              const highlights = []
+              for (let index = 0; index < lines.length; index++) {
+                if (!/\bnot ok \d+\b|error TS\d+|##\[error\]|ERR_TEST_FAILURE/.test(lines[index])) continue
+                highlights.push(lines.slice(Math.max(0, index - 2), Math.min(lines.length, index + 16)).join("\n"))
+                if (highlights.join("\n...\n").length > 16000) break
+              }
+              const excerpt = highlights.join("\n...\n").slice(0, 16000)
+              const tail = clean.slice(-12000)
+              const limited = (excerpt ? "FAILURE EXCERPTS:\n" + excerpt + "\n\nEND OF JOB LOG:\n" : "") + tail
               const backticks = "`".repeat(Math.max(4, ...(limited.match(/`+/g) || []).map(s => s.length + 1)))
-              summary.push("", `<details open><summary>Failing job log (last ${limited.length} characters)</summary>`,
+              summary.push("", "<details open><summary>Failing test/compiler excerpts and final job log</summary>",
                 "", `${backticks}text`, limited || "(empty log)", backticks, "", "</details>")
             } catch (error) {
               summary.push("", `Could not retrieve the compilation log: ${String(error)}. Open the [Actions run](${runUrl}) to read it.`)
