@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, type AnchorHTMLAttributes, type ReactNode } from "react"
+import { Suspense, useDeferredValue, useEffect, type AnchorHTMLAttributes, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
@@ -41,6 +41,37 @@ export function NextDocsSiteMdxLink({ href, ...props }: AnchorHTMLAttributes<HTM
     return <a href={href} {...props} />
   }
   return <Link href={href} {...props} />
+}
+
+
+/** Retain the previously rendered reading pane during React's deferred route update. */
+function DocsReadingPlaceholder() {
+  return (
+    <div className="mx-auto max-w-[76rem] px-5 pt-10 pb-24 sm:px-10 lg:pt-14" role="status" aria-label="Loading documentation page">
+      <span className="sr-only">Loading documentation page</span>
+      <div className="max-w-3xl space-y-6 animate-pulse">
+        <div className="h-4 w-40 rounded bg-muted" />
+        <div className="h-9 w-3/5 rounded bg-muted" />
+        <div className="h-4 w-full rounded bg-muted" />
+        <div className="h-4 w-4/5 rounded bg-muted" />
+        <div className="mt-10 h-36 rounded-lg bg-muted" />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Defer reading-pane content updates so React can keep the previous article
+ * visible while the next route resolves. Use a visible placeholder, not an
+ * empty page, if a Suspense boundary must reveal its fallback on first load.
+ */
+export function NextDocsSiteContent({ children }: { children: ReactNode }) {
+  const deferredChildren = useDeferredValue(children)
+  return (
+    <Suspense fallback={<DocsReadingPlaceholder />}>
+      <div className="min-w-0" data-ng-docs-content>{deferredChildren}</div>
+    </Suspense>
+  )
 }
 
 /** Search results use App Router transitions rather than location.assign. */
