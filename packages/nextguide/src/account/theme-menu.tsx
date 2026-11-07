@@ -2,8 +2,8 @@
 
 import { Check, Monitor, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { Button } from "../ui/index.js"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/interactive.js"
+import { Button } from "./ui/button.js"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu.js"
 
 /**
  * Compact shadcn-style appearance menu, shared by setup and Studio.

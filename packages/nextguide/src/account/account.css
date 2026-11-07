@@ -278,3 +278,163 @@
 .ng-account-check [data-state],.ng-studio-checkbox [data-state]{flex:0 0 18px}
 .ng-studio-switch-row .ng-switch{flex-shrink:0}
 .ng-studio-fields .ng-studio-switch-row{display:flex;flex-direction:row;align-items:center}
+
+/* NEXTGUIDE_ACCOUNT_SHADCN_BOOTSTRAPPER: account routes only. */
+@source "./ui";
+/* Account-only tokens from the supplied m1nsook@next shadcn bootstrapper.
+   :has limits the variables to setup/login/admin routes, including Radix portals.
+   Do not move these tokens to NextGuide's global docs stylesheet. */
+:root:has(.ng-account-bootstrap) {
+
+    --background: oklch(0.9703 0.0121 4.7438);
+    --foreground: oklch(0.2022 0.0083 4.2755);
+    --card: oklch(1.0000 0 0);
+    --card-foreground: oklch(0.2022 0.0083 4.2755);
+    --popover: oklch(1.0000 0 0);
+    --popover-foreground: oklch(0.2022 0.0083 4.2755);
+    --primary: oklch(0.8228 0.1095 346.0184);
+    --primary-foreground: oklch(0.2022 0.0083 4.2755);
+    --secondary: oklch(0.2408 0.0082 334.4428);
+    --secondary-foreground: oklch(1.0000 0 0);
+    --muted: oklch(0.9397 0.0270 3.3993);
+    --muted-foreground: oklch(0.5085 0.0160 0.7380);
+    --accent: oklch(0.9397 0.0270 3.3993);
+    --accent-foreground: oklch(0.2022 0.0083 4.2755);
+    --destructive: oklch(0.6368 0.2078 25.3313);
+    --border: oklch(0.9288 0.0126 255.5078);
+    --scrollbar-thumb: color-mix(in oklch, var(--foreground) 15%, transparent);
+    --scrollbar-thumb-hover: color-mix(in oklch, var(--foreground) 30%, transparent);
+    --input: oklch(0.9288 0.0126 255.5078);
+    --ring: oklch(0.8228 0.1095 346.0184);
+    --chart-1: oklch(0.8228 0.1095 346.0184);
+    --chart-2: oklch(0.8369 0.1644 84.4286);
+    --chart-3: oklch(0.7107 0.0351 256.7878);
+    --chart-4: oklch(0.6658 0.1574 58.3183);
+    --chart-5: oklch(0.7253 0.1752 349.7607);
+    --radius: 0.75rem;
+    --sidebar: oklch(1.0000 0 0);
+    --sidebar-foreground: oklch(0.2022 0.0083 4.2755);
+    --sidebar-primary: oklch(0.8228 0.1095 346.0184);
+    --sidebar-primary-foreground: oklch(0.2022 0.0083 4.2755);
+    --sidebar-accent: oklch(0.9397 0.0270 3.3993);
+    --sidebar-accent-foreground: oklch(0.2022 0.0083 4.2755);
+    --sidebar-border: oklch(0.9288 0.0126 255.5078);
+    --sidebar-ring: oklch(0.8228 0.1095 346.0184);
+    --destructive-foreground: oklch(0.9842 0.0034 247.8575);
+    --font-sans: Inter, system-ui, sans-serif;
+    --font-serif: Georgia, serif;
+    --font-mono: ui-monospace, monospace;
+    --shadow-color: #000000;
+    --shadow-opacity: 0.05;
+    --shadow-blur: 10px;
+    --shadow-spread: 0px;
+    --shadow-offset-x: 0px;
+    --shadow-offset-y: 4px;
+    --letter-spacing: -0.01em;
+    --spacing: 0.25rem;
+    --shadow-2xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.03);
+    --shadow-xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.03);
+    --shadow-sm: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+    --shadow: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+    --shadow-md: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 2px 4px -1px hsl(0 0% 0% / 0.05);
+    --shadow-lg: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 4px 6px -1px hsl(0 0% 0% / 0.05);
+    --shadow-xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 8px 10px -1px hsl(0 0% 0% / 0.05);
+    --shadow-2xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.13);
+    --tracking-normal: -0.01em;
+
+}
+:root.dark:has(.ng-account-bootstrap) {
+
+    --background: #1b1a21;
+    --foreground: #e2e1eb;
+    --background-darker: #131217;
+    --card: #25232d;
+    --card-foreground: #e2e1eb;
+    --card-header: #1f1d25;
+    --card-border: #32303c;
+    --popover: #2d2a37;
+    --popover-foreground: #e2e1eb;
+    --primary: #ffc7d4;
+    --primary-foreground: #000;
+    --secondary: #5d596a;
+    --secondary-foreground: #e2e1eb;
+    --muted: #2d2a35;
+    --muted-foreground: #a19ea9;
+    --accent: #37313c;
+    --accent-foreground: #e6c4cc;
+    --success: #2ecc70;
+    --success-foreground: #000;
+    --warning: #edc55e;
+    --warning-foreground: #edc55e;
+    --destructive: #ce8a8a;
+    --destructive-foreground: #1b1a21;
+    --premium: #e64db2;
+    --premium-foreground: #fff;
+    --border: #32303c;
+    --image-upload-dropzone-border: #666076;
+    --input: #2d2b36;
+    --ring: #e689a8;
+    --submit: #ba1231;
+    --submit-foreground: #fff;
+    --submit-hover: #a2102b;
+    --submit-active: #8b0e25;
+    --sucess: #2ecc70;
+    --sucess-foreground: #000;
+    --success-hover: #2bbf69;
+    --success-active: #29b362;
+    --chart-1: #ab9fbf;
+    --chart-2: #e6c4cc;
+    --chart-3: #84ab9d;
+    --chart-4: #dcc4a1;
+    --chart-5: #adbed6;
+    --sidebar: var(--background);
+    --sidebar-foreground: #e2e1eb;
+    --sidebar-background: var(--background);
+    --sidebar-primary: #ffc7d4;
+    --sidebar-primary-foreground: #000;
+    --sidebar-accent: #37313c;
+    --sidebar-accent-foreground: #e6c4cc;
+    --sidebar-border: #2d2b36;
+    --sidebar-ring: #e689a8;
+    --shadow-2xs: 1px 2px 5px 1px #1a1a1a08;
+    --shadow-xs: 1px 2px 5px 1px #1a1a1a08;
+    --shadow-sm: 1px 2px 5px 1px #1a1a1a0f, 1px 1px 2px 0px #1a1a1a0f;
+    --shadow: 1px 2px 5px 1px #1a1a1a0f, 1px 1px 2px 0px #1a1a1a0f;
+    --shadow-md: 1px 2px 5px 1px #1a1a1a0f, 1px 2px 4px 0px #1a1a1a0f;
+    --shadow-lg: 1px 2px 5px 1px #1a1a1a0f, 1px 4px 6px 0px #1a1a1a0f;
+    --shadow-xl: 1px 2px 5px 1px #1a1a1a0f, 1px 8px 10px 0px #1a1a1a0f;
+    --shadow-2xl: 1px 2px 5px 1px #1a1a1a26;
+    --scrollbar-thumb: var(--border);
+    --discord-blurple: #5865f2;
+    --discord-blurple-foreground: #fff;
+    --discord-secondary: #70747b;
+    --discord-secondary-foreground: #fff;
+    --discord-success: #3ba55d;
+    --discord-success-foreground: #fff;
+    --discord-danger: #ed4245;
+    --discord-danger-foreground: #fff;
+    --discord-link: #70747b;
+    --discord-link-foreground: #fff;
+    --guide-md-code-bg: #2b2834;
+    --guide-md-code-fg: #e2e1eb;
+    --guide-md-code-border: #32303c;
+    --guide-md-inline-code-bg: #26232e;
+    --guide-md-inline-code-fg: #e2e1eb;
+    --announcement-bar: var(--primary);
+    --scrollbar-thumb-hover: color-mix(in srgb, var(--muted-foreground) 35%, transparent);
+
+}
+/* Keep custom Account Mode action rows accessible with shadcn buttons. */
+.ng-account-bootstrap button[data-slot="button"].ng-studio-nav-item,
+.ng-account-bootstrap button[data-slot="button"].ng-studio-button,
+.ng-account-bootstrap button[data-slot="button"].ng-studio-button-secondary,
+.ng-account-bootstrap button[data-slot="button"].ng-studio-button-danger,
+.ng-account-bootstrap button[data-slot="button"].ng-studio-reorder {
+  height: auto;
+  min-height: 36px;
+}
+.ng-account-bootstrap .ng-studio-fields [data-slot="input"],
+.ng-account-bootstrap .ng-studio-fields [data-slot="textarea"] {
+  width: 100%;
+}
+
