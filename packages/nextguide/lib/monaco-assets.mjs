@@ -43,6 +43,9 @@ export function installMonacoAssets(projectDirectory) {
   const staging = destination + ".nextguide-tmp-" + randomUUID()
   try {
     cpSync(source, staging, { recursive: true, force: false, errorOnExist: true })
+    // Keep the MIT notice beside the redistributed editor assets.
+    const licenseFile = join(sourceRoot, "LICENSE.txt")
+    if (existsSync(licenseFile)) cpSync(licenseFile, join(staging, "LICENSE.txt"))
     writeFileSync(join(staging, ".nextguide-version"), VERSION + "\n", { flag: "wx" })
     renameSync(staging, destination)
   } finally {
