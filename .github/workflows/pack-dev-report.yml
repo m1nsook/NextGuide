@@ -98,7 +98,7 @@ jobs:
             summary.push("", "The package compiled, tests passed, and `npm pack` completed successfully.")
           }
 
-          const title = `[pack:dev] ${result.toUpperCase()} — run #${id} (attempt ${attempt})`
+          const title = `[pack:dev] ${result === "success" ? "PASS" : "FAIL"} — run #${id} (attempt ${attempt})`
           const response = await request(`${api}/issues`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
