@@ -64,8 +64,18 @@ function withLock(project, operation) {
   let fd
   try { fd = openSync(lock, "wx", 0o600) }
   catch (error) {
-    if (error?.code === "EEXIST") throw new AccountError("Another account operation is in progress. Retry shortly.", 503, 2)
-    throw error
+    if (error?.code !== "EEXIST") throw error
+    // A hard-killed server can leave a stale lock. Operations are synchronous
+    // and short, so a lock older than two minutes cannot be legitimate here.
+    try {
+      const metadata = lstatSync(lock)
+      if (metadata.isSymbolicLink()) throw new Error("Unsafe account lock")
+      if (Date.now() - metadata.mtimeMs > 120_000) {
+        unlinkSync(lock)
+        fd = openSync(lock, "wx", 0o600)
+      }
+    } catch { /* fail closed on ambiguous lock state */ }
+    if (fd === undefined) throw new AccountError("Another account operation is in progress. Retry shortly.", 503, 2)
   }
   try {
     const state = readState(file)
@@ -291,8 +301,13 @@ export function signOut(project, sessionToken) {
 export function sameOrigin(request, configuredUrl = process.env.NEXTGUIDE_PUBLIC_URL) {
   const origin = request.headers.get("origin")
   if (!origin) return false
-  let expected
-  try { expected = new URL(configuredUrl || request.url).origin }
-  catch { return false }
-  return origin === expected
+  try {
+    const target = new URL(configuredUrl || request.url)
+    const local = ["localhost", "127.0.0.1", "[::1]"].includes(target.hostname)
+    // Never derive an external production origin solely from an untrusted Host
+    // header. Deployments behind nginx must explicitly configure the HTTPS URL.
+    if (process.env.NODE_ENV === "production" && !local &&
+        (!configuredUrl || target.protocol !== "https:")) return false
+    return origin === target.origin
+  } catch { return false }
 }
