@@ -11,6 +11,10 @@ import { CodeWindow, CodeTabs, FileTree, Steps, Step, LinkCards, LinkCard as Pac
 import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, ScrollArea, ScrollAreaViewport, ScrollBar, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, Textarea, NativeSelect, Spinner, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
 
 /** Preserve the official NextGuide MDX component, adjusting only its plain-anchor URL. */
+function OfficialBreadcrumbLink(props: ComponentProps<typeof PackageBreadcrumbLink>) {
+  return <PackageBreadcrumbLink {...props} href={typeof props.href === "string" ? staticHref(props.href) : props.href} />
+}
+
 function OfficialLinkCard(props: ComponentProps<typeof PackageLinkCard>) {
   return <PackageLinkCard {...props} href={staticHref(props.href)} />
 }
@@ -107,7 +111,7 @@ export const mdxComponents = {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbLink,
+  BreadcrumbLink: OfficialBreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
 } as unknown as MDXComponents
