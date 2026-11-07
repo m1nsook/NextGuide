@@ -108,10 +108,22 @@ test("init rejects running outside a Next.js project", () => {
   } finally { rmSync(directory, { recursive: true, force: true }); }
 });
 
-test("init refuses Account Mode instead of pretending it's ready", () => {
-  const result = run("init", "--account");
-  assert.equal(result.status, 2);
-  assert.match(result.stderr, /Account Mode is not implemented/);
+test("init --account scaffolds the protected browser flow", () => {
+  const directory = fixture();
+  const storage = mkdtempSync(join(tmpdir(), "nextguide-account-cli-"));
+  try {
+    const result = spawnSync(process.execPath, [cli, "init", directory, "--account", "--yes"], {
+      encoding: "utf8", env: { ...process.env, NEXTGUIDE_DATA_DIR: join(storage, "private") },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /ONE-TIME ACCOUNT SETUP TOKEN/);
+    assert.match(result.stdout, /open \/setup/);
+    assert.ok(existsSync(join(directory, "src/app/setup/page.jsx")));
+    assert.equal(JSON.parse(readFileSync(join(directory, "nextguide.config.json"), "utf8")).mode, "account");
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+    rmSync(storage, { recursive: true, force: true });
+  }
 });
 
 test("init CLI writes Developer Mode files and prints their locations", () => {

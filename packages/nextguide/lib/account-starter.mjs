@@ -154,7 +154,7 @@ function staticExport(directory) {
   for (const name of ["next.config.mjs", "next.config.js", "next.config.cjs", "next.config.ts"]) {
     const path = join(directory, name)
     if (!existsSync(path)) continue
-    if (/\\boutput\\s*:\\s*["']export["']/.test(readFileSync(path, "utf8"))) return true
+    if (/\boutput\s*:\s*["']export["']/.test(readFileSync(path, "utf8"))) return true
   }
   return false
 }
