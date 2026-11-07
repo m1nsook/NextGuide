@@ -50,6 +50,12 @@ jobs:
       - name: Build NextGuide documentation
         run: bun run build:web
 
+      - name: Test GitHub Pages link verifier
+        run: node --test scripts/verify-official-links.test.mjs
+
+      - name: Verify every exported documentation link
+        run: node scripts/verify-official-links.mjs apps/web/out
+
       - name: Keep Next.js assets intact on Pages
         if: github.event_name != 'pull_request'
         run: touch apps/web/out/.nojekyll

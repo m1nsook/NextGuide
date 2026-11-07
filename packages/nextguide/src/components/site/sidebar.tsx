@@ -14,6 +14,8 @@ import { DocsVersionSelector } from "./version-selector.js"
 export interface DocsSiteSidebarProps {
   items: NavItem[]
   version: string
+  /** Show the prerelease/version picker on the official NextGuide site only. */
+  showVersionSelector?: boolean
   siteName?: string
   basePath?: string
   homeHref?: string
@@ -23,7 +25,10 @@ export interface DocsSiteSidebarProps {
   linkAs?: ComponentType<LinkComponentProps>
 }
 function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", basePath = "/docs", homeHref = "/",
-  githubUrl, releaseUrl, activeHref, linkAs }: DocsSiteSidebarProps & { onNavigate?: () => void }) {
+  githubUrl, releaseUrl, activeHref, linkAs, showVersionSelector = false }: DocsSiteSidebarProps & { onNavigate?: () => void }) {
+  // Next.js Link is injected by the official docs. Installed sites keep regular
+  // links, while basePath deployments automatically resolve /NextGuide correctly.
+  const HeaderLink = linkAs ?? "a"
   const [pathname, setPathname] = useState("")
   useEffect(() => {
     setPathname(window.location.pathname)
@@ -35,11 +40,11 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
   return (
     <div className="flex h-full flex-col">
       <div className="space-y-4 px-4 pt-5 pb-4">
-        <a href={homeHref} onClick={onNavigate} aria-label={`${siteName} home`} className="flex px-2 text-[17px]">
+        <HeaderLink href={homeHref} onClick={onNavigate} aria-label={`${siteName} home`} className="flex px-2 text-[17px]">
           <Logo name={siteName} />
-        </a>
+        </HeaderLink>
         <SearchButton />
-        <DocsVersionSelector version={version} basePath={basePath} releaseUrl={releaseUrl} onNavigate={onNavigate} />
+        {showVersionSelector ? <DocsVersionSelector version={version} basePath={basePath} releaseUrl={releaseUrl} onNavigate={onNavigate} linkAs={linkAs} /> : null}
       </div>
       <ScrollArea className="min-h-0 flex-1">
         <ScrollAreaViewport className="h-full px-4 pb-6">
@@ -65,7 +70,8 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
 
 /** Desktop: sticky sidebar. Mobile: a top bar with search and a drawer. */
 export function DocsSiteSidebar(props: DocsSiteSidebarProps) {
-  const { items, version, siteName = "NextGuide", homeHref = "/" } = props
+  const { items, version, siteName = "NextGuide", homeHref = "/", linkAs } = props
+  const HeaderLink = linkAs ?? "a"
   const [open, setOpen] = useState(false)
 
   return (
@@ -75,9 +81,9 @@ export function DocsSiteSidebar(props: DocsSiteSidebarProps) {
       </aside>
 
       <header className="bg-background/90 sticky top-0 z-30 flex h-14 items-center gap-1 border-b pr-2 pl-4 backdrop-blur lg:hidden">
-        <a href={homeHref} aria-label={`${siteName} home`} className="flex flex-1 text-base">
+        <HeaderLink href={homeHref} aria-label={`${siteName} home`} className="flex flex-1 text-base">
           <Logo name={siteName} />
-        </a>
+        </HeaderLink>
         <SearchButton compact />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger

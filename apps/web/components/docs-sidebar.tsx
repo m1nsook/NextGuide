@@ -13,6 +13,6 @@ export function DocsSidebar({ items, version }: { items: NavItem[]; version: str
     <DocsSiteSidebar items={items} version={version} siteName={site.name}
       basePath="/docs" homeHref="/" githubUrl={site.github}
       releaseUrl="https://github.com/m1nsook/NextGuide/releases"
-      activeHref={pathname} linkAs={Link} />
+      activeHref={pathname} linkAs={Link} showVersionSelector />
   )
 }
