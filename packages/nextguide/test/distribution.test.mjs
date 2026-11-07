@@ -256,6 +256,6 @@ test("next/navigation and next/link compile without hoisted Next.js types", () =
   assert.ok(existsSync(join(root, "src/types/next-navigation.d.ts")))
   assert.equal("next" in manifest.dependencies, false, "Next.js must remain a host peer")
   const compiled = readFileSync(join(root, "dist/components/site/next-navigation.js"), "utf8")
-  assert.match(compiled, /from ["']next\\/link["']/)
-  assert.match(compiled, /from ["']next\\/navigation["']/)
+  assert.match(compiled, /from ["']next\/link["']/)
+  assert.match(compiled, /from ["']next\/navigation["']/)
 })
