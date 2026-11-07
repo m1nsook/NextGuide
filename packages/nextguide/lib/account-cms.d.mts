@@ -6,6 +6,11 @@ export type SiteSettings = {
   ownerName: string
   ownerEmail: string
   ownerAvatar: string
+  logo: string
+  ogImage: string
+  copyrightEnabled: boolean
+  copyrightText: string
+  copyrightHref: string
   accent: "blue" | "red" | "green" | "purple" | "yellow" | "orange" | "teal" | "pink"
   theme: "light" | "dark" | "system"
   bodyFont: "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system"
