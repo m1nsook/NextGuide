@@ -1,4 +1,5 @@
 export { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
+export { NextGuideBuildBadge } from "./build-badge.js"
 export { SearchProvider as DocsSiteSearchProvider, SearchButton as DocsSiteSearchButton, type SearchEntry as DocsSiteSearchEntry } from "./search.js"
 export { Providers as DocsSiteProviders } from "./providers.js"
 export { ThemeToggle as DocsSiteThemeToggle } from "./theme-toggle.js"

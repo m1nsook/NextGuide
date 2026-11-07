@@ -2,6 +2,9 @@
 
 import { useEffect, useState, type FormEvent } from "react"
 import { LogoMark } from "../components/site/logo.js"
+import { Providers as DocsSiteProviders } from "../components/site/providers.js"
+import { ThemeToggle } from "../components/site/theme-toggle.js"
+import { Button, Card, Input } from "../ui/index.js"
 
 type AccountStatus = { initialized: boolean; authenticated: boolean }
 type Phase = "token" | "verify" | "recovery" | "login"
@@ -79,9 +82,11 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
 
   const setup = mode === "setup"
   return (
+    <DocsSiteProviders defaultTheme="system" enableSystem>
     <main className="ng-account-page">
       <div className="ng-account-background" aria-hidden="true" />
-      <section className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
+      <Card className="ng-account-card" aria-label={setup ? "NextGuide setup" : "NextGuide sign in"}>
+        <div className="ng-account-theme"><ThemeToggle /></div>
         <div className="ng-account-logo" aria-hidden="true"><LogoMark className="ng-account-icon" /></div>
         <span className="ng-account-kicker">NEXTGUIDE / ACCOUNT MODE</span>
         <h1>{setup ? "Make your docs yours." : "Welcome back."}</h1>
@@ -97,9 +102,9 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
           <div className="ng-account-recovery">
             <p className="ng-account-warning">Each recovery code works only once. Store them offline, separately from your phone. You will not see this list again.</p>
             <pre className="ng-account-codes" aria-label="Single-use account recovery codes">{recoveryCodes.join("\n")}</pre>
-            <button className="ng-account-secondary" type="button" onClick={() => navigator.clipboard?.writeText(recoveryCodes.join("\n"))}>Copy recovery codes</button>
+            <Button variant="outline" className="ng-account-secondary" type="button" onClick={() => navigator.clipboard?.writeText(recoveryCodes.join("\n"))}>Copy recovery codes</Button>
             <label className="ng-account-check">
-              <input type="checkbox" checked={saved} onChange={e => setSaved(e.target.checked)} />
+              <Input type="checkbox" checked={saved} onChange={e => setSaved(e.target.checked)} />
               I saved these recovery codes in a safe place.
             </label>
             <a className={saved ? "ng-account-submit" : "ng-account-submit ng-account-disabled"} href={saved ? "/admin" : undefined} aria-disabled={!saved}>Open dashboard</a>
@@ -117,23 +122,24 @@ export function AccountAccess({ mode }: { mode: "setup" | "login" }) {
             ) : null}
             {phase === "token" ? (
               <label>One-time terminal token
-                <input value={token} onChange={e => setToken(e.target.value)} placeholder="Paste the setup token" type="password" autoComplete="off" autoFocus required />
+                <Input value={token} onChange={e => setToken(e.target.value)} placeholder="Paste the setup token" type="password" autoComplete="off" autoFocus required />
               </label>
             ) : (
               <label>{useRecovery && phase === "login" ? "Recovery code" : "Authenticator code"}
-                <input value={code} onChange={e => setCode(e.target.value)} placeholder={useRecovery && phase === "login" ? "NG-XXXX-XXXX-XXXX-XXXX-XXXX" : "000000"} inputMode={useRecovery && phase === "login" ? "text" : "numeric"} autoComplete={useRecovery ? "off" : "one-time-code"} pattern={useRecovery && phase === "login" ? "NG-[A-Fa-f0-9]{4}(-[A-Fa-f0-9]{4}){4}" : "[0-9]{6}"} required autoFocus />
+                <Input value={code} onChange={e => setCode(e.target.value)} placeholder={useRecovery && phase === "login" ? "NG-XXXX-XXXX-XXXX-XXXX-XXXX" : "000000"} inputMode={useRecovery && phase === "login" ? "text" : "numeric"} autoComplete={useRecovery ? "off" : "one-time-code"} pattern={useRecovery && phase === "login" ? "NG-[A-Fa-f0-9]{4}(-[A-Fa-f0-9]{4}){4}" : "[0-9]{6}"} required autoFocus />
               </label>
             )}
-            <button className="ng-account-submit" disabled={working || (phase === "verify" && code.length !== 6)}>
+            <Button className="ng-account-submit" disabled={working || (phase === "verify" && code.length !== 6)}>
               {working ? "Verifying…" : phase === "token" ? "Continue to QR setup" : phase === "verify" ? "Verify authenticator" : "Sign in"}
-            </button>
+            </Button>
             {phase === "login" ? <button className="ng-account-link" type="button" onClick={() => { setUseRecovery(!useRecovery); setCode(""); setError("") }}>{useRecovery ? "Use authenticator instead" : "Lost your phone? Use a recovery code"}</button> : null}
             {phase === "verify" ? <button className="ng-account-link" type="button" onClick={() => { setPhase("token"); setCode(""); setQrDataUrl(""); setManualKey("") }}>Start QR setup again</button> : null}
           </form>
         ) : null}
         {error && <p className="ng-account-error" role="alert">{error}</p>}
         <p className="ng-account-footer">No password. No email required. Protected by your authenticator.</p>
-      </section>
+      </Card>
     </main>
+    </DocsSiteProviders>
   )
 }

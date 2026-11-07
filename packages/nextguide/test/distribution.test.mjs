@@ -214,6 +214,7 @@ test("official docs site and installed sites resolve the same package UI", async
   assert.equal(typeof site.DocsSitePage, "function")
   assert.equal(typeof site.DocsSiteSearchProvider, "function")
   assert.equal(typeof site.DocsSiteProviders, "function")
+  assert.equal(typeof site.NextGuideBuildBadge, "function")
   const css = readFileSync(join(root, "dist/components/styles/site.css"), "utf8")
   const officialCss = readFileSync(join(root, "../../apps/web/app/site.css"), "utf8")
   assert.match(css, /--background: #ffffff/)
@@ -258,4 +259,30 @@ test("next/navigation and next/link compile without hoisted Next.js types", () =
   // not imported by this isolated library distribution test.
   assert.match(compiled, /function NextDocsNavigationLink/)
   assert.match(compiled, /linkAs: NextDocsNavigationLink/)
+})
+
+test("Build badge contains a versioned dialog and docs prefetch is enabled", () => {
+  const badge = readFileSync(join(root, "src/components/site/build-badge.tsx"), "utf8")
+  const sidebar = readFileSync(join(root, "src/components/site/sidebar.tsx"), "utf8")
+  for (const part of ["DialogTrigger asChild", "DialogTitle", "NextGuide version", "View source on GitHub"]) assert.ok(badge.includes(part), part)
+  assert.ok(sidebar.includes("<NextGuideBuildBadge version={version}"))
+  const navigation = readFileSync(join(root, "dist/components/site/next-navigation.js"), "utf8")
+  assert.ok(navigation.includes("prefetch: true"))
+  assert.ok(navigation.includes("targets.length >= 18"))
+})
+
+test("Account Mode shares Docs UI tokens and controls", () => {
+  const css = readFileSync(join(root, "dist/account/account.css"), "utf8")
+  const access = readFileSync(join(root, "src/account/client.tsx"), "utf8")
+  const studio = readFileSync(join(root, "src/account/studio.tsx"), "utf8")
+  assert.ok(css.includes('@import "../components/styles/site.css"'))
+  assert.ok(css.includes("var(--background)"))
+  assert.ok(access.includes('<DocsSiteProviders defaultTheme="system" enableSystem>'))
+  assert.ok(access.includes('<Card className="ng-account-card"'))
+  assert.ok(access.includes("<Input"))
+  assert.ok(studio.includes('<Card className="ng-studio-section"'))
+  assert.ok(studio.includes("<ThemeToggle"))
+  assert.ok(studio.includes("function StudioSelect"))
+  assert.ok(studio.includes("<SelectTrigger"))
+  assert.ok(studio.includes("<SelectContent"))
 })

@@ -221,6 +221,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     .replace("footerEnabled={ngCopyright.enabled !== false}", "footerEnabled={settings.copyrightEnabled}")
     .replace("footerText={ngCopyright.text}", "footerText={settings.copyrightText}")
     .replace("footerHref={ngCopyright.href}", "footerHref={settings.copyrightHref}")
+  layout = layout.replace("prewarm={true}", "prewarm={false}")
   // The account wizard's font selectors must change the actual published docs,
   // not merely show sample labels in the dashboard.
   layout = layout.replace(
@@ -256,7 +257,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     throw new Error("NextGuide account pages are incompatible with the generated starter.")
   }
   page = page.replace('import { Suspense } from "react"', 'import { Suspense } from "react"\nimport { getStudioSettings } from "nextguide/account/cms"')
-  page = page.replace('  const frontmatter = await docs.getFrontmatter({ slug })\n  const title', '  const runtimeSite = getStudioSettings(process.cwd())\n  const frontmatter = await docs.getFrontmatter({ slug })\n  const title')
+  page = page.replace('  let frontmatter\n  try {', '  const runtimeSite = getStudioSettings(process.cwd())\n  let frontmatter\n  try {')
     .replace('site.description ?? ""', 'runtimeSite.description ?? ""')
     .replace('"url" in site && typeof site.url === "string" && /^https?:\\/\\//.test(site.url)', 'runtimeSite.url && /^https?:\\/\\//.test(runtimeSite.url)')
     .replace('new URL(imagePath, site.url.replace', 'new URL(imagePath, runtimeSite.url.replace')

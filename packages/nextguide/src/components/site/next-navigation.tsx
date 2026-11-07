@@ -15,23 +15,61 @@ import { SearchProvider, type SearchEntry } from "./search.js"
  * Keeping the adapter here avoids unsafe casts and preserves client routing.
  */
 function NextDocsNavigationLink({ href, children, ...props }: LinkComponentProps) {
-  return <Link href={href} {...props}>{children}</Link>
+  return <Link href={href} prefetch={true} {...props}>{children}</Link>
 }
 
 /**
  * Next.js App Router bridge for generated documentation sites.
  *
- * The public sidebar stays framework-agnostic. This adapter provides real
+ * The public sidebar stays framework-agnostic. This adapter requests full\n * page content in advance instead of only the Next.js 16 partial route shell.\n * It provides real
  * client-side navigation and a reactive pathname; otherwise the default <a>
  * links cause a full document reload and reset expanded sidebar folders.
  */
-export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHref" | "linkAs">) {
+export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHref" | "linkAs"> & { prewarm?: boolean }) {
+  const { prewarm = false, ...sidebarProps } = props
   const pathname = usePathname()
-  return <DocsSiteSidebar {...props} activeHref={pathname ?? undefined} linkAs={NextDocsNavigationLink} />
+  const router = useRouter()
+
+  // Developer Mode MDX is file-backed; warm a bounded number of pages at idle
+  // so the article, not only the Next.js route shell, is ready for next clicks.
+  // Mutable Account Mode leaves this off to avoid prefetching stale CMS content.
+  useEffect(() => {
+    if (!prewarm) return
+    const targets: string[] = []
+    const seen = new Set<string>()
+    const current = window.location.pathname
+    const base = sidebarProps.basePath || "/docs"
+    function visit(items: DocsSiteSidebarProps["items"]) {
+      for (const item of items) {
+        const href = item.href
+        if (targets.length >= 18) return
+        if (href && href.startsWith("/") && !href.startsWith("//") && href !== current &&
+            (base === "/" || href === base || href.startsWith((base.endsWith("/") ? base.slice(0, -1) : base) + "/")) &&
+            !seen.has(href)) {
+          seen.add(href)
+          targets.push(href)
+        }
+        if (item.items?.length) visit(item.items)
+      }
+    }
+    visit(sidebarProps.items)
+    let index = 0
+    let interval: number | undefined
+    const begin = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        const next = targets[index++]
+        if (!next) { if (interval) window.clearInterval(interval); return }
+        router.prefetch(next)
+      }, 110)
+    }, 300)
+    return () => { clearTimeout(begin); if (interval) window.clearInterval(interval) }
+  }, [prewarm, router, sidebarProps.items, sidebarProps.basePath])
+
+  return <DocsSiteSidebar {...sidebarProps} activeHref={pathname ?? undefined} linkAs={NextDocsNavigationLink} />
 }
 
 /**
- * Markdown links are rendered through next/link, so they prefetch and never
+ * Markdown links are rendered through next/link with a full-route prefetch, so they never
  * trigger a browser document navigation in an installed NextGuide site.
  * Explicit external links and download links retain normal anchor behavior.
  */
@@ -40,7 +78,7 @@ export function NextDocsSiteMdxLink({ href, ...props }: AnchorHTMLAttributes<HTM
       props.download !== undefined || (props.target && props.target !== "_self")) {
     return <a href={href} {...props} />
   }
-  return <Link href={href} {...props} />
+  return <Link href={href} prefetch={true} {...props} />
 }
 
 
