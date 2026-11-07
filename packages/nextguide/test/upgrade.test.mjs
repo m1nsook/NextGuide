@@ -254,11 +254,11 @@ test('refreshing an installed alpha restores client routing without touching aut
       .replaceAll('NextDocsSiteClientNavigation', 'OldDocsNavigation')
       .replace('nextguide/site/next', 'nextguide/site')
     const legacyComponents = desiredComponents
-      .replace('import { NextDocsSiteMdxLink } from "nextguide/site/next"\\n', '')
-      .replace('  a: NextDocsSiteMdxLink,\\n', '')
+      .replace('import { NextDocsSiteMdxLink } from "nextguide/site/next"\n', '')
+      .replace('  a: NextDocsSiteMdxLink,\n', '')
     f.write(layoutFile, legacyLayout)
     f.write(componentsFile, legacyComponents)
-    const writtenDocs = '---\\ntitle: Private custom docs\\n---\\n\\nNever discard my work.\\n'
+    const writtenDocs = '---\ntitle: Private custom docs\n---\n\nNever discard my work.\n'
     f.write('content/docs/index.mdx', writtenDocs)
     const originalNav = f.read('content/docs/_meta.json')
 
