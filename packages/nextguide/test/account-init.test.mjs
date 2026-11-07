@@ -106,3 +106,24 @@ test("conflicting user project file rolls back bootstrap and preserves the file"
     assert.equal(existsSync(privateFile), false)
   } finally { rmSync(project, { recursive: true, force: true }) }
 }))
+
+test("Account Mode API and admin routes work with Cache Components and load true font previews", () => isolated(() => {
+  const { project, inspection } = fixture()
+  try {
+    initAccount(project, inspection)
+    for (const filename of [
+      "src/app/admin/page.tsx",
+      "src/app/api/nextguide/account/[action]/route.ts",
+      "src/app/api/nextguide/studio/[action]/route.ts",
+      "src/app/nextguide/media/[name]/route.ts",
+    ]) {
+      assert.doesNotMatch(readFileSync(join(project, filename), "utf8"), /export const runtime\\s*=/, filename)
+    }
+    const admin = readFileSync(join(project, "src/app/admin/page.tsx"), "utf8")
+    for (const key of ["--ng-preview-inter", "--ng-preview-geist", "--ng-preview-ibm-plex-sans",
+      "--ng-preview-jetbrains-mono", "--ng-preview-geist-mono", "--ng-preview-ibm-plex-mono"]) {
+      assert.ok(admin.includes(key), key + " must be loaded using next/font/google")
+    }
+    assert.match(admin, /ng-studio-font-assets/)
+  } finally { rmSync(project, { recursive: true, force: true }) }
+}))
