@@ -182,6 +182,43 @@ async function init(args) {
     process.exitCode = 2;
     return;
   }
+  const directory = projectPath ?? process.cwd();
+  // Existing installations should be upgraded, not reinitialized. Detect them
+  // before asking for a new mode or mount path, so an installed site never gets
+  // a confusing second-install wizard or a huge file-conflict dump.
+  let installedMode;
+  let installedBasePath;
+  try {
+    const existing = JSON.parse(readFileSync(join(directory, "nextguide.config.json"), "utf8"));
+    if (existing && ["developer", "account"].includes(existing.mode)) {
+      installedMode = existing.mode;
+      installedBasePath = existing.basePath ?? "/docs";
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT" && !(error instanceof SyntaxError)) throw error;
+  }
+  if (installedMode) {
+    const upgradeFlags = [
+      ...(appearance.mode ? ["--" + appearance.mode] : []),
+      ...(appearance.accent ? ["--accent:" + appearance.accent] : []),
+    ];
+    process.stderr.write(
+      "NextGuide " + installedMode + " Mode is already initialized at " + installedBasePath + ".\n" +
+      "Your pages and configuration were not modified.\n"
+    );
+    if (installedMode === "developer") {
+      process.stderr.write("To update this installation, run: nextguide upgrade --refresh-generated" +
+        (upgradeFlags.length ? " " + upgradeFlags.join(" ") : "") + "\n");
+    } else {
+      process.stderr.write("Account Mode is already initialized; do not run init a second time.\n");
+    }
+    if (basePath && basePath !== installedBasePath) {
+      process.stderr.write("Changing from " + installedBasePath + " to " + basePath +
+        " is a separate mount-path migration and cannot be done by re-running init.\n");
+    }
+    process.exitCode = 2;
+    return;
+  }
   const interactive = !yes && process.stdin.isTTY && process.stdout.isTTY;
   // Existing non-interactive installations preserve Developer Mode to avoid
   // silently introducing server state into CI or scripted docs deployments.
@@ -212,7 +249,6 @@ async function init(args) {
     process.exitCode = 2;
     return;
   }
-  const directory = projectPath ?? process.cwd();
   try {
     const status = inspectProject(directory);
     if (basePath === "/" && interactive && !replaceHome) {
@@ -235,6 +271,7 @@ async function init(args) {
     process.stdout.write("Router: " + result.router.name + " (" + result.router.folder + ")\n");
     process.stdout.write("Documentation URL: " + result.basePath + "\n");
     process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
+    process.stdout.write("Upgrade templates from installed NextGuide package: " + version + "\n");
     for (const name of result.created) process.stdout.write("  " + (dryRun ? "WOULD CREATE" : "CREATE") + " " + name + "\n");
     for (const name of result.modified) process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + name + "\n");
     for (const name of result.backedUp) process.stdout.write("  " + (dryRun ? "WOULD BACK UP" : "BACKUP") + " " + name + "\n");
@@ -288,7 +325,7 @@ function upgrade(args) {
     process.stdout.write("NextGuide Developer Mode " + (dryRun ? "upgrade preview" : "upgrade complete") + "\n");
     process.stdout.write("Project: " + result.projectDirectory + "\n");
     process.stdout.write("Appearance: " + result.appearance.mode + " / " + result.appearance.accent + "\n");
-    if (!result.changes.length) process.stdout.write("No configuration or generated file changes needed.\n");
+    if (!result.changes.length) process.stdout.write("All files match the templates in this installed package. No changes were required.\n");
     for (const change of result.changes) {
       process.stdout.write("  " + (dryRun ? "WOULD UPDATE" : "UPDATE") + " " + change.path + "\n");
       if (change.backup) process.stdout.write("    Backup: " + change.backup + "\n");

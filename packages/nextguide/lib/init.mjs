@@ -248,7 +248,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
 
 export function applyPlan(plan, dryRun = false) {
   const conflicts = Object.keys(plan.files).filter((file) => existsSync(join(plan.directory, file)))
-  if (conflicts.length) throw new Error('Refusing to overwrite existing project files:\\n' + conflicts.map((x) => '  ' + x).join('\\n'))
+  if (conflicts.length) throw new Error('Refusing to overwrite existing project files:\n' + conflicts.map((x) => '  ' + x).join('\n'))
   const patch = plan.patch
   if (patch && existsSync(join(plan.directory, patch.backup))) {
     throw new Error('Cannot back up ' + patch.path + ': ' + patch.backup + ' already exists.')
