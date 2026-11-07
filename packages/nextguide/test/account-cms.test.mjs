@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, rmSync
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { createBootstrap, totp } from "../lib/account-auth.mjs"
-import { listStudioPages, readStudioPage, saveStudioPage, deleteStudioPage, getStudioNavigation, setStudioNavigation, getStudioSettings, saveStudioSettings, listStudioMedia, uploadStudioMedia, deleteStudioMedia } from "../lib/account-cms.mjs"
+import { listStudioPages, readStudioPage, saveStudioPage, deleteStudioPage, getStudioNavigation, setStudioNavigation, getStudioSettings, saveStudioSettings, listStudioMedia, uploadStudioMedia, readStudioMedia, deleteStudioMedia } from "../lib/account-cms.mjs"
 
 function fixture(fn) {
   const root = mkdtempSync(join(tmpdir(), "nextguide-studio-"))
@@ -83,6 +83,9 @@ test("media accepts only verified raster signatures and randomized names", () =>
   const result = uploadStudioMedia(root, "image/png", data)
   assert.match(result.url, /^\/nextguide\/media\/[a-f0-9]{24}\.png$/)
   assert.deepEqual(listStudioMedia(root), [result])
+  assert.equal(readStudioMedia(root, result.name).mime, "image/png")
+  assert.ok(existsSync(join(root, ".private/media", result.name)))
+  assert.equal(existsSync(join(root, "public/nextguide/media", result.name)), false)
   assert.throws(() => uploadStudioMedia(root, "image/svg+xml", data), /Only PNG/)
   assert.throws(() => uploadStudioMedia(root, "image/png", Buffer.from("javascript").toString("base64")), /Invalid image file/)
   assert.deepEqual(deleteStudioMedia(root, result.name), { deleted: result.name })

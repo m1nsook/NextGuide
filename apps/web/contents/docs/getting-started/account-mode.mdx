@@ -50,7 +50,7 @@ The authenticated dashboard provides an overview, MDX page creation/editing/dele
 
 The page editor includes insert tools for Markdown and NextGuide components and a draft reading preview. **MDX component rendering is authoritative on the published documentation page; the draft preview is an approximation.**
 
-Page files stay in `content/docs`, uploaded raster images stay in `public/nextguide/media`, and private account credentials and site settings stay outside the source repository. Only PNG, JPEG, WebP, and GIF assets are supported (maximum 2 MB per image). SVG uploads are intentionally blocked.
+Page files stay in `content/docs`, uploaded raster images stay in the **private persistent Account Mode data directory**, and a read-only `/nextguide/media/*` route serves the media without exposing account credentials. Private site settings also stay outside the source repository. Only PNG, JPEG, WebP, and GIF assets are supported (maximum 2 MB per image). SVG uploads are intentionally blocked.
 
 Changing the authenticator requires a valid code from the existing authenticator, then verification of a new one. Recovery code renewal invalidates earlier codes, and the security page can sign out all active sessions.
 
