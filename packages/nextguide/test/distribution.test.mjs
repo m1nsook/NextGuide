@@ -282,4 +282,7 @@ test("Account Mode shares Docs UI tokens and controls", () => {
   assert.ok(access.includes("<Input"))
   assert.ok(studio.includes('<Card className="ng-studio-section"'))
   assert.ok(studio.includes("<ThemeToggle"))
+  assert.ok(studio.includes("function StudioSelect"))
+  assert.ok(studio.includes("<SelectTrigger"))
+  assert.ok(studio.includes("<SelectContent"))
 })
