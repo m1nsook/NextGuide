@@ -4,8 +4,6 @@ import { ImageResponse } from "next/og"
 import { docs, componentDocs } from "@/lib/source"
 import { site } from "@/lib/site"
 
-export const dynamicParams = false
-
 export async function generateStaticParams() {
   const groups = [{ section: "docs", source: docs }, { section: "components", source: componentDocs }]
   return (await Promise.all(groups.map(async ({ section, source }) =>
