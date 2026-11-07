@@ -1,0 +1,127 @@
+# Intentionally tiny triage workflow; NO checkout, installs, builds, tests, schedules,
+# push triggers, PR synchronize triggers, or npm publication.
+# One label-only runner on new issues or PRs; cap duration to two minutes.
+name: Auto-label issues and pull requests
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions: {}
+
+jobs:
+  triage:
+    name: Apply metadata labels
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Classify issue or pull request (no source checkout)
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const pull = context.payload.pull_request;
+            const number = issue?.number ?? pull?.number;
+            if (!number) return;
+
+            const labelCatalog = {
+              "status: triage": { color: "e4e669", description: "Awaiting initial review" },
+              "type: bug": { color: "d73a4a", description: "A reproducible defect" },
+              "type: build-error": { color: "b60205", description: "Installation, CLI, build or runtime failure" },
+              "type: feature": { color: "a2eeef", description: "Requested enhancement" },
+              "type: documentation": { color: "0075ca", description: "Missing, confusing or outdated documentation" },
+              "area: developer-mode": { color: "bfdadc", description: "File-first Developer Mode" },
+              "area: account-mode": { color: "c5def5", description: "Browser-managed Account Mode" },
+              "area: cli": { color: "d4c5f9", description: "Installer, CLI commands or generated routes" },
+              "area: components": { color: "5319e7", description: "MDX, UI, blocks and component library" },
+              "area: navigation": { color: "f9d0c4", description: "Navigation, links, routing or loading flashes" },
+              "area: deployment": { color: "fef2c0", description: "Hosting, packaging or runtime environments" },
+              "area: website": { color: "1d76db", description: "Official NextGuide documentation website" },
+              "area: tests": { color: "c2e0c6", description: "Local tests and release acceptance" },
+              "area: dependencies": { color: "006b75", description: "Dependencies or lockfile updates" },
+              "area: community": { color: "ededed", description: "Community templates and repository guidance" }
+            };
+            const labels = new Set(["status: triage"]);
+
+            if (issue) {
+              const title = issue.title || "";
+              const body = issue.body || "";
+              if (/^\[Bug\]/i.test(title)) labels.add("type: bug");
+              if (/^\[Error\]/i.test(title)) labels.add("type: build-error");
+              if (/^\[Feature\]/i.test(title)) labels.add("type: feature");
+              if (/^\[Docs\]/i.test(title)) labels.add("type: documentation");
+              if (/\bDeveloper Mode\b/i.test(body)) labels.add("area: developer-mode");
+              if (/\bAccount Mode\b/i.test(body)) labels.add("area: account-mode");
+              if (/\bsidebar|navigation|page flash|full.page reload|404|redirect\b/i.test(title + " " + body)) {
+                labels.add("area: navigation");
+              }
+              if (/\binstall|init |CLI|command|upgrade\b/i.test(title)) labels.add("area: cli");
+              if (/\bdeploy|hosting|serverless|Vercel|GitHub Pages\b/i.test(title)) {
+                labels.add("area: deployment");
+              }
+            }
+
+            if (pull) {
+              // Only inspect GitHub's changed-file metadata on the PR base.
+              // NEVER check out, import, or execute a contributor's PR contents.
+              const filenames = await github.paginate(github.rest.pulls.listFiles, {
+                owner, repo, pull_number: number, per_page: 100
+              });
+              for (const { filename } of filenames) {
+                if (filename === "README.md" || filename === "CONTRIBUTING.md" ||
+                    filename.endsWith("/README.md") || filename.startsWith("apps/web/contents/")) {
+                  labels.add("type: documentation");
+                }
+                if (filename.startsWith("packages/nextguide/src/account/") ||
+                    filename.startsWith("packages/nextguide/lib/account-")) {
+                  labels.add("area: account-mode");
+                }
+                if (filename.startsWith("packages/nextguide/bin/") ||
+                    filename.startsWith("packages/nextguide/lib/init") ||
+                    filename.startsWith("packages/nextguide/lib/upgrade") ||
+                    filename.startsWith("packages/nextguide/lib/starter-")) {
+                  labels.add("area: cli");
+                }
+                if (filename.startsWith("packages/nextguide/src/components/") ||
+                    filename.startsWith("packages/nextguide/src/ui/") ||
+                    filename.startsWith("packages/nextguide/src/blocks/")) {
+                  labels.add("area: components");
+                }
+                if (/navigation|sidebar|page-footer/.test(filename)) labels.add("area: navigation");
+                if (filename.startsWith("apps/web/app/") ||
+                    filename.startsWith("apps/web/components/")) labels.add("area: website");
+                if (filename.startsWith("packages/nextguide/test/") ||
+                    filename.startsWith("scripts/verify-")) labels.add("area: tests");
+                if (/package\.json$|bun\.lock$|package-lock\.json$/.test(filename)) labels.add("area: dependencies");
+                if (filename.startsWith(".github/") || filename === "SECURITY.md") labels.add("area: community");
+              }
+            }
+
+            // GitHub issue form defaults cannot attach labels unless those labels
+            // already exist. Provision only the labels needed for this event.
+            for (const name of labels) {
+              const definition = labelCatalog[name];
+              if (!definition) continue;
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                try {
+                  await github.rest.issues.createLabel({
+                    owner, repo, name, color: definition.color, description: definition.description
+                  });
+                } catch (race) {
+                  if (race.status !== 422) throw race;
+                }
+              }
+            }
+
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number: number, labels: [...labels]
+            });
