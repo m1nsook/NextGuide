@@ -66,6 +66,16 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
   run("bun", ["install"], folder)
   const output = run(process.execPath, [cli, "init", "--developer", "--router", router, "--base-path", basePath, "--yes", ...(basePath === "/" ? ["--replace-home"] : [])], folder)
   assert.match(output, /CREATE/)
+  if (router === "app") {
+    const rootLayout = join(folder, "src", "app", "layout.tsx")
+    const source = readFileSync(rootLayout, "utf8")
+    assert.match(source, /<html suppressHydrationWarning lang="en">/,
+      "App Router root html must suppress only theme-owned hydration attributes")
+    const backup = rootLayout + ".nextguide-backup"
+    assert.ok(existsSync(backup), "The existing user root layout must be backed up")
+    const original = readFileSync(backup, "utf8")
+    assert.match(original, /<html lang="en">/, "The backup must preserve the original root html")
+  }
   run(process.execPath, [join(folder, "node_modules", "next", "dist", "bin", "next"), "build"], folder)
   if (!cacheComponents) {
     for (const page of (basePath === "/" ? ["index.html", "getting-started/index.html"] : ["docs/index.html", "docs/getting-started/index.html"])) {
