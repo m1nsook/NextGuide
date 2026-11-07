@@ -25,7 +25,7 @@ test('initializes src/app TypeScript project with real pages and config', () => 
     const r = initDeveloper(d, inspect(d, ['src/app']))
     assert.equal(r.created.length, 17)
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/opengraph-image.tsx')))
-    assert.match(read(d, 'src/app/docs/[[...slug]]/opengraph-image.tsx'), /renderNextGuideOgImage/)
+    assert.match(read(d, 'src/app/docs/[[...slug]]/opengraph-image.tsx'), /NextGuideOgCard/)
     assert.equal(r.mode, 'developer')
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/page.tsx')))
     assert.ok(existsSync(join(d, 'src/app/docs/layout.tsx')))
