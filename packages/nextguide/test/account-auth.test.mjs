@@ -3,7 +3,7 @@ import { test } from "node:test"
 import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { accountFile, accountStatus, base32Encode, beginEnrollment, createBootstrap, finishEnrollment, matchingTotpStep, otpUri, sameOrigin, signIn, signOut, rotateBootstrap, totp, verifySession } from "../lib/account-auth.mjs"
+import { accountFile, accountStatus, base32Encode, beginEnrollment, createBootstrap, finishEnrollment, matchingTotpStep, otpUri, sameOrigin, signIn, signOut, rotateBootstrap, beginAuthenticatorRotation, finishAuthenticatorRotation, renewRecoveryCodes, revokeAllSessions, totp, verifySession } from "../lib/account-auth.mjs"
 
 const make = () => mkdtempSync(join(tmpdir(), "nextguide-account-"))
 function fixture(fn) {
@@ -42,7 +42,8 @@ test("setup is terminal-token gated, owner is unique, code replay is rejected, a
     const now = Date.now()
     const secret = JSON.parse(readFileSync(file, "utf8")).pending.secret
     const firstCode = totp(secret, now)
-    assert.throws(() => finishEnrollment(root, newToken, "000000", now), /Invalid authenticator code/)
+    const invalidCode = firstCode === "000000" ? "000001" : "000000"
+    assert.throws(() => finishEnrollment(root, newToken, invalidCode, now), /Invalid authenticator code/)
     const complete = finishEnrollment(root, newToken, firstCode, now)
     assert.equal(complete.recoveryCodes.length, 10)
     assert.equal(verifySession(root, complete.session), true)
@@ -57,6 +58,21 @@ test("setup is terminal-token gated, owner is unique, code replay is rejected, a
     const backup = signIn(root, complete.recoveryCodes[0], now + 31_000)
     assert.equal(backup.usedRecovery, true)
     assert.throws(() => signIn(root, complete.recoveryCodes[0], now + 32_000), /already-used code/)
+    const rotation = await beginAuthenticatorRotation(root, backup.session, totp(secret, now + 60_000), {
+      time: now + 60_000, qr: async uri => uri,
+    })
+    assert.match(rotation.qrDataUrl, /^otpauth:\/\/totp\//)
+    assert.notEqual(rotation.manualKey, secret)
+    const refreshed = finishAuthenticatorRotation(root, backup.session, totp(rotation.manualKey, now + 60_000), now + 60_000)
+    assert.equal(refreshed.recoveryCodes.length, 10)
+    assert.equal(verifySession(root, backup.session), false)
+    assert.equal(verifySession(root, refreshed.session), true)
+    assert.throws(() => signIn(root, totp(secret, now + 90_000), now + 90_000), /already-used code|Invalid/)
+    const newCodes = renewRecoveryCodes(root, refreshed.session, totp(rotation.manualKey, now + 90_000), now + 90_000)
+    assert.equal(newCodes.recoveryCodes.length, 10)
+    assert.throws(() => signIn(root, refreshed.recoveryCodes[0], now + 91_000), /already-used code/)
+    assert.equal(revokeAllSessions(root, refreshed.session).ok, true)
+    assert.equal(verifySession(root, refreshed.session), false)
   } finally {
     if (previous === undefined) delete process.env.NEXTGUIDE_DATA_DIR
     else process.env.NEXTGUIDE_DATA_DIR = previous
