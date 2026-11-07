@@ -19,7 +19,16 @@
     "types": [
       "node"
     ],
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "baseUrl": ".",
+    "paths": {
+      "next/link": [
+        "./src/types/next-link.d.ts"
+      ],
+      "next/navigation": [
+        "./src/types/next-navigation.d.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts",
