@@ -1,9 +1,30 @@
 name: NextGuide Docs (GitHub Pages)
 
-# Manual only: no build jobs on pushes, pull requests or merge.
-# This workflow can consume significant runner minutes. Review before running.
+# Auto-deploy official App Router docs after relevant main-branch changes.
+# PRs are build-tested by pack:dev; Pages deployment is never run on PRs.
+# Path filters avoid spending runner minutes on unrelated code changes.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nextguide-pages.yml"
+      - "apps/web/**"
+      - "packages/nextguide/src/components/**"
+      - "packages/nextguide/src/mdx/**"
+      - "packages/nextguide/src/ui/**"
+      - "packages/nextguide/src/blocks/**"
+      - "packages/nextguide/src/og/**"
+      - "packages/nextguide/src/fonts/**"
+      - "packages/nextguide/src/icons/**"
+      - "packages/nextguide/src/openapi/**"
+      - "packages/nextguide/src/core/**"
+      - "packages/nextguide/lib/starter-templates.mjs"
+      - "packages/nextguide/lib/starter-content.mjs"
+      - "packages/nextguide/package.json"
+      - "scripts/verify-official-links.mjs"
+      - "scripts/verify-generated-starter.mjs"
+      - "bun.lock"
 
 permissions:
   contents: read
