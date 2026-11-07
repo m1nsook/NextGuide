@@ -1,0 +1,69 @@
+name: Build or runtime error
+description: Report an installation, compilation, CLI, or server error.
+title: "[Error] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Include the first meaningful error message and the command that caused it.
+        Remove credentials, environment variable values, setup tokens, and private paths where possible.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Where does the error happen?
+      options:
+        - Installation or npm package
+        - CLI initialization or upgrade
+        - Next.js development server
+        - Next.js production build
+        - Next.js production runtime
+        - Account Mode authentication or storage
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: NextGuide mode
+      options:
+        - Developer Mode
+        - Account Mode (unreleased preview)
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: NextGuide and Next.js versions
+      placeholder: "NextGuide 0.0.1-alpha.0; Next.js 16.x"
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command that failed
+      placeholder: "bun run build"
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Error output
+      description: Include enough of the stack trace to identify the file and error. Redact secrets.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      placeholder: "A fresh install, after upgrading from alpha, specific MDX page, etc."
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment details (optional)
+      description: OS, router, Node/Bun versions, hosting provider, and any relevant config without secrets.
+    validations:
+      required: false

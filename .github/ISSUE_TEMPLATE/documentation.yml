@@ -1,0 +1,39 @@
+name: Documentation issue
+description: Report missing, confusing, incorrect, or outdated documentation.
+title: "[Docs] "
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Documentation page
+      description: Link to the affected official documentation page when available.
+      placeholder: "https://m1nsook.github.io/NextGuide/docs/getting-started/installation/"
+    validations:
+      required: false
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of documentation problem
+      options:
+        - Incorrect or outdated instructions
+        - Missing installation or setup steps
+        - Broken link or missing page
+        - Platform-specific instructions without alternatives
+        - Code example does not work
+        - Accessibility or readability
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What is wrong?
+      description: Include the confusing text or steps and explain what happens.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should the documentation explain instead?
+    validations:
+      required: true

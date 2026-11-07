@@ -1,0 +1,88 @@
+name: Bug report
+description: Report a reproducible problem with NextGuide.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve NextGuide. Please search existing issues first.
+        Never paste passwords, authentication tokens, recovery codes, or private account data.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: NextGuide mode
+      options:
+        - Developer Mode
+        - Account Mode (unreleased preview)
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: nextguide-version
+    attributes:
+      label: NextGuide version
+      description: Run `bunx nextguide --version` or `npx nextguide --version`.
+      placeholder: "0.0.1-alpha.0"
+    validations:
+      required: true
+  - type: input
+    id: nextjs-version
+    attributes:
+      label: Next.js version
+      placeholder: "16.x"
+    validations:
+      required: true
+  - type: dropdown
+    id: router
+    attributes:
+      label: Next.js router
+      options:
+        - App Router
+        - Pages Router
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: system
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What did you do before the problem appeared?
+      placeholder: |
+        1. Install NextGuide in a fresh Next.js application.
+        2. Open /docs.
+        3. Click a nested sidebar link.
+        4. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: "The page changes without a full reload, white flash, or sidebar reset."
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, videos, or logs
+      description: Optional. Drag files here or paste redacted logs. Mention whether it happens in dev, production, or both.
+    validations:
+      required: false
