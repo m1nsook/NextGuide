@@ -276,10 +276,36 @@ test('refreshing an installed alpha restores client routing without touching aut
     assert.equal(f.read(layoutFile), desiredLayout)
     assert.equal(f.read(componentsFile), desiredComponents)
     assert.match(f.read(layoutFile), /NextDocsSiteClientNavigation/)
+    assert.match(f.read(layoutFile), /NextDocsSiteContent/)
+    assert.match(f.read('src/app/docs/[[...slug]]/page.tsx'), /DocumentationPending/)
     assert.match(f.read(componentsFile), /a: NextDocsSiteMdxLink/)
     assert.doesNotMatch(f.read(layoutFile), /Loading documentation/)
     assert.equal(f.read('content/docs/index.mdx'), writtenDocs)
     assert.equal(f.read('content/docs/_meta.json'), originalNav)
     assert.equal(upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true }).changes.length, 0)
+  } finally { f.clear() }
+})
+
+test('re-running init on installed Developer Mode shows upgrade command without changing files', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const original = f.read('nextguide.config.json')
+    const page = f.read('content/docs/index.mdx')
+    const run = spawnSync(process.execPath, [cli, 'init', '--developer', '--accent:red', '--yes'], {
+      cwd: f.directory, encoding: 'utf8',
+    })
+    assert.equal(run.status, 2, run.stderr)
+    assert.match(run.stderr, /already initialized/)
+    assert.match(run.stderr, /upgrade --refresh-generated --accent:red/)
+    assert.equal(f.read('nextguide.config.json'), original)
+    assert.equal(f.read('content/docs/index.mdx'), page)
+    const upgrade = spawnSync(process.execPath, [cli, 'upgrade', '--accent:red', '--refresh-generated'], {
+      cwd: f.directory, encoding: 'utf8',
+    })
+    assert.equal(upgrade.status, 0, upgrade.stderr)
+    assert.match(upgrade.stdout, /Appearance: light \/ red/)
+    assert.equal(JSON.parse(f.read('nextguide.config.json')).appearance.accent, 'red')
+    assert.equal(f.read('content/docs/index.mdx'), page)
   } finally { f.clear() }
 })
