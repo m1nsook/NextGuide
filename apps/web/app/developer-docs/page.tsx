@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, BookOpen, Code2, FileCode2, GitBranch } from "lucide-react"
+import { ArrowLeft, ArrowRight, BookOpen, Code2, FileCode2, GitBranch } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Developer Mode — NextGuide",
@@ -16,7 +16,7 @@ const features = [
 export default function DeveloperDocsHome() {
   return (
     <main className="mx-auto min-h-dvh max-w-5xl px-5 py-16 sm:px-10 sm:py-24">
-      <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex text-sm">← NextGuide</Link>
+      <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm"><ArrowLeft className="size-4 shrink-0" aria-hidden="true" />NextGuide</Link>
       <div className="mt-14 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-[var(--ng-accent)]">
         <Code2 size={14} aria-hidden /> Available in alpha
       </div>

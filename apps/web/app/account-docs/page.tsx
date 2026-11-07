@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, BookOpen, LockKeyhole, PanelsTopLeft, Settings2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, BookOpen, LockKeyhole, PanelsTopLeft, Settings2 } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Account Mode — NextGuide",
@@ -16,7 +16,7 @@ const capabilities = [
 export default function AccountDocsHome() {
   return (
     <main className="mx-auto min-h-dvh max-w-5xl px-5 py-16 sm:px-10 sm:py-24">
-      <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex text-sm">← NextGuide</Link>
+      <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm"><ArrowLeft className="size-4 shrink-0" aria-hidden="true" />NextGuide</Link>
       <div className="text-muted-foreground mt-14 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
         <LockKeyhole size={14} aria-hidden /> Authentication preview in development
       </div>
