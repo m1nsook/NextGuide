@@ -1,0 +1,39 @@
+# Run the actual npm tarball packaging command on every PR and main update.
+# Standard GitHub-hosted Linux runner; no artifacts uploaded, no npm publish.
+name: NextGuide pack:dev
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build and package (Ubuntu)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Use Bun 1.4.4
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.4"
+      - name: Install workspace dependencies
+        run: bun install
+      - name: Build, test, and pack the NextGuide npm package
+        run: bun run pack:dev
+      - name: Remove generated package archives
+        if: always()
+        shell: bash
+        run: |
+          # The package is created only to verify packaging. Never upload it.
+          find . -maxdepth 1 -type f -name 'nextguide-*.tgz' -delete

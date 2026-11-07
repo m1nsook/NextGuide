@@ -32,6 +32,9 @@ jobs:
 
             const labelCatalog = {
               "status: triage": { color: "e4e669", description: "Awaiting initial review" },
+              "status: passed": { color: "2da44e", description: "Automated package build passed" },
+              "status: failed": { color: "d73a4a", description: "Automated package build failed" },
+              "type: ci": { color: "b4a7d6", description: "Automated build verification report" },
               "type: bug": { color: "d73a4a", description: "A reproducible defect" },
               "type: build-error": { color: "b60205", description: "Installation, CLI, build or runtime failure" },
               "type: feature": { color: "a2eeef", description: "Requested enhancement" },
@@ -47,11 +50,17 @@ jobs:
               "area: dependencies": { color: "006b75", description: "Dependencies or lockfile updates" },
               "area: community": { color: "ededed", description: "Community templates and repository guidance" }
             };
-            const labels = new Set(["status: triage"]);
+            const isBuildReport = Boolean(issue && /^\[pack:dev\]/i.test(issue.title || ""));
+            const labels = new Set(isBuildReport ? [] : ["status: triage"]);
 
             if (issue) {
               const title = issue.title || "";
               const body = issue.body || "";
+              if (isBuildReport) {
+                labels.add("type: ci");
+                if (/^\[pack:dev\] PASS\b/i.test(title)) labels.add("status: passed");
+                if (/^\[pack:dev\] FAIL\b/i.test(title)) labels.add("status: failed");
+              }
               if (/^\[Bug\]/i.test(title)) labels.add("type: bug");
               if (/^\[Error\]/i.test(title)) labels.add("type: build-error");
               if (/^\[Feature\]/i.test(title)) labels.add("type: feature");
