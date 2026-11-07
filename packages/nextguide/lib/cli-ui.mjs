@@ -27,7 +27,7 @@ export const cliUi = {
     const key = action.replace(/^WOULD /, "")
     const code = key === "CREATE" ? "32" : key === "UPDATE" ? "36" : "33"
     const glyph = key === "CREATE" ? "+" : key === "UPDATE" ? "~" : "↳"
-    write("  " + tint(glyph, code) + " " + tint(action.padEnd(12), "1;" + code) + " " + path)
+    write("  " + tint(glyph, code) + " " + tint(action, "1;" + code) + " " + path)
   },
   backup(path) {
     write("    " + tint("↳ Backup:", "33") + " " + path)
