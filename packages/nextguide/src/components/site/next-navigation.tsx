@@ -44,7 +44,7 @@ export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHre
         const href = item.href
         if (targets.length >= 18) return
         if (href && href.startsWith("/") && !href.startsWith("//") && href !== current &&
-            (base === "/" || href === base || href.startsWith(base.replace(/\\/$/, "") + "/")) &&
+            (base === "/" || href === base || href.startsWith((base.endsWith("/") ? base.slice(0, -1) : base) + "/")) &&
             !seen.has(href)) {
           seen.add(href)
           targets.push(href)
@@ -54,15 +54,15 @@ export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHre
     }
     visit(sidebarProps.items)
     let index = 0
-    let interval: ReturnType<typeof setInterval> | undefined
+    let interval: number | undefined
     const begin = window.setTimeout(() => {
       interval = window.setInterval(() => {
         const next = targets[index++]
-        if (!next) { if (interval) clearInterval(interval); return }
+        if (!next) { if (interval) window.clearInterval(interval); return }
         router.prefetch(next)
       }, 110)
     }, 300)
-    return () => { clearTimeout(begin); if (interval) clearInterval(interval) }
+    return () => { clearTimeout(begin); if (interval) window.clearInterval(interval) }
   }, [prewarm, router, sidebarProps.items, sidebarProps.basePath])
 
   return <DocsSiteSidebar {...sidebarProps} activeHref={pathname ?? undefined} linkAs={NextDocsNavigationLink} />
