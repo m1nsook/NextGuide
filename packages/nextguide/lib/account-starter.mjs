@@ -182,12 +182,12 @@ export function initAccount(projectDirectory, inspection, options = {}) {
   if (!layout || !layout.includes("const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])")) {
     throw new Error("NextGuide account layout is incompatible with the generated starter.")
   }
-  layout = layout.replace('import { Suspense } from "react"', 'import { Suspense } from "react"\\nimport { connection } from "next/server"\\nimport { getStudioSettings } from "nextguide/account/cms"')
+  layout = layout.replace('import { Suspense } from "react"', 'import { Suspense } from "react"\nimport { connection } from "next/server"\nimport { getStudioSettings } from "nextguide/account/cms"')
   layout = layout.replace(
     "  const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])",
-    "  await connection()\\n  const settings = getStudioSettings(process.cwd())\\n  const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])"
+    "  await connection()\n  const settings = getStudioSettings(process.cwd())\n  const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])"
   )
-  layout = layout.replace("defaultTheme={appearance.mode}", "defaultTheme={settings.theme}")
+  layout = layout.replace(/defaultTheme=\\{"(?:light|dark|system)"\\}/, "defaultTheme={settings.theme}")
     .replace("data-ng-accent={appearance.accent}", "data-ng-accent={settings.accent}")
     .replace("siteName={site.name}", "siteName={settings.name}")
   plan.files[layoutFile] = layout
@@ -196,8 +196,8 @@ export function initAccount(projectDirectory, inspection, options = {}) {
   if (!page || !page.includes("export async function generateMetadata")) {
     throw new Error("NextGuide account pages are incompatible with the generated starter.")
   }
-  page = page.replace('import { Suspense } from "react"', 'import { Suspense } from "react"\\nimport { getStudioSettings } from "nextguide/account/cms"')
-  page = page.replace('  const frontmatter = await docs.getFrontmatter({ slug })\\n  const title', '  const runtimeSite = getStudioSettings(process.cwd())\\n  const frontmatter = await docs.getFrontmatter({ slug })\\n  const title')
+  page = page.replace('import { Suspense } from "react"', 'import { Suspense } from "react"\nimport { getStudioSettings } from "nextguide/account/cms"')
+  page = page.replace('  const frontmatter = await docs.getFrontmatter({ slug })\n  const title', '  const runtimeSite = getStudioSettings(process.cwd())\n  const frontmatter = await docs.getFrontmatter({ slug })\n  const title')
     .replace('site.description ?? ""', 'runtimeSite.description ?? ""')
     .replace('"url" in site && typeof site.url === "string" && /^https?:\\/\\//.test(site.url)', 'runtimeSite.url && /^https?:\\/\\//.test(runtimeSite.url)')
     .replace('new URL(imagePath, site.url.replace', 'new URL(imagePath, runtimeSite.url.replace')
