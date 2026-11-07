@@ -335,7 +335,7 @@ function confirmCurrentAuthenticator(state, code, time, allowRecovery = false) {
   // Owner recovery requires an already authenticated session *and* a second,
   // unused recovery code. A code used at login cannot be reused here.
   if (allowRecovery && typeof code === "string" &&
-      /^NG-(?:[\\da-fA-F]{4}-){4}[\\da-fA-F]{4}$/.test(code)) {
+      /^NG-(?:[\da-fA-F]{4}-){4}[\da-fA-F]{4}$/.test(code)) {
     const hashed = digest(code.replace(/-/g, "").toUpperCase())
     const index = state.recovery.findIndex(value => equal(value, hashed))
     if (index !== -1) {
@@ -348,8 +348,7 @@ function confirmCurrentAuthenticator(state, code, time, allowRecovery = false) {
   return false
 }
 
-// Changing the authenticator always requires a fresh code from the current
-// device in addition to the signed-in session. No recovery bypass is exposed.
+// Changing the authenticator requires a signed-in session and fresh proof:\n// the current authenticator, or another unused offline recovery code.\n// There is no session-only reset path.
 export async function beginAuthenticatorRotation(project, session, code, { time = Date.now(), qr } = {}) {
   const result = withLock(project, state => {
     requireOwnerSession(state, session, time)
