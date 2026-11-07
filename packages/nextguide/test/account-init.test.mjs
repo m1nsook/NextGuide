@@ -4,6 +4,7 @@ import { mkdtempSync, mkdirSync, existsSync, readFileSync, writeFileSync, rmSync
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { initAccount } from "../lib/account-starter.mjs"
+import { accountFile } from "../lib/account-auth.mjs"
 import ts from "typescript"
 
 function fixture(router = "src/app", typed = true) {
@@ -92,9 +93,10 @@ test("conflicting user project file rolls back bootstrap and preserves the file"
   try {
     const filename = join(project, "nextguide.config.json")
     writeFileSync(filename, '{"custom":true}')
-    const initial = initAccount(project, inspection, { dryRun: true })
+    const privateFile = accountFile(project)
+    assert.throws(() => initAccount(project, inspection, { dryRun: true }), /Refusing to overwrite/)
     assert.throws(() => initAccount(project, inspection), /Refusing to overwrite/)
     assert.equal(readFileSync(filename, "utf8"), '{"custom":true}')
-    assert.equal(existsSync(initial.privateDirectory), false)
+    assert.equal(existsSync(privateFile), false)
   } finally { rmSync(project, { recursive: true, force: true }) }
 }))
