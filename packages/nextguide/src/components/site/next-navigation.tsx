@@ -1,0 +1,61 @@
+"use client"
+
+import { useEffect, type ReactNode } from "react"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { DocsSiteSidebar, type DocsSiteSidebarProps } from "./sidebar.js"
+import { SearchProvider, type SearchEntry } from "./search.js"
+
+/**
+ * Next.js App Router bridge for generated documentation sites.
+ *
+ * The public sidebar stays framework-agnostic. This adapter provides real
+ * client-side navigation and a reactive pathname; otherwise the default <a>
+ * links cause a full document reload and reset expanded sidebar folders.
+ */
+export function NextDocsSiteSidebar(props: Omit<DocsSiteSidebarProps, "activeHref" | "linkAs">) {
+  const pathname = usePathname()
+  return <DocsSiteSidebar {...props} activeHref={pathname ?? undefined} linkAs={Link} />
+}
+
+/** Search results use App Router transitions rather than location.assign. */
+export function NextDocsSiteSearchProvider({ entries, children }: { entries: SearchEntry[]; children: ReactNode }) {
+  const router = useRouter()
+  return <SearchProvider entries={entries} onNavigate={href => router.push(href)}>{children}</SearchProvider>
+}
+
+/**
+ * MDX renders ordinary HTML <a> elements, and component cards/breadcrumbs
+ * also contain normal anchors. Upgrade same-origin docs links to App Router
+ * navigation without rewriting user MDX or intercepting modifier clicks,
+ * external websites, downloads, new tabs, and same-page anchor jumps.
+ * Next.js Link already prevents its handled clicks; we skip those.
+ */
+export function NextDocsSiteClientNavigation({ basePath = "/docs" }: { basePath?: string }) {
+  const router = useRouter()
+  useEffect(() => {
+    const prefix = basePath === "/" ? "/" : basePath.replace(/\/+$/, "")
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.altKey || event.ctrlKey ||
+          event.metaKey || event.shiftKey || !(event.target instanceof Element)) return
+      const anchor = event.target.closest("a[href]")
+      if (!(anchor instanceof HTMLAnchorElement) || !anchor.closest(".ng-official-docs")) return
+      if (anchor.hasAttribute("download") ||
+          (anchor.target && anchor.target !== "_self") ||
+          anchor.rel.split(/\s+/).includes("external")) return
+      let target: URL
+      try { target = new URL(anchor.href, window.location.href) }
+      catch { return }
+      if (target.origin !== window.location.origin || !["http:", "https:"].includes(target.protocol)) return
+      const inDocs = prefix === "/" || target.pathname === prefix || target.pathname.startsWith(prefix + "/")
+      if (!inDocs) return
+      // Keep native hash scrolling, history semantics, and back/forward.
+      if (target.pathname === window.location.pathname && target.search === window.location.search) return
+      event.preventDefault()
+      router.push(target.pathname + target.search + target.hash)
+    }
+    document.addEventListener("click", onClick)
+    return () => document.removeEventListener("click", onClick)
+  }, [basePath, router])
+  return null
+}

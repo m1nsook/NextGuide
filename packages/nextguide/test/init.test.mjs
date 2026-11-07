@@ -481,3 +481,22 @@ test('Pages Router can still initialize without an unsupported dynamic image rou
     assert.ok(!result.created.some((p) => p.includes('/og/[...slug]/route.')))
   } finally { clear(d) }
 })
+
+
+test('generated Developer Mode uses App Router links and never shows loading text during navigation', () => {
+  const d = fixture()
+  try {
+    initDeveloper(d, inspect(d, ['src/app']))
+    const layout = read(d, 'src/app/docs/layout.tsx')
+    const page = read(d, 'src/app/docs/[[...slug]]/page.tsx')
+    assert.match(layout, /nextguide\\/site\\/next/)
+    assert.match(layout, /NextDocsSiteSidebar/)
+    assert.match(layout, /NextDocsSiteSearchProvider/)
+    assert.match(layout, /NextDocsSiteClientNavigation/)
+    assert.doesNotMatch(layout, /Loading documentation/)
+    assert.doesNotMatch(page, /Loading page/)
+    assert.match(layout, /fallback=\\{null\\}/)
+    assert.match(page, /fallback=\\{null\\}/)
+    assert.match(read(d, 'src/lib/nextguide.ts'), /getSidebar/)
+  } finally { clear(d) }
+})
