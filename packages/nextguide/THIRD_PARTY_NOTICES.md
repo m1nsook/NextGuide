@@ -27,3 +27,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Monaco editor (MIT)
+
+NextGuide Account Mode uses `@monaco-editor/react` (Copyright © 2018 Suren Atoyan)
+and `monaco-editor` (Copyright © Microsoft Corporation).
+Both components are licensed under the MIT License and are installed as npm dependencies.
+The NextGuide CLI copies the pinned Monaco browser assets into the consumer's
+`public/_nextguide/monaco/vs/` folder to avoid third-party CDN requests.
+
+Their original MIT copyright and license notices accompany their installed
+npm packages, and are available at:
+- https://github.com/suren-atoyan/monaco-react/blob/master/LICENSE
+- https://github.com/microsoft/monaco-editor/blob/main/LICENSE.txt
+
+The MIT License permits use, copying, modification, distribution and
+sublicensing, provided copyright and permission notices are retained.

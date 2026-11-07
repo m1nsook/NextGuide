@@ -5,6 +5,7 @@ import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, 
 import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
 import { AccountThemeMenu } from "./theme-menu.js"
+import { AccountMdxEditor } from "./mdx-editor.js"
 import { Card, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/index.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
@@ -266,7 +267,7 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
                   <label>Title<input value={page.title} onChange={e=>changePage("title",e.target.value)} maxLength={160} placeholder="Installation"/></label>
                   <label>Description<input value={page.description} onChange={e=>changePage("description",e.target.value)} maxLength={500} placeholder="What this page teaches"/></label>
                   <div className="ng-studio-editbar"><button title="Insert heading" onClick={()=>changePage("body",page.body+"\n## New heading\n")}>H2</button><button title="Insert bold" onClick={()=>changePage("body",page.body+"**Bold text**")}>B</button><button title="Insert link" onClick={()=>changePage("body",page.body+"[Link](https://example.com)")}>Link</button><button title="Insert code" onClick={()=>changePage("body",page.body+"\n```ts\nconst hello = 'NextGuide'\n```\n")}>Code</button><button title="Insert callout" onClick={()=>changePage("body",page.body+"\n<Callout kind=\"info\" title=\"Note\">Your message</Callout>\n")}>Callout</button></div>
-                  <label>Page content <textarea className="ng-studio-mdx" value={page.body} onChange={e=>changePage("body",e.target.value)} spellCheck={false} placeholder="# Welcome to your docs..." rows={17}/></label>
+                  <div className="ng-studio-editor-field"><label>MDX source</label><AccountMdxEditor key={page.slug || "new-page"} value={page.body} slug={page.slug} onChange={value=>changePage("body",value)}/></div>
                 </div>
                 {preview?<div className="ng-studio-preview"><div className="ng-studio-preview-head"><BookOpen size={16}/>Draft reading preview <span>(Markdown approximation; MDX components render on the live page)</span></div><div className="ng-studio-preview-copy"><h2>{page.title||"Untitled page"}</h2>{headingPreview(page.body)}</div></div>:null}
                 <div className="ng-studio-editor-actions">{page.version!==null&&page.slug?<button className="ng-studio-button-danger" onClick={removePage}><Trash2 size={16}/>Delete</button>:null}
