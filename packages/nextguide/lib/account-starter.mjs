@@ -199,20 +199,20 @@ export function initAccount(projectDirectory, inspection, options = {}) {
   )
   layout = layout.replace(
     'const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })',
-    'const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })\\n' +
-    'const fontGeist = Geist({ subsets: ["latin"], variable: "--ng-geist" })\\n' +
-    'const fontGeistMono = Geist_Mono({ subsets: ["latin"], variable: "--ng-geist-mono" })\\n' +
-    'const fontIbm = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-ibm-plex" })\\n' +
-    'const fontIbmMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-ibm-plex-mono" })\\n' +
+    'const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })\n' +
+    'const fontGeist = Geist({ subsets: ["latin"], variable: "--ng-geist" })\n' +
+    'const fontGeistMono = Geist_Mono({ subsets: ["latin"], variable: "--ng-geist-mono" })\n' +
+    'const fontIbm = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-ibm-plex" })\n' +
+    'const fontIbmMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--ng-ibm-plex-mono" })\n' +
     'const fontClasses = [fontSans.variable, fontMono.variable, fontGeist.variable, fontGeistMono.variable, fontIbm.variable, fontIbmMono.variable].join(" ")'
   )
   layout = layout.replace(
     '  const settings = getStudioSettings(process.cwd())',
-    '  const settings = getStudioSettings(process.cwd())\\n' +
-    '  const sansFonts = { inter: fontSans.style.fontFamily, geist: fontGeist.style.fontFamily, "ibm-plex-sans": fontIbm.style.fontFamily, "segoe-ui": "\\"Segoe UI\\", system-ui, sans-serif", system: "system-ui, sans-serif" }\\n' +
-    '  const codeFonts = { "jetbrains-mono": fontMono.style.fontFamily, "geist-mono": fontGeistMono.style.fontFamily, "ibm-plex-mono": fontIbmMono.style.fontFamily, "system-mono": "ui-monospace, Consolas, monospace" }\\n' +
-    '  const bodyFamily = sansFonts[settings.bodyFont]\\n' +
-    '  const headingFamily = sansFonts[settings.headingFont]\\n' +
+    '  const settings = getStudioSettings(process.cwd())\n' +
+    '  const sansFonts = { inter: fontSans.style.fontFamily, geist: fontGeist.style.fontFamily, "ibm-plex-sans": fontIbm.style.fontFamily, "segoe-ui": "\\"Segoe UI\\", system-ui, sans-serif", system: "system-ui, sans-serif" }\n' +
+    '  const codeFonts = { "jetbrains-mono": fontMono.style.fontFamily, "geist-mono": fontGeistMono.style.fontFamily, "ibm-plex-mono": fontIbmMono.style.fontFamily, "system-mono": "ui-monospace, Consolas, monospace" }\n' +
+    '  const bodyFamily = sansFonts[settings.bodyFont]\n' +
+    '  const headingFamily = sansFonts[settings.headingFont]\n' +
     '  const codeFamily = codeFonts[settings.codeFont]'
   )
   layout = layout.replace(
@@ -232,7 +232,7 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     .replace('new URL(imagePath, site.url.replace', 'new URL(imagePath, runtimeSite.url.replace')
   plan.files[pageFile] = page
   const styleFile = (plan.router.folder.startsWith("src/") ? "src/" : "") + "styles/nextguide.css"
-  plan.files[styleFile] += "\\n/* Account Mode: user-selected document typography. */\\n.ng-official-docs :is(h1,h2,h3,h4,h5,h6) { font-family: var(--ng-heading-font, var(--font-sans)) !important; }\\n.ng-official-docs :is(code,pre,kbd) { font-family: var(--ng-code-font, var(--font-mono)) !important; }\\n"
+  plan.files[styleFile] += "\n/* Account Mode: user-selected document typography. */\n.ng-official-docs :is(h1,h2,h3,h4,h5,h6) { font-family: var(--ng-heading-font, var(--font-sans)) !important; }\n.ng-official-docs :is(code,pre,kbd) { font-family: var(--ng-code-font, var(--font-mono)) !important; }\n"
   const privateFile = accountFile(directory)
   if (!options.dryRun && existsSync(privateFile)) {
     throw new Error("Account storage already exists. Refusing to overwrite an owner or a setup token.")
