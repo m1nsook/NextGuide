@@ -60,11 +60,12 @@ test("setup is terminal-token gated, owner is unique, code replay is rejected, a
     const backup = signIn(site, complete.recoveryCodes[0], now + 31_000)
     assert.equal(backup.usedRecovery, true)
     assert.throws(() => signIn(site, complete.recoveryCodes[0], now + 32_000), /already-used code/)
-    const authenticatorRotation = await beginAuthenticatorRotation(site, backup.session, totp(secret, now + 60_000), {
+    const authenticatorRotation = await beginAuthenticatorRotation(site, backup.session, complete.recoveryCodes[1], {
       time: now + 60_000, qr: async uri => uri,
     })
     assert.match(authenticatorRotation.qrDataUrl, /^otpauth:\/\/totp\//)
     assert.notEqual(authenticatorRotation.manualKey, secret)
+    await assert.rejects(beginAuthenticatorRotation(site, backup.session, complete.recoveryCodes[1], {time: now + 60_000, qr: async uri => uri}), /Invalid authenticator or unused recovery code/)
     const refreshed = finishAuthenticatorRotation(site, backup.session, totp(authenticatorRotation.manualKey, now + 60_000), now + 60_000)
     assert.equal(refreshed.recoveryCodes.length, 10)
     assert.equal(verifySession(site, backup.session), false)
