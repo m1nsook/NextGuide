@@ -187,7 +187,8 @@ export function initAccount(projectDirectory, inspection, options = {}) {
     "  const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])",
     "  await connection()\n  const settings = getStudioSettings(process.cwd())\n  const [navigation, searchIndex] = await Promise.all([getSidebar(), getSearchIndex()])"
   )
-  layout = layout.replace(/defaultTheme=\\{"(?:light|dark|system)"\\}/, "defaultTheme={settings.theme}")
+  layout = layout.replace('defaultTheme={appearance.mode as "light" | "dark" | "system"}', "defaultTheme={settings.theme}")
+    .replace("defaultTheme={appearance.mode}", "defaultTheme={settings.theme}")
     .replace("data-ng-accent={appearance.accent}", "data-ng-accent={settings.accent}")
     .replace("siteName={site.name}", "siteName={settings.name}")
   plan.files[layoutFile] = layout
