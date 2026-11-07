@@ -466,8 +466,8 @@ test('generated OG image routes reuse NextGuide branding and support App Router 
       assert.match(image, /from "nextguide\/og"/)
       assert.match(image, /getFrontmatter/)
       assert.match(image, /generateStaticParams/)
-      assert.match(image, /siteName: site.name/)
-      assert.match(image, /appearance: appearance.mode/)
+      assert.match(image, /siteName=\\{site.name\\}/)
+      assert.match(image, /appearance=\\{appearance.mode\\}/)
       assert.equal(result.created.length, 17)
     } finally { clear(d) }
   }
