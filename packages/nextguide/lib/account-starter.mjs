@@ -187,6 +187,9 @@ export function initAccount(projectDirectory, inspection, options = {}) {
   if (options.router && options.router !== "app") {
     throw new Error("Account Mode currently requires Next.js App Router. Use --router app.")
   }
+  if (!inspection?.routers?.some(router => router.name === "App Router")) {
+    throw new Error("Account Mode requires a Next.js App Router project.")
+  }
   if (staticExport(directory)) {
     throw new Error("Account Mode needs a running Next.js server. Remove output: 'export' from next.config and use Developer Mode for GitHub Pages.")
   }
