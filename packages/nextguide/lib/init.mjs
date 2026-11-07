@@ -18,7 +18,7 @@ export function normalizeAppearance(value = {}) {
 }
 
 function shellConfig(basePath = '/docs', appearance = normalizeAppearance()) {
-  return `${JSON.stringify({ schemaVersion: 1, mode: 'developer', contentDir: 'content/docs', basePath, appearance, site: { name: 'My Documentation', description: 'Documentation built with NextGuide' } }, null, 2)}\n`
+  return `${JSON.stringify({ schemaVersion: 1, mode: 'developer', contentDir: 'content/docs', basePath, appearance, site: { name: 'My Documentation', description: 'Documentation built with NextGuide', logo: '', logoAlt: '', ogImage: '' }, ngCopyright: { enabled: true, text: 'Built with NextGuide', href: 'https://m1nsook.github.io/NextGuide/' } }, null, 2)}\n`
 }
 
 function pagesAppSource(typescript, stylesImport = '../styles/nextguide.css') {
@@ -196,6 +196,22 @@ export function planDeveloperProject(directory, inspection, routerOption, option
     }
   }
   const aliases = projectImportAliases(directory)
+  // A string in JSON cannot be imported as a React component at runtime.
+  // Resolve it here into a static generated import when refreshing templates.
+  let customFooterFile = null
+  const customFooter = options.ngCopyright?.custom
+  if (customFooter != null && customFooter !== '') {
+    if (typeof customFooter !== 'string' ||
+        !/^(?:src\/)?(?:components|app\/components)\/[a-zA-Z0-9_/-]+\.(?:tsx|jsx|ts|js)$/.test(customFooter) ||
+        customFooter.split('/').some(part => part === '..')) {
+      throw new Error('ngCopyright.custom must be a local component path such as src/components/CustomCopyright.tsx.')
+    }
+    customFooterFile = resolve(directory, customFooter)
+    if (!customFooterFile.startsWith(resolve(directory) + sep) || !existsSync(customFooterFile) ||
+        lstatSync(customFooterFile).isSymbolicLink()) {
+      throw new Error('Custom footer component was not found or is not a regular file: ' + customFooter)
+    }
+  }
   const libFile = root + 'lib/nextguide.' + lib
   const stylesFile = root + 'styles/nextguide.css'
   const mdxFile = root + 'lib/nextguide-mdx-components.' + ext
@@ -215,7 +231,9 @@ export function planDeveloperProject(directory, inspection, routerOption, option
     files[layoutFile] = fullLayoutSource(
       typed, basePath,
       projectImport(directory, aliases, layoutFile, libFile.replace(/\.(ts|js)$/, '')),
-      projectImport(directory, aliases, layoutFile, stylesFile)
+      projectImport(directory, aliases, layoutFile, stylesFile),
+      { importSource: customFooterFile ? projectImport(directory, aliases, layoutFile,
+        customFooterFile.replace(/\.(?:tsx|jsx|ts|js)$/, '')) : null }
     )
     files[pageFile] = fullAppPageSource(
       typed, basePath, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, ''))
@@ -229,7 +247,9 @@ export function planDeveloperProject(directory, inspection, routerOption, option
     const pageFile = router.folder + (basePath === '/' ? '/[[...slug]].' : '/docs/[[...slug]].') + ext
     files[pageFile] = fullPagesPageSource(
       typed, basePath, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, '')),
-      projectImport(directory, aliases, pageFile, mdxFile.replace(/\.(tsx|jsx)$/, ''))
+      projectImport(directory, aliases, pageFile, mdxFile.replace(/\.(tsx|jsx)$/, '')),
+      { importSource: customFooterFile ? projectImport(directory, aliases, pageFile,
+        customFooterFile.replace(/\.(?:tsx|jsx|ts|js)$/, '')) : null }
     )
     const appVariants = ['tsx', 'ts', 'jsx', 'js'].filter((suffix) => existsSync(join(directory, router.folder, '_app.' + suffix)))
     if (appVariants.length > 1) throw new Error('Multiple pages/_app entrypoints detected; please use a single file.')

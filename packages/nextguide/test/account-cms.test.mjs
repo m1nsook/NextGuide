@@ -69,7 +69,7 @@ test("navigation uses NextGuide's array schema and supports ordering and hidden 
 test("settings accept supported themes and fonts and persist outside public web files", () => fixture(root => {
   const original = getStudioSettings(root)
   assert.equal(original.name, "Test Docs")
-  const newSite = { ...original, name:"Hello & goodbye", url:"https://docs.example.com", accent:"purple", theme:"system", bodyFont:"ibm-plex-sans", headingFont:"geist", codeFont:"geist-mono", setupComplete:true }
+  const newSite = { ...original, name:"Hello & goodbye", url:"https://docs.example.com", logo:"/my-logo.svg", ogImage:"/social.png", copyrightEnabled:false, copyrightText:"Custom credit", copyrightHref:"https://example.org", accent:"purple", theme:"system", bodyFont:"ibm-plex-sans", headingFont:"geist", codeFont:"geist-mono", setupComplete:true }
   assert.deepEqual(saveStudioSettings(root, newSite), newSite)
   assert.deepEqual(getStudioSettings(root), newSite)
   assert.equal(existsSync(join(process.env.NEXTGUIDE_DATA_DIR, "site.json")), true)
@@ -77,6 +77,9 @@ test("settings accept supported themes and fonts and persist outside public web 
   assert.throws(() => saveStudioSettings(root, { ...newSite, accent: "unknown" }), /Unsupported accent/)
   assert.throws(() => saveStudioSettings(root, { ...newSite, url: "https://docs.example.com/secret" }), /should not include a path/)
   assert.throws(() => saveStudioSettings(root, { ...newSite, name: "" }), /Invalid site name/)
+  assert.throws(() => saveStudioSettings(root, { ...newSite, logo: "javascript:alert(1)" }), /Invalid logo path/)
+  assert.throws(() => saveStudioSettings(root, { ...newSite, ogImage: "//other-site.example/photo.png" }), /Invalid ogImage path/)
+  assert.throws(() => saveStudioSettings(root, { ...newSite, copyrightHref: "javascript:alert(1)" }), /Invalid footer URL/)
 }))
 
 test("media accepts only verified raster signatures and randomized names", () => fixture(root => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, type ComponentType } from "react"
+import { useEffect, useState, type ComponentType, type ReactNode } from "react"
 import { Menu } from "lucide-react"
 import { DocsNav, type LinkComponentProps } from "../docs/nav.js"
 import type { NavItem } from "../../core/index.js"
@@ -23,9 +23,43 @@ export interface DocsSiteSidebarProps {
   releaseUrl?: string
   activeHref?: string
   linkAs?: ComponentType<LinkComponentProps>
+  /** undefined keeps the official NextGuide mark; "" shows the site's initial. */
+  siteLogo?: string
+  siteLogoAlt?: string
+  /** Completely override the header brand, including name and icon. */
+  siteBrand?: ReactNode
+  /** Bottom sidebar attribution; installed sites enable it via ngCopyright. */
+  footerEnabled?: boolean
+  footerText?: string
+  footerHref?: string
+  /** User-supplied React component rendered instead of the default attribution. */
+  footerContent?: ReactNode
+}
+function SiteHeaderBrand({ name, logo, alt, custom }: { name: string; logo?: string; alt?: string; custom?: ReactNode }) {
+  if (custom !== undefined && custom !== null) return <>{custom}</>
+  if (logo === undefined) return <Logo name={name} />
+  return (
+    <span className="inline-flex min-w-0 items-center gap-2 font-semibold tracking-tight">
+      {logo ? <img src={logo} alt={alt || ""} className="size-5 shrink-0 object-contain" /> :
+        <span aria-hidden="true" className="bg-muted text-foreground inline-flex size-5 shrink-0 items-center justify-center rounded-[5px] text-xs font-semibold">{name.trim().charAt(0).toUpperCase() || "D"}</span>}
+      <span className="truncate">{name}</span>
+    </span>
+  )
+}
+function SidebarAttribution({ enabled, content, text, href }: {
+  enabled?: boolean; content?: ReactNode; text?: string; href?: string
+}) {
+  if (!enabled) return null
+  return <div className="border-t px-6 pt-3 pb-2 text-[11px] text-muted-foreground">
+    {content ?? <a href={href || "https://m1nsook.github.io/NextGuide/"} target="_blank" rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 rounded-sm underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+      {text || "Built with NextGuide"}
+    </a>}
+  </div>
 }
 function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", basePath = "/docs", homeHref = "/",
-  githubUrl, releaseUrl, activeHref, linkAs, showVersionSelector = false }: DocsSiteSidebarProps & { onNavigate?: () => void }) {
+  githubUrl, releaseUrl, activeHref, linkAs, showVersionSelector = false,
+  siteLogo, siteLogoAlt, siteBrand, footerEnabled, footerText, footerHref, footerContent }: DocsSiteSidebarProps & { onNavigate?: () => void }) {
   // Next.js Link is injected by the official docs. Installed sites keep regular
   // links, while basePath deployments automatically resolve /NextGuide correctly.
   const HeaderLink = linkAs ?? "a"
@@ -41,7 +75,7 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
     <div className="flex h-full flex-col">
       <div className="space-y-4 px-4 pt-5 pb-4">
         <HeaderLink href={homeHref} onClick={onNavigate} aria-label={`${siteName} home`} className="flex px-2 text-[17px]">
-          <Logo name={siteName} />
+          <SiteHeaderBrand name={siteName} logo={siteLogo} alt={siteLogoAlt} custom={siteBrand} />
         </HeaderLink>
         <SearchButton />
         {showVersionSelector ? <DocsVersionSelector version={version} basePath={basePath} releaseUrl={releaseUrl} onNavigate={onNavigate} linkAs={linkAs} /> : null}
@@ -52,6 +86,7 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
         </ScrollAreaViewport>
         <ScrollBar />
       </ScrollArea>
+      <SidebarAttribution enabled={footerEnabled} content={footerContent} text={footerText} href={footerHref} />
       <div className="flex items-center justify-between border-t px-6 py-3">
         {githubUrl ? <Tooltip><TooltipTrigger asChild><a
           href={githubUrl}
@@ -70,7 +105,7 @@ function SidebarBody({ items, version, onNavigate, siteName = "NextGuide", baseP
 
 /** Desktop: sticky sidebar. Mobile: a top bar with search and a drawer. */
 export function DocsSiteSidebar(props: DocsSiteSidebarProps) {
-  const { items, version, siteName = "NextGuide", homeHref = "/", linkAs } = props
+  const { items, version, siteName = "NextGuide", homeHref = "/", linkAs, siteLogo, siteLogoAlt, siteBrand } = props
   const HeaderLink = linkAs ?? "a"
   const [open, setOpen] = useState(false)
 
@@ -82,7 +117,7 @@ export function DocsSiteSidebar(props: DocsSiteSidebarProps) {
 
       <header className="bg-background/90 sticky top-0 z-30 flex h-14 items-center gap-1 border-b pr-2 pl-4 backdrop-blur lg:hidden">
         <HeaderLink href={homeHref} aria-label={`${siteName} home`} className="flex flex-1 text-base">
-          <Logo name={siteName} />
+          <SiteHeaderBrand name={siteName} logo={siteLogo} alt={siteLogoAlt} custom={siteBrand} />
         </HeaderLink>
         <SearchButton compact />
         <Sheet open={open} onOpenChange={setOpen}>

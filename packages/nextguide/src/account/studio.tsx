@@ -5,7 +5,7 @@ import { BookOpen, Brush, ChevronDown, ChevronUp, Copy, ExternalLink, FilePlus, 
 import { LogoMark } from "../components/site/logo.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
-type Site = { name: string; description: string; url: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
+type Site = { name: string; description: string; url: string; logo: string; ogImage: string; copyrightEnabled: boolean; copyrightText: string; copyrightHref: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
 type PageRow = { slug: string; title: string; description: string; version: string; bytes: number }
 type Page = { slug: string; title: string; description: string; body: string; version: string | null }
 type NavEntry = { slug: string; title: string; hidden: boolean }
@@ -256,7 +256,21 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
           </>}
           {view==="design"&&site&&<>
             <h1>Website & appearance</h1><p className="ng-studio-muted">Your changes are saved on the server and used by your documentation layout.</p>
-            {to("Site identity","Make your documentation recognizable.",<div className="ng-studio-fields"><label>Title<input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label><label>Description<textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label><label>Public site origin (no path)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label></div>)}
+            {to("Site identity","Make your documentation recognizable.",<div className="ng-studio-fields">
+              <label>Title<input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label>
+              <label>Description<textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label>
+              <label>Public site origin (no path)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
+              <label>Sidebar logo from media library<select value={site.logo} onChange={e=>editSite("logo",e.target.value)}>
+                <option value="">Use site initial (default)</option>{state!.media.map(item=><option key={item.name} value={item.url}>{item.name}</option>)}
+              </select></label>
+              <label>Sidebar logo public path<input value={site.logo} onChange={e=>editSite("logo",e.target.value)} placeholder="/logo.svg"/></label>
+              <label>Custom OG image public path<input value={site.ogImage} onChange={e=>editSite("ogImage",e.target.value)} placeholder="/og-cover.png"/></label>
+            </div>)}
+            {to("Sidebar footer","Choose your attribution. The default is optional and completely customizable.",<div className="ng-studio-fields">
+              <label className="ng-studio-check"><input type="checkbox" checked={site.copyrightEnabled} onChange={e=>editSite("copyrightEnabled",e.target.checked)}/>Show a sidebar footer</label>
+              <label>Footer text<input disabled={!site.copyrightEnabled} value={site.copyrightText} onChange={e=>editSite("copyrightText",e.target.value)} placeholder="Built with NextGuide"/></label>
+              <label>Footer link<input disabled={!site.copyrightEnabled} value={site.copyrightHref} onChange={e=>editSite("copyrightHref",e.target.value)} placeholder="https://example.com"/></label>
+            </div>)}
             {to("Design tokens","Accessible accent presets and typography.",<DesignFields site={site} update={editSite}/>)}
             {to("Owner profile","Optional owner information stays in private account storage and is not displayed publicly.",<div className="ng-studio-fields">
               <label>Display name<input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} maxLength={80}/></label>

@@ -20,6 +20,11 @@ export const DEFAULT_SITE = Object.freeze({
   ownerName: "",
   ownerEmail: "",
   ownerAvatar: "",
+  logo: "",
+  ogImage: "",
+  copyrightEnabled: true,
+  copyrightText: "Built with NextGuide",
+  copyrightHref: "https://m1nsook.github.io/NextGuide/",
   accent: "blue",
   theme: "light",
   bodyFont: "inter",
@@ -277,6 +282,11 @@ export function getStudioSettings(project = process.cwd()) {
   const path = settingsFile(project)
   const defaults = { ...DEFAULT_SITE, name: config.site?.name ?? DEFAULT_SITE.name,
     description: config.site?.description ?? DEFAULT_SITE.description,
+    logo: config.site?.logo ?? DEFAULT_SITE.logo,
+    ogImage: config.site?.ogImage ?? DEFAULT_SITE.ogImage,
+    copyrightEnabled: config.ngCopyright?.enabled !== false,
+    copyrightText: config.ngCopyright?.text ?? DEFAULT_SITE.copyrightText,
+    copyrightHref: config.ngCopyright?.href ?? DEFAULT_SITE.copyrightHref,
     accent: config.appearance?.accent ?? "blue", theme: config.appearance?.mode ?? "light" }
   if (!existsSync(path)) return defaults
   if (lstatSync(path).isSymbolicLink()) throw new AccountError("Refusing symbolic-link settings.", 503)
@@ -294,6 +304,11 @@ export function saveStudioSettings(project, input) {
     ownerName: assertText(input.ownerName ?? "", "owner display name", 80),
     ownerEmail: assertText(input.ownerEmail ?? "", "owner email", 254),
     ownerAvatar: assertText(input.ownerAvatar ?? "", "owner avatar", 170),
+    logo: assertText(input.logo ?? "", "logo path", 200),
+    ogImage: assertText(input.ogImage ?? "", "OG image path", 200),
+    copyrightEnabled: input.copyrightEnabled !== false,
+    copyrightText: assertText(input.copyrightText ?? DEFAULT_SITE.copyrightText, "footer text", 120),
+    copyrightHref: assertText(input.copyrightHref ?? DEFAULT_SITE.copyrightHref, "footer URL", 200),
     accent: input.accent,
     theme: input.theme,
     bodyFont: input.bodyFont,
@@ -303,6 +318,18 @@ export function saveStudioSettings(project, input) {
   }
   if (site.ownerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(site.ownerEmail)) throw new AccountError("Invalid optional contact email.", 400)
   if (site.ownerAvatar && !/^\/nextguide\/media\/[a-f0-9]{24}\.(png|jpg|webp|gif)$/.test(site.ownerAvatar)) throw new AccountError("Choose an avatar from your uploaded media.", 400)
+  for (const key of ["logo", "ogImage"]) {
+    const value = site[key]
+    if (value && (!/^\/(?!\/)[A-Za-z0-9/_-]+\.(svg|png|jpg|jpeg|webp|gif)$/.test(value) ||
+        value.split("/").some(part => part === ".."))) {
+      throw new AccountError("Invalid " + key + " path: use a public image URL beginning with /.", 400)
+    }
+  }
+  if (site.copyrightHref) {
+    let link
+    try { link = new URL(site.copyrightHref) } catch { throw new AccountError("Invalid footer URL.", 400) }
+    if (!["https:", "http:"].includes(link.protocol) || link.username || link.password) throw new AccountError("Invalid footer URL.", 400)
+  }
   if (site.url) {
     let parsed
     try { parsed = new URL(site.url) }

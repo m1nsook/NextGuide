@@ -309,3 +309,58 @@ test('re-running init on installed Developer Mode shows upgrade command without 
     assert.equal(f.read('content/docs/index.mdx'), page)
   } finally { f.clear() }
 })
+
+test('branding and footer settings refresh generated layouts without replacing authored MDX', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const config = JSON.parse(f.read('nextguide.config.json'))
+    assert.equal(config.site.logo, '')
+    assert.equal(config.site.ogImage, '')
+    assert.equal(config.ngCopyright.enabled, true)
+    const markdown = f.read('content/docs/index.mdx')
+    const current = f.read('src/app/docs/layout.tsx')
+    assert.match(current, /siteLogo=\{branding.logo\}/)
+    assert.match(current, /footerEnabled=\{ngCopyright.enabled !== false\}/)
+    assert.match(f.read('src/app/og/[...slug]/route.ts'), /brandMark: "site"/)
+    assert.match(f.read('src/app/docs/[[...slug]]/page.tsx'), /branding.ogImage \|\| imageUrl/)
+
+    config.site.logo = '/brand.svg'
+    config.site.ogImage = '/social-cover.png'
+    config.ngCopyright.enabled = false
+    config.ngCopyright.text = 'Custom footer'
+    f.write('nextguide.config.json', JSON.stringify(config, null, 2) + '\n')
+    const noTemplates = upgradeDeveloper(f.directory, f.inspection)
+    assert.equal(noTemplates.changes.length, 0)
+    assert.equal(f.read('content/docs/index.mdx'), markdown)
+    assert.equal(f.read('src/app/docs/layout.tsx'), current)
+  } finally { f.clear() }
+})
+
+test('custom footer path generates a static local import and refuses missing components', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const config = JSON.parse(f.read('nextguide.config.json'))
+    config.ngCopyright.custom = 'src/components/CustomCopyright.tsx'
+    f.write('nextguide.config.json', JSON.stringify(config, null, 2) + '\n')
+    assert.throws(() => upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true }), /Custom footer component was not found/)
+    assert.throws(() => {
+      config.ngCopyright.custom = '../secrets/unsafe.tsx'
+      f.write('nextguide.config.json', JSON.stringify(config, null, 2) + '\n')
+      upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true })
+    }, /ngCopyright.custom must be a local component path/)
+    mkdirSync(join(f.directory, 'src/components'), { recursive: true })
+    config.ngCopyright.custom = 'src/components/CustomCopyright.tsx'
+    f.write('src/components/CustomCopyright.tsx', 'export default function CustomCopyright() { return null }\n')
+    f.write('nextguide.config.json', JSON.stringify(config, null, 2) + '\n')
+    const plan = planUpgrade(f.directory, f.inspection, { refreshGenerated: true, dryRun: true })
+    assert.ok(plan.updates.some(item => item.path === 'src/app/docs/layout.tsx'))
+    const result = upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true })
+    assert.ok(result.changes.some(item => item.path === 'src/app/docs/layout.tsx'))
+    assert.match(f.read('src/app/docs/layout.tsx'), /import CustomFooter from .*CustomCopyright/)
+    assert.match(f.read('src/app/docs/layout.tsx'), /footerContent=\{<CustomFooter \/>\}/)
+    assert.equal(f.read('src/components/CustomCopyright.tsx'), 'export default function CustomCopyright() { return null }\n')
+    assert.equal(upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true }).changes.length, 0)
+  } finally { f.clear() }
+})
