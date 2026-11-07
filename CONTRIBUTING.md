@@ -53,6 +53,14 @@ NEXTGUIDE_TEST_URL=http://127.0.0.1:3000/docs node scripts/verify-docs-navigatio
 
 The browser check requires Chrome or Chromium; set `NEXTGUIDE_CHROME` to the executable path if necessary. These checks run locally and do not require GitHub Actions.
 
+## Automated package build check
+
+Every pull request and push to `main` runs the [NextGuide pack:dev workflow](.github/workflows/pack-dev.yml) on one standard Ubuntu runner. It installs dependencies and runs `bun run pack:dev`, including the package tests and npm packaging step. The generated `.tgz` is deleted after the check and is never uploaded or published.
+
+A separate [build reporter](.github/workflows/pack-dev-report.yml) creates a `[pack:dev] PASS` or `[pack:dev] FAIL` issue for each completed run. Failure issues include an excerpt of the failing job's log and a link to its full Actions run. These results receive CI status labels rather than a triage label.
+
+The automatic package build does not replace testing inside an actual Next.js consumer application, particularly for Account Mode and browser navigation.
+
 ## Pull requests
 
 Keep changes focused, explain their user-visible behavior, and include tests for bug fixes. Avoid modifying user-authored documentation while upgrading generated project files. Do not commit secrets, account state files, personal credentials, or production data.
