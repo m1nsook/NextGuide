@@ -9,6 +9,11 @@ import { initDeveloper, normalizeAppearance } from '../lib/init.mjs'
 import { upgradeDeveloper, planUpgrade, applyUpgrade } from '../lib/upgrade.mjs'
 
 const cli = fileURLToPath(new URL('../bin/nextguide.mjs', import.meta.url))
+// Functional CLI tests assert plain text, regardless of the developer's shell.
+// Color behavior has separate FORCE_COLOR / NO_COLOR coverage in cli-ui.test.mjs.
+const plainCliEnv = { ...process.env, NO_COLOR: "1" };
+delete plainCliEnv.FORCE_COLOR;
+
 function fixture(folder = 'src/app') {
   const directory = mkdtempSync(join(tmpdir(), 'nextguide-upgrade-'))
   mkdirSync(join(directory, folder), { recursive: true })
@@ -85,7 +90,7 @@ test('dry-run and CLI flags are non-destructive and config changes are explicit'
     const result = upgradeDeveloper(f.directory, f.inspection, { appearance: { mode: 'system', accent: 'purple' }, dryRun: true })
     assert.equal(result.dryRun, true)
     assert.equal(f.read('nextguide.config.json'), before)
-    const child = spawnSync(process.execPath, [cli, 'upgrade', '--system', '--accent:purple'], { cwd: f.directory, encoding: 'utf8' })
+    const child = spawnSync(process.execPath, [cli, 'upgrade', '--system', '--accent:purple'], { cwd: f.directory, encoding: 'utf8', env: plainCliEnv })
     assert.equal(child.status, 0, child.stderr)
     assert.deepEqual(JSON.parse(f.read('nextguide.config.json')).appearance, { mode: 'system', accent: 'purple' })
   } finally { f.clear() }
@@ -94,9 +99,9 @@ test('dry-run and CLI flags are non-destructive and config changes are explicit'
 test('CLI init --dark and --accent:red persist appearance; contradictory modes fail', () => {
   const f = fixture()
   try {
-    const invalid = spawnSync(process.execPath, [cli, 'init', '--light', '--dark', '--yes'], { cwd: f.directory, encoding: 'utf8' })
+    const invalid = spawnSync(process.execPath, [cli, 'init', '--light', '--dark', '--yes'], { cwd: f.directory, encoding: 'utf8', env: plainCliEnv })
     assert.equal(invalid.status, 2)
-    const done = spawnSync(process.execPath, [cli, 'init', '--dark', '--accent:red', '--yes'], { cwd: f.directory, encoding: 'utf8' })
+    const done = spawnSync(process.execPath, [cli, 'init', '--dark', '--accent:red', '--yes'], { cwd: f.directory, encoding: 'utf8', env: plainCliEnv })
     assert.equal(done.status, 0, done.stderr)
     assert.deepEqual(JSON.parse(f.read('nextguide.config.json')).appearance, { mode: 'dark', accent: 'red' })
   } finally { f.clear() }
@@ -293,7 +298,7 @@ test('re-running init on installed Developer Mode shows upgrade command without 
     const original = f.read('nextguide.config.json')
     const page = f.read('content/docs/index.mdx')
     const run = spawnSync(process.execPath, [cli, 'init', '--developer', '--accent:red', '--yes'], {
-      cwd: f.directory, encoding: 'utf8',
+      cwd: f.directory, encoding: 'utf8', env: plainCliEnv,
     })
     assert.equal(run.status, 2, run.stderr)
     assert.match(run.stderr, /already initialized/)
@@ -301,7 +306,7 @@ test('re-running init on installed Developer Mode shows upgrade command without 
     assert.equal(f.read('nextguide.config.json'), original)
     assert.equal(f.read('content/docs/index.mdx'), page)
     const upgrade = spawnSync(process.execPath, [cli, 'upgrade', '--accent:red', '--refresh-generated'], {
-      cwd: f.directory, encoding: 'utf8',
+      cwd: f.directory, encoding: 'utf8', env: plainCliEnv,
     })
     assert.equal(upgrade.status, 0, upgrade.stderr)
     assert.match(upgrade.stdout, /Appearance: light \/ red/)

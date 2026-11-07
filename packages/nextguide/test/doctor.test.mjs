@@ -19,8 +19,14 @@ function fixture({ next = "^16.4.5", folders = ["src/app"] } = {}) {
   return directory;
 }
 
+
+// Functional CLI tests assert plain text, regardless of the developer's shell.
+// Color behavior has separate FORCE_COLOR / NO_COLOR coverage in cli-ui.test.mjs.
+const plainCliEnv = { ...process.env, NO_COLOR: "1" };
+delete plainCliEnv.FORCE_COLOR;
+
 function run(...args) {
-  return spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" });
+  return spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", env: plainCliEnv });
 }
 
 test("CLI file URL resolves to a real filesystem path (including Windows drive letters)", () => {
@@ -113,7 +119,7 @@ test("init --account scaffolds the protected browser flow", () => {
   const storage = mkdtempSync(join(tmpdir(), "nextguide-account-cli-"));
   try {
     const result = spawnSync(process.execPath, [cli, "init", directory, "--account", "--yes"], {
-      encoding: "utf8", env: { ...process.env, NEXTGUIDE_DATA_DIR: join(storage, "private") },
+      encoding: "utf8", env: { ...plainCliEnv, NEXTGUIDE_DATA_DIR: join(storage, "private") },
     });
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /ONE-TIME ACCOUNT SETUP TOKEN/);
