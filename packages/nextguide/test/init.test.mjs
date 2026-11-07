@@ -403,7 +403,7 @@ test('initialization fixes the real create-next-app root html without changing i
       '    <body>{children}</body></html>',
       '}',
       '',
-    ].join('\\n')
+    ].join('\n')
     writeFileSync(join(d, root), original)
     const result = initDeveloper(d, inspect(d, ['src/app']))
     assert.deepEqual(result.modified, [root])
@@ -420,7 +420,7 @@ test('init dry-run reports the root hydration patch without modifying host files
   const d = fixture()
   try {
     const root = 'src/app/layout.tsx'
-    const original = '<html lang="en"><body>test</body></html>\\n'
+    const original = '<html lang="en"><body>test</body></html>\n'
     writeFileSync(join(d, root), original)
     const result = initDeveloper(d, inspect(d, ['src/app']), { dryRun: true })
     assert.deepEqual(result.modified, [root])
@@ -434,7 +434,7 @@ test('initialization leaves already hydration-safe root layouts untouched', () =
   const d = fixture()
   try {
     const root = 'src/app/layout.tsx'
-    const original = '<html lang="en" suppressHydrationWarning><body>OK</body></html>\\n'
+    const original = '<html lang="en" suppressHydrationWarning><body>OK</body></html>\n'
     writeFileSync(join(d, root), original)
     const result = initDeveloper(d, inspect(d, ['src/app']))
     assert.deepEqual(result.modified, [])
@@ -447,7 +447,7 @@ test('refuses unsafe root layouts rather than changing user-owned JSX blindly', 
   const d = fixture()
   try {
     const root = 'src/app/layout.tsx'
-    const original = 'export default function Layout({ children }) { return <CustomHtml>{children}</CustomHtml> }\\n'
+    const original = 'export default function Layout({ children }) { return <CustomHtml>{children}</CustomHtml> }\n'
     writeFileSync(join(d, root), original)
     assert.throws(() => initDeveloper(d, inspect(d, ['src/app'])), /Cannot safely locate the root <html>/)
     assert.equal(read(d, root), original)
