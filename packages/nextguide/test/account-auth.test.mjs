@@ -58,17 +58,17 @@ test("setup is terminal-token gated, owner is unique, code replay is rejected, a
     const backup = signIn(root, complete.recoveryCodes[0], now + 31_000)
     assert.equal(backup.usedRecovery, true)
     assert.throws(() => signIn(root, complete.recoveryCodes[0], now + 32_000), /already-used code/)
-    const rotation = await beginAuthenticatorRotation(root, backup.session, totp(secret, now + 60_000), {
+    const authenticatorRotation = await beginAuthenticatorRotation(root, backup.session, totp(secret, now + 60_000), {
       time: now + 60_000, qr: async uri => uri,
     })
-    assert.match(rotation.qrDataUrl, /^otpauth:\/\/totp\//)
-    assert.notEqual(rotation.manualKey, secret)
-    const refreshed = finishAuthenticatorRotation(root, backup.session, totp(rotation.manualKey, now + 60_000), now + 60_000)
+    assert.match(authenticatorRotation.qrDataUrl, /^otpauth:\/\/totp\//)
+    assert.notEqual(authenticatorRotation.manualKey, secret)
+    const refreshed = finishAuthenticatorRotation(root, backup.session, totp(authenticatorRotation.manualKey, now + 60_000), now + 60_000)
     assert.equal(refreshed.recoveryCodes.length, 10)
     assert.equal(verifySession(root, backup.session), false)
     assert.equal(verifySession(root, refreshed.session), true)
     assert.throws(() => signIn(root, totp(secret, now + 90_000), now + 90_000), /already-used code|Invalid/)
-    const newCodes = renewRecoveryCodes(root, refreshed.session, totp(rotation.manualKey, now + 90_000), now + 90_000)
+    const newCodes = renewRecoveryCodes(root, refreshed.session, totp(authenticatorRotation.manualKey, now + 90_000), now + 90_000)
     assert.equal(newCodes.recoveryCodes.length, 10)
     assert.throws(() => signIn(root, refreshed.recoveryCodes[0], now + 91_000), /already-used code/)
     assert.equal(revokeAllSessions(root, refreshed.session).ok, true)
