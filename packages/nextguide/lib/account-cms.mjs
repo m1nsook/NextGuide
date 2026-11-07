@@ -104,10 +104,13 @@ function documentPath(project, slug) {
 function readMeta(project, folder = "") {
   const relativePath = folder ? "content/docs/" + folder + "/_meta.json" : "content/docs/_meta.json"
   const file = filePath(project, relativePath)
-  if (!existsSync(file)) return {}
+  if (!existsSync(file)) return []
   try {
     const value = JSON.parse(readFileSync(file, "utf8"))
-    if (!value || typeof value !== "object" || Array.isArray(value)) return {}
+    if (!Array.isArray(value) || value.some(entry => !entry || typeof entry !== "object" ||
+      typeof entry.slug !== "string" || !/^[a-z0-9-]+$/.test(entry.slug))) {
+      throw Error("Invalid NextGuide metadata format")
+    }
     return value
   } catch { throw new AccountError("Invalid navigation metadata. Fix _meta.json first.", 409) }
 }
@@ -182,8 +185,8 @@ export function saveStudioPage(project, input) {
   const name = parts.pop() || "index"
   const folder = parts.join("/")
   const nav = readMeta(project, folder)
-  if (nav[name] === undefined) {
-    nav[name] = title
+  if (!nav.some(entry => entry.slug === name)) {
+    nav.push({ slug: name, title })
     writeMeta(project, folder, nav)
   }
   return { slug, title, description, body, version: hash(content), created: !exists }
@@ -199,16 +202,14 @@ export function deleteStudioPage(project, slug, version) {
   const name = parts.pop()
   const folder = parts.join("/")
   const nav = readMeta(project, folder)
-  delete nav[name]
-  writeMeta(project, folder, nav)
+  writeMeta(project, folder, nav.filter(entry => entry.slug !== name))
   return { deleted: slug }
 }
 export function getStudioNavigation(project, folder = "") {
   if (folder) guardedSlug(folder, false)
   const meta = readMeta(project, folder)
-  return { folder, items: Object.entries(meta).map(([slug, value]) => ({
-    slug, title: typeof value === "string" ? value : typeof value?.title === "string" ? value.title : slug,
-    hidden: value === false || value?.hidden === true,
+  return { folder, items: meta.map(entry => ({
+    slug: entry.slug, title: entry.title ?? entry.slug, hidden: entry.nav === false,
   })) }
 }
 export function setStudioNavigation(project, input) {
@@ -219,14 +220,14 @@ export function setStudioNavigation(project, input) {
   if (!existsSync(location)) throw new AccountError("Navigation folder not found.", 404)
   if (!Array.isArray(input.items) || input.items.length > 200) throw new AccountError("Invalid navigation items.", 400)
   const seen = new Set()
-  const nav = {}
+  const nav = []
   for (const item of input.items) {
     assertObject(item)
     const slug = assertText(item.slug, "navigation slug", 80, true)
     if (!/^[a-z0-9-]+$/.test(slug) || seen.has(slug) || slug.startsWith("-")) throw new AccountError("Invalid or duplicate navigation slug.", 400)
     seen.add(slug)
     if (!existsSync(join(location, slug + ".mdx")) && !existsSync(join(location, slug))) throw new AccountError("Navigation entry has no matching page or folder.", 409)
-    nav[slug] = item.hidden ? false : assertText(item.title, "navigation label", 120, true)
+    nav.push({ slug, title: assertText(item.title, "navigation label", 120, true), nav: !item.hidden })
   }
   writeMeta(project, folder, nav)
   return getStudioNavigation(project, folder)
