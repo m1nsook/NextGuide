@@ -1,3 +1,4 @@
+import Link from "next/link"
 import type { ReactNode } from "react"
 import { AlertTriangle, Info, Lightbulb, ShieldAlert } from "lucide-react"
 import { cn } from "nextguide/components"
@@ -36,12 +37,12 @@ export function Cards({ children }: { children?: ReactNode }) {
 
 export function Card({ title, href, children }: { title: string; href: string; children?: ReactNode }) {
   return (
-    <a
+    <Link
       href={href}
       className="hover:bg-muted/50 block rounded-xl border p-4 no-underline transition-colors"
     >
       <p className="text-foreground text-sm font-medium">{title}</p>
       {children !== undefined ? <p className="text-muted-foreground mt-1 text-sm">{children}</p> : null}
-    </a>
+    </Link>
   )
 }
