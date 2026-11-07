@@ -44,8 +44,11 @@ export function installMonacoAssets(projectDirectory) {
   try {
     cpSync(source, staging, { recursive: true, force: false, errorOnExist: true })
     // Keep the MIT notice beside the redistributed editor assets.
-    const licenseFile = join(sourceRoot, "LICENSE.txt")
-    if (existsSync(licenseFile)) cpSync(licenseFile, join(staging, "LICENSE.txt"))
+    const licenseFile = join(sourceRoot, "LICENSE")
+    if (!existsSync(licenseFile)) throw new Error("Monaco distribution is missing its MIT license.")
+    cpSync(licenseFile, join(staging, "LICENSE.txt"))
+    const thirdParty = join(sourceRoot, "ThirdPartyNotices.txt")
+    if (existsSync(thirdParty)) cpSync(thirdParty, join(staging, "ThirdPartyNotices.txt"))
     writeFileSync(join(staging, ".nextguide-version"), VERSION + "\n", { flag: "wx" })
     renameSync(staging, destination)
   } finally {
