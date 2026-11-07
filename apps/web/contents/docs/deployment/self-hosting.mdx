@@ -1,22 +1,46 @@
 ---
-title: Self-host a NextGuide site
-subtitle: Run the same Developer Mode documentation application on your own infrastructure.
+title: Self-host NextGuide
+description: Run documentation alongside your existing Next.js application on a server you control.
 ---
 
-# Self-hosting
+# Self-hosting NextGuide
 
-Developer Mode is part of your existing Next.js application. It doesn't require a separate NextGuide daemon.
+NextGuide runs inside your Next.js application. You do not need a separate NextGuide daemon or an external content service.
 
-## Production build
+## Developer Mode
 
-```powershell
+Build and start your Next.js application as you normally would:
+
+```bash
 bun install
 bun run build
 bun run start
 ```
 
-Configure your reverse proxy and domain to point to the Next.js application. Keep `content/docs/` and the generated configuration tracked in your source repository.
+Configure your domain, HTTPS, and reverse proxy for the Next.js process. Commit `content/docs/`, `nextguide.config.json`, and the generated route and styles in your application's repository.
 
-For static hosting without a Node.js process, use Next.js `output: "export"` and deploy the `out/` directory. For dynamic Next.js hosting, run the production server normally.
+Developer Mode is also compatible with static hosting. Configure Next.js with `output: "export"`, build the project, and deploy the resulting `out/` directory if you do not need a Node.js server.
 
-Account Mode is planned separately and will require SQLite backups, secure admin sessions, and a persistent writable storage path. These account features are **not available in this alpha**.
+## Account Mode (unreleased preview)
+
+Account Mode requires a **persistent Node.js server**, a writable documentation directory, and private storage outside the web application directory. It cannot run as a read-only static export or rely on an ephemeral serverless filesystem.
+
+When running a local source build for development, set:
+
+```dotenv
+NEXTGUIDE_PUBLIC_URL=https://docs.example.com
+NEXTGUIDE_DATA_DIR=/var/lib/nextguide/account
+```
+
+These are example values, not a directory you must use. Choose a private, persistent path your server process can read and write. The public URL should be your actual HTTPS origin. Back up this directory securely and store recovery codes separately.
+
+The current Account Mode authentication and editor remain **unreleased and not approved for production use**. See [Account Mode setup and limitations](/docs/getting-started/account-mode).
+
+## Deployment checklist
+
+- Build the Next.js app and test documentation routes before routing public traffic.
+- Terminate TLS at your hosting provider or reverse proxy.
+- Keep secrets, private keys, and Account Mode files out of the public directory and source control.
+- Ensure the server can write to your chosen persistent storage only if you use Account Mode.
+
+[Installation](/docs/getting-started/installation) · [Developer Mode](/docs/getting-started/developer-mode)

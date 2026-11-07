@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest an improvement for NextGuide.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user problem first. NextGuide ships one npm package,
+        so proposals should not require users to install a collection of separate packages.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature area
+      options:
+        - Developer Mode
+        - Account Mode
+        - CLI and installation
+        - Documentation components
+        - Theming and accessibility
+        - OpenAPI or MDX
+        - Deployment and compatibility
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain how people would use the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or examples (optional)
+    validations:
+      required: false

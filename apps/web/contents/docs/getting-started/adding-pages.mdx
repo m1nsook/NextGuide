@@ -11,7 +11,7 @@ Once you have initialized Developer Mode, you can create pages without hunting f
 
 Run this command from the root of your Next.js project:
 
-<CodeWindow title="Generate a page" language="powershell" code={"bunx nextguide page add changelog --title \"Changelog\" --description \"Release notes for our project\""} />
+<CodeWindow title="Generate a page" language="bash" code={"bunx nextguide page add changelog --title \"Changelog\" --description \"Release notes for the project\""} />
 
 NextGuide creates `content/docs/changelog.mdx` and adds its entry to `content/docs/_meta.json`. It **never overwrites an existing MDX page**. The command prints every file created or updated.
 
@@ -23,17 +23,17 @@ The generated page includes a title, description and editable MDX body. The rout
 
 Directories are created automatically as you add pages:
 
-<CodeWindow title="Create a nested page" language="powershell" code={"bunx nextguide page add guides/windows/installation --title \"Install on Windows\""} />
+<CodeWindow title="Create a nested page" language="bash" code={"bunx nextguide page add guides/installation --title \"Installation\""} />
 
-The command creates `content/docs/guides/windows/installation.mdx`, creates `_meta.json` inside each new section, and adds the `guides` section to the root navigation metadata. The page URL is `/docs/guides/windows/installation`.
+The command creates `content/docs/guides/installation.mdx`, creates `_meta.json` inside each new section, and adds the `guides` section to the root navigation metadata. The page URL is `/docs/guides/installation`.
 
 To create a section's index page at `/docs/guides`, use:
 
-<CodeWindow title="Create a section homepage" language="powershell" code="bunx nextguide page add guides/index --title Guides" />
+<CodeWindow title="Create a section homepage" language="bash" code="bunx nextguide page add guides/index --title Guides" />
 
 ## 3. Preview before changing files
 
-<CodeWindow title="Dry-run a page addition" language="powershell" code="bunx nextguide page add api/authentication --dry-run" />
+<CodeWindow title="Dry-run a page addition" language="bash" code="bunx nextguide page add api/authentication --dry-run" />
 
 Dry-run prints the exact files that **would be created or modified** and makes no changes. For tooling and scripts, add `--json` to receive machine-readable paths and the URL.
 
@@ -41,7 +41,7 @@ Dry-run prints the exact files that **would be created or modified** and makes n
 
 Open the generated `.mdx` file in your editor, replace the placeholder content, then start your existing Next.js dev server:
 
-<CodeWindow title="Start the documentation site" language="powershell" code="bun run dev" />
+<CodeWindow title="Start the documentation site" language="bash" code="bun run dev" />
 
 Go to the URL printed by `nextguide page add` on the port reported by Next.js.
 
@@ -51,6 +51,6 @@ NextGuide reads `_meta.json` in each folder to control ordering, labels and visi
 
 The command reads the `contentDir` from `nextguide.config.json`, so a customized content directory is supported. If the file already exists, or metadata is invalid, the command stops instead of replacing your work.
 
-<Callout kind="info" title="Developer Mode only">The page generator edits local project files. It needs no account, database or online service. Account Mode and the browser editor are separate features still in development.</Callout>
+<Callout kind="info" title="Developer Mode only">The page generator edits local project files. It needs no account, database or online service. Account Mode and the browser editor are separate features under development and not yet released to npm.</Callout>
 
 [Generated project files](/docs/getting-started/generated-files) · [Developer Mode](/docs/getting-started/developer-mode) · [Component library](/components/ui)

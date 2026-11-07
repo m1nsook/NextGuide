@@ -1,87 +1,73 @@
 ---
 title: Install NextGuide
-description: Test the current GitHub build inside a separate Next.js application using one packaged dependency.
+description: Add NextGuide to an existing Next.js application, generate documentation, and start writing.
 ---
 
-# Install NextGuide
+# Installation
 
-**The source of truth during development is GitHub `main`, not the old npm alpha.** You can test the current build without copying any repository files or workspace packages into your Next.js application.
+NextGuide is installed into your **existing Next.js application**. It creates the documentation routes, MDX files, navigation, and styling for you. You do not need a separate documentation repository, server, or component registry for Developer Mode.
 
+<Callout kind="info" title="Current release channel">NextGuide is currently published as an npm alpha. Install using the `alpha` tag until a stable release is available. The published alpha may not include every feature documented in the development version of this site. Check `nextguide --version` and the [release notes](https://github.com/m1nsook/NextGuide/releases) when upgrading.</Callout>
 
-## What you get after one install
+## 1. Start with Next.js
 
-The Developer Mode initializer creates a **fully designed, working documentation website** with local search, navigation, responsive sidebar, theme controls, breadcrumbs, page actions and table of contents. It automatically registers bundled MDX components and generates a working component gallery—no copying component source or manually wiring a layout. [See the exact generated files](/docs/getting-started/generated-files).
+You can use an existing project, or create a new one:
 
-## Existing NextGuide projects
+<CodeTabs items={[{label:"Bun",code:"bunx create-next-app@latest my-docs\ncd my-docs",language:"bash"},{label:"npm",code:"npx create-next-app@latest my-docs\ncd my-docs",language:"bash"}]} />
 
-Do **not** initialize again after installing a newer NextGuide package. Instead use `bunx nextguide upgrade --dry-run` followed by `bunx nextguide upgrade`. This preserves existing pages, navigation and project files. [See the safe upgrade guide](/docs/getting-started/upgrading).
+Developer Mode supports the App Router and Pages Router, JavaScript and TypeScript, and projects with or without a `src/` directory.
 
-## 1. Prepare a Next.js application
+## 2. Install the package
 
-Use an existing Next.js project, or create one in a separate folder:
+Run the command from your Next.js project root:
 
-<CodeWindow title="Create a fresh test application" language="bash" code={"bunx create-next-app@latest my-docs\ncd my-docs"} />
+<CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha",language:"bash"},{label:"npm",code:"npm install nextguide@alpha",language:"bash"},{label:"pnpm",code:"pnpm add nextguide@alpha",language:"bash"}]} />
 
-NextGuide supports both App Router and Pages Router, in TypeScript and JavaScript projects, with or without `src/`.
+NextGuide is **one npm package**. The application provides its own Next.js and React dependencies; there is no separate installation for MDX, OpenAPI, or the UI components.
 
-## 2. Build a single NextGuide package from GitHub
+## 3. Generate your documentation site
 
-Open the [NextGuide repository](https://github.com/m1nsook/NextGuide) through GitHub Desktop and pull the latest `main` branch. **Keep this repository in its own folder.**
+Initialize Developer Mode:
 
-Open PowerShell in the NextGuide repository root and run:
+<CodeTabs items={[{label:"Bun",code:"bunx nextguide init --developer",language:"bash"},{label:"npm",code:"npx nextguide init --developer",language:"bash"}]} />
 
-<CodeWindow title="Create and test a local development package" language="bash" code={"bun install\nbun run pack:dev"} />
+The CLI examines your Next.js project and creates a ready-to-edit documentation site. By default, your pages live under `/docs`, leaving the existing homepage intact.
 
-This builds the single `nextguide` package, runs its CLI and distribution tests, and creates `nextguide-0.0.1-alpha.2.tgz` in the repository root. It does not publish to npm or upload to GitHub.
+To see what would be generated **before changing files**:
 
-If a test or the compiler fails, the packaging command stops instead of giving you an untested archive.
+<CodeWindow title="Preview installation" language="bash" code="bunx nextguide init --developer --dry-run" />
 
-## 3. Install only the packaged dependency in your app
+For an unattended setup, specify the location:
 
-Return to PowerShell in your **separate Next.js application** and install the generated archive using its absolute file path:
+<CodeTabs items={[{label:"Documentation under /docs",code:"bunx nextguide init --developer --base-path /docs --yes",language:"bash"},{label:"Documentation as homepage",code:"bunx nextguide init --developer --base-path / --replace-home --yes",language:"bash"}]} />
 
-<CodeWindow title="Install the GitHub build without copying source" language="bash" code={"bun add \"C:\\path\\to\\NextGuide\\nextguide-0.0.1-alpha.2.tgz\"\nbunx nextguide --version"} />
+The `--replace-home` flag explicitly authorizes backing up an existing homepage; it does not silently delete the original file. Use `--router app` or `--router pages` if the project contains both router types.
 
-Replace `C:\path\to\NextGuide` with the actual folder containing the archive. This is a local package installation. Your Next.js project does not need the NextGuide monorepo, build tools, or any `@workspace/*` dependencies.
+## 4. Start the application
 
-**Do not use `bun add github:m1nsook/NextGuide`**: the repository root is a workspace, not the publishable package. Do not use `bun add nextguide@alpha` for current-source testing: that tag may contain older code.
+<CodeWindow title="Start Next.js" language="bash" code="bun run dev" />
 
-## 4. Generate documentation routes and pages
+Open `/docs` on the address printed by Next.js (or `/` if you selected the homepage). Your documentation source lives in `content/docs/`; the generated project files can be edited like normal application code.
 
-Run these commands from the root of the test application:
+<CodeWindow title="Add your first page" language="bash" code={'bunx nextguide page add guides/installation --title "Installation"'} />
 
-<CodeWindow title="Initialize Developer Mode" language="bash" code="bunx nextguide init --developer" />
+NextGuide creates the MDX file and updates the sidebar metadata for you.
 
-The initializer now asks whether your docs should appear under **`/docs`** (default, preserving your site's homepage), or at **`/`** (documentation becomes the homepage). If an existing homepage would be replaced, NextGuide asks for confirmation and backs it up instead of deleting it.
+## Next steps
 
-For noninteractive use, choose exactly one of these:
+<LinkCards>
+  <LinkCard title="Generated files" description="See what each generated file does" href="/docs/getting-started/generated-files" />
+  <LinkCard title="Add pages" description="Write guides and organize navigation" href="/docs/getting-started/adding-pages" />
+  <LinkCard title="Components" description="Explore live component examples and usage" href="/components/ui" />
+  <LinkCard title="Deployment" description="Run on Vercel, GitHub Pages, or your own server" href="/docs/deployment/vercel" />
+</LinkCards>
 
-<CodeTabs items={[{label:"Under /docs",code:"bunx nextguide init --developer --base-path /docs --yes",language:"powershell"},{label:"As website homepage",code:"bunx nextguide init --developer --base-path / --replace-home --yes",language:"powershell"}]} />
+## Already using NextGuide?
 
-The root option uses `--replace-home` to explicitly permit backing up an existing page; the original is preserved as `.nextguide-backup`. The installer also stores `basePath` in `nextguide.config.json`, which the page-creation command uses for new links.
+**Do not rerun `init`** on an existing documentation site. Update the package, then preview `bunx nextguide upgrade --dry-run`. Adopting updated generated layouts is an explicit `--refresh-generated` operation with backups. See [upgrading safely](/docs/getting-started/upgrading).
 
-To preview without writing files, use `bunx nextguide init --developer --dry-run --yes`. If the project has both router types, select `--router app` or `--router pages`. New App Router files avoid the `dynamicParams` export rejected by Next.js Cache Components.
+## What about Account Mode?
 
-## 5. Start Next.js and test
+Account Mode is a separate, **unreleased** browser-based setup and editing workflow. It needs an App Router application with a persistent Node.js server. [Learn about Account Mode and its security requirements](/docs/getting-started/account-mode).
 
-<CodeWindow title="Run your Next.js development server" language="bash" code="bun run dev" />
-
-Open the selected route on the port reported by Next.js, typically `http://localhost:3000/docs` or `http://localhost:3000/`. You should see the Introduction and Getting started pages.
-
-You can add more pages and update sidebar navigation automatically:
-
-<CodeWindow title="Add another documentation page" language="bash" code={"bunx nextguide page add changelog --title Changelog"} />
-
-Edit `content/docs/index.mdx` to customize the homepage, or [read about adding nested pages](/docs/getting-started/adding-pages).
-
-## Retest after NextGuide changes
-
-Pull `main` in your separate NextGuide source checkout, rerun `bun run pack:dev`, and rerun `bun add "C:\path\to\NextGuide\nextguide-0.0.1-alpha.2.tgz"` in the test application. No source files need to be copied between projects.
-
-## When NextGuide is published
-
-After Account Mode is implemented and tested, the public installation will simply be `bun add nextguide`, followed by `bunx nextguide init --developer`. We are intentionally **not** publishing another npm release yet.
-
-[See every generated file and its purpose](/docs/getting-started/generated-files).
-
-<Callout kind="warning" title="Account Mode is still in development">This installation activates the file-based Developer Mode. Account Mode, the `/setup` ownership token and the `/admin` browser editor are not yet available.</Callout>
+For contributors who need to test unreleased source code instead of the published alpha, see the [development instructions](https://github.com/m1nsook/NextGuide/blob/main/CONTRIBUTING.md).

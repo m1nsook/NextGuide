@@ -43,7 +43,7 @@ export default function DeveloperDocsHome() {
         ))}
       </section>
       <p className="text-muted-foreground mt-10 text-sm">
-        Looking for a visual editor? <Link href="/account-docs" className="text-foreground underline underline-offset-4">Explore planned Account Mode</Link>.
+        Looking for a visual editor? <Link href="/account-docs" className="text-foreground underline underline-offset-4">Explore Account Mode preview</Link>.
       </p>
     </main>
   )

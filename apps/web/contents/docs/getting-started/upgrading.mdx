@@ -9,11 +9,11 @@ description: Update NextGuide without recreating your Next.js project or losing 
 
 ## 1. Update the installed package
 
-For a normal npm installation, update the single NextGuide dependency:
+For an npm installation, update the single NextGuide dependency (use the `alpha` channel while a stable release is unavailable):
 
-<CodeWindow title="Shell" language="bash" code="bun update nextguide" />
+<CodeWindow title="Shell" language="bash" code="bun update nextguide@alpha" />
 
-If you are testing an unreleased GitHub build, first rebuild the tarball in your NextGuide source checkout with `bun run pack:dev`. Then install that fresh tarball in your **separate application** using `bun add` and its actual absolute file path. No new Next.js application is necessary.
+If you are testing an unreleased source build rather than a published npm version, see the [contributing and local-package guide](https://github.com/m1nsook/NextGuide/blob/main/CONTRIBUTING.md) for packaging instructions. The upgrade steps below work the same way for either installation.
 
 ## 2. Preview the upgrade
 
@@ -28,6 +28,22 @@ This reports which configuration files would change. It never writes anything du
 <CodeWindow title="Shell" language="bash" code="bunx nextguide upgrade" />
 
 The command preserves existing site metadata, custom fields, MDX content, and `_meta.json` navigation. A numbered `.nextguide-backup` copy is written before a configuration file is changed. Re-running the command is safe when there are no changes to make.
+
+### Repair page flashes and full reloads on an installed site
+
+Older Developer Mode installations contain generated layouts with plain HTML links.
+That causes the entire document to reload between pages, briefly showing a white
+screen even if dark mode is selected. The fix is **client-side navigation**,
+not an animation or loading-screen overlay.
+
+After installing a NextGuide package version that includes this navigation fix,
+update your existing generated files using the preview and opt-in refresh below.
+This updates the sidebar, Markdown links, search, and documentation page transitions
+while keeping your `content/docs/**` files unchanged. It creates numbered
+backups of the old generated files, so customizations can be reapplied.
+
+**Updating the npm package alone will not replace previously generated layout files.**
+You do not need to recreate the Next.js project or rerun `init`.
 
 ### Adopt new generated layouts and styles
 

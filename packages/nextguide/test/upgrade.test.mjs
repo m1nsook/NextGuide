@@ -240,3 +240,46 @@ test('refresh generated files also updates the host root html without taking own
     assert.match(f.read(root), /<html suppressHydrationWarning lang="en">/)
   } finally { f.clear() }
 })
+
+test('refreshing an installed alpha restores client routing without touching authored pages', () => {
+  const f = fixture()
+  try {
+    initDeveloper(f.directory, f.inspection)
+    const layoutFile = 'src/app/docs/layout.tsx'
+    const componentsFile = 'src/lib/nextguide-mdx-components.tsx'
+    const desiredLayout = f.read(layoutFile)
+    const desiredComponents = f.read(componentsFile)
+    const legacyLayout = desiredLayout.replaceAll('NextDocsSiteSidebar', 'DocsSiteSidebar')
+      .replaceAll('NextDocsSiteSearchProvider', 'DocsSiteSearchProvider')
+      .replaceAll('NextDocsSiteClientNavigation', 'OldDocsNavigation')
+      .replace('nextguide/site/next', 'nextguide/site')
+    const legacyComponents = desiredComponents
+      .replace('import { NextDocsSiteMdxLink } from "nextguide/site/next"\n', '')
+      .replace('  a: NextDocsSiteMdxLink,\n', '')
+    f.write(layoutFile, legacyLayout)
+    f.write(componentsFile, legacyComponents)
+    const writtenDocs = '---\ntitle: Private custom docs\n---\n\nNever discard my work.\n'
+    f.write('content/docs/index.mdx', writtenDocs)
+    const originalNav = f.read('content/docs/_meta.json')
+
+    const preview = planUpgrade(f.directory, f.inspection, { refreshGenerated: true, dryRun: true })
+    assert.ok(preview.updates.some((item) => item.path === layoutFile))
+    assert.ok(preview.updates.some((item) => item.path === componentsFile))
+    assert.equal(f.read(layoutFile), legacyLayout, 'Preview must not modify installed routes')
+
+    const result = upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true })
+    const layoutBackup = result.changes.find((item) => item.path === layoutFile)?.backup
+    const componentsBackup = result.changes.find((item) => item.path === componentsFile)?.backup
+    assert.ok(layoutBackup && componentsBackup)
+    assert.equal(f.read(layoutBackup), legacyLayout)
+    assert.equal(f.read(componentsBackup), legacyComponents)
+    assert.equal(f.read(layoutFile), desiredLayout)
+    assert.equal(f.read(componentsFile), desiredComponents)
+    assert.match(f.read(layoutFile), /NextDocsSiteClientNavigation/)
+    assert.match(f.read(componentsFile), /a: NextDocsSiteMdxLink/)
+    assert.doesNotMatch(f.read(layoutFile), /Loading documentation/)
+    assert.equal(f.read('content/docs/index.mdx'), writtenDocs)
+    assert.equal(f.read('content/docs/_meta.json'), originalNav)
+    assert.equal(upgradeDeveloper(f.directory, f.inspection, { refreshGenerated: true }).changes.length, 0)
+  } finally { f.clear() }
+})

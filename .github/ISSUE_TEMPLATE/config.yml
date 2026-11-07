@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: NextGuide documentation
+    url: https://m1nsook.github.io/NextGuide/
+    about: Installation, upgrades, component examples, and deployment guides.
+  - name: Security reporting guidance
+    url: https://github.com/m1nsook/NextGuide/security
+    about: Report suspected vulnerabilities privately, never in a public issue.

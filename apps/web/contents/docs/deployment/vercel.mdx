@@ -1,23 +1,27 @@
 ---
 title: Deploy to Vercel
-subtitle: Deploy NextGuide using the Next.js application you already have.
+description: Deploy your NextGuide Developer Mode site with the standard Next.js build process.
 ---
 
-# Deploy NextGuide to Vercel
+# Deploy to Vercel
 
-NextGuide runs inside your Next.js application. A Next.js project using Developer Mode can deploy through Vercel's normal Next.js build pipeline.
+NextGuide Developer Mode is part of your Next.js application. You can deploy it using your normal Vercel workflow, without a separate NextGuide backend.
 
 ## Before deploying
 
-1. Run `bun run build` in your project and check for TypeScript or MDX errors.
-2. Commit the files created by `nextguide init`, including `content/docs/`, the docs route, `nextguide.config.json`, and CSS.
-3. Import the repository in the Vercel dashboard, select the Next.js framework, and deploy.
+1. Build the application locally with `bun run build` and check for MDX, TypeScript, and routing errors.
+2. Commit the files created by `nextguide init --developer`, including `content/docs/`, `nextguide.config.json`, the documentation route, and styles.
+3. Import your application repository into Vercel and select the Next.js framework.
+4. Deploy, then check the published documentation URL and internal links.
 
-The Next.js build compiles MDX into routes. No NextGuide-specific server or database is required for Developer Mode.
+Next.js handles the build, prerendering, and assets. There are no special NextGuide credentials in Developer Mode.
 
-## Custom domains and environment
+## Domains and preview deployments
 
-Manage domains, HTTPS, deployment permissions and environment variables through your normal Next.js hosting settings. There are no special NextGuide credentials in Developer Mode.
+Configure custom domains, HTTPS, preview deployments, and environment variables in your Vercel project settings. The documentation is served from the same application as your other pages.
 
-Account Mode will need persistent storage, authentication, and additional deployment instructions once released; do not assume a stateless deployment provides a persistent SQLite database.
+## Account Mode
 
+The unreleased Account Mode preview writes documentation and private account state to persistent storage. Do not assume that a standard ephemeral serverless filesystem can hold that data. Account Mode needs additional hosting and security validation before production release.
+
+[Installation](/docs/getting-started/installation) · [Self-hosting](/docs/deployment/self-hosting)

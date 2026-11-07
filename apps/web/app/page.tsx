@@ -8,10 +8,10 @@ import { site } from "@/lib/site"
 const features = [
   { title: "MDX documentation", description: "Documentation pages, search, navigation, code blocks, and reusable components.", icon: BookOpen, href: "/docs" },
   { title: "API reference", description: "OpenAPI-powered references with reusable endpoint components and typed parsing.", icon: Layers3, href: "/reference" },
-  { title: "App and Pages Router", description: "Next.js is required. We are building adapters for both router styles.", icon: Code2, href: "/docs/getting-started/installation" },
-  { title: "Setup wizard", description: "Planned guided installation with site branding, themes, and an ownership token.", icon: Palette, href: "/account-docs" },
-  { title: "Admin panel", description: "Planned browser CMS for pages, navigation, media, settings, and API definitions.", icon: LockKeyhole, href: "/account-docs" },
-  { title: "File-based development", description: "Planned developer mode for MDX and configuration managed directly in your editor.", icon: ServerCog, href: "/developer-docs" },
+  { title: "App and Pages Router", description: "Next.js is required. Developer Mode supports both router styles.", icon: Code2, href: "/docs/getting-started/installation" },
+  { title: "Setup wizard", description: "Account Mode setup includes branding, themes, and an ownership token (unreleased).", icon: Palette, href: "/account-docs" },
+  { title: "Admin panel", description: "An unreleased browser editor for pages, navigation, media, and site settings.", icon: LockKeyhole, href: "/account-docs" },
+  { title: "File-based development", description: "Edit MDX and site configuration in your editor, with built-in search and navigation.", icon: ServerCog, href: "/developer-docs" },
 ]
 
 export default function HomePage() {
@@ -36,12 +36,12 @@ export default function HomePage() {
           <div className="relative mx-auto max-w-5xl px-5 py-24 sm:py-32">
             <span className="mb-6 inline-flex rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">NextGuide · Early alpha</span>
             <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.045em] text-balance sm:text-7xl">Documentation that starts simple and grows with you.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Build documentation with Next.js, MDX, OpenAPI, flexible themes, and one all-in-one package. A guided installer and browser editor are on the roadmap.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Build documentation with Next.js, MDX, OpenAPI, flexible themes, and one all-in-one package. Developer Mode creates a ready-to-edit documentation site; a browser-based Account Mode is in development.</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href="/developer-docs" className="inline-flex items-center gap-2 rounded-md bg-foreground px-5 py-3 text-sm font-medium text-background hover:opacity-90">Get started <ArrowRight className="size-4" /></Link>
               <a href={site.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-md border bg-background px-5 py-3 text-sm font-medium hover:bg-muted">View source</a>
             </div>
-            <p className="mt-5 text-sm text-muted-foreground">Requires Next.js · App Router and Pages Router integration planned · Bun-first development</p>
+            <p className="mt-5 text-sm text-muted-foreground">Requires Next.js · Developer Mode supports App Router and Pages Router · Bun or npm</p>
           </div>
         </section>
 
@@ -60,7 +60,7 @@ export default function HomePage() {
             <Link href="/account-docs" className="group bg-card rounded-xl border p-7 transition-colors hover:bg-muted/40">
               <span className="text-muted-foreground inline-flex items-center gap-2 text-xs font-semibold">IN DEVELOPMENT</span>
               <div className="mt-4 flex items-center gap-3"><Palette className="size-6" aria-hidden /><h3 className="text-xl font-semibold">Account Mode</h3></div>
-              <p className="text-muted-foreground mt-3 text-sm leading-7">For a more visual workflow: planned guided setup, protected accounts and browser-based documentation editing.</p>
+              <p className="text-muted-foreground mt-3 text-sm leading-7">For a more visual workflow: authenticator-based setup and an authenticated editing dashboard are in development.</p>
               <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:underline">See the plan <ArrowRight className="size-4" /></span>
             </Link>
           </div>

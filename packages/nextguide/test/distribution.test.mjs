@@ -9,7 +9,7 @@ const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 const output = join(root, "dist")
 
 test("all-in-one exports are present", () => {
-  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./blocks", "./ui/primitives", "./ui/interactive", "./fonts", "./fonts/catalog", "./styles.css"]) {
+  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./blocks", "./ui/primitives", "./ui/interactive", "./fonts", "./fonts/catalog", "./site/next", "./styles.css"]) {
     assert.ok(manifest.exports[key], key)
   }
 })
@@ -55,6 +55,10 @@ test("public JS modules import from the self-contained package", async () => {
   assert.equal(typeof core.slugify, "function")
   assert.equal(typeof mdx.createDocs, "function")
   assert.equal(typeof api.parseOpenAPI, "function")
+  const { NextDocsSiteMdxLink, NextDocsSiteSidebar, NextDocsSiteClientNavigation } = await import("nextguide/site/next")
+  assert.equal(typeof NextDocsSiteMdxLink, "function")
+  assert.equal(typeof NextDocsSiteSidebar, "function")
+  assert.equal(typeof NextDocsSiteClientNavigation, "function")
   assert.ok(components.Docs)
   assert.equal(typeof components.DocsStarterShell, "function")
   assert.equal(typeof ui.Button, "function")
