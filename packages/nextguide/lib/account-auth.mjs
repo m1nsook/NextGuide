@@ -3,7 +3,7 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto"
 import { closeSync, chmodSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
-import { dirname, isAbsolute, join, resolve } from "node:path"
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path"
 
 const PERIOD_MS = 30_000
 const SESSION_MS = 12 * 60 * 60_000
@@ -36,8 +36,15 @@ export function accountFile(project = process.cwd(), dataDir) {
   const projectId = digest(resolve(project)).slice(0, 24)
   const configured = dataDir ?? process.env.NEXTGUIDE_DATA_DIR
   const directory = configured
-    ? (isAbsolute(configured) ? configured : resolve(project, configured))
+    ? resolve(isAbsolute(configured) ? configured : resolve(project, configured))
     : join(homedir(), ".nextguide", "account-sites", projectId)
+  const projectRoot = resolve(project)
+  const inside = relative(projectRoot, directory)
+  // Never permit private owner secrets in a served project tree. Even an
+  // accidental dataDir=public path would otherwise expose the TOTP seed.
+  if (inside === "" || (inside !== ".." && !inside.startsWith(".." + sep) && !isAbsolute(inside))) {
+    throw new AccountError("NEXTGUIDE_DATA_DIR must point outside the Next.js project directory.", 400)
+  }
   return join(directory, "state.json")
 }
 
