@@ -36,9 +36,9 @@ The initial format only supports Markdown content with no runtime permissions. C
 
 ## Validate before submission
 
-<CodeWindow title="Run local checks" language="bash" code="node scripts/validate-addon.mjs\nnode --test test/validate-addon.test.mjs" />
+<CodeWindow title="Run local checks" language="bash" code={"node scripts/validate-addon.mjs\\nnode --test test/validate-addon.test.mjs"} />
 
-The template's GitHub workflow repeats these checks on pull requests and releases to the default branch. It does not automatically publish or install an add-on.
+The template's GitHub workflow repeats these checks on pull requests and pushes to the default branch. It does not automatically publish or install an add-on.
 
 Submit a link to your repository and immutable commit SHA with the [official submission form](https://github.com/m1nsook/NextGuide/issues/new?template=submit-your-addon.md). An independent review is required before registry inclusion.
 

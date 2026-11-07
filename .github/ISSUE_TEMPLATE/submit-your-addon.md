@@ -1,21 +1,37 @@
 ---
-name: Submit your Addon
-about: 'Addon: Name of your addon'
-title: "[Addon]"
+name: Submit your NextGuide add-on
+about: Submit a versioned add-on for independent registry verification and review
+title: "[Addon] Publisher.Name — Version"
 labels: addon
 assignees: ''
-
 ---
 
-**Describe the addon**
-A clear and concise description of what the addon provides.
+## Package identity
+- **Add-on id** (publisher.slug):
+- **Name**:
+- **Version (SemVer)**:
+- **Category**:
+- **License**:
 
-**Version**
-1.0
+## Immutable source
+- **Repository HTTPS URL**:
+- **Release tag URL**:
+- **Full Git commit SHA** (40 hex characters):
+- **Manifest location** (normally nextguide-addon.json):
 
-**Screenshots**
-If applicable, add screenshots to help explain your addon.
+## Validation
+- [ ] I started from the [NextGuide add-on template](https://github.com/m1nsook/NextGuide-Addons) or implemented its current manifest format.
+- [ ] I ran the local manifest validator and tests.
+- [ ] I verified the compatibility range and restricted this add-on to Account Mode.
+- [ ] I understand passing CI does not mean automatic approval or publication.
+- [ ] I have rights to redistribute all included code, content and assets.
 
+**Validation run URL**:
 
-**Repository**
-Include your repository for the addon.
+## Description and permissions
+Describe what the add-on does, who it is for, and any network, account or storage permissions it will need when the API exists.
+
+## Screenshots / demo (optional)
+Include accurate images or video of the feature, if available.
+
+**Note:** The hosted marketplace and extension runtime are still under development. Opening a submission does not install or publish an add-on.
