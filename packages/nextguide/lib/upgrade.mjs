@@ -103,6 +103,7 @@ export function planUpgrade(projectDirectory, inspection, options = {}) {
     const templates = planDeveloperProject(directory, inspection, options.router, {
       basePath: updated.basePath,
       appearance,
+      ngCopyright: updated.ngCopyright,
     })
     for (const [path, content] of Object.entries(templates.files)) {
       // MDX content and _meta.json are always user-owned, even with --refresh-generated.
