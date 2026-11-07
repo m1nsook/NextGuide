@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url"
 export function validateExportLinks(outputDirectory, deploymentBasePath = "/NextGuide") {
   const root = resolve(outputDirectory)
   if (!existsSync(root)) throw new Error("Missing generated static site at " + root)
-  const prefix = deploymentBasePath.replace(/\\/$/, "")
+  const prefix = deploymentBasePath.replace(/\/$/, "")
   const htmlFiles = []
   const walk = (dir) => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -26,7 +26,7 @@ export function validateExportLinks(outputDirectory, deploymentBasePath = "/Next
   let checked = 0
   for (const file of htmlFiles) {
     const html = readFileSync(file, "utf8")
-    for (const match of html.matchAll(/<a\\b[^>]*?\\bhref=(["'])(.*?)\\1/gis)) {
+    for (const match of html.matchAll(/<a\b[^>]*?\bhref=(["'])(.*?)\1/gis)) {
       const raw = match[2].replace(/&amp;/g, "&")
       if (!raw.startsWith("/") || raw.startsWith("//")) continue
       const path = new URL(raw, "https://example.invalid").pathname
@@ -37,11 +37,11 @@ export function validateExportLinks(outputDirectory, deploymentBasePath = "/Next
         continue
       }
       const rest = decodeURIComponent(path.slice(prefix.length) || "/")
-      if (rest.includes("\\0") || rest.split("/").includes("..")) {
+      if (rest.includes("\0") || rest.split("/").includes("..")) {
         errors.push({ file: relative(root, file), href: raw, reason: "Unsafe destination path" })
         continue
       }
-      const clean = rest.replace(/^\\/+/, "").replace(/\\/+$/, "")
+      const clean = rest.replace(/^\/+/, "").replace(/\/+$/, "")
       const target = clean ? join(root, clean, "index.html") : join(root, "index.html")
       const fileTarget = clean ? join(root, clean) : target
       if (!existsSync(target) && !existsSync(fileTarget)) {
@@ -51,8 +51,8 @@ export function validateExportLinks(outputDirectory, deploymentBasePath = "/Next
     }
   }
   if (errors.length) {
-    throw new Error("Found " + errors.length + " broken internal links in exported NextGuide HTML:\\n" +
-      errors.slice(0, 75).map(e => "  " + e.file + ": " + e.href + " (" + e.reason + ")").join("\\n"))
+    throw new Error("Found " + errors.length + " broken internal links in exported NextGuide HTML:\n" +
+      errors.slice(0, 75).map(e => "  " + e.file + ": " + e.href + " (" + e.reason + ")").join("\n"))
   }
   return { pages: htmlFiles.length, checked }
 }
