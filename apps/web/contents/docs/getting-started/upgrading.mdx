@@ -9,11 +9,11 @@ description: Update NextGuide without recreating your Next.js project or losing 
 
 ## 1. Update the installed package
 
-For a normal npm installation, update the single NextGuide dependency:
+For an npm installation, update the single NextGuide dependency (use the `alpha` channel while a stable release is unavailable):
 
-<CodeWindow title="Shell" language="bash" code="bun update nextguide" />
+<CodeWindow title="Shell" language="bash" code="bun update nextguide@alpha" />
 
-If you are testing an unreleased GitHub build, first rebuild the tarball in your NextGuide source checkout with `bun run pack:dev`. Then install that fresh tarball in your **separate application** using `bun add` and its actual absolute file path. No new Next.js application is necessary.
+If you are testing an unreleased source build rather than a published npm version, see the [contributing and local-package guide](https://github.com/m1nsook/NextGuide/blob/main/CONTRIBUTING.md) for packaging instructions. The upgrade steps below work the same way for either installation.
 
 ## 2. Preview the upgrade
 

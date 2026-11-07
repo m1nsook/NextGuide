@@ -15,6 +15,6 @@ export function TypographySettings() {
 }
 ```
 
-The preview is interactive, but **saving choices and applying font files to the whole site is the host application's responsibility** until the Account Mode setup wizard is implemented. The docs site uses Next.js font loading. System fonts such as Segoe UI are never redistributed with NextGuide.
+The preview is interactive, but in **Developer Mode** the host application is responsible for saving font choices and applying them to its layout. The unreleased Account Mode source includes a site setup wizard with font selections, but it still requires production build validation. NextGuide uses Next.js font loading. System fonts such as Segoe UI are never redistributed with NextGuide.
 
 For a static site, use `next/font/google` to self-host open fonts and connect the chosen CSS variables to your theme.
