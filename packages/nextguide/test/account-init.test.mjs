@@ -4,6 +4,7 @@ import { mkdtempSync, mkdirSync, existsSync, readFileSync, writeFileSync, rmSync
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { initAccount } from "../lib/account-starter.mjs"
+import ts from "typescript"
 
 function fixture(router = "src/app", typed = true) {
   const project = mkdtempSync(join(tmpdir(), "nextguide-account-init-"))
@@ -32,6 +33,12 @@ test("App Router Account Mode scaffolds protected routes and owner token without
     assert.equal(result.mode, "account")
     assert.ok(result.bootstrapToken.length >= 30)
     assert.equal(result.created.length, 23)
+    for (const name of result.created.filter(path => /\\.[jt]sx?$/.test(path))) {
+      const content = readFileSync(join(project, name), "utf8")
+      const parsed = ts.createSourceFile(name, content, ts.ScriptTarget.Latest, true)
+      assert.equal(parsed.parseDiagnostics.length, 0, name + ": " +
+        parsed.parseDiagnostics.map(item => ts.flattenDiagnosticMessageText(item.messageText, " ")).join("; "))
+    }
     assert.ok(existsSync(join(project, "src/app/setup/page.tsx")))
     assert.ok(existsSync(join(project, "src/app/login/page.tsx")))
     assert.ok(existsSync(join(project, "src/app/admin/page.tsx")))
