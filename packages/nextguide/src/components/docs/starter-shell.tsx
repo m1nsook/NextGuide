@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { BookOpen, ChevronRight, Menu, Monitor, Moon, Search, Sun, X } from "lucide-react"
+import { ArrowDown, ArrowUp, BookOpen, ChevronRight, Menu, Monitor, Moon, Search, Sun, X } from "lucide-react"
 import type { NavItem } from "../../core/index.js"
 
 export type DocsSearchItem = {
@@ -187,7 +187,7 @@ export function DocsStarterShell({
                 </a>
               )) : <p className="ng-site-search-empty">No matching pages. Try another search.</p>}
             </div>
-            <p className="ng-site-search-help">↑ ↓ Navigate · Enter Open · Esc Close</p>
+            <p className="ng-site-search-help"><ArrowUp aria-hidden="true" className="inline-block size-3.5 align-[-2px]" /> <ArrowDown aria-hidden="true" className="inline-block size-3.5 align-[-2px]" /> Navigate · Enter Open · Esc Close</p>
           </div>
         </div>
       ) : null}

@@ -121,6 +121,17 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Tailwind v4 defaults bare .border/.divide-y to currentColor. Inside
+   Account Mode, use Vega's neutral tokens in both themes, scoped so
+   Developer Mode and official docs are unaffected. */
+@layer base {
+  .ng-account-root,
+  .ng-account-root *,
+  .ng-account-root *::before,
+  .ng-account-root *::after {
+    border-color: var(--border);
+  }
+}
 /* NextGuide Account Mode: fresh shadcn/ui Vega shell, no historic dashboard CSS. */
 .ng-account-root { color: var(--foreground); background: var(--background); font-family: var(--ng-preview-inter), Inter, ui-sans-serif, system-ui, sans-serif; }
 .ng-account-root * { box-sizing: border-box; }
