@@ -70,7 +70,7 @@ test("upgrade shows installed-template version and unchanged/generated status", 
     assert.equal(setup.status, 0, setup.stderr)
     const upgrade = run(["upgrade", root, "--refresh-generated", "--dry-run"], { env: withColor })
     assert.equal(upgrade.status, 0, upgrade.stderr)
-    assert.match(upgrade.stdout, /Templates: installed NextGuide package v/)
+    assert.match(upgrade.stdout.replace(/\u001b\[[\d;]+m/g, ""), /Templates: installed NextGuide package v/)
     assert.match(upgrade.stdout, /✓.*All files match/)
     assert.match(upgrade.stdout, /does not download or rebuild/)
   } finally { rmSync(root, { recursive: true, force: true }) }
