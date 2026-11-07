@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { copyFileSync, constants, existsSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { STARTER_CONTENT } from './starter-content.mjs'
 import { GENERATED_MDX_COMPONENTS } from './starter-components.mjs'
@@ -117,6 +117,43 @@ function projectImport(directory, aliases, fromFile, targetFile) {
   return specifier.startsWith('.') ? specifier : './' + specifier
 }
 
+/**
+ * next-themes applies the chosen class and color-scheme to document.documentElement
+ * before React hydration. For App Router projects, React also hydrates <html>,
+ * so the actual root layout must opt out of checking those theme-owned attributes.
+ * This is the same one-element safeguard used by apps/web/app/layout.tsx.
+ *
+ * Only patch a single, recognizable root <html> opening tag. Never overwrite
+ * custom layouts or rewrite user code that does not match this safe pattern.
+ */
+export function planRootLayoutHydrationPatch(directory, router) {
+  if (router.name !== 'App Router') return null
+  const candidates = ['tsx', 'jsx', 'js', 'ts']
+    .map((ext) => router.folder + '/layout.' + ext)
+    .filter((path) => existsSync(join(directory, path)))
+  if (candidates.length > 1) {
+    throw new Error('Multiple root App Router layouts found: ' + candidates.join(', '))
+  }
+  if (!candidates.length) return null
+  const path = candidates[0]
+  const absolute = join(directory, path)
+  if (lstatSync(absolute).isSymbolicLink()) {
+    throw new Error('Refusing to modify a symbolic-link root layout: ' + path)
+  }
+  const original = readFileSync(absolute, 'utf8')
+  const matches = [...original.matchAll(/<html(?=[\s/>])/g)]
+  if (matches.length !== 1) {
+    throw new Error('Cannot safely locate the root <html> in ' + path +
+      '. Add suppressHydrationWarning to that element for NextGuide themes.')
+  }
+  const position = matches[0].index
+  const end = original.indexOf('>', position)
+  if (end < 0) throw new Error('Unclosed root <html> element in ' + path)
+  if (/\bsuppressHydrationWarning\b/.test(original.slice(position, end + 1))) return null
+  const updated = original.slice(0, position) + '<html suppressHydrationWarning' + original.slice(position + 5)
+  return { path, original, updated, backup: path + '.nextguide-backup' }
+}
+
 export function planDeveloperProject(directory, inspection, routerOption, options = {}) {
   const basePath = options.basePath ?? '/docs'
   const appearance = normalizeAppearance(options.appearance)
@@ -171,6 +208,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
   files[stylesFile] = fullStyleSource(root)
   let patch = null
   if (router.name === 'App Router') {
+    patch = planRootLayoutHydrationPatch(directory, router)
     const docsFolder = router.folder + (basePath === '/' ? '/(nextguide)' : '/docs')
     const layoutFile = docsFolder + '/layout.' + ext
     const pageFile = docsFolder + '/[[...slug]]/page.' + ext
@@ -197,7 +235,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
       const original = readFileSync(join(directory, appFile), 'utf8')
       const needed = ['import "nextguide/styles.css"', 'import "' + cssImport + '"']
         .filter((line) => !original.includes(line.split('"')[1]))
-      if (needed.length) patch = { path: appFile, original, updated: needed.join('\n') + '\n' + original }
+      if (needed.length) patch = { path: appFile, original, updated: needed.join('\n') + '\n' + original, backup: appFile + '.nextguide-backup' }
     }
   }
   return { directory, router, typed, files, patch, basePath, appearance, homeBackup }
@@ -205,25 +243,56 @@ export function planDeveloperProject(directory, inspection, routerOption, option
 
 export function applyPlan(plan, dryRun = false) {
   const conflicts = Object.keys(plan.files).filter((file) => existsSync(join(plan.directory, file)))
-  if (conflicts.length) throw new Error('Refusing to overwrite existing project files:\n' + conflicts.map((x) => '  ' + x).join('\n'))
-  const backedUp = plan.homeBackup ? [plan.homeBackup.backup] : []
-  if (dryRun) return { created: Object.keys(plan.files), modified: plan.patch ? [plan.patch.path] : [], backedUp }
-  if (plan.homeBackup) renameSync(join(plan.directory, plan.homeBackup.original), join(plan.directory, plan.homeBackup.backup))
+  if (conflicts.length) throw new Error('Refusing to overwrite existing project files:\\n' + conflicts.map((x) => '  ' + x).join('\\n'))
+  const patch = plan.patch
+  if (patch && existsSync(join(plan.directory, patch.backup))) {
+    throw new Error('Cannot back up ' + patch.path + ': ' + patch.backup + ' already exists.')
+  }
+  const backedUp = [
+    ...(plan.homeBackup ? [plan.homeBackup.backup] : []),
+    ...(patch ? [patch.backup] : []),
+  ]
+  if (dryRun) return { created: Object.keys(plan.files), modified: patch ? [patch.path] : [], backedUp }
+
+  const created = []
+  let homeMoved = false
+  let patchSaved = false
   try {
+    if (plan.homeBackup) {
+      renameSync(join(plan.directory, plan.homeBackup.original), join(plan.directory, plan.homeBackup.backup))
+      homeMoved = true
+    }
     for (const [file, content] of Object.entries(plan.files)) {
       const dest = join(plan.directory, file)
       mkdirSync(dirname(dest), { recursive: true })
       writeFileSync(dest, content, { encoding: 'utf8', flag: 'wx' })
+      created.push(file)
     }
-    if (plan.patch) writeFileSync(join(plan.directory, plan.patch.path), plan.patch.updated, 'utf8')
+    if (patch) {
+      const dest = join(plan.directory, patch.path)
+      if (readFileSync(dest, 'utf8') !== patch.original) {
+        throw new Error('Root project file changed while initializing: ' + patch.path)
+      }
+      copyFileSync(dest, join(plan.directory, patch.backup), constants.COPYFILE_EXCL)
+      patchSaved = true
+      writeFileSync(dest, patch.updated, 'utf8')
+    }
   } catch (error) {
-    if (plan.homeBackup && !existsSync(join(plan.directory, plan.homeBackup.original)) &&
-        existsSync(join(plan.directory, plan.homeBackup.backup))) {
-      renameSync(join(plan.directory, plan.homeBackup.backup), join(plan.directory, plan.homeBackup.original))
+    if (patchSaved) {
+      try { copyFileSync(join(plan.directory, patch.backup), join(plan.directory, patch.path)) }
+      catch { /* keep the backup for recovery */ }
+    }
+    for (const file of created.reverse()) {
+      try { rmSync(join(plan.directory, file), { force: true }) }
+      catch { /* keep original error */ }
+    }
+    if (homeMoved && plan.homeBackup) {
+      try { renameSync(join(plan.directory, plan.homeBackup.backup), join(plan.directory, plan.homeBackup.original)) }
+      catch { /* keep the backup for recovery */ }
     }
     throw error
   }
-  return { created: Object.keys(plan.files), modified: plan.patch ? [plan.patch.path] : [], backedUp }
+  return { created: Object.keys(plan.files), modified: patch ? [patch.path] : [], backedUp }
 }
 
 export function initDeveloper(projectDirectory, inspection, options = {}) {
