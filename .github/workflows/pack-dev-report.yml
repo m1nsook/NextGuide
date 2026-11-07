@@ -80,12 +80,26 @@ jobs:
             summary.push("", "The package build failed. Review the relevant log below and the full Actions run.")
 
             try {
-              const jobsResponse = await request(`${api}/actions/runs/${id}/attempts/${Number(attempt)}/jobs?per_page=100`)
-              const jobs = (await jobsResponse.json()).jobs || []
-              const failed = jobs.find(job => job.conclusion === "failure")
-              if (!failed) throw new Error("No failed job found in run attempt")
-              const logResponse = await request(`${api}/actions/jobs/${failed.id}/logs`)
-              const raw = await logResponse.text()
+              // GitHub may still be finalizing the logs immediately after completion.
+              // Retry briefly instead of creating a failure issue with no compiler output.
+              let raw = ""
+              let latestError
+              for (let retry = 0; retry < 6; retry++) {
+                try {
+                  const jobsResponse = await request(`${api}/actions/runs/${id}/attempts/${Number(attempt)}/jobs?per_page=100`)
+                  const jobs = (await jobsResponse.json()).jobs || []
+                  const failed = jobs.find(job => job.conclusion === "failure")
+                  if (!failed) throw new Error("No failed job found in run attempt")
+                  const logResponse = await request(`${api}/actions/jobs/${failed.id}/logs`)
+                  raw = await logResponse.text()
+                  if (raw.trim()) break
+                  throw new Error("GitHub returned an empty job log")
+                } catch (error) {
+                  latestError = error
+                  if (retry < 5) await new Promise(resolve => setTimeout(resolve, 2000))
+                }
+              }
+              if (!raw.trim()) throw latestError || new Error("Could not fetch job log")
               const clean = raw.replace(/\u001b\[[0-9;]*[A-Za-z]/g, "")
               const limited = clean.slice(-30000).replace(/\r/g, "")
               const backticks = "`".repeat(Math.max(4, ...(limited.match(/`+/g) || []).map(s => s.length + 1)))
