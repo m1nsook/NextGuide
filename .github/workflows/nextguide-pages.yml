@@ -1,10 +1,8 @@
 name: NextGuide Docs (GitHub Pages)
 
+# Manual only: no build jobs on pushes, pull requests or merge.
+# This workflow can consume significant runner minutes. Review before running.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
