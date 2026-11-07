@@ -179,7 +179,7 @@ test("publisher posts verified release to review queue, owner approves with CSRF
       assert.equal(sub.status,202)
       const id=(await sub.json()).id
       const before=await (await fetch(base+"/admin")).text()
-      assert.match(before,/Owner login/)
+      assert.match(before,/Registry owner login/)
       assert.doesNotMatch(before,/Pending add-on publications/)
       const unauth=await fetch(base+"/admin/review/"+id+"/approve",{method:"POST",headers:{Origin:opts.origin,"Content-Type":"application/x-www-form-urlencoded"},body:"csrf=invalid",redirect:"manual"})
       assert.equal(unauth.status,401)
