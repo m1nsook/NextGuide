@@ -24,8 +24,8 @@ test('initializes src/app TypeScript project with real pages and config', () => 
   try {
     const r = initDeveloper(d, inspect(d, ['src/app']))
     assert.equal(r.created.length, 17)
-    assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/opengraph-image.tsx')))
-    assert.match(read(d, 'src/app/docs/[[...slug]]/opengraph-image.tsx'), /NextGuideOgCard/)
+    assert.ok(existsSync(join(d, 'src/app/og/[...slug]/route.ts')))
+    assert.match(read(d, 'src/app/og/[...slug]/route.ts'), /NextGuideOgCard/)
     assert.equal(r.mode, 'developer')
     assert.ok(existsSync(join(d, 'src/app/docs/[[...slug]]/page.tsx')))
     assert.ok(existsSync(join(d, 'src/app/docs/layout.tsx')))
@@ -462,12 +462,12 @@ test('generated OG image routes reuse NextGuide branding and support App Router 
     const d = fixture({ folder })
     try {
       const result = initDeveloper(d, inspect(d, [folder]), { basePath: '/docs' })
-      const image = read(d, folder + '/docs/[[...slug]]/opengraph-image.tsx')
+      const image = read(d, folder + '/og/[...slug]/route.ts')
       assert.match(image, /from "nextguide\/og"/)
       assert.match(image, /getFrontmatter/)
       assert.match(image, /generateStaticParams/)
-      assert.ok(image.includes("siteName={site.name}"))
-      assert.ok(image.includes("appearance={appearance.mode}"))
+      assert.match(image, /siteName: site.name/)
+      assert.match(image, /appearance: appearance.mode/)
       assert.equal(result.created.length, 17)
     } finally { clear(d) }
   }
@@ -478,6 +478,6 @@ test('Pages Router can still initialize without an unsupported dynamic image rou
   try {
     const result = initDeveloper(d, inspect(d, ['src/pages']))
     assert.ok(result.created.length >= 16)
-    assert.ok(!result.created.some((p) => p.includes('opengraph-image')))
+    assert.ok(!result.created.some((p) => p.includes('/og/[...slug]/route.')))
   } finally { clear(d) }
 })

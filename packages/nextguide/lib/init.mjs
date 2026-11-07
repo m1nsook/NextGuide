@@ -221,7 +221,7 @@ export function planDeveloperProject(directory, inspection, routerOption, option
       typed, basePath, projectImport(directory, aliases, pageFile, libFile.replace(/\.(ts|js)$/, ''))
     )
     // Statically generate one branded social preview for every MDX route.
-    const ogFile = docsFolder + '/[[...slug]]/opengraph-image.' + ext
+    const ogFile = router.folder + '/og/[...slug]/route.' + lib
     files[ogFile] = fullOgImageSource(
       typed, projectImport(directory, aliases, ogFile, libFile.replace(/\.(ts|js)$/, ''))
     )

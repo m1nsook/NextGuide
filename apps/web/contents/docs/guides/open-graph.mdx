@@ -11,7 +11,7 @@ These previews are intended for link sharing on Discord, Slack, LinkedIn and oth
 
 ## Available support
 
-- **App Router / Developer Mode:** generated `opengraph-image.tsx` route per MDX slug, with a PNG built during static export or served by Next.js.
+- **App Router / Developer Mode:** generated `app/og/[...slug]/route.ts` image handler per MDX slug, with a PNG built during static export or served by Next.js.
 - **The official NextGuide documentation:** one image for the homepage and individually generated images for the documentation and components sections.
 - **Pages Router:** the reusable image renderer is available from `nextguide/og`, but an automatic per-page generated image route for static exports is not yet included.
 - **Account Mode:** planned. It is not implemented in the current alpha.
@@ -49,6 +49,6 @@ The automatically generated App Router template obtains the information from the
 
 The generated image route is static whenever its paths and content are available at build time. It works with Next.js static exports, including GitHub Pages, without a separate screenshot service.
 
-Share previews use an absolute image URL resolved from your site metadata. Configure a publicly accessible domain for your Next.js deployment. Generated images also require Next.js to produce an `og:image` metadata tag on each page.
+Share previews use an image URL resolved from site metadata; set `site.url` to your public domain, including a base path when needed. Configure a publicly accessible domain for your Next.js deployment. Generated images also require Next.js to produce an `og:image` metadata tag on each page.
 
 This feature uses Next.js's built-in `ImageResponse` API; it does not introduce another npm package.

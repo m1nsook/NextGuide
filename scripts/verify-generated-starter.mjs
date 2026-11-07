@@ -94,10 +94,10 @@ function createSite(router, basePath = "/docs", cacheComponents = false) {
         return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
           const path = join(directory, entry.name)
           return entry.isDirectory() ? ogFiles(path)
-            : entry.name.includes("opengraph-image") && entry.name.endsWith(".png") ? [path] : []
+            : entry.name.endsWith(".png") ? [path] : []
         })
       }
-      assert.ok(ogFiles(join(folder, "out")).length >= 1,
+      assert.ok(ogFiles(join(folder, "out", "og")).length >= 1,
         "App Router static export must include generated OG image PNG files")
     }
 
