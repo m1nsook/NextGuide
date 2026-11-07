@@ -27,7 +27,7 @@ test("accepts Pages-prefixed links for working static routes", () => {
 test("rejects the original bug: root-relative anchors escape GitHub Pages", () => {
   const dir = exportedSite('<a href="/">broken logo</a><a href="/components/">broken components</a>')
   try {
-    assert.throws(() => validateExportLinks(dir), /Missing \\/NextGuide deployment prefix/)
+    assert.throws(() => validateExportLinks(dir), /Missing \/NextGuide deployment prefix/)
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 
