@@ -1,64 +1,31 @@
 ---
-title: Account Mode (early implementation)
-description: Passwordless NextGuide setup using a terminal token, authenticator app, and single-use recovery codes.
+title: Account Mode
+description: Guided setup, owner login, browser-based editing, and add-on plans.
 ---
 
-# Account Mode: authenticator-first setup
+# Account Mode
 
-Account Mode is being developed and **has not been published to npm**. The source implementation includes the passwordless setup flow, a guided site wizard, and an authenticated content studio. Installation and deployment testing are required before release.
+Account Mode is for people who want to build and manage documentation in the browser. It uses the same NextGuide package as Developer Mode, but adds a private owner dashboard and persistent storage.
 
-Instead of a password or email login, the site owner uses a standard TOTP authenticator app.
+<CodeWindow title="Generate Account Mode" language="bash" code="bunx nextguide init --account" />
 
-## Owner enrollment
+After generating the site, start your Next.js server, open `/setup`, and enter the one-time token printed by your terminal. Then register your authenticator and save the recovery codes.
 
-1. In a Next.js App Router project, run `bunx nextguide init --account` using a locally built NextGuide package that contains Account Mode. A running Next.js server is required; static export cannot host Account Mode.
-2. The CLI prints a one-time ownership token. The server stores only its hash, so nobody else can claim a new installation by visiting it first.
-3. Start the server, visit `/setup`, and enter the token from the terminal.
-4. Scan the QR code in an authenticator app, or enter its key manually, then confirm with a six-digit OTP.
-5. Store the ten single-use recovery codes somewhere safe. The setup token is invalidated once enrollment succeeds.
+<LinkCards>
+  <LinkCard title="First-time setup" description="Ownership token, authenticator, and site wizard" href="/docs/account/setup" />
+  <LinkCard title="Manage your site" description="Pages, navigation, appearance, and media" href="/docs/account/studio" />
+  <LinkCard title="Security & hosting" description="Recovery, storage, HTTPS, and backups" href="/docs/account/security" />
+  <LinkCard title="Add-ons" description="Marketplace design and upcoming add-on management" href="/docs/addons" />
+</LinkCards>
 
-6. Use `/login` with a new OTP or an unused recovery code. `/admin` requires an authenticated session.
+## How Account Mode differs
 
-If you lose the terminal setup token **before** enrolling, run `bunx nextguide account token --rotate` locally in your project to generate a replacement. You cannot rotate the bootstrap token after an owner has registered.
+| | Developer Mode | Account Mode |
+| --- | --- | --- |
+| Editing | Files and source control | Browser-based protected studio |
+| Router | App Router and Pages Router | App Router |
+| Hosting | Static export or Node.js | Persistent Node.js server |
+| Authentication | Not required | Single-owner TOTP and recovery codes |
+| Add-ons | Not available | Planned for 1.0.0 |
 
-## Storage and deployment
-
-This implementation is designed for one site owner on a persistent Node.js server. The data file lives outside the project repository, under a per-project directory in the server user's home folder. It must stay private and writable by the server process.
-
-For a VPS, set `NEXTGUIDE_DATA_DIR` to an owner-only persistent directory and set `NEXTGUIDE_PUBLIC_URL` to your **HTTPS public origin**. Use a TLS reverse proxy; the server requires same-origin requests for account mutations.
-
-The setup QR is generated locally on the server; no QR-generation web service is involved. Recovery codes and session tokens are stored only as cryptographic hashes. Authenticator codes are checked in a small time window and rejected after a successful use.
-
-Back up your private account data and store your recovery codes separately. Losing the server data or both the authenticator and all recovery codes can prevent account recovery.
-
-## Security limitations
-
-TOTP is **not phishing-resistant**. A fraudulent login page can steal a freshly entered code. Passkeys (WebAuthn) are planned as a stronger passwordless option. This source preview is not yet approved for production use.
-
-## Website setup wizard
-
-After saving your recovery codes, Account Mode opens the dashboard and guides you through:
-
-1. Site title, description, public URL, and optional owner display name and contact email.
-2. Light, dark, or system appearance; accessible accent presets; separate body, heading, and code fonts with previews.
-3. Review, finish setup, and enter the content studio.
-
-Owner contact information is optional and is not required for login.
-
-## Content studio at /admin
-
-The authenticated dashboard provides an overview, MDX page creation/editing/deletion, optimistic concurrent editing protection, navigation ordering and visibility using NextGuide's real `_meta.json` arrays, file uploads, a site appearance editor, and account security settings.
-
-The page editor includes insert tools for Markdown and NextGuide components and a draft reading preview. **MDX component rendering is authoritative on the published documentation page; the draft preview is an approximation.**
-
-Page files stay in `content/docs`, uploaded raster images stay in the **private persistent Account Mode data directory**, and a read-only `/nextguide/media/*` route serves the media without exposing account credentials. Private site settings also stay outside the source repository. Only PNG, JPEG, WebP, and GIF assets are supported (maximum 2 MB per image). SVG uploads are intentionally blocked.
-
-Changing the authenticator requires a valid code from the existing authenticator **or a second unused recovery code if the phone is lost**, followed by verification of the new device. A recovery code used to sign in cannot be reused to authorize this change. Recovery code renewal invalidates earlier codes, and the security page can sign out all active sessions.
-
-## Installation boundaries
-
-Account Mode currently targets a **single site owner**, one persistent Node.js server, and Next.js App Router. It requires a writable deployment directory for MDX and media and a stable private data directory. Static-only hosting such as GitHub Pages and ephemeral serverless filesystems are not compatible with the editor.
-
-It is part of the **one** `nextguide` package. No separate CMS package, hosted authentication provider, email address, or password is needed.
-
-Account Mode still requires full packaged-install and production-build validation before release. Developer Mode remains available for file-first/static workflows.
+**Availability:** The source implementation includes both modes; check the published npm alpha version before following a new feature guide. The marketplace and add-on runtime are not available yet.

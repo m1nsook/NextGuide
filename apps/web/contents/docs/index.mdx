@@ -1,46 +1,34 @@
 ---
 title: NextGuide documentation
-description: Create and customize documentation sites for Next.js using one package.
+description: Get started with NextGuide, choose a mode, and learn the essentials.
 ---
 
-# Documentation, built for your project
+# Welcome to NextGuide
 
-NextGuide brings MDX guides, API references, navigation, search, and reusable components into your Next.js application. Write content in files you own and deploy it with the tools you already use.
+Create a documentation site inside your existing Next.js app with one npm package. Choose how you want to work:
 
-## Get started
+<LinkCards>
+  <LinkCard title="Developer Mode" description="Write MDX in files, use Git, and deploy to static hosting." href="/docs/getting-started/developer-mode" />
+  <LinkCard title="Account Mode" description="Set up and manage your site in a browser with a protected owner account." href="/docs/account" />
+</LinkCards>
+
+## Install in three steps
 
 <CodeTabs items={[{label:"Bun",code:"bun add nextguide@alpha\nbunx nextguide init --developer\nbun run dev",language:"bash"},{label:"npm",code:"npm install nextguide@alpha\nnpx nextguide init --developer\nnpm run dev",language:"bash"}]} />
 
-Run these commands in a Next.js project. The initializer creates a documentation site under `/docs`; you can change the location during setup.
+For browser-based editing, use `bunx nextguide init --account` instead. Account Mode needs an App Router project and a persistent Node.js server.
 
-<Callout kind="info" title="Alpha release">NextGuide is currently on the npm alpha channel. The published alpha can differ from the in-development documentation and Account Mode preview. Check your installed version with `bunx nextguide --version`.</Callout>
+<Callout kind="info" title="Current package channel">NextGuide remains on the npm alpha channel. Features in the current source may not be available in every published alpha. Always check your installed version and the [release notes](https://github.com/m1nsook/NextGuide/releases).</Callout>
 
-## Choose a workflow
-
-<LinkCards>
-  <LinkCard title="Developer Mode" description="File-based MDX, source control, and static deployments" href="/docs/getting-started/developer-mode" />
-  <LinkCard title="Account Mode" description="Browser-based configuration and editing, currently in development" href="/docs/getting-started/account-mode" />
-</LinkCards>
-
-**Developer Mode** is designed for people who prefer editing source files. It works with App Router or Pages Router and supports static builds.
-
-**Account Mode** is an upcoming single-owner workflow for a persistent Next.js server. It adds an authenticator-based login, guided configuration, and a content editor. It is not part of the published alpha yet.
-
-Both modes use the same `nextguide` package—not separate UI, MDX, and OpenAPI packages.
-
-## Explore the documentation
+## What do you want to do?
 
 <LinkCards>
-  <LinkCard title="Installation" description="Install and generate your first documentation site" href="/docs/getting-started/installation" />
-  <LinkCard title="Generated files" description="Understand the routes, components, and styles" href="/docs/getting-started/generated-files" />
-  <LinkCard title="Component catalog" description="Preview reusable blocks and UI components" href="/components/ui" />
-  <LinkCard title="OpenAPI" description="Build an API reference from your specification" href="/docs/openapi" />
-  <LinkCard title="Deployment" description="Prepare your site for production" href="/docs/deployment/vercel" />
-  <LinkCard title="Safe upgrades" description="Update generated layouts without losing content" href="/docs/getting-started/upgrading" />
+  <LinkCard title="Install NextGuide" description="First-time setup and generated files" href="/docs/getting-started/installation" />
+  <LinkCard title="Use Account Mode" description="Owner setup, sign-in, the editor, and deployment" href="/docs/account" />
+  <LinkCard title="Add-on ecosystem" description="Marketplace plan, manifests, and extension APIs" href="/docs/addons" />
+  <LinkCard title="Write documentation" description="Pages, components, and MDX" href="/docs/getting-started/adding-pages" />
+  <LinkCard title="Component library" description="Reusable UI, code blocks, and file trees" href="/components/ui" />
+  <LinkCard title="Deploy a site" description="Hosting options and persistence requirements" href="/docs/deployment/self-hosting" />
 </LinkCards>
 
-## Make it yours
-
-Your documentation content lives in `content/docs/`, with `_meta.json` files controlling navigation. Built-in component examples are ready to use in MDX, and the theme and CSS can be customized inside your own application.
-
-[Start with the installation guide](/docs/getting-started/installation).
+NextGuide contains MDX, UI components, OpenAPI, fonts and theming in the same package. No extra NextGuide packages are required.

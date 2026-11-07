@@ -42,6 +42,11 @@ test("App Router Account Mode scaffolds protected routes and owner token without
     }
     assert.ok(existsSync(join(project, "src/app/setup/page.tsx")))
     assert.ok(existsSync(join(project, "src/app/login/page.tsx")))
+    for (const route of ["setup", "login"]) {
+      const source = readFileSync(join(project, `src/app/${route}/page.tsx`), "utf8")
+      assert.match(source, /next\/font\/google/, route + " should self-host Inter")
+      assert.match(source, /--ng-preview-inter/, route + " should supply the Account Mode font variable")
+    }
     assert.ok(existsSync(join(project, "src/app/admin/page.tsx")))
     assert.ok(existsSync(join(project, "public/_nextguide/monaco/vs/loader.js")), "local Monaco bundle missing")
     assert.ok(existsSync(join(project, "public/_nextguide/monaco/vs/LICENSE.txt")), "Microsoft MIT notice missing")
