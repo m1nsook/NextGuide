@@ -6,7 +6,13 @@ import { LogoMark } from "../components/site/logo.js"
 import { Providers as DocsSiteProviders } from "../components/site/providers.js"
 import { AccountThemeMenu } from "./theme-menu.js"
 import { AccountMdxEditor } from "./mdx-editor.js"
-import { Card, Checkbox, Switch, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/index.js"
+import { Card } from "./ui/card.js"
+import { Checkbox } from "./ui/checkbox.js"
+import { Switch } from "./ui/switch.js"
+import { Button } from "./ui/button.js"
+import { Input } from "./ui/input.js"
+import { Textarea } from "./ui/textarea.js"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select.js"
 
 type Font = "inter" | "geist" | "ibm-plex-sans" | "segoe-ui" | "system" | "jetbrains-mono" | "geist-mono" | "ibm-plex-mono" | "system-mono"
 type Site = { name: string; description: string; url: string; logo: string; ogImage: string; copyrightEnabled: boolean; copyrightText: string; copyrightHref: string; ownerName: string; ownerEmail: string; ownerAvatar: string; accent: string; theme: string; bodyFont: Font; headingFont: Font; codeFont: Font; setupComplete: boolean }
@@ -213,24 +219,24 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
   const showWizard=appReady&&!site?.setupComplete
   const to = (title:string,description:string,content:React.ReactNode) => <Card className="ng-studio-section"><header><h2>{title}</h2><p>{description}</p></header>{content}</Card>
 
-  return <DocsSiteProviders defaultTheme="system" enableSystem><div className="ng-studio-shell">
+  return <DocsSiteProviders defaultTheme="system" enableSystem><div className="ng-studio-shell ng-account-bootstrap">
     <aside className={"ng-studio-side "+(mobileMenu?"ng-studio-side-open":"")}>
       <div className="ng-studio-brand"><span className="ng-studio-brand-icon"><LogoMark className="ng-account-icon"/></span><span>NextGuide<small>Account Mode</small></span></div>
       <span className="ng-studio-nav-label">WORKSPACE</span>
       <nav aria-label="Dashboard">
-        {navigationItems.map(item=><button key={item.id} type="button" className={"ng-studio-nav-item "+(view===item.id?"ng-studio-active":"")} onClick={()=>switchView(item.id)}><item.icon size={18} aria-hidden="true"/>{item.label}</button>)}
+        {navigationItems.map(item=><Button key={item.id} type="button" className={"ng-studio-nav-item "+(view===item.id?"ng-studio-active":"")} onClick={()=>switchView(item.id)}><item.icon size={18} aria-hidden="true"/>{item.label}</Button>)}
       </nav>
-      <div className="ng-studio-side-bottom"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View website</a><form method="post" action="/api/nextguide/account/logout"><button type="submit"><LogOut size={16}/>Sign out</button></form></div>
+      <div className="ng-studio-side-bottom"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View website</a><form method="post" action="/api/nextguide/account/logout"><Button type="submit"><LogOut size={16}/>Sign out</Button></form></div>
     </aside>
     <div className="ng-studio-main">
       <header className="ng-studio-topbar">
-        <button className="ng-studio-menu" aria-label="Toggle navigation" onClick={()=>setMobileMenu(!mobileMenu)}><Menu size={22}/></button>
+        <Button className="ng-studio-menu" aria-label="Toggle navigation" onClick={()=>setMobileMenu(!mobileMenu)}><Menu size={22}/></Button>
         <span>{state?.site.name||"Account Mode"} <span className="ng-studio-chevron">/</span> {navigationItems.find(x=>x.id===view)?.label}</span>
         <div className="ng-studio-header-tools"><a href={slugHref("", basePath)} target="_blank" rel="noreferrer">View docs <ExternalLink size={14}/></a><AccountThemeMenu /></div>
       </header>
       <main className="ng-studio-workspace" aria-live="polite">
-        {error&&<div className="ng-studio-alert ng-studio-error" role="alert">{error}<button type="button" onClick={()=>setError("")}>Dismiss</button></div>}
-        {notice&&<div className="ng-studio-alert ng-studio-success" role="status">{notice}<button type="button" onClick={()=>setNotice("")}>Dismiss</button></div>}
+        {error&&<div className="ng-studio-alert ng-studio-error" role="alert">{error}<Button type="button" onClick={()=>setError("")}>Dismiss</Button></div>}
+        {notice&&<div className="ng-studio-alert ng-studio-success" role="status">{notice}<Button type="button" onClick={()=>setNotice("")}>Dismiss</Button></div>}
         {!appReady&&!error?<p className="ng-studio-muted">Loading your workspace…</p>:null}
         {showWizard&&site?<div className="ng-studio-onboarding">
           <span className="ng-studio-eyebrow">STEP {wizardStep+1} OF 3 · PERSONALIZE YOUR SITE</span>
@@ -238,87 +244,87 @@ export function AccountStudio({ basePath = "/docs" }: { basePath?: string }) {
           <p>{wizardStep===0?"Your authenticator is already connected. Give your site a name and short description.":wizardStep===1?"Choose a readable color scheme and typography. Everything can be changed later.":"Your pages, navigation, search, and components are already installed."}</p>
           <div className="ng-studio-steps" aria-label="Wizard progress"><span data-current={wizardStep===0}>1. Identity</span><span data-current={wizardStep===1}>2. Design</span><span data-current={wizardStep===2}>3. Finish</span></div>
           {wizardStep===0?<div className="ng-studio-fields">
-            <label>Website title<input value={site.name} maxLength={100} onChange={e=>editSite("name",e.target.value)} placeholder="Your documentation"/></label>
-            <label>Description<textarea value={site.description} maxLength={400} onChange={e=>editSite("description",e.target.value)} rows={3}/></label>
-            <label>Public site origin (optional)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
-            <label>Your display name (optional)<input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} placeholder="Documentation owner"/></label>
-            <label>Contact email (optional, private)<input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} placeholder="you@example.com"/></label>
+            <label>Website title<Input value={site.name} maxLength={100} onChange={e=>editSite("name",e.target.value)} placeholder="Your documentation"/></label>
+            <label>Description<Textarea value={site.description} maxLength={400} onChange={e=>editSite("description",e.target.value)} rows={3}/></label>
+            <label>Public site origin (optional)<Input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
+            <label>Your display name (optional)<Input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} placeholder="Documentation owner"/></label>
+            <label>Contact email (optional, private)<Input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} placeholder="you@example.com"/></label>
           </div>:null}
           {wizardStep===1?<DesignFields site={site} update={editSite}/>:null}
           {wizardStep===2?<div className="ng-studio-summary"><ShieldCheck size={26}/><h3>{site.name}</h3><p>{site.description}</p><p>Appearance: {site.theme} · {site.accent} · {site.bodyFont}</p><p>Your admin area requires an authenticator code. Keep your recovery codes offline.</p></div>:null}
           <div className="ng-studio-actions">
-            {wizardStep>0?<button className="ng-studio-button-secondary" onClick={()=>setWizardStep(x=>x-1)}>Back</button>:null}
-            {wizardStep<2?<button className="ng-studio-button" onClick={()=>setWizardStep(x=>x+1)}>Continue</button>:<button className="ng-studio-button" disabled={busy} onClick={()=>run(async()=>{await saveSite(true);setView("overview");setWizardStep(0)},"Site configured. Welcome to your dashboard!")}>Finish setup</button>}
+            {wizardStep>0?<Button className="ng-studio-button-secondary" onClick={()=>setWizardStep(x=>x-1)}>Back</Button>:null}
+            {wizardStep<2?<Button className="ng-studio-button" onClick={()=>setWizardStep(x=>x+1)}>Continue</Button>:<Button className="ng-studio-button" disabled={busy} onClick={()=>run(async()=>{await saveSite(true);setView("overview");setWizardStep(0)},"Site configured. Welcome to your dashboard!")}>Finish setup</Button>}
           </div>
         </div>:null}
         {appReady&&!showWizard&&<div className="ng-studio-content">
           {view==="overview"&&<>
             <span className="ng-studio-eyebrow">YOUR WORKSPACE</span><h1>{site?.ownerName ? "Welcome back, "+site.ownerName+"." : "Good to see you again."}</h1><p className="ng-studio-muted">Manage your documentation site without touching source files.</p>
             <div className="ng-studio-stats"><div><FileText size={21}/><strong>{state!.pages.length}</strong><span>Documentation pages</span></div><div><FolderTree size={21}/><strong>{state!.navigation.items.length}</strong><span>Top-level items</span></div><div><HardDriveUpload size={21}/><strong>{state!.media.length}</strong><span>Uploaded images</span></div></div>
-            {to("Quick actions","Everything here is stored in your own Next.js project.",<div className="ng-studio-quick"><button onClick={()=>{setPage({...emptyPage});setView("pages")}}><FilePlus size={18}/>Create a page</button><button onClick={()=>switchView("design")}><Brush size={18}/>Customize site</button><button onClick={()=>switchView("navigation")}><FolderTree size={18}/>Edit navigation</button></div>)}
-            {to("Recent pages","Continue working on an existing document.",<div className="ng-studio-page-list">{state!.pages.slice(0,8).map(item=><button key={item.slug} onClick={()=>loadPage(item.slug)}><FileText size={17}/><span>{item.title}<small>{slugLabel(item.slug)}</small></span><span>Open</span></button>)}</div>)}
+            {to("Quick actions","Everything here is stored in your own Next.js project.",<div className="ng-studio-quick"><Button onClick={()=>{setPage({...emptyPage});setView("pages")}}><FilePlus size={18}/>Create a page</Button><Button onClick={()=>switchView("design")}><Brush size={18}/>Customize site</Button><Button onClick={()=>switchView("navigation")}><FolderTree size={18}/>Edit navigation</Button></div>)}
+            {to("Recent pages","Continue working on an existing document.",<div className="ng-studio-page-list">{state!.pages.slice(0,8).map(item=><Button key={item.slug} onClick={()=>loadPage(item.slug)}><FileText size={17}/><span>{item.title}<small>{slugLabel(item.slug)}</small></span><span>Open</span></Button>)}</div>)}
           </>}
           {view==="pages"&&<>
-            <div className="ng-studio-title-row"><div><h1>Pages</h1><p className="ng-studio-muted">Edit your MDX, organize guides, and publish updates.</p></div><button className="ng-studio-button" onClick={()=>{setPage({...emptyPage});setUnsaved(false)}}><FilePlus size={17}/>New page</button></div>
-            <div className="ng-studio-page-grid"><div className="ng-studio-page-panel"><label className="ng-studio-search"><Search size={16}/><input placeholder="Search pages" value={query} onChange={e=>setQuery(e.target.value)}/></label><div className="ng-studio-page-picker">{filtered.map(row=><button type="button" key={row.slug} data-selected={page?.slug===row.slug} onClick={()=>loadPage(row.slug)}><FileText size={16}/><span>{row.title}<small>{slugLabel(row.slug)}</small></span></button>)}</div></div>
+            <div className="ng-studio-title-row"><div><h1>Pages</h1><p className="ng-studio-muted">Edit your MDX, organize guides, and publish updates.</p></div><Button className="ng-studio-button" onClick={()=>{setPage({...emptyPage});setUnsaved(false)}}><FilePlus size={17}/>New page</Button></div>
+            <div className="ng-studio-page-grid"><div className="ng-studio-page-panel"><label className="ng-studio-search"><Search size={16}/><Input placeholder="Search pages" value={query} onChange={e=>setQuery(e.target.value)}/></label><div className="ng-studio-page-picker">{filtered.map(row=><Button type="button" key={row.slug} data-selected={page?.slug===row.slug} onClick={()=>loadPage(row.slug)}><FileText size={16}/><span>{row.title}<small>{slugLabel(row.slug)}</small></span></Button>)}</div></div>
               {page?<div className="ng-studio-editor">
-                <div className="ng-studio-editor-head"><span>{page.version===null?"New page":"Editing "+slugLabel(page.slug)}</span><div><button className="ng-studio-button-secondary" onClick={()=>setPreview(!preview)}>{preview?"Hide preview":"Show preview"}</button><button className="ng-studio-button" disabled={busy} onClick={savePage}><Save size={17}/>Save</button></div></div>
-                <div className="ng-studio-fields"><label>Page path (slug)<input disabled={page.version!==null} value={page.slug} onChange={e=>changePage("slug",e.target.value.toLowerCase())} placeholder="guides/installation"/><small>Lowercase letters, hyphens, and slash. Homepage slug is empty.</small></label>
-                  <label>Title<input value={page.title} onChange={e=>changePage("title",e.target.value)} maxLength={160} placeholder="Installation"/></label>
-                  <label>Description<input value={page.description} onChange={e=>changePage("description",e.target.value)} maxLength={500} placeholder="What this page teaches"/></label>
-                  <div className="ng-studio-editbar"><button title="Insert heading" onClick={()=>changePage("body",page.body+"\n## New heading\n")}>H2</button><button title="Insert bold" onClick={()=>changePage("body",page.body+"**Bold text**")}>B</button><button title="Insert link" onClick={()=>changePage("body",page.body+"[Link](https://example.com)")}>Link</button><button title="Insert code" onClick={()=>changePage("body",page.body+"\n```ts\nconst hello = 'NextGuide'\n```\n")}>Code</button><button title="Insert callout" onClick={()=>changePage("body",page.body+"\n<Callout kind=\"info\" title=\"Note\">Your message</Callout>\n")}>Callout</button></div>
+                <div className="ng-studio-editor-head"><span>{page.version===null?"New page":"Editing "+slugLabel(page.slug)}</span><div><Button className="ng-studio-button-secondary" onClick={()=>setPreview(!preview)}>{preview?"Hide preview":"Show preview"}</Button><Button className="ng-studio-button" disabled={busy} onClick={savePage}><Save size={17}/>Save</Button></div></div>
+                <div className="ng-studio-fields"><label>Page path (slug)<Input disabled={page.version!==null} value={page.slug} onChange={e=>changePage("slug",e.target.value.toLowerCase())} placeholder="guides/installation"/><small>Lowercase letters, hyphens, and slash. Homepage slug is empty.</small></label>
+                  <label>Title<Input value={page.title} onChange={e=>changePage("title",e.target.value)} maxLength={160} placeholder="Installation"/></label>
+                  <label>Description<Input value={page.description} onChange={e=>changePage("description",e.target.value)} maxLength={500} placeholder="What this page teaches"/></label>
+                  <div className="ng-studio-editbar"><Button title="Insert heading" onClick={()=>changePage("body",page.body+"\n## New heading\n")}>H2</Button><Button title="Insert bold" onClick={()=>changePage("body",page.body+"**Bold text**")}>B</Button><Button title="Insert link" onClick={()=>changePage("body",page.body+"[Link](https://example.com)")}>Link</Button><Button title="Insert code" onClick={()=>changePage("body",page.body+"\n```ts\nconst hello = 'NextGuide'\n```\n")}>Code</Button><Button title="Insert callout" onClick={()=>changePage("body",page.body+"\n<Callout kind=\"info\" title=\"Note\">Your message</Callout>\n")}>Callout</Button></div>
                   <div className="ng-studio-editor-field"><label>MDX source</label><AccountMdxEditor key={page.slug || "new-page"} value={page.body} slug={page.slug} onChange={value=>changePage("body",value)}/></div>
                 </div>
                 {preview?<div className="ng-studio-preview"><div className="ng-studio-preview-head"><BookOpen size={16}/>Draft reading preview <span>(Markdown approximation; MDX components render on the live page)</span></div><div className="ng-studio-preview-copy"><h2>{page.title||"Untitled page"}</h2>{headingPreview(page.body)}</div></div>:null}
-                <div className="ng-studio-editor-actions">{page.version!==null&&page.slug?<button className="ng-studio-button-danger" onClick={removePage}><Trash2 size={16}/>Delete</button>:null}
+                <div className="ng-studio-editor-actions">{page.version!==null&&page.slug?<Button className="ng-studio-button-danger" onClick={removePage}><Trash2 size={16}/>Delete</Button>:null}
                   {page.version!==null?<a href={slugHref(page.slug, basePath)} target="_blank" rel="noreferrer"><ExternalLink size={16}/>View published page</a>:null}</div>
               </div>:<div className="ng-studio-placeholder"><FileText size={32}/><h3>Select a page</h3><p>Or create a new one to start writing.</p></div>}
             </div>
           </>}
           {view==="navigation"&&<>
             <h1>Navigation</h1><p className="ng-studio-muted">Choose a folder, reorder its items, or hide entries from the sidebar.</p>
-            <div className="ng-studio-fields ng-studio-nav-folder"><label>Folder<input value={nav?.folder||""} onChange={e=>setNav(prev=>prev?{...prev,folder:e.target.value}:prev)} placeholder="Root navigation"/></label><button className="ng-studio-button-secondary" onClick={()=>openNavigation(nav?.folder||"")}>Open folder</button></div>
-            {to("Navigation entries","Drag-free keyboard-friendly ordering. Use the arrow buttons to move each entry.",<div className="ng-studio-nav-editor">{nav?.items.map((item,index)=><div className="ng-studio-nav-row" key={item.slug}><span className="ng-studio-nav-position">{index+1}</span><span className="ng-studio-nav-slug">{item.slug}</span><input aria-label={"Navigation title for "+item.slug} value={item.title} onChange={e=>setNav(prev=>prev?{...prev,items:prev.items.map((x,j)=>j===index?{...x,title:e.target.value}:x)}:prev)}/><div className="ng-studio-checkbox"><Checkbox id={"ng-nav-visible-"+index} checked={!item.hidden} onCheckedChange={checked=>setNav(prev=>prev?{...prev,items:prev.items.map((x,j)=>j===index?{...x,hidden:checked!==true}:x)}:prev)}/><label htmlFor={"ng-nav-visible-"+index}>Visible</label></div><div className="ng-studio-reorder"><button aria-label={"Move "+item.slug+" up"} disabled={index===0} onClick={()=>moveNav(index,-1)}><ChevronUp size={17}/></button><button aria-label={"Move "+item.slug+" down"} disabled={index===nav!.items.length-1} onClick={()=>moveNav(index,1)}><ChevronDown size={17}/></button></div></div>)}</div>)}
-            <button className="ng-studio-button" disabled={busy} onClick={saveNav}><Save size={17}/>Save navigation</button>
+            <div className="ng-studio-fields ng-studio-nav-folder"><label>Folder<Input value={nav?.folder||""} onChange={e=>setNav(prev=>prev?{...prev,folder:e.target.value}:prev)} placeholder="Root navigation"/></label><Button className="ng-studio-button-secondary" onClick={()=>openNavigation(nav?.folder||"")}>Open folder</Button></div>
+            {to("Navigation entries","Drag-free keyboard-friendly ordering. Use the arrow buttons to move each entry.",<div className="ng-studio-nav-editor">{nav?.items.map((item,index)=><div className="ng-studio-nav-row" key={item.slug}><span className="ng-studio-nav-position">{index+1}</span><span className="ng-studio-nav-slug">{item.slug}</span><Input aria-label={"Navigation title for "+item.slug} value={item.title} onChange={e=>setNav(prev=>prev?{...prev,items:prev.items.map((x,j)=>j===index?{...x,title:e.target.value}:x)}:prev)}/><div className="ng-studio-checkbox"><Checkbox id={"ng-nav-visible-"+index} checked={!item.hidden} onCheckedChange={checked=>setNav(prev=>prev?{...prev,items:prev.items.map((x,j)=>j===index?{...x,hidden:checked!==true}:x)}:prev)}/><label htmlFor={"ng-nav-visible-"+index}>Visible</label></div><div className="ng-studio-reorder"><Button aria-label={"Move "+item.slug+" up"} disabled={index===0} onClick={()=>moveNav(index,-1)}><ChevronUp size={17}/></Button><Button aria-label={"Move "+item.slug+" down"} disabled={index===nav!.items.length-1} onClick={()=>moveNav(index,1)}><ChevronDown size={17}/></Button></div></div>)}</div>)}
+            <Button className="ng-studio-button" disabled={busy} onClick={saveNav}><Save size={17}/>Save navigation</Button>
           </>}
           {view==="design"&&site&&<>
             <h1>Website & appearance</h1><p className="ng-studio-muted">Your changes are saved on the server and used by your documentation layout.</p>
             {to("Site identity","Make your documentation recognizable.",<div className="ng-studio-fields">
-              <label>Title<input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label>
-              <label>Description<textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label>
-              <label>Public site origin (no path)<input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
+              <label>Title<Input value={site.name} onChange={e=>editSite("name",e.target.value)}/></label>
+              <label>Description<Textarea rows={3} value={site.description} onChange={e=>editSite("description",e.target.value)}/></label>
+              <label>Public site origin (no path)<Input value={site.url} onChange={e=>editSite("url",e.target.value)} placeholder="https://docs.example.com"/></label>
               <label>Sidebar logo from media library<StudioSelect label="Sidebar logo" value={site.logo} onChange={value=>editSite("logo",value)}
                 options={[{value:"",label:"Use site initial (default)"},...state!.media.map(item=>({value:item.url,label:item.name}))]}/></label>
-              <label>Sidebar logo public path<input value={site.logo} onChange={e=>editSite("logo",e.target.value)} placeholder="/logo.svg"/></label>
-              <label>Custom OG image public path<input value={site.ogImage} onChange={e=>editSite("ogImage",e.target.value)} placeholder="/og-cover.png"/></label>
+              <label>Sidebar logo public path<Input value={site.logo} onChange={e=>editSite("logo",e.target.value)} placeholder="/logo.svg"/></label>
+              <label>Custom OG image public path<Input value={site.ogImage} onChange={e=>editSite("ogImage",e.target.value)} placeholder="/og-cover.png"/></label>
             </div>)}
             {to("Sidebar footer","Choose your attribution. The default is optional and completely customizable.",<div className="ng-studio-fields">
               <div className="ng-studio-check ng-studio-switch-row"><Switch id="ng-copyright-enabled" checked={site.copyrightEnabled} onCheckedChange={checked=>editSite("copyrightEnabled",checked)}/><label htmlFor="ng-copyright-enabled">Show a sidebar footer</label></div>
-              <label>Footer text<input disabled={!site.copyrightEnabled} value={site.copyrightText} onChange={e=>editSite("copyrightText",e.target.value)} placeholder="Built with NextGuide"/></label>
-              <label>Footer link<input disabled={!site.copyrightEnabled} value={site.copyrightHref} onChange={e=>editSite("copyrightHref",e.target.value)} placeholder="https://example.com"/></label>
+              <label>Footer text<Input disabled={!site.copyrightEnabled} value={site.copyrightText} onChange={e=>editSite("copyrightText",e.target.value)} placeholder="Built with NextGuide"/></label>
+              <label>Footer link<Input disabled={!site.copyrightEnabled} value={site.copyrightHref} onChange={e=>editSite("copyrightHref",e.target.value)} placeholder="https://example.com"/></label>
             </div>)}
             {to("Design tokens","Accessible accent presets and typography.",<DesignFields site={site} update={editSite}/>)}
             {to("Owner profile","Optional owner information stays in private account storage and is not displayed publicly.",<div className="ng-studio-fields">
-              <label>Display name<input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} maxLength={80}/></label>
-              <label>Contact email (not required for login)<input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} maxLength={254}/></label>
-              <label>Avatar from your media library<select value={site.ownerAvatar} onChange={e=>editSite("ownerAvatar",e.target.value)}><option value="">Default NextGuide avatar</option>{state!.media.map(item=><option key={item.name} value={item.url}>{item.name}</option>)}</select></label>
+              <label>Display name<Input value={site.ownerName} onChange={e=>editSite("ownerName",e.target.value)} maxLength={80}/></label>
+              <label>Contact email (not required for login)<Input type="email" value={site.ownerEmail} onChange={e=>editSite("ownerEmail",e.target.value)} maxLength={254}/></label>
+              <label>Avatar from your media library<StudioSelect label="Owner avatar" value={site.ownerAvatar} onChange={value=>editSite("ownerAvatar",value)} options={[{value:"",label:"Default NextGuide avatar"},...state!.media.map(item=>({value:item.url,label:item.name}))]}/></label>
             </div>)}
-            <button className="ng-studio-button" disabled={busy} onClick={()=>run(()=>saveSite(),"Site settings saved.")}><Save size={17}/>Save settings</button>
+            <Button className="ng-studio-button" disabled={busy} onClick={()=>run(()=>saveSite(),"Site settings saved.")}><Save size={17}/>Save settings</Button>
           </>}
           {view==="media"&&<>
             <h1>Media library</h1><p className="ng-studio-muted">Upload images for docs. Files remain on your server; no external image host is needed.</p>
-            {to("Upload an image","PNG, JPEG, WebP or GIF, up to 2 MB.",<div className="ng-studio-upload"><input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e=>setSelectedUpload(e.target.files?.[0]||null)}/><button className="ng-studio-button" disabled={!selectedUpload||busy} onClick={uploadFile}><HardDriveUpload size={17}/>Upload</button></div>)}
-            {to("Your assets","Click Copy URL to paste into an MDX page.",<div className="ng-studio-media-list">{!state!.media.length?<p className="ng-studio-muted">No images uploaded yet.</p>:state!.media.map(item=><div key={item.name}><FileText size={19}/><span>{item.name}<small>{item.url}</small></span><button onClick={()=>navigator.clipboard.writeText(item.url)} aria-label={"Copy URL for "+item.name}><Copy size={16}/>Copy URL</button><button onClick={()=>deleteFile(item.name)} aria-label={"Delete "+item.name}><Trash2 size={16}/></button></div>)}</div>)}
+            {to("Upload an image","PNG, JPEG, WebP or GIF, up to 2 MB.",<div className="ng-studio-upload"><Input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e=>setSelectedUpload(e.target.files?.[0]||null)}/><Button className="ng-studio-button" disabled={!selectedUpload||busy} onClick={uploadFile}><HardDriveUpload size={17}/>Upload</Button></div>)}
+            {to("Your assets","Click Copy URL to paste into an MDX page.",<div className="ng-studio-media-list">{!state!.media.length?<p className="ng-studio-muted">No images uploaded yet.</p>:state!.media.map(item=><div key={item.name}><FileText size={19}/><span>{item.name}<small>{item.url}</small></span><Button onClick={()=>navigator.clipboard.writeText(item.url)} aria-label={"Copy URL for "+item.name}><Copy size={16}/>Copy URL</Button><Button onClick={()=>deleteFile(item.name)} aria-label={"Delete "+item.name}><Trash2 size={16}/></Button></div>)}</div>)}
           </>}
           {view==="security"&&<>
             <h1>Account security</h1><p className="ng-studio-muted">Your documentation is protected by your authenticator, not a password.</p>
-            {to("Authenticator & recovery","Keep a saved copy of your recovery codes. They work once each.",<div className="ng-studio-fields"><p>To change your authenticator, confirm with a current authenticator code or an additional unused recovery code. Renewing recovery codes requires your authenticator. A signed-in session alone cannot reset either factor.</p><label>Current authenticator code or unused recovery code<input value={securityCode} onChange={e=>setSecurityCode(e.target.value)} inputMode="text" maxLength={27} autoComplete="off" placeholder="000000 or NG-XXXX-XXXX-XXXX-XXXX-XXXX"/></label>
-              <div className="ng-studio-actions"><button className="ng-studio-button-secondary" disabled={busy||!(securityCode.length===6||validRecoveryChallenge)} onClick={()=>run(async()=>{const result=await accountPost<{qrDataUrl:string;manualKey:string}>("rotate-begin",{code:securityCode.trim()});setQr(result.qrDataUrl);setManualKey(result.manualKey);setSecurityCode("")},"")}>Change authenticator</button>
-              <button className="ng-studio-button-secondary" disabled={busy||securityCode.length!==6} onClick={()=>run(async()=>{const result=await accountPost<{recoveryCodes:string[]}>("recovery-renew",{code:securityCode.trim()});setRecovery(result.recoveryCodes);setAckRecovery(false);setSecurityCode("")},"Recovery codes replaced. Save the new ones now.")}>Replace recovery codes</button></div>
-              {qr?<div className="ng-studio-rotate"><p>Scan this new QR code, then enter a code from your *new* authenticator. Your existing codes stay active until you confirm.</p><img src={qr} width={230} height={230} alt="New authenticator QR code"/><code>{manualKey}</code><input value={newCode} onChange={e=>setNewCode(e.target.value)} inputMode="numeric" maxLength={6} placeholder="New authenticator code"/><button className="ng-studio-button" disabled={busy||newCode.length!==6} onClick={()=>run(async()=>{const result=await accountPost<{recoveryCodes:string[]}>("rotate-finish",{code:newCode});setQr("");setManualKey("");setNewCode("");setRecovery(result.recoveryCodes);setAckRecovery(false)},"Authenticator changed. Save these replacement recovery codes.")}>Verify new authenticator</button></div>:null}
-              {recovery?<div className="ng-studio-rotate"><strong>Save these replacement recovery codes now.</strong><p>Old recovery codes are now invalid.</p><pre>{recovery.join("\n")}</pre><button onClick={()=>navigator.clipboard.writeText(recovery.join("\n"))} className="ng-studio-button-secondary"><Copy size={16}/>Copy recovery codes</button><div className="ng-studio-checkbox"><Checkbox id="ng-recovery-confirm" checked={ackRecovery} onCheckedChange={checked=>setAckRecovery(checked===true)}/><label htmlFor="ng-recovery-confirm">I saved these codes</label></div><button disabled={!ackRecovery} className="ng-studio-button" onClick={()=>setRecovery(null)}>Done</button></div>:null}
+            {to("Authenticator & recovery","Keep a saved copy of your recovery codes. They work once each.",<div className="ng-studio-fields"><p>To change your authenticator, confirm with a current authenticator code or an additional unused recovery code. Renewing recovery codes requires your authenticator. A signed-in session alone cannot reset either factor.</p><label>Current authenticator code or unused recovery code<Input value={securityCode} onChange={e=>setSecurityCode(e.target.value)} inputMode="text" maxLength={27} autoComplete="off" placeholder="000000 or NG-XXXX-XXXX-XXXX-XXXX-XXXX"/></label>
+              <div className="ng-studio-actions"><Button className="ng-studio-button-secondary" disabled={busy||!(securityCode.length===6||validRecoveryChallenge)} onClick={()=>run(async()=>{const result=await accountPost<{qrDataUrl:string;manualKey:string}>("rotate-begin",{code:securityCode.trim()});setQr(result.qrDataUrl);setManualKey(result.manualKey);setSecurityCode("")},"")}>Change authenticator</Button>
+              <Button className="ng-studio-button-secondary" disabled={busy||securityCode.length!==6} onClick={()=>run(async()=>{const result=await accountPost<{recoveryCodes:string[]}>("recovery-renew",{code:securityCode.trim()});setRecovery(result.recoveryCodes);setAckRecovery(false);setSecurityCode("")},"Recovery codes replaced. Save the new ones now.")}>Replace recovery codes</Button></div>
+              {qr?<div className="ng-studio-rotate"><p>Scan this new QR code, then enter a code from your *new* authenticator. Your existing codes stay active until you confirm.</p><img src={qr} width={230} height={230} alt="New authenticator QR code"/><code>{manualKey}</code><Input value={newCode} onChange={e=>setNewCode(e.target.value)} inputMode="numeric" maxLength={6} placeholder="New authenticator code"/><Button className="ng-studio-button" disabled={busy||newCode.length!==6} onClick={()=>run(async()=>{const result=await accountPost<{recoveryCodes:string[]}>("rotate-finish",{code:newCode});setQr("");setManualKey("");setNewCode("");setRecovery(result.recoveryCodes);setAckRecovery(false)},"Authenticator changed. Save these replacement recovery codes.")}>Verify new authenticator</Button></div>:null}
+              {recovery?<div className="ng-studio-rotate"><strong>Save these replacement recovery codes now.</strong><p>Old recovery codes are now invalid.</p><pre>{recovery.join("\n")}</pre><Button onClick={()=>navigator.clipboard.writeText(recovery.join("\n"))} className="ng-studio-button-secondary"><Copy size={16}/>Copy recovery codes</Button><div className="ng-studio-checkbox"><Checkbox id="ng-recovery-confirm" checked={ackRecovery} onCheckedChange={checked=>setAckRecovery(checked===true)}/><label htmlFor="ng-recovery-confirm">I saved these codes</label></div><Button disabled={!ackRecovery} className="ng-studio-button" onClick={()=>setRecovery(null)}>Done</Button></div>:null}
             </div>)}
-            {to("Sessions","Sign out from all devices if you think a session is compromised.",<button className="ng-studio-button-danger" onClick={()=>run(async()=>{await accountPost("logout-all",{});window.location.replace("/login")},"")}><LockKeyhole size={17}/>Sign out everywhere</button>)}
+            {to("Sessions","Sign out from all devices if you think a session is compromised.",<Button className="ng-studio-button-danger" onClick={()=>run(async()=>{await accountPost("logout-all",{});window.location.replace("/login")},"")}><LockKeyhole size={17}/>Sign out everywhere</Button>)}
           </>}
         </div>}
       </main>
@@ -333,7 +339,7 @@ async function accountPost<T>(action:string,data:object):Promise<T> {
 }
 function DesignFields({site,update}:{site:Site;update:<K extends keyof Site>(key:K,value:Site[K])=>void}) {
   return <div className="ng-studio-fields">
-    <fieldset className="ng-studio-colors"><legend>Accent color</legend><div>{accents.map(accent=><button type="button" key={accent} data-selected={site.accent===accent} aria-label={accent+" accent"} aria-pressed={site.accent===accent} onClick={()=>update("accent",accent)}><span style={{backgroundColor:accentColor[accent]}}/>{accent}</button>)}</div></fieldset>
+    <fieldset className="ng-studio-colors"><legend>Accent color</legend><div>{accents.map(accent=><Button type="button" key={accent} data-selected={site.accent===accent} aria-label={accent+" accent"} aria-pressed={site.accent===accent} onClick={()=>update("accent",accent)}><span style={{backgroundColor:accentColor[accent]}}/>{accent}</Button>)}</div></fieldset>
     <label>Default appearance <StudioSelect label="Default appearance" value={site.theme} onChange={value=>update("theme",value)}
       options={[{value:"light",label:"Light"},{value:"dark",label:"Dark"},{value:"system",label:"Follow system"}]}/></label>
     <div className="ng-studio-font-grid">{(["bodyFont","headingFont","codeFont"] as const).map(field=><label key={field}>{field==="bodyFont"?"Body font":field==="headingFont"?"Heading font":"Code font"}
