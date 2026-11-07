@@ -14,8 +14,8 @@ export interface NextGuideOgOptions {
   title: string
   description?: string
   section?: string
-  appearance?: "light" | "dark" | "system"
-  accent?: NextGuideOgAccent
+  appearance?: "light" | "dark" | "system" | string
+  accent?: NextGuideOgAccent | string
 }
 
 const LIGHT = {
@@ -49,7 +49,7 @@ export function renderNextGuideOgImage({
 }: NextGuideOgOptions): ImageResponse {
   const dark = appearance !== "light" // system falls back to dark for stable social cards
   const palette = dark ? DARK : LIGHT
-  const highlight = palette[accent] ?? palette.blue
+  const highlight = palette[accent as NextGuideOgAccent] ?? palette.blue
   const background = dark ? "#0e1014" : "#ffffff"
   const surface = dark ? "#181b20" : "#fafafa"
   const foreground = dark ? "#ededed" : "#0b0b0c"
