@@ -15,6 +15,8 @@ export interface NextGuideOgOptions {
   section?: string
   appearance?: "light" | "dark" | "system" | string
   accent?: NextGuideOgAccent | string
+  /** Official docs can show the NG monogram; consumer docs default to the site's identity. */
+  brandMark?: "nextguide" | "site"
 }
 
 const LIGHT = {
@@ -45,6 +47,7 @@ export function NextGuideOgCard({
   section = "Documentation",
   appearance = "dark",
   accent = "blue",
+  brandMark = "nextguide",
 }: NextGuideOgOptions) {
   const dark = appearance !== "light" // system falls back to dark for stable social cards
   const palette = dark ? DARK : LIGHT
@@ -78,13 +81,13 @@ export function NextGuideOgCard({
           width: 64, height: 64, background: surface,
           borderRadius: 14, border: `1px solid ${border}`,
         }}>
-          <svg width="39" height="39" viewBox="0 0 1072 1072" fill={foreground} xmlns="http://www.w3.org/2000/svg">
+          {brandMark === "nextguide" ? <svg width="39" height="39" viewBox="0 0 1072 1072" fill={foreground} xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" d={NEXTGUIDE_LOGO_PATH} />
-          </svg>
+          </svg> : <span style={{ fontSize: 34, fontWeight: 700, color: foreground }}>{limit(siteName || "D", 1).toUpperCase()}</span>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", marginLeft: 18 }}>
           <span style={{ fontSize: 27, fontWeight: 700, letterSpacing: -1 }}>{limit(siteName || "NextGuide", 44)}</span>
-          <span style={{ color: muted, fontSize: 17, marginTop: 4 }}>Documentation powered by NextGuide</span>
+          <span style={{ color: muted, fontSize: 17, marginTop: 4 }}>{brandMark === "nextguide" ? "Documentation powered by NextGuide" : "Documentation"}</span>
         </div>
         <div style={{
           display: "flex", marginLeft: "auto", padding: "12px 18px",
@@ -108,7 +111,7 @@ export function NextGuideOgCard({
         borderTop: `1px solid ${border}`, paddingTop: 22,
         color: muted, fontSize: 17,
       }}>
-        <span>NextGuide</span>
+        <span>{brandMark === "nextguide" ? "NextGuide" : limit(siteName, 44)}</span>
         <span style={{ color: highlight }}>MDX · Next.js · Documentation</span>
       </div>
     </div>
