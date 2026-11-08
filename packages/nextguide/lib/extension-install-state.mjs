@@ -19,6 +19,7 @@ import { verifyApprovedContentArchive } from "./extension-artifacts.mjs"
 
 const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*\.[a-z0-9]+(?:-[a-z0-9]+)*$/
 const VERSION = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
+const PACKAGE_VERSION = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?$/
 const HASH = /^[a-f0-9]{64}$/
 const MAX_INSTALLED = 64
 const MAX_VERSIONS = 4
@@ -100,7 +101,9 @@ export function createAccountAddonStore({
   nextguideVersion,
   now = () => Date.now(),
 } = {}) {
-  if (!VERSION.test(nextguideVersion)) fail("INCOMPATIBLE", "A stable NextGuide version is required")
+  if (typeof nextguideVersion !== "string" || !PACKAGE_VERSION.test(nextguideVersion)) {
+    fail("INCOMPATIBLE", "A valid installed NextGuide package version is required")
+  }
   const site = resolve(project)
   const configFile = join(site, "nextguide.config.json")
   assertRegular(configFile)
@@ -246,7 +249,7 @@ export function createAccountAddonStore({
           size: release.size, name: release.manifest.name,
           reviewedAt: release.approvedAt,
         }
-        const versions = prior ? [...prior.versions, record].slice(-MAX_VERSIONS) : [record]
+        const versions = prior ? [...prior.versions.filter(r => r.version !== version), record].slice(-MAX_VERSIONS) : [record]
         saveBlob(release, bytes)
         next.addons[id] = {
           id, pinnedVersion: version, enabled: prior?.enabled ?? false, versions,
