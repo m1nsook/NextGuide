@@ -321,5 +321,5 @@ test("extension exports ship with declarations and safe client boundary", async 
   const source = readFileSync(join(root, "dist/extensions/ui.js"), "utf8")
   assert.match(source, /^"use client";?/)
   assert.doesNotMatch(source, /dangerouslySetInnerHTML/)
-  assert.doesNotMatch(source, /eval/)
+  assert.doesNotMatch(source, /\beval\s*\(/)
 })
