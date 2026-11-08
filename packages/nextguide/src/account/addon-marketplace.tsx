@@ -66,7 +66,9 @@ function ReleaseDetails({ release, back, installed, onAction, busy }: {
 }) {
   const { manifest: addon } = release
   const canInstall = release.compatible && addon.permissions.length === 0
-  const canUpdate = installed && canInstall && installed.version !== addon.version
+  const newer = (a: string, b: string) => a.split(".").map(Number).some((n,i,all) =>
+    all.slice(0,i).every((v,j)=>v===Number(b.split(".")[j])) && n>Number(b.split(".")[i]))
+  const canUpdate = installed && canInstall && newer(addon.version, installed.version)
   return <div className="space-y-6">
     <Button variant="ghost" onClick={back} disabled={busy} className="gap-2">
       <ArrowLeft className="size-4" />Back to add-ons
