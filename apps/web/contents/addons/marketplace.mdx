@@ -6,7 +6,7 @@ description: Browse signed content add-ons, manage reviewed versions and underst
 # Account Mode add-ons
 
 <Callout kind="info" title="Reviewed Markdown add-ons">
-The Account Mode studio now supports signed **content-only v1** add-on installation, version pinning, enable/disable state, verified updates, rollback and uninstall. These actions are available only to a signed-in site owner and require the independent registry's Ed25519 signature. **Installed content is stored privately but is not yet automatically mounted as public documentation pages.** Executable v2 add-ons remain disabled.
+The Account Mode studio now supports signed **content-only v1** add-on installation, version pinning, enable/disable state, verified updates, rollback and uninstall. These actions are available only to a signed-in site owner and require the independent registry's Ed25519 signature. **Enabled reviewed Markdown pages are published through a dedicated Account Mode route, with registry and stored-archive verification on every request.** Executable v2 add-ons remain disabled.
 </Callout>
 
 ## Connect a reviewed registry
@@ -25,7 +25,7 @@ The registry must issue a newly signed index at least once an hour: stale metada
 2. Search or filter reviewed releases and open **View details**.
 3. Check publisher identity, license, NextGuide compatibility and requested permissions.
 4. Confirm **Install reviewed content**. The site downloads only the signed GitHub Release and verifies its bytes before writing immutable files to private storage.
-5. Use **Enable/Disable** to change the stored content state. The public docs integration is a separate milestone; enabling does not automatically publish pages yet.
+5. Use **Enable/Disable** to control whether the reviewed Markdown pages can be opened at your site's `/docs/addons/<publisher.addon>/` route. Each request re-verifies signed approval and local archive integrity.
 6. Use **Update** when a higher reviewed version is available, or **Roll back** to a previously saved, still-approved version. Rollback leaves the add-on disabled for explicit re-enabling.
 7. **Uninstall** clears its installed entry but preserves separate private settings and historical archive blobs for recovery.
 
@@ -37,6 +37,6 @@ Published v1 examples currently declare NextGuide `>=1.0.0 <2.0.0`. A site still
 
 The server validates owner sessions and request origin on every mutation. Installed data is never placed in `content/docs` or public assets. The journal checks the signed release metadata, exact SHA-256, compatible package version and current approval status. Conflicting update requests are rejected using an installation revision, and a damaged archive cannot be enabled.
 
-The UI uses NextGuide's native Account Mode components. No Docker requirement or new npm package is introduced.
+The UI uses NextGuide's native Account Mode components. Pages are rendered with NextGuide's safe Markdown subset, **not** MDX, so raw HTML and JavaScript are never executed. Disabled, revoked, invalid or stale releases are not served. Add-on pages do not automatically enter the public docs sidebar or search index yet. No Docker requirement or new npm package is introduced.
 
 See [Updates and removal](/addons/updates), [Security and permissions](/addons/permissions), and [runtime API](/addons/api). Follow [roadmap #101](https://github.com/m1nsook/NextGuide/issues/101) for executable v2 and public rendering integration.

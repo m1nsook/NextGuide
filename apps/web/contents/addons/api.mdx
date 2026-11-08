@@ -91,7 +91,7 @@ Security constraints:
 - Only **Account Mode** may create the journal; Developer Mode is rejected.
 - An enabled release is still **data-only Markdown**. It must never execute scripts, MDX expressions or untrusted HTML.
 - Activating or reading a release rechecks its signed status and locally stored digest; revoked or stale releases fail closed. The registry must refresh its signed index at least hourly for state changes to succeed.
-- There is no automated downloader, dashboard installation endpoint, public docs rendering integration, or installed-site UI yet. The module is a server-side foundation, not a completed marketplace workflow.
+- The Account Mode dashboard now includes the reviewed v1 downloader and installation actions. A generated public route serves only explicitly enabled, still-approved Markdown, rendered as safe React text—not executable MDX. Sidebar/search integration and privileged v2 extensions remain separate milestones.
 - Explicit browser consent and permission diffs remain required for future executable v2 add-ons.
 
 ## Fetch approved archives without arbitrary redirects

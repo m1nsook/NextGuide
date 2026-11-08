@@ -6,6 +6,7 @@ import { join } from "node:path"
 import { initAccount } from "../lib/account-starter.mjs"
 import { accountFile } from "../lib/account-auth.mjs"
 import ts from "typescript"
+import { accountAddonDocsRouteSource as routeTemplate } from "../lib/account-addon-page-template.mjs"
 
 function fixture(router = "src/app", typed = true) {
   const project = mkdtempSync(join(tmpdir(), "nextguide-account-init-"))
@@ -33,7 +34,7 @@ test("App Router Account Mode scaffolds protected routes and owner token without
     const result = initAccount(project, inspection)
     assert.equal(result.mode, "account")
     assert.ok(result.bootstrapToken.length >= 30)
-    assert.equal(result.created.length, 23)
+    assert.equal(result.created.length, 24)
     for (const name of result.created.filter(path => /\\.[jt]sx?$/.test(path))) {
       const content = readFileSync(join(project, name), "utf8")
       const parsed = ts.createSourceFile(name, content, ts.ScriptTarget.Latest, true)
@@ -48,6 +49,15 @@ test("App Router Account Mode scaffolds protected routes and owner token without
       assert.match(source, /--ng-preview-inter/, route + " should supply the Account Mode font variable")
     }
     assert.ok(existsSync(join(project, "src/app/admin/page.tsx")))
+    const addOnRoute = readFileSync(join(project,
+      "src/app/docs/addons/[id]/[[...page]]/page.tsx"), "utf8")
+    assert.match(addOnRoute, /createAccountAddonManager/)
+    assert.match(addOnRoute, /readEnabled/)
+    assert.match(addOnRoute, /<Markdown>/)
+    assert.match(addOnRoute, /await connection\(\)/)
+    assert.match(addOnRoute, /robots: \{ index: false/)
+    assert.doesNotMatch(addOnRoute, /parseMdx|eval\(|import\(.*addon/)
+
     assert.ok(existsSync(join(project, "public/_nextguide/monaco/vs/loader.js")), "local Monaco bundle missing")
     assert.ok(existsSync(join(project, "public/_nextguide/monaco/vs/LICENSE.txt")), "Microsoft MIT notice missing")
     assert.match(readFileSync(join(project, "src/app/admin/page.tsx"), "utf8"), /await connection\(\)/)
@@ -157,7 +167,7 @@ test("Account Mode add-on lifecycle routes stay owner-authenticated and read-onl
       "POST must authenticate before mutating add-ons")
     assert.ok(post.indexOf("if (!sameOrigin(request))") < post.indexOf('action.startsWith("addon-")'),
       "POST must enforce same-origin before any add-on mutation")
-    assert.match(view,/<AccountAddonMarketplace \/>/)
+    assert.ok(view.includes("<AccountAddonMarketplace basePath={basePath} />"))
     assert.match(view,/id: "addons", label: "Add-ons"/)
     assert.match(market,/credentials:"same-origin"/)
     assert.match(market,/<AlertDialog /)
@@ -170,3 +180,27 @@ test("Account Mode add-on lifecycle routes stay owner-authenticated and read-onl
     assert.doesNotMatch(market,/eval\(|import\([^)]*addon/)
   } finally {rmSync(project,{recursive:true,force:true})}
 }))
+
+
+test("public v1 content route generator handles TS and JS paths without MDX evaluation",()=>{
+  const {accountAddonDocsRouteSource}=requireAddonDocsTemplate()
+  const typescript=accountAddonDocsRouteSource(true)
+  const javascript=accountAddonDocsRouteSource(false)
+  for(const [name,source] of [["page.tsx",typescript],["page.jsx",javascript]]) {
+    const parsed=ts.createSourceFile(name,source,ts.ScriptTarget.Latest,true,
+      name.endsWith(".tsx")?ts.ScriptKind.TSX:ts.ScriptKind.JSX)
+    assert.equal(parsed.parseDiagnostics.length,0,
+      parsed.parseDiagnostics.map(d=>ts.flattenDiagnosticMessageText(d.messageText," ")).join("; "))
+    assert.match(source,/createAccountAddonManager/)
+    assert.match(source,/readEnabled/)
+    assert.match(source,/const addonId =/)
+    assert.match(source,/Markdown/)
+    assert.doesNotMatch(source,/parseMdx|serializeMdx|dangerouslySetInnerHTML/)
+  }
+  assert.doesNotMatch(javascript, /__PARAM_TYPE__|__ID_TYPE__|__PAGE_TYPE__/)
+})
+
+function requireAddonDocsTemplate() {
+  // statically imported below through Node's native ESM test runner
+  return {accountAddonDocsRouteSource: routeTemplate}
+}
