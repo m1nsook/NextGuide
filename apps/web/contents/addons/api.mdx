@@ -8,7 +8,7 @@ description: Trusted host, isolated-runtime broker, UI descriptors and permissio
 NextGuide is growing beyond content-only add-ons. Future extensions can provide React/MDX UI, themes, languages, admin tools, AI providers, authentication integrations and server functionality. **Not all of these are executable today.**
 
 <Callout kind="warning" title="Executable marketplace add-ons are not enabled">
-The current ngapi registry verifies content-only v1 releases. The Account Mode marketplace installer and OS-isolated third-party runner are not implemented. Neither the trusted host nor the capability broker is a sandbox. Do not import or evaluate downloaded JavaScript in a NextGuide server or site.
+The current ngapi registry verifies content-only v1 releases. The Account Mode marketplace installer is not implemented. A Linux-only, opt-in runner prototype is now available, but it is **not approved for installing or executing public registry add-ons**. Neither the trusted host nor the capability broker is a sandbox. Do not import or evaluate downloaded JavaScript in a NextGuide server or site.
 </Callout>
 
 ## Runtime foundation
@@ -24,6 +24,7 @@ The single `nextguide` package now exposes these building blocks:
 | `nextguide/extensions/ui` | Host-owned React renderer for validated UI descriptors using NextGuide UI primitives |
 | `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed registry indexes and approved releases |
 | `nextguide/extensions/network` | Restricted, host-only outbound HTTPS adapter with pinned DNS and response limits |
+| `nextguide/extensions/isolation` | Experimental Linux bubblewrap/prlimit process launcher for SHA-256-pinned compiled modules; no Windows or automatic fallback |
 
 All exports are part of **one npm package**, not additional packages to install. See [Getting started](/addons/getting-started) for the currently publishable v1 format.
 
@@ -63,6 +64,18 @@ A verified add-on can request network access **only when both** its permissions 
 
 This is a host capability adapter—not an executable extension sandbox. Host operators should additionally enforce egress restrictions at the OS/network layer.
 
+## Linux isolated execution (prototype)
+
+The Node-only **nextguide/extensions/isolation** export can launch a single compiled ES module out of process. It checks the exact UTF-8 SHA-256, opens a separately authorized capability-broker session, and communicates through size-bounded JSON lines. It does not execute unsigned archive contents, installer scripts, or arbitrary filesystem paths.
+
+The host requires a non-root Linux user, Bubblewrap and util-linux prlimit. The runner explicitly requires new user, PID, network, IPC and UTS namespaces. Only a read-only extension module, the confined worker, host runtime libraries and private temporary storage are mounted. Permitted HTTPS calls must pass through the host's broker. Startup, CPU time, virtual address space, descriptors, IPC output and total lifetime are bounded, but **cgroup memory and process-count quotas are still missing**.
+
+<CodeWindow title="Linux host dependencies" language="bash" code={"sudo apt-get update\nsudo apt-get install bubblewrap util-linux"} />
+
+This is an internal integration prototype, not the end-user marketplace installation API. A trusted Account Mode host must authenticate the site owner, verify the approved release bytes, signature and grants, and construct the broker before running this module. A third-party compiled module exports an activate function that receives only a bounded JSON request bridge. Never pass an unreviewed download or add-on-supplied policy into the launcher.
+
+Windows deployments reject executable add-ons rather than falling back to ordinary child processes, Node workers or node:vm. Linux hosts without working Bubblewrap/user namespaces also reject them. Signed v2 archives, full platform resource isolation, browser-side React widgets, host integration, install/update/rollback and production acceptance remain separate work. **Do not enable executable public marketplace add-ons yet.**
+
 ## Render add-on UI without importing its code
 
 The first UI pathway is a declarative view tree rendered by NextGuide. The host only accepts supported node kinds such as headings, text, cards, stacks, badges, links and action buttons.
@@ -79,7 +92,7 @@ The public API is read-only; it **does not download or execute** package content
 
 ## Next milestones
 
-1. **Isolated execution adapter:** A platform-approved sandbox/worker boundary for packaged JavaScript and a bounded message transport, not bare Node worker threads.
+1. **Harden the isolated runner:** Real Linux validation, cgroup resource quotas and an independent security review; provide a Windows isolation backend or preserve explicit unsupported-mode refusal.
 2. **Host services:** Secure DNS-pinned network adapter, namespaced credential handles, server route and job dispatch, scoped data storage and quotas.
 3. **Browser UI isolation:** Signed asset delivery, sandboxed views for code-capable React widgets, and controlled host messaging.
 4. **Private registry verifier:** Independently inspect and approve v2 executable releases and permission changes. The private ngapi service is deployed separately.
