@@ -210,7 +210,7 @@ test("public navigation includes only explicitly enabled signed Markdown pages",
     assert.equal(pages[0].id,"acme.docs")
     assert.equal(pages[0].title,"Docs Extension")
     assert.equal(pages[0].slug,"")
-    assert.match(pages[0].markdown,/Welcome 1\\.0\\.0/)
+    assert.ok(pages[0].markdown.includes("Welcome 1.0.0"))
     await f.manager.toggle({id:"acme.docs",enabled:false,expectedRevision:2})
     assert.deepEqual(await f.manager.publicPages(),[])
   } finally { f.cleanup() }
