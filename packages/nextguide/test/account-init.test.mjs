@@ -137,25 +137,36 @@ test("Account Mode API and admin routes work with Cache Components and load true
 }))
 
 
-test("Account Mode add-on discovery is owner-authenticated, signed and read-only", () => isolated(() => {
+test("Account Mode add-on lifecycle routes stay owner-authenticated and read-only on Developer Mode", () => isolated(() => {
   const { project, inspection } = fixture()
   try {
     initAccount(project, inspection)
-    const route = readFileSync(join(project, "src/app/api/nextguide/studio/[action]/route.ts"), "utf8")
-    const view = readFileSync(new URL("../src/account/studio.tsx", import.meta.url), "utf8")
-    const marketplace = readFileSync(new URL("../src/account/addon-marketplace.tsx", import.meta.url), "utf8")
-    assert.match(route, /createVerifiedRegistryClient/)
-    assert.match(route, /NEXTGUIDE_ADDON_REGISTRY_PUBLIC_KEY_B64/)
-    assert.match(route, /NEXTGUIDE_ADDON_REGISTRY_URL/)
-    assert.match(route, /return response\(\{ configured: true, releases: await registry\.listApproved\(\) \}\)/)
+    const route=readFileSync(join(project,"src/app/api/nextguide/studio/[action]/route.ts"),"utf8")
+    const view=readFileSync(new URL("../src/account/studio.tsx",import.meta.url),"utf8")
+    const market=readFileSync(new URL("../src/account/addon-marketplace.tsx",import.meta.url),"utf8")
+    const manager=readFileSync(new URL("../lib/extension-site-manager.mjs",import.meta.url),"utf8")
+    assert.match(route,/createAccountAddonManager/)
+    assert.match(route,/addons\.install\(input\)/)
+    assert.match(route,/addons\.toggle\(input\)/)
+    assert.match(route,/addons\.rollback\(input\)/)
+    assert.match(route,/addons\.uninstall\(input\)/)
     assert.ok(route.indexOf("if (!authorized(request))") < route.indexOf('if (action === "addons")'),
-      "Unauthenticated visitors must not fetch registry data through the studio")
-    const post = route.slice(route.indexOf("export async function POST"))
-    assert.doesNotMatch(post, /install-addon|execute-addon|update-addon/)
-    assert.match(view, /<AccountAddonMarketplace \/>/)
-    assert.match(view, /id: "addons", label: "Add-ons"/)
-    assert.match(marketplace, /credentials: "same-origin"/)
-    assert.match(marketplace, /disabled><PackageCheck/)
-    assert.doesNotMatch(marketplace, /import\([^)]*addon|eval\(/)
-  } finally { rmSync(project, { recursive: true, force: true }) }
+      "GET must authenticate before inspecting the registry")
+    const post=route.slice(route.indexOf("export async function POST"))
+    assert.ok(post.indexOf("if (!authorized(request))") < post.indexOf('action.startsWith("addon-")'),
+      "POST must authenticate before mutating add-ons")
+    assert.ok(post.indexOf("if (!sameOrigin(request))") < post.indexOf('action.startsWith("addon-")'),
+      "POST must enforce same-origin before any add-on mutation")
+    assert.match(view,/<AccountAddonMarketplace \/>/)
+    assert.match(view,/id: "addons", label: "Add-ons"/)
+    assert.match(market,/credentials:"same-origin"/)
+    assert.match(market,/<AlertDialog /)
+    assert.match(market,/expectedRevision:catalog\.installed\.revision/)
+    assert.match(market,/consent:true/)
+    assert.match(manager,/NEXTGUIDE_ADDON_REGISTRY_PUBLIC_KEY_B64/)
+    assert.match(manager,/NEXTGUIDE_ADDON_REGISTRY_URL/)
+    assert.match(manager,/downloadVerifiedContentRelease/)
+    assert.match(manager,/compatibleAddonRange/)
+    assert.doesNotMatch(market,/eval\(|import\([^)]*addon/)
+  } finally {rmSync(project,{recursive:true,force:true})}
 }))

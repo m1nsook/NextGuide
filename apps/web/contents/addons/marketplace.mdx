@@ -1,41 +1,42 @@
 ---
-title: Account Mode add-on discovery
-description: Read-only verified registry browsing in the Account Mode studio; installation is still planned.
+title: Account Mode marketplace
+description: Browse signed content add-ons, manage reviewed versions and understand executable-extension restrictions.
 ---
 
 # Account Mode add-ons
 
-<Callout kind="info" title="Signed catalog preview">
-The Account Mode studio now includes **Add-ons** in the sidebar. Once configured, it can browse current approved **content-only v1** registry releases, filter categories, search publishers and open a full add-on detail view. Listings are verified with the site's pinned Ed25519 key on the server before being shown. **Install, enable, update and uninstall are not implemented.**
+<Callout kind="info" title="Reviewed Markdown add-ons">
+The Account Mode studio now supports signed **content-only v1** add-on installation, version pinning, enable/disable state, verified updates, rollback and uninstall. These actions are available only to a signed-in site owner and require the independent registry's Ed25519 signature. **Installed content is stored privately but is not yet automatically mounted as public documentation pages.** Executable v2 add-ons remain disabled.
 </Callout>
 
-## Connect the signed catalog
+## Connect a reviewed registry
 
-Set the following environment variables on your persistent Account Mode Next.js server:
+Configure the trusted catalog on a persistent Account Mode Node server:
 
-<CodeWindow title="Account Mode environment configuration" language="bash" code={"NEXTGUIDE_ADDON_REGISTRY_URL=https://your-approved-registry.example/v1/registry\nNEXTGUIDE_ADDON_REGISTRY_PUBLIC_KEY_B64=YOUR_TRUSTED_BASE64_ENCODED_ED25519_PEM"} />
+<CodeWindow title="Account Mode registry environment" language="bash" code={"NEXTGUIDE_ADDON_REGISTRY_URL=https://your-approved-registry.example/v1/registry\nNEXTGUIDE_ADDON_REGISTRY_PUBLIC_KEY_B64=YOUR_BASE64_ENCODED_TRUSTED_PUBLIC_ED25519_PEM"} />
 
-The Base64 value is the trusted registry's **public** Ed25519 PEM key, encoded as UTF-8 then Base64. Obtain the exact public key through a trusted, independent channel; never accept a signing key merely because an unsigned registry response supplied it. Do not put the registry configuration in a `NEXT_PUBLIC_` variable.
+The Base64 value contains a PEM-format **public** key, retrieved through a separately trusted channel. Never load the signing key from unsigned registry metadata or expose the configuration through a `NEXT_PUBLIC_` variable. Your `NEXTGUIDE_DATA_DIR` must point outside the Next.js site, and the runtime must have access to its own persistent private storage.
 
-If those variables are missing, the Add-ons page explains that the catalog connection is not configured. If the signature or endpoint is invalid, the server rejects the response; it never falls back to unsigned data. Only a logged-in Account Mode owner can access the discovery API.
+The registry must issue a newly signed index at least once an hour: stale metadata refuses installation, enabling and rollback, rather than silently using potentially revoked information.
 
-## Current and future actions
+## Install and manage content
 
-| Action | Status |
-| --- | --- |
-| Discover | Search and filter approved content-only releases in Account Mode |
-| Inspect | Full detail view with author, signed release, compatibility, license and requested permissions |
-| Install | Planned: verify artifact bytes, request permission approval and persist installed state |
-| Configure | Planned: store scoped settings and trusted credential handles |
-| Enable/disable | Planned: start and stop a reviewed extension safely |
-| Update | Planned: permission-diff review and transactional integrity checks |
-| Rollback | Planned: restore a previously reviewed, compatible version |
-| Uninstall | Planned: remove files safely, with a private-data retention choice |
+1. Sign in to Account Mode and open **Add-ons**.
+2. Search or filter reviewed releases and open **View details**.
+3. Check publisher identity, license, NextGuide compatibility and requested permissions.
+4. Confirm **Install reviewed content**. The site downloads only the signed GitHub Release and verifies its bytes before writing immutable files to private storage.
+5. Use **Enable/Disable** to change the stored content state. The public docs integration is a separate milestone; enabling does not automatically publish pages yet.
+6. Use **Update** when a higher reviewed version is available, or **Roll back** to a previously saved, still-approved version. Rollback leaves the add-on disabled for explicit re-enabling.
+7. **Uninstall** clears its installed entry but preserves separate private settings and historical archive blobs for recovery.
 
-The existing extension capability broker, isolated runner prototype and signed content archive verifier are foundations. They do not make executable marketplace add-ons safe to install today.
+<Callout kind="warning" title="Compatibility and executable permissions">
+Published v1 examples currently declare NextGuide `>=1.0.0 <2.0.0`. A site still running `0.0.1-alpha.2` is intentionally shown as **incompatible**, not allowed to bypass the publisher's declared version range. This is a release gate, not a failed install. Code-capable extensions, React widgets, secret handles and server jobs still require additional review, sandbox hardening and permission approvals.
+</Callout>
 
-## Security requirements before executable add-ons
+## Security and rollback
 
-Executable add-ons require independent code review, properly signed v2 artifacts, hardened OS sandboxing and resource controls, and browser-frame isolation for custom React components. The private registry service remains separately deployed and is **not** part of this public repository.
+The server validates owner sessions and request origin on every mutation. Installed data is never placed in `content/docs` or public assets. The journal checks the signed release metadata, exact SHA-256, compatible package version and current approval status. Conflicting update requests are rejected using an installation revision, and a damaged archive cannot be enabled.
 
-Track implementation in [roadmap issue #101](https://github.com/m1nsook/NextGuide/issues/101). To publish a currently supported content add-on, start with [Getting started](/addons/getting-started).
+The UI uses NextGuide's native Account Mode components. No Docker requirement or new npm package is introduced.
+
+See [Updates and removal](/addons/updates), [Security and permissions](/addons/permissions), and [runtime API](/addons/api). Follow [roadmap #101](https://github.com/m1nsook/NextGuide/issues/101) for executable v2 and public rendering integration.

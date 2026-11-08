@@ -26,6 +26,7 @@ The single `nextguide` package now exposes these building blocks:
 | `nextguide/extensions/artifacts` | Read-only v1 content archive verifier: signature, exact release size/hash and safe tar members; does not install or execute files |
 | `nextguide/extensions/download` | Strict signed GitHub artifact downloader with pinned public-IPv4 DNS, TLS, and limited trusted GitHub CDN redirects |
 | `nextguide/extensions/install-state` | Server-only Account Mode journal for signed v1 content releases, version pinning, disable, verified rollback, and uninstall without executing code |
+| `nextguide/extensions/site-manager` | Owner-authenticated host-side orchestration: signed discovery, safe download, lifecycle actions and revision checks |
 | `nextguide/extensions/network` | Restricted, host-only outbound HTTPS adapter with pinned DNS and response limits |
 | `nextguide/extensions/isolation` | Experimental Linux bubblewrap/prlimit process launcher for SHA-256-pinned compiled modules; no Windows or automatic fallback |
 

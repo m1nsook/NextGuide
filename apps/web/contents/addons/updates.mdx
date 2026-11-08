@@ -1,34 +1,39 @@
 ---
-title: Updates & removal
-description: Publish new versions, revoke old releases and understand add-on withdrawal.
+title: Updates and removal
+description: Publisher updates, Account Mode version pinning and verified rollback for content add-ons.
 ---
 
 # Updates and removal
 
-NextGuide keeps GitHub release artifacts immutable. Every update is independently checked and must be manually approved before it becomes available in the signed catalog.
+## Publisher workflow
 
-## Publish an update
+Every new add-on version requires its own independently reviewed immutable GitHub Release, committed source provenance and signed registry approval.
 
-1. Update the add-on files and increase `version` in `nextguide-addon.json`.
-2. Commit and push changes to the same GitHub repository.
-3. Open the [NextGuide Publisher GitHub App](https://github.com/apps/nextguide-publisher) and select the repository through its publisher portal.
-4. Validate the release and submit the new version.
-5. Check the pending review and wait for approval.
+1. Increase `version` in `nextguide-addon.json`.
+2. Commit and push the changed files to the source repository.
+3. Open the [NextGuide Publisher GitHub App](https://github.com/apps/nextguide-publisher) and select the repository.
+4. Validate and submit the new version for independent review.
+5. Wait for the signed registry to contain the approved release.
 
-<CodeWindow title="Version update example" language="json" code={"{\n  \"id\": \"acme.hello-world\",\n  \"version\": \"0.2.0\",\n  \"repository\": \"https://github.com/acme/hello-world\"\n}"} />
+Do not overwrite existing GitHub Release assets to make a silent change. Create a new version instead.
 
-## Removing a published add-on
+## Account Mode installation lifecycle
 
-A verified publisher can withdraw their own add-on; authorized moderation can revoke releases. These are **catalog actions**: approved versions are marked revoked in the signed index, and pending submissions are withdrawn.
+The owner-facing **Add-ons** page can install, enable/disable, update, roll back and uninstall **content-only v1** releases when the site's NextGuide package satisfies their declared compatibility range.
 
-Removal does **not** silently delete GitHub Releases, erase the review audit log, or uninstall copies already installed on user sites.
+| Action | What happens |
+| --- | --- |
+| Install | Recheck signed registry, verify exact remote archive and place content in private storage, initially disabled |
+| Enable | Recheck latest signed approval and local integrity before marking content enabled |
+| Disable | Mark content disabled without deleting settings |
+| Update | Recheck the newer reviewed version, then atomically advance the pinned version |
+| Rollback | Verify an already stored, still-approved version and restore it in a disabled state |
+| Uninstall | Remove the installed record; preserve private add-on settings and historical blobs for recovery |
 
-## Future in-site update manager
+Owner authentication and same-origin checks apply to every mutation. A concurrent change requires refreshing the page rather than overwriting another update. A revoked or stale release cannot be reactivated or rolled back.
 
-Account Mode's planned marketplace will separately support installing, enabling, disabling, updating, rolling back and uninstalling add-ons. It must verify the artifact digest, compatible NextGuide version, signed catalog and permissions, and must handle revoked releases safely.
-
-<Callout kind="info" title="Publisher vs. installer">
-The [publisher GitHub App](https://github.com/apps/nextguide-publisher) is for **developers**. The planned marketplace belongs inside **each site's own Account Mode dashboard**.
+<Callout kind="warning" title="Current milestone boundaries">
+The Account Mode site does not yet mount installed Markdown pages into public documentation. Executable add-ons, privileged permissions, secrets, React components and automatic background update checks remain future milestones. Legacy v1 content is never compiled as untrusted MDX.
 </Callout>
 
-Read [Marketplace (planned)](/addons/marketplace) and [Permissions & security](/addons/permissions).
+For details see [Account Mode marketplace](/addons/marketplace) and [runtime API](/addons/api).
