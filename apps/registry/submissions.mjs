@@ -24,7 +24,7 @@ function json(res,status,obj,extra={}) {
 function html(res,status,body,headers={}) {
   const content=Buffer.from(body)
   res.writeHead(status,{"Content-Type":"text/html; charset=utf-8","Content-Length":String(content.length),
-    "Cache-Control":"no-store","X-Frame-Options":"DENY","Referrer-Policy":"no-referrer",
+    "Cache-Control":"no-store","X-Frame-Options":"DENY","Referrer-Policy":"same-origin",
     "Content-Security-Policy":"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
     ...headers})
   res.end(content)
