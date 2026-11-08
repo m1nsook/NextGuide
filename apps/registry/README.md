@@ -51,6 +51,29 @@ bun apps/registry/server.mjs
 
 The registry should always listen on **127.0.0.1:4389** in production; nginx alone exposes the HTTPS public endpoint.
 
+## Origin-side Cloudflare Access verification
+
+The owner dashboard at `/admin` and its nested routes are denied by the server
+unless a signed Cloudflare Access JWT verifies successfully. The verifier validates
+`Cf-Access-Jwt-Assertion` using the team's rotating RSA signing keys, the JWT
+issuer, the configured application audience, and the expiry timestamp. It does not
+trust the header merely because it is present. Public catalog routes do not
+require Access authentication.
+
+Set these two **non-secret** values in your VPS-only environment file, alongside
+the existing registry environment variables:
+
+```text
+NG_CF_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+NG_CF_ACCESS_AUD=<the-64-character-app-audience-tag>
+```
+
+The dashboard fails closed when these values are missing or the remote signing
+keys cannot be validated. Keep nginx's `/admin` deny rule until the updated
+server and signed-token verification have been tested, then allow `/admin`
+to proxy to the registry. Protect direct origin access as an additional layer;
+Cloudflare Access checks at the edge and origin token validation are complementary.
+
 ## Deployment configuration
 
 Server-specific environment, systemd, TLS and nginx configuration is deliberately not kept in the repository. These files are delivered separately as a private, placeholder-only ZIP to the maintainer. Never commit live credentials, webhook URLs, signing keys or environment files.

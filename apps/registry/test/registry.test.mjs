@@ -134,7 +134,7 @@ test("signed catalog serves pinned GitHub icon URLs and approved updates only",a
       assert.equal((await get("/v1/addons/acme.hello-world/updates?from=0.1.0&nextguide=1.0.0")).body.update.version,"0.2.0")
       assert.equal((await get("/v1/addons/acme.hello-world/updates?from=0.1.0&nextguide=2.0.0")).body.update,null)
       assert.equal((await get("/marketplace")).code,404)
-      assert.equal((await get("/admin")).code,503)
+      assert.equal((await get("/admin")).code,403)
       const signed=await get("/v1/registry")
       assert.equal(verifyEnvelope(signed.body,f.publicKey).releases.length,2)
     })
@@ -171,7 +171,7 @@ test("publisher posts verified release to review queue, owner approves with CSRF
     const approved=remote(f)
     const opts={dataDir:f.dataDir,publicKey:f.publicKey,privateKey:f.privateKey,
       adminSecret:"a".repeat(48),sessionSecret:"b".repeat(48),origin:"https://ngapi.m1nsook.com",
-      verify:async()=>structuredClone(approved)}
+      verify:async()=>structuredClone(approved), accessVerifier:async()=>true}
     await withServer(opts,async base=>{
       const req={repository:approved.manifest.repository,tag:approved.tag,
         commit:approved.commit,sha256:approved.digest,assetUrl:approved.assetUrl}

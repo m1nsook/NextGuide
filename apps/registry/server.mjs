@@ -4,6 +4,7 @@ import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { readRegistry, compareSemver, parseSemver, satisfiesRange } from "./lib.mjs"
 import { handleRegistryWrites } from "./submissions.mjs"
+import { createCloudflareAccessVerifier } from "./access.mjs"
 
 const HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
@@ -50,6 +51,17 @@ export function createRegistryHandler(options) {
   const argumentsContext = options
   if (!dataDir || !publicKey) throw Error("Registry data directory and pinned public key required")
   return async (req, res) => {
+    // Protect /admin at the origin, even when a request bypasses Cloudflare.
+    // Without explicit Access verification the dashboard always fails closed.
+    let requestedPath = ""
+    try { requestedPath = new URL(req.url || "", "http://127.0.0.1").pathname } catch {}
+    if (requestedPath === "/admin" || requestedPath.startsWith("/admin/")) {
+      let authorized = false
+      try { authorized = !!options.accessVerifier && await options.accessVerifier(req) }
+      catch { authorized = false }
+      if (!authorized) return respond(res, req.method || "GET", 403,
+        { error: "Cloudflare Access authorization required" }, { "Cache-Control": "no-store" })
+    }
     try { if (await handleRegistryWrites(req, res, argumentsContext)) return }
     catch (error) { console.error("[nextguide-registry] Route error:", error.message); return respond(res, req.method || "GET", 500, {error:"Internal server error"}) }
     const method = req.method || "GET"
@@ -138,7 +150,12 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   const sessionSecret = process.env.NG_REGISTRY_SESSION_SECRET || null
   const origin = process.env.NG_REGISTRY_PUBLIC_ORIGIN || null
   const webhook = process.env.NG_REGISTRY_DISCORD_WEBHOOK_URL || null
+  const teamDomain = process.env.NG_CF_ACCESS_TEAM_DOMAIN
+  const audience = process.env.NG_CF_ACCESS_AUD
+  const accessVerifier = teamDomain && audience
+    ? createCloudflareAccessVerifier({ teamDomain, audience }) : null
+  if (!accessVerifier) console.warn("[nextguide-registry] /admin disabled: Cloudflare Access not configured")
   const server = createRegistryServer({ dataDir, publicKey, privateKey, adminSecret,
-    sessionSecret, origin, webhook })
+    sessionSecret, origin, webhook, accessVerifier })
   server.listen(port, host, () => console.log("[nextguide-registry] Listening on " + host + ":" + port))
 }
