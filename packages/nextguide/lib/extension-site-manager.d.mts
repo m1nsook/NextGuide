@@ -1,6 +1,8 @@
 import type { InstalledAddon } from "./extension-install-state.mjs"
 export type AccountAddonCatalog = {
   configured: boolean
+  /** True if a configured registry cannot be verified. */
+  registryUnavailable?: boolean
   catalogFresh: boolean
   releases: Array<{
     manifest: {

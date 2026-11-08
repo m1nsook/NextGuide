@@ -23,6 +23,8 @@ const PACKAGE_VERSION = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z
 const HASH = /^[a-f0-9]{64}$/
 const MAX_INSTALLED = 64
 const MAX_VERSIONS = 4
+const MAX_HISTORY = 100
+const OPERATIONS = new Set(["install", "update", "rollback", "enable", "disable", "uninstall", "no-op"])
 const MAX_CATALOG_AGE_MS = 60 * 60 * 1000
 const FUTURE_SKEW_MS = 5 * 60 * 1000
 
@@ -85,10 +87,26 @@ function assertState(state) {
   for (const [key, value] of Object.entries(state.addons)) {
     if (!safeRecord(value) || key !== value.id) fail("DAMAGED_STATE", "Invalid installed add-on record")
   }
+  if (state.history !== undefined) {
+    if (!Array.isArray(state.history) || state.history.length > MAX_HISTORY) {
+      fail("DAMAGED_STATE", "Invalid add-on activity history")
+    }
+    let latestRevision = 0
+    for (const event of state.history) {
+      if (!object(event) || !OPERATIONS.has(event.operation) ||
+          !ID.test(event.id) || !VERSION.test(event.version) ||
+          !Number.isSafeInteger(event.revision) || event.revision <= latestRevision ||
+          event.revision > state.revision ||
+          typeof event.at !== "string" || !Number.isFinite(Date.parse(event.at))) {
+        fail("DAMAGED_STATE", "Invalid add-on activity entry")
+      }
+      latestRevision = event.revision
+    }
+  }
   return state
 }
 function copy(value) { return JSON.parse(JSON.stringify(value)) }
-function newState() { return { schemaVersion: 1, revision: 0, addons: Object.create(null) } }
+function newState() { return { schemaVersion: 1, revision: 0, addons: Object.create(null), history: [] } }
 
 /**
  * Only called by trusted, authenticated Account Mode handlers.
@@ -176,7 +194,7 @@ export function createAccountAddonStore({
     }
     return release
   }
-  function journal(expectedRevision, action) {
+  function journal(expectedRevision, action, intent) {
     if (!Number.isSafeInteger(expectedRevision) || expectedRevision < 0) {
       fail("CONFLICT", "Expected index revision is required")
     }
@@ -189,6 +207,20 @@ export function createAccountAddonStore({
       const proposed = copy(previous)
       const result = action(proposed)
       proposed.revision = previous.revision + 1
+      const entry = result?.addon
+      const old = entry ? previous.addons[entry.id] : previous.addons[result?.removed]
+      const operation = intent === "rollback" ? "rollback" : result?.removed ? "uninstall" :
+        !old ? "install" :
+          old.pinnedVersion !== entry.version ?
+            (compare(entry.version,old.pinnedVersion) > 0 ? "update" : "rollback") :
+            old.enabled !== entry.enabled ? (entry.enabled ? "enable" : "disable") : "no-op"
+      const id = result?.removed ?? entry?.id
+      const version = entry?.version ?? old?.pinnedVersion
+      if (!ID.test(id) || !VERSION.test(version)) fail("DAMAGED_STATE", "Missing activity metadata")
+      proposed.history = [...(previous.history ?? []), {
+        revision: proposed.revision, at: new Date(now()).toISOString(),
+        operation, id, version,
+      }].slice(-MAX_HISTORY)
       assertState(proposed)
       const tmp = join(root, "." + randomBytes(16).toString("hex") + ".tmp")
       try {
@@ -223,7 +255,7 @@ export function createAccountAddonStore({
   return {
     list() {
       const current = state()
-      return { revision: current.revision, addons: Object.values(current.addons).map(publicEntry) }
+      return { revision: current.revision, addons: Object.values(current.addons).map(publicEntry), history: copy(current.history ?? []) }
     },
     /** A reviewed archive can be installed or upgraded; writes are atomic. */
     install({ envelope, pinnedPublicKeyPem, id, version, archive, expectedRevision }) {
@@ -290,7 +322,7 @@ export function createAccountAddonStore({
         // fresh signed release status and integrity verification.
         record.enabled = false
         return { addon: publicEntry(record) }
-      })
+      }, "rollback")
     },
     uninstall({ id, expectedRevision }) {
       return journal(expectedRevision, next => {

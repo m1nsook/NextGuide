@@ -45,11 +45,19 @@ type InstalledAddon = {
   name: string
   availableVersions: string[]
 }
+type AddonActivity = {
+  revision: number
+  at: string
+  id: string
+  version: string
+  operation: "install" | "update" | "rollback" | "enable" | "disable" | "uninstall" | "no-op"
+}
 type Catalog = {
   configured: boolean
+  registryUnavailable?: boolean
   catalogFresh: boolean
   releases: Release[]
-  installed: { revision: number; addons: InstalledAddon[] }
+  installed: { revision: number; addons: InstalledAddon[]; history?: AddonActivity[] }
   nextguideVersion: string
 }
 type Action =
@@ -276,6 +284,22 @@ export function AccountAddonMarketplace({basePath="/docs"}: {basePath?: string})
           </CardContent></Card>)}
         </div>
       </section>}
+      {catalog?.installed.history && catalog.installed.history.length > 0 && <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Recent add-on activity</h2>
+        <Card><CardContent className="divide-y divide-border">
+          {[...catalog.installed.history].reverse().slice(0,12).map(event=>
+            <div key={event.revision} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+              <div className="min-w-0"><span className="font-medium capitalize">{event.operation}</span>
+                <span className="ml-2 break-all text-muted-foreground">{event.id} · v{event.version}</span></div>
+              <span className="text-xs text-muted-foreground">{event.at.replace("T"," ").slice(0,16)} UTC · #{event.revision}</span>
+            </div>
+          )}
+        </CardContent></Card>
+        <p className="text-xs text-muted-foreground">The latest 100 successful installation changes are recorded privately with each atomic state update. No credentials or downloaded code are included.</p>
+      </section>}
+      {catalog?.registryUnavailable && <Card><CardContent className="p-5 text-sm text-muted-foreground" role="status">
+        The signed registry cannot be verified right now. Installed history remains available, but new installs, updates and enabling are unavailable. You can still disable or uninstall existing add-ons.
+      </CardContent></Card>}
       {catalog?.configured && !catalog.catalogFresh && <Card><CardContent className="p-5 text-sm text-muted-foreground" role="status">The verified catalog is older than one hour. Discovery is available, but new installs, updates and enabling are suspended until the registry issues a fresh signed index. Disable and uninstall remain available.</CardContent></Card>}
       {catalog && !catalog.configured && <Card><CardHeader>
         <CardTitle>Signed registry not configured</CardTitle>
