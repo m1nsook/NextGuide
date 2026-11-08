@@ -194,7 +194,7 @@ export function createAccountAddonStore({
     }
     return release
   }
-  function journal(expectedRevision, action) {
+  function journal(expectedRevision, action, intent) {
     if (!Number.isSafeInteger(expectedRevision) || expectedRevision < 0) {
       fail("CONFLICT", "Expected index revision is required")
     }
@@ -209,7 +209,7 @@ export function createAccountAddonStore({
       proposed.revision = previous.revision + 1
       const entry = result?.addon
       const old = entry ? previous.addons[entry.id] : previous.addons[result?.removed]
-      const operation = result?.removed ? "uninstall" :
+      const operation = intent === "rollback" ? "rollback" : result?.removed ? "uninstall" :
         !old ? "install" :
           old.pinnedVersion !== entry.version ?
             (compare(entry.version,old.pinnedVersion) > 0 ? "update" : "rollback") :
@@ -322,7 +322,7 @@ export function createAccountAddonStore({
         // fresh signed release status and integrity verification.
         record.enabled = false
         return { addon: publicEntry(record) }
-      })
+      }, "rollback")
     },
     uninstall({ id, expectedRevision }) {
       return journal(expectedRevision, next => {
