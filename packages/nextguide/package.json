@@ -16,9 +16,9 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs test/extension-network.test.mjs test/extension-isolation.test.mjs test/extension-artifacts.test.mjs test/extension-install-state.test.mjs test/docs-chatgpt.test.mjs",
+    "test": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs test/extension-network.test.mjs test/extension-isolation.test.mjs test/extension-artifacts.test.mjs test/extension-install-state.test.mjs test/extension-download.test.mjs test/docs-chatgpt.test.mjs",
     "test:dist": "node --test test/distribution.test.mjs",
-    "prepack": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs test/extension-network.test.mjs test/extension-isolation.test.mjs test/extension-artifacts.test.mjs test/extension-install-state.test.mjs test/docs-chatgpt.test.mjs",
+    "prepack": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs test/extension-network.test.mjs test/extension-isolation.test.mjs test/extension-artifacts.test.mjs test/extension-install-state.test.mjs test/extension-download.test.mjs test/docs-chatgpt.test.mjs",
     "test:unit": "bunx vitest run",
     "check-types": "node scripts/build.mjs"
   },
@@ -189,6 +189,11 @@
       "types": "./lib/extension-install-state.d.mts",
       "node": "./lib/extension-install-state.mjs",
       "default": "./lib/extension-install-state.mjs"
+    },
+    "./extensions/download": {
+      "types": "./lib/extension-download.d.mts",
+      "node": "./lib/extension-download.mjs",
+      "default": "./lib/extension-download.mjs"
     }
   },
   "imports": {

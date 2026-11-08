@@ -24,6 +24,7 @@ The single `nextguide` package now exposes these building blocks:
 | `nextguide/extensions/ui` | Host-owned React renderer for validated UI descriptors using NextGuide UI primitives |
 | `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed registry indexes and approved releases |
 | `nextguide/extensions/artifacts` | Read-only v1 content archive verifier: signature, exact release size/hash and safe tar members; does not install or execute files |
+| `nextguide/extensions/download` | Strict signed GitHub artifact downloader with pinned public-IPv4 DNS, TLS, and limited trusted GitHub CDN redirects |
 | `nextguide/extensions/install-state` | Server-only Account Mode journal for signed v1 content releases, version pinning, disable, verified rollback, and uninstall without executing code |
 | `nextguide/extensions/network` | Restricted, host-only outbound HTTPS adapter with pinned DNS and response limits |
 | `nextguide/extensions/isolation` | Experimental Linux bubblewrap/prlimit process launcher for SHA-256-pinned compiled modules; no Windows or automatic fallback |
@@ -91,6 +92,14 @@ Security constraints:
 - Activating or reading a release rechecks its signed status and locally stored digest; revoked or stale releases fail closed. The registry must refresh its signed index at least hourly for state changes to succeed.
 - There is no automated downloader, dashboard installation endpoint, public docs rendering integration, or installed-site UI yet. The module is a server-side foundation, not a completed marketplace workflow.
 - Explicit browser consent and permission diffs remain required for future executable v2 add-ons.
+
+## Fetch approved archives without arbitrary redirects
+
+**`nextguide/extensions/download`** provides a Node-only `downloadVerifiedContentRelease` helper for **content-only v1** packages. It authenticates the original signed catalog envelope, requires an active reviewed GitHub Release and downloads its exact versioned artifact.
+
+The downloader uses HTTPS with server certificate verification and pins a validated public IPv4 DNS answer to the socket. Redirects are accepted only to dedicated GitHub release-asset CDN hostnames; it will not send credentials, follow arbitrary URLs, allow proxies, or accept private/reserved DNS answers. It enforces byte limits, response length, a timeout and abort, and re-verifies the entire archive content and SHA-256 before returning bytes.
+
+This helper **does not install** the archive. Call the Account Mode private installation journal only after its own owner-authentication, permission approval, current NextGuide version compatibility, signed registry freshness and atomic state checks. A reviewed `.tgz` must never be executed as code.
 
 ## Linux isolated execution (prototype)
 
