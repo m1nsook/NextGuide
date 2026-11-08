@@ -48,15 +48,16 @@ export function createAccountAddonManager({
     registryUrl,pinnedPublicKeyPem,...(registryFetch?{fetchImpl:registryFetch}:{})
   }) : null
 
-  async function signed() {
+  async function signed({requireFresh=true}={}) {
     if (!registry) reject("NO_REGISTRY", "Trusted signed registry is not configured")
     const envelope = await registry.fetchSignedEnvelope()
     const payload = verifySignedRegistryEnvelope(envelope,pinnedPublicKeyPem)
     const age = now() - Date.parse(payload.updatedAt)
-    if (!Number.isFinite(age) || age > MAX_FRESHNESS || age < -5*60*1000) {
+    const catalogFresh = Number.isFinite(age) && age <= MAX_FRESHNESS && age >= -5*60*1000
+    if (requireFresh && !catalogFresh) {
       reject("STALE_CATALOG", "Registry release catalog must be signed within the last hour")
     }
-    return {envelope,payload}
+    return {envelope,payload,catalogFresh}
   }
   function requireConsent(value) {
     if (value !== true) reject("CONSENT_REQUIRED", "Explicit site-owner consent is required")
@@ -66,8 +67,8 @@ export function createAccountAddonManager({
     async catalog() {
       const installed=store.list()
       if (!registry) return {configured:false,releases:[],installed,
-        nextguideVersion}
-      const {payload}=await signed()
+        nextguideVersion,catalogFresh:false}
+      const {payload,catalogFresh}=await signed({requireFresh:false})
       return {
         configured:true,
         releases:listVerifiedAddons(payload).map(release=>({
@@ -75,7 +76,7 @@ export function createAccountAddonManager({
           compatible:compatibleAddonRange(
             release.manifest.compatibility.nextguide,nextguideVersion)
         })),
-        installed,nextguideVersion,
+        installed,nextguideVersion,catalogFresh,
       }
     },
     async install({id,version,expectedRevision,consent}={}) {
