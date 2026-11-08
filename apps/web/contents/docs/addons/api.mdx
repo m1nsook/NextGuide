@@ -1,102 +1,111 @@
 ---
-title: Extension API roadmap
-description: Versioned capabilities, trusted host lifecycle, and plans for isolated add-ons.
+title: Extension runtime and capability API
+description: Trusted host, isolated-runtime broker, UI descriptors and permission model.
 ---
 
-# Extension API roadmap
+# NextGuide extension runtime
 
-NextGuide is being developed as a **full extension platform**, not merely a Markdown add-on marketplace. The existing content-only v1 format remains valid. v2 metadata will support UI, MDX components, themes, admin tools, AI, OAuth, server endpoints, scheduled jobs, translations and integrations.
+NextGuide is growing beyond content-only add-ons. Future extensions can provide React/MDX UI, themes, languages, admin tools, AI providers, authentication integrations and server functionality. **Not all of these are executable today.**
 
-<Callout kind="warning" title="Execution is not yet supported">
-The first extension-host foundation is for **explicitly trusted, site-owner-supplied modules only**. It does not install, import, sandbox, or run third-party marketplace JavaScript. The public ngapi registry still verifies content-only v1 releases; its private verifier must be upgraded independently before accepting executable packages.
+<Callout kind="warning" title="Executable marketplace add-ons are not enabled">
+The current ngapi registry verifies content-only v1 releases. The Account Mode marketplace installer and OS-isolated third-party runner are not implemented. Neither the trusted host nor the capability broker is a sandbox. Do not import or evaluate downloaded JavaScript in a NextGuide server or site.
 </Callout>
 
-## Foundation: `nextguide/extensions`
+## Runtime foundation
 
-The single `nextguide` npm package includes a versioned extension contract. The first module provides:
+The single `nextguide` package now exposes these building blocks:
 
-- `EXTENSION_API_VERSION` — host contract version.
-- `EXTENSION_CAPABILITIES` — declared permissions for documentation, MDX blocks, UI, themes, icons, locales, AI, authentication, server routes/jobs, storage, network and secrets.
-- `validateExtensionManifest(manifest)` — checks both content-only v1 and new v2 descriptors and returns **every validation issue together**.
-- `createExtensionHost()` — in-process lifecycle and contribution management for **trusted extensions only**, with explicit capability approval, activation, deactivation and cleanup.
-
-A valid manifest is a declaration, **not permission to execute code**.
-
-## Planned v2 manifest
-
-```json
-{
-  "schemaVersion": 2,
-  "id": "acme.search-tools",
-  "name": "Search Tools",
-  "version": "1.0.0",
-  "category": "integration",
-  "compatibility": {
-    "mode": "account",
-    "nextguide": ">=1.0.0 <2.0.0"
-  },
-  "permissions": ["admin.pages", "docs.pages"],
-  "entrypoints": {
-    "client": "dist/client.js",
-    "server": "dist/server.mjs"
-  }
-}
-```
-
-This is a **draft extension contract**, not yet a package you can submit to ngapi. Future versions will add detailed permission descriptions, package signatures, asset inventories, extension identifiers, and capability-specific contribution schemas.
-
-## Initial capability groups
-
-| Capability group | Planned scope |
+| Export | What it provides |
 | --- | --- |
-| `docs.pages`, `mdx.blocks` | Pages and dynamic MDX components |
-| `ui.components`, `admin.pages` | UI extensions and owner dashboard integrations |
-| `theme.tokens`, `icons.packs`, `i18n.locales` | Appearance and localization |
-| `ai.providers`, `auth.providers` | AI, external identity and OAuth integration |
-| `server.routes`, `server.jobs` | Server-side endpoints and scheduled work |
-| `storage.read`, `storage.write` | Scoped extension storage |
-| `network.fetch`, `secrets.read` | Policy-controlled host-provided services |
+| `nextguide/extensions` | Manifest validation, capabilities and trusted lifecycle host |
+| `nextguide/extensions/runtime` | Message broker for a future isolated runner, bound to an approved add-on and artifact SHA-256 |
+| `nextguide/extensions/storage` | Private, namespaced JSON store for the trusted Node host |
+| `nextguide/extensions/views` | Data-only UI schema, safe-link validation and multi-issue diagnostics |
+| `nextguide/extensions/ui` | Host-owned React renderer for validated UI descriptors using NextGuide UI primitives |
+| `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed ngapi indexes and approved releases |
 
-No capability is granted merely because an add-on requests it.
+All exports are part of **one npm package**, not additional packages to install.
 
-## Trusted host example
+## Permissions and lifecycle
+
+An add-on declares capabilities such as `mdx.blocks`, `ui.components`, `admin.pages`, `storage.read`, `storage.write`, `network.fetch` or `server.routes`. The host grants only capabilities approved by the site owner. Unsupported operations remain disabled even when an add-on declares them.
+
+The initial trusted lifecycle host supports registration, explicit approval, activation, deactivation, cleanup and data-only contributions. That `registerTrusted()` API is **only** for site-owner-controlled code. It must never receive registry JavaScript directly.
+
+## Capability broker
+
+An isolated runner will communicate with the host through typed JSON messages. The broker accepts a verified manifest and an artifact SHA-256; the site must provide its own **trusted** authorization callback that verifies the signed release and stored owner permission grants.
 
 ```ts
-import { createExtensionHost } from "nextguide/extensions"
+import { createExtensionBroker } from "nextguide/extensions/runtime"
+import { createExtensionFileStorage } from "nextguide/extensions/storage"
 
-const host = createExtensionHost()
-
-// Only do this for code deliberately supplied and trusted by the site owner.
-host.registerTrusted({
-  manifest: {
-    schemaVersion: 2,
-    id: "acme.search-tools",
-    name: "Search Tools",
-    version: "1.0.0",
-    category: "integration",
-    compatibility: { mode: "account", nextguide: ">=1.0.0 <2.0.0" },
-    permissions: ["admin.pages"],
-    entrypoints: { client: "dist/client.js" }
-  },
-  activate(ctx) {
-    ctx.contribute("admin.page", { title: "Search Tools", path: "/admin/search" })
-    ctx.onDeactivate(() => console.log("Stopped"))
-  }
+const broker = createExtensionBroker({
+  // Application-owned security check. Do not accept grants from the add-on.
+  authorize: verifySignedInstallAndOwnerApproval,
+  storage: createExtensionFileStorage("/private/nextguide/extension-storage"),
 })
 
-host.approve("acme.search-tools", ["admin.pages"])
-await host.enable("acme.search-tools")
+// The runner transport remains a separate, future isolation component.
+const session = await broker.openSession(verifiedManifest, pinnedSha256)
+const reply = await session.handle({
+  id: "request-1", method: "storage.get", params: { key: "preferences" }
+})
+session.close()
 ```
 
-Contributions are **JSON descriptors**. They are not automatically wired to Next.js routes, React rendering or server APIs yet; that requires isolated runners and dedicated rendering adapters.
+`verifySignedInstallAndOwnerApproval`, `verifiedManifest` and `pinnedSha256` are **host application inputs**, not exports supplied by NextGuide. The example illustrates the interface; a complete secure installer is not yet available.
 
-## Safety architecture and next milestones
+The broker currently implements:
 
-1. **Contract and trusted host foundation:** Versioned manifest, capability definitions, activation/deactivation. This part is initially supported in source.
-2. **Isolation and adapters:** Sandbox/cross-process boundaries, host-mediated storage and network access, safe React/MDX rendering and versioned SDK.
-3. **Signed distribution:** Upgrade the private ngapi verification system to audit code-bearing releases and permission changes.
-4. **Account Mode installer:** Browse verified releases, approve permissions, install, configure, enable/disable, update, roll back and uninstall.
+| Method | Required permission | Behavior |
+| --- | --- | --- |
+| `extension.info` | None | Return scoped extension ID, version and API version |
+| `storage.get` | `storage.read` | Read a JSON value in this add-on's private namespace |
+| `storage.set` / `storage.delete` | `storage.write` | Write or remove private JSON values |
+| `network.request` | `network.fetch` | Delegate a GET/POST to an **explicitly configured** host adapter and exact allowlisted HTTPS domain |
+| `contribution.publish` | Contribution-specific | Register a bounded, JSON-only contribution descriptor |
 
-No remote `import()`, raw `eval`, in-process execution of untrusted server code or silent permission escalation is permitted in this foundation.
+By default, there is **no network adapter**, no arbitrary filesystem access, no secret read method and no script-execution method. The server must enforce DNS/IP and redirect protections if it installs a network adapter: checking an HTTPS hostname alone does not prevent DNS rebinding or SSRF.
 
-[Create a content-only add-on](/docs/addons/manifest) · [Publishing and review](/docs/addons/publishing)
+Persistent storage limits each key to roughly 32 KiB and each extension to 128 keys / 1 MiB. It must live outside the served Next.js directories, under an owner-controlled private path.
+
+## Render add-on UI without importing its code
+
+The first UI pathway is a declarative view tree rendered by NextGuide. The host only accepts supported node kinds such as headings, text, cards, stacks, badges, links and action buttons.
+
+```tsx
+import { ExtensionView } from "nextguide/extensions/ui"
+
+const descriptor = {
+  type: "card",
+  children: [
+    { type: "heading", level: 2, text: "Search settings" },
+    { type: "button", text: "Configure", action: "open_settings" },
+  ],
+}
+
+<ExtensionView view={descriptor} onAction={action => {
+  // Handle through the host's permission-checked action dispatcher.
+}} />
+```
+
+The renderer does not support arbitrary HTML, JSX, injected React components, scripts or untrusted URL schemes. A future isolated UI runtime will be necessary for add-ons that need custom React code. Button actions are identifiers; the host application must authorize them before performing mutations.
+
+## Trust the signed catalog, not unsigned JSON
+
+The Node-only `nextguide/extensions/catalog` client validates the Ed25519 signature and uses a **pinned public key** supplied by the installed NextGuide application. The key must not be downloaded from the same response it is intended to authenticate. The client checks the signed release metadata, rejects incorrect artifact URLs and digests, and excludes revoked versions from new installations.
+
+The public API is read-only; it **does not download or execute** package content. A future installer must verify the exact downloaded artifact SHA-256 and recheck revocation/permissions before activation. The registry index is signed for integrity but currently does not provide an expiry timestamp, so freshness and revocation propagation need additional policy before general availability.
+
+## Next milestones
+
+1. **Isolated execution adapter:** A platform-approved sandbox/worker boundary for packaged JavaScript and a bounded message transport, not bare Node worker threads.
+2. **Host services:** Secure DNS-pinned network adapter, namespaced credential handles, server route and job dispatch, scoped data storage and quotas.
+3. **Browser UI isolation:** Signed asset delivery, sandboxed views for code-capable React widgets, and controlled host messaging.
+4. **Private registry verifier:** Independently inspect and approve v2 executable releases and permission changes. The private ngapi service is deployed separately.
+5. **Account Mode marketplace:** Signed catalog browsing, installation, permissions, activation, updates, rollback and uninstall.
+
+Legacy v1 Markdown add-ons stay supported, but are not the limit of NextGuide's add-on architecture.
+
+[Create a content add-on](/docs/addons/manifest) · [Publish and review](/docs/addons/publishing)
