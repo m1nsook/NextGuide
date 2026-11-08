@@ -69,8 +69,8 @@ import "nextguide/styles.css"
 
 The single NextGuide package now includes `nextguide/extensions`,
 `nextguide/extensions/runtime`, `nextguide/extensions/storage`,
-`nextguide/extensions/views`, `nextguide/extensions/ui`, and
-`nextguide/extensions/catalog`.
+`nextguide/extensions/views`, `nextguide/extensions/ui`,
+`nextguide/extensions/catalog`, and `nextguide/extensions/network`.
 
 These provide a typed capability contract, a trusted lifecycle host, a
 permission-gated message broker, private per-extension JSON storage, and a

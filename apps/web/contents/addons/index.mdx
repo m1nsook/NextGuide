@@ -8,7 +8,7 @@ description: Build, publish and maintain extensions for NextGuide Account Mode.
 A dedicated place for creating and maintaining NextGuide add-ons, from simple documentation content to the future permissioned TypeScript/React extension system. Add-ons use the existing **single `nextguide` package**; there is no second SDK to install.
 
 <Callout kind="info" title="What works today">
-The [NextGuide Publisher](https://ngapi.m1nsook.com/publish) supports GitHub App sign-in, repository selection, preflight validation, submission, review, updates, and withdrawal. The private ngapi registry signs its approved catalog. **Only content-only v1 add-ons can be published today.** The Account Mode marketplace installer and isolated executable runner are still in development.
+The developer publisher supports GitHub App sign-in, repository selection, preflight validation, submissions, updates, and withdrawal. Review is handled separately. The private ngapi registry signs its approved catalog. **Only content-only v1 add-ons can be published today.** The Account Mode marketplace installer and isolated executable runner are still in development.
 </Callout>
 
 ## Start here
@@ -30,7 +30,7 @@ The [NextGuide Publisher](https://ngapi.m1nsook.com/publish) supports GitHub App
 | Capability contracts and trusted extension host | Available in NextGuide source |
 | Host-mediated storage, signed catalog verifier, safe UI descriptors | Available as foundation APIs |
 | Execute third-party React, TypeScript or server scripts | **Not supported yet** |
-| Browse and install add-ons from each Account Mode `/admin` | **Not supported yet** |
+| Browse and install add-ons inside Account Mode | **Not supported yet** |
 
 The extension host is not a security sandbox. Executable add-ons require a separate isolated runner, verified artifacts and owner-approved permissions before we can offer them in the marketplace.
 
@@ -38,4 +38,4 @@ The extension host is not a security sandbox. Executable add-ons require a separ
 
 Add-on developer docs live under `/addons` with a dedicated sidebar, search, and page navigation. For framework basics, visit [NextGuide documentation](/docs); for UI component examples, see the [component catalog](/components).
 
-[Publisher](https://ngapi.m1nsook.com/publish) · [Registry API](https://ngapi.m1nsook.com/v1/addons) · [Add-ons repository template](https://github.com/m1nsook/NextGuide-Addons) · [Roadmap](https://github.com/m1nsook/NextGuide/issues/101)
+[GitHub App publisher](https://github.com/apps/nextguide-publisher) · [Add-ons repository template](https://github.com/m1nsook/NextGuide-Addons) · [Roadmap](https://github.com/m1nsook/NextGuide/issues/101)

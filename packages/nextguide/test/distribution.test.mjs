@@ -304,13 +304,14 @@ test("Account Mode ships the supplied shadcn Base UI Vega controls independently
 })
 
 test("extension exports ship with declarations and safe client boundary", async () => {
-  const [extensions, runtime, views, ui, storage, catalog] = await Promise.all([
+  const [extensions, runtime, views, ui, storage, catalog, network] = await Promise.all([
     import("nextguide/extensions"),
     import("nextguide/extensions/runtime"),
     import("nextguide/extensions/views"),
     import("nextguide/extensions/ui"),
     import("nextguide/extensions/storage"),
     import("nextguide/extensions/catalog"),
+    import("nextguide/extensions/network"),
   ])
   assert.equal(typeof extensions.createExtensionHost, "function")
   assert.equal(typeof runtime.createExtensionBroker, "function")
@@ -318,6 +319,7 @@ test("extension exports ship with declarations and safe client boundary", async 
   assert.equal(typeof ui.ExtensionView, "function")
   assert.equal(typeof storage.createExtensionFileStorage, "function")
   assert.equal(typeof catalog.createVerifiedRegistryClient, "function")
+  assert.equal(typeof network.createRestrictedExtensionHttpsAdapter, "function")
   const source = readFileSync(join(root, "dist/extensions/ui.js"), "utf8")
   assert.match(source, /^"use client";?/)
   assert.doesNotMatch(source, /dangerouslySetInnerHTML/)
@@ -348,7 +350,8 @@ test("official add-on docs have their own route, navigation and real NextGuide b
   assert.match(gettingStarted, /<CodeTabs/)
   assert.match(manifest, /<FileTree/)
   assert.match(manifest, /<CodeWindow/)
-  assert.match(publishing, /https:\/\/ngapi\.m1nsook\.com\/publish/)
+  assert.match(publishing, /https:\/\/github\.com\/apps\/nextguide-publisher/)
+  assert.doesNotMatch(publishing, /ngapi\.m1nsook\.com|\/admin/)
   assert.doesNotMatch(publishing, /GITHUB_TOKEN|fine-grained personal access token/)
   assert.match(read("contents/addons/components.mdx"), /<ExtensionView/)
   const baseMeta = JSON.parse(read("contents/docs/_meta.json"))
@@ -356,5 +359,15 @@ test("official add-on docs have their own route, navigation and real NextGuide b
   for (const old of ["index", "manifest", "publishing", "api"]) {
     const legacy = read("contents/docs/addons/" + old + ".mdx")
     assert.match(legacy, /\/addons/)
+  }
+})
+
+test("public add-on guides do not disclose internal registry routes", () => {
+  const website = join(dirname(dirname(root)), "apps", "web")
+  const guides = ["index", "publishing", "getting-started", "updates", "marketplace", "api"]
+  for (const guide of guides) {
+    const content = readFileSync(join(website, "contents/addons/" + guide + ".mdx"), "utf8")
+    assert.doesNotMatch(content, /ngapi\.m1nsook\.com|\/admin\b/,
+      "Public page must not advertise operator-only registry details: " + guide)
   }
 })
