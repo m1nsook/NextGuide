@@ -158,7 +158,7 @@ function actionDescription(action: Action | null) {
 }
 
 /** Owner-only Account Mode UI. All mutations go through session and origin-checked routes. */
-export function AccountAddonMarketplace() {
+export function AccountAddonMarketplace({basePath="/docs"}: {basePath?: string}) {
   const [catalog, setCatalog] = React.useState<Catalog | null>(null)
   const [loading, setLoading] = React.useState(true)
   const [busy, setBusy] = React.useState(false)
@@ -264,6 +264,7 @@ export function AccountAddonMarketplace() {
             <CardTitle className="text-base">{addon.name}</CardTitle>
             <CardDescription>{addon.id} · v{addon.version} · {addon.enabled?"Enabled":"Disabled"}</CardDescription>
           </CardHeader><CardContent className="flex flex-wrap gap-2">
+            {addon.enabled && <a className="inline-flex h-8 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted" href={(basePath==="/"?"":basePath)+"/addons/"+encodeURIComponent(addon.id)+"/"} target="_blank" rel="noopener noreferrer">Open content</a>}
             {releases.some(x=>x.manifest.id===addon.id) && <Button variant="outline" size="sm"
               disabled={busy} onClick={()=>setChosen(addon.id)}>Details</Button>}
             <Button variant="outline" size="sm" disabled={busy || (!addon.enabled && !catalog.catalogFresh)} onClick={()=>
