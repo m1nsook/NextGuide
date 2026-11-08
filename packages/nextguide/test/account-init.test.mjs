@@ -167,7 +167,7 @@ test("Account Mode add-on lifecycle routes stay owner-authenticated and read-onl
       "POST must authenticate before mutating add-ons")
     assert.ok(post.indexOf("if (!sameOrigin(request))") < post.indexOf('action.startsWith("addon-")'),
       "POST must enforce same-origin before any add-on mutation")
-    assert.match(view,/<AccountAddonMarketplace \/>/)
+    assert.ok(view.includes("<AccountAddonMarketplace basePath={basePath} />"))
     assert.match(view,/id: "addons", label: "Add-ons"/)
     assert.match(market,/credentials:"same-origin"/)
     assert.match(market,/<AlertDialog /)
