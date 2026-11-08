@@ -24,6 +24,7 @@ The single `nextguide` package now exposes these building blocks:
 | `nextguide/extensions/ui` | Host-owned React renderer for validated UI descriptors using NextGuide UI primitives |
 | `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed registry indexes and approved releases |
 | `nextguide/extensions/artifacts` | Read-only v1 content archive verifier: signature, exact release size/hash and safe tar members; does not install or execute files |
+| `nextguide/extensions/install-state` | Server-only Account Mode journal for signed v1 content releases, version pinning, disable, verified rollback, and uninstall without executing code |
 | `nextguide/extensions/network` | Restricted, host-only outbound HTTPS adapter with pinned DNS and response limits |
 | `nextguide/extensions/isolation` | Experimental Linux bubblewrap/prlimit process launcher for SHA-256-pinned compiled modules; no Windows or automatic fallback |
 
@@ -76,6 +77,20 @@ The returned pages must be rendered using a safe Markdown renderer with raw HTML
 </Callout>
 
 The downloader is intentionally separate: the site must only retrieve the reviewed GitHub Release artifact using a trusted transport, with redirect and network restrictions. The verifier is the byte-level integrity gate, not an HTTP downloader.
+
+## Private Account Mode installation journal
+
+The single package also provides **`nextguide/extensions/install-state`** to trusted server code. It stores reviewed content-only v1 releases under the Account Mode private data directory (outside the Next.js project). Archive files are named by their SHA-256 and retained immutably; one atomic index tracks installed versions and a revision used to reject concurrent changes.
+
+The journal exposes `install`, `setEnabled`, `rollback`, `uninstall`, `list`, and `readEnabled`. It verifies the original signed registry envelope, the exact archive hash, release approval, compatibility and the registry's signed timestamp. By default an installed release is **disabled**. Rollback always leaves it disabled until the owner explicitly enables it again. Uninstall leaves private add-on settings intact, with cleanup to be added separately.
+
+Security constraints:
+
+- Only **Account Mode** may create the journal; Developer Mode is rejected.
+- An enabled release is still **data-only Markdown**. It must never execute scripts, MDX expressions or untrusted HTML.
+- Activating or reading a release rechecks its signed status and locally stored digest; revoked or stale releases fail closed. The registry must refresh its signed index at least hourly for state changes to succeed.
+- There is no automated downloader, dashboard installation endpoint, public docs rendering integration, or installed-site UI yet. The module is a server-side foundation, not a completed marketplace workflow.
+- Explicit browser consent and permission diffs remain required for future executable v2 add-ons.
 
 ## Linux isolated execution (prototype)
 
