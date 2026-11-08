@@ -109,3 +109,26 @@ test("failed activation cleans up registered side effects", async () => {
   assert.equal(cleaned, true)
   assert.equal(host.list()[0].state, "disabled")
 })
+
+
+test("stale extension contexts cannot contribute after disable and re-enable", async () => {
+  const host = createExtensionHost()
+  const contexts = []
+  host.registerTrusted({
+    manifest: manifest({ permissions: ["admin.pages"] }),
+    activate(ctx) {
+      contexts.push(ctx)
+      ctx.contribute("admin.page", { path: "/admin/current" })
+    }
+  })
+  host.approve("acme.search", ["admin.pages"])
+  await host.enable("acme.search")
+  const old = contexts[0]
+  await host.disable("acme.search")
+  assert.throws(() => old.contribute("admin.page", { path: "/admin/obsolete" }), /no longer active/)
+  assert.throws(() => old.onDeactivate(() => {}), /no longer active/)
+  await host.enable("acme.search")
+  assert.throws(() => old.contribute("admin.page", { path: "/admin/stale" }), /no longer active/)
+  assert.equal(host.contributions("admin.page").length, 1)
+  await host.disable("acme.search")
+})
