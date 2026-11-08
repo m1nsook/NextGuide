@@ -28,7 +28,7 @@ The current trusted host requires explicit owner approval before activation. The
 
 ## Host-mediated messages
 
-The `nextguide/extensions/runtime` broker binds messages to an already verified add-on identity. Client-supplied IDs cannot switch storage namespaces. Network requests are denied by default; host adapters must also prevent DNS rebinding, redirects and private-network access.
+The `nextguide/extensions/runtime` broker binds messages to an already verified add-on identity. Client-supplied IDs cannot switch storage namespaces. Network requests are denied by default. The optional restricted HTTPS host adapter pins vetted public IPv4 DNS results to a TLS connection, rejects redirects and has fixed response limits. It must be configured by the trusted host and never exposed directly to add-on code.
 
 <CodeWindow title="Example broker request" language="json" code={"{\n  \"id\": \"request-1\",\n  \"method\": \"storage.get\",\n  \"params\": {\n    \"key\": \"preferences\"\n  }\n}"} />
 

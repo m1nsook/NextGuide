@@ -8,7 +8,7 @@ description: Publish via GitHub App, validate all errors together and request re
 **NextGuide Publisher** is the supported browser workflow for content-only v1 add-ons. It authenticates through the NextGuide Publisher GitHub App—no personal access token is needed for the web workflow.
 
 <LinkCards>
-  <LinkCard title="Open NextGuide Publisher" href="https://ngapi.m1nsook.com/publish" description="Log in with GitHub, select a repository, validate and submit" />
+  <LinkCard title="Open NextGuide Publisher" href="https://github.com/apps/nextguide-publisher" description="Log in with GitHub, select a repository, validate and submit" />
   <LinkCard title="Check manifest requirements" href="/addons/manifest" description="Required metadata, IDs, versions and permitted files" />
 </LinkCards>
 
@@ -17,14 +17,14 @@ description: Publish via GitHub App, validate all errors together and request re
 1. Create a public repository using the [official add-on template](https://github.com/m1nsook/NextGuide-Addons).
 2. Set the manifest's `id`, `repository`, `version`, author, and icon.
 3. Commit and push the files to your repository's default branch.
-4. Sign in at [NextGuide Publisher](https://ngapi.m1nsook.com/publish) and choose the repository.
+4. Sign in through the [NextGuide Publisher GitHub App](https://github.com/apps/nextguide-publisher) and select the repository in its publisher portal.
 5. Run validation and fix **every reported issue** before submitting for review.
 
 <CodeWindow title="Example source identity" language="json" code={"{\n  \"id\": \"acme.hello-world\",\n  \"version\": \"0.1.0\",\n  \"repository\": \"https://github.com/acme/hello-world\"\n}"} />
 
 ## How publishing works
 
-The GitHub App checks repository access and source files, creates or reuses a matching immutable GitHub Release archive, then submits its pinned commit and SHA-256 to the private ngapi registry. A reviewer independently checks the release and either approves or rejects it.
+The GitHub App checks repository access and source files, creates or reuses a matching immutable GitHub Release archive, then submits its pinned commit and SHA-256 for independent registry review. A moderator checks the release before approval.
 
 A release is **not** published to the trusted catalog merely because it exists on GitHub.
 
@@ -34,13 +34,10 @@ Return to the publisher after correcting the problem. The publisher can reuse an
 
 ## After approval
 
-The verified release appears in the signed registry:
-
-- [Public approved add-ons](https://ngapi.m1nsook.com/v1/addons)
-- [Signed release index](https://ngapi.m1nsook.com/v1/registry)
+The approved release appears in the signed add-on catalog. Developers can track their own submissions through the publisher portal.
 
 Updates require a higher SemVer version and new review. Publishers can withdraw their own add-on; the owner can revoke releases from the private admin review dashboard. Withdrawal removes releases from the active catalog but does not erase audit history or uninstall existing sites' copies.
 
-**Account Mode's end-user marketplace installer is not implemented yet.** This publisher site is for developers and registry reviewers, not the in-site add-on installer.
+**Account Mode's end-user marketplace installer is not implemented yet.** The publishing portal is for developers, not the in-site add-on installer.
 
 See [Updates & removal](/addons/updates) for the full lifecycle.

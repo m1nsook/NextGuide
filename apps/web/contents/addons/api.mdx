@@ -22,7 +22,8 @@ The single `nextguide` package now exposes these building blocks:
 | `nextguide/extensions/storage` | Private, namespaced JSON store for the trusted Node host |
 | `nextguide/extensions/views` | Data-only UI schema, safe-link validation and multi-issue diagnostics |
 | `nextguide/extensions/ui` | Host-owned React renderer for validated UI descriptors using NextGuide UI primitives |
-| `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed ngapi indexes and approved releases |
+| `nextguide/extensions/catalog` | Node-only client for verified Ed25519-signed registry indexes and approved releases |
+| `nextguide/extensions/network` | Restricted, host-only outbound HTTPS adapter with pinned DNS and response limits |
 
 All exports are part of **one npm package**, not additional packages to install. See [Getting started](/addons/getting-started) for the currently publishable v1 format.
 
@@ -50,9 +51,17 @@ The broker currently implements:
 | `network.request` | `network.fetch` | Delegate a GET/POST to an **explicitly configured** host adapter and exact allowlisted HTTPS domain |
 | `contribution.publish` | Contribution-specific | Register a bounded, JSON-only contribution descriptor |
 
-By default, there is **no network adapter**, no arbitrary filesystem access, no secret read method and no script-execution method. The server must enforce DNS/IP and redirect protections if it installs a network adapter: checking an HTTPS hostname alone does not prevent DNS rebinding or SSRF.
+By default, there is **no network adapter**, no arbitrary filesystem access, no secret read method and no script-execution method. A trusted host may explicitly configure `nextguide/extensions/network` to enforce exact permitted HTTPS hosts, block private or reserved DNS addresses, pin one approved IPv4 address for the TLS connection, reject redirects and cap JSON responses. The broker still enforces each individual extension's approved network host list. Do not expose the adapter directly to extension code.
 
 Persistent storage limits each key to roughly 32 KiB and each extension to 128 keys / 1 MiB. It must live outside the served Next.js directories, under an owner-controlled private path.
+
+## Restrict outbound HTTPS
+
+A verified add-on can request network access **only when both** its permissions and the trusted host's HTTPS adapter allow the destination. The adapter is IPv4-only for now and rejects an entire DNS answer if even one returned IPv4 address is private or reserved. It does not follow redirects and requires valid TLS certificates for the original hostname.
+
+<CodeWindow title="Trusted host HTTPS policy" language="typescript" code={"import { createRestrictedExtensionHttpsAdapter } from \"nextguide/extensions/network\"\n\nconst network = createRestrictedExtensionHttpsAdapter({\n  allowedHosts: [\"api.example.org\"],\n  timeoutMs: 8000,\n})\n\n// Pass network to createExtensionBroker only in trusted host code."} />
+
+This is a host capability adapter—not an executable extension sandbox. Host operators should additionally enforce egress restrictions at the OS/network layer.
 
 ## Render add-on UI without importing its code
 

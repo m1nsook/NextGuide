@@ -11,7 +11,7 @@ NextGuide keeps GitHub release artifacts immutable. Every update is independentl
 
 1. Update the add-on files and increase `version` in `nextguide-addon.json`.
 2. Commit and push changes to the same GitHub repository.
-3. Visit [NextGuide Publisher](https://ngapi.m1nsook.com/publish) and select the repository.
+3. Open the [NextGuide Publisher GitHub App](https://github.com/apps/nextguide-publisher) and select the repository through its publisher portal.
 4. Validate the release and submit the new version.
 5. Check the pending review and wait for approval.
 
@@ -19,7 +19,7 @@ NextGuide keeps GitHub release artifacts immutable. Every update is independentl
 
 ## Removing a published add-on
 
-The publisher can withdraw an add-on they control; the registry owner can remove it through the protected `/admin` dashboard. These are **catalog actions**: approved versions are marked revoked in the signed index, and pending submissions are withdrawn.
+A verified publisher can withdraw their own add-on; authorized moderation can revoke releases. These are **catalog actions**: approved versions are marked revoked in the signed index, and pending submissions are withdrawn.
 
 Removal does **not** silently delete GitHub Releases, erase the review audit log, or uninstall copies already installed on user sites.
 
@@ -28,7 +28,7 @@ Removal does **not** silently delete GitHub Releases, erase the review audit log
 Account Mode's planned marketplace will separately support installing, enabling, disabling, updating, rolling back and uninstalling add-ons. It must verify the artifact digest, compatible NextGuide version, signed catalog and permissions, and must handle revoked releases safely.
 
 <Callout kind="info" title="Publisher vs. installer">
-The working publisher at [ngapi.m1nsook.com/publish](https://ngapi.m1nsook.com/publish) is for **developers**. The planned marketplace will be inside **each site's own Account Mode /admin**.
+The [publisher GitHub App](https://github.com/apps/nextguide-publisher) is for **developers**. The planned marketplace belongs inside **each site's own Account Mode dashboard**.
 </Callout>
 
 Read [Marketplace (planned)](/addons/marketplace) and [Permissions & security](/addons/permissions).
