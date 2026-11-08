@@ -1,31 +1,41 @@
 ---
-title: Marketplace (planned)
-description: Planned installation and management workflow for NextGuide Account Mode.
+title: Account Mode add-on discovery
+description: Read-only verified registry browsing in the Account Mode studio; installation is still planned.
 ---
 
-# Account Mode marketplace
+# Account Mode add-ons
 
-<Callout kind="warning" title="Not available yet">
-NextGuide's **in-site marketplace** has not been released. The developer publisher is working, but browsing and installing extensions from an individual site's Account Mode dashboard is still a development milestone.
+<Callout kind="info" title="Signed catalog preview">
+The Account Mode studio now includes **Add-ons** in the sidebar. Once configured, it can browse current approved **content-only v1** registry releases, filter categories, search publishers and open a full add-on detail view. Listings are verified with the site's pinned Ed25519 key on the server before being shown. **Install, enable, update and uninstall are not implemented.**
 </Callout>
 
-## What site owners will be able to do
+## Connect the signed catalog
 
-| Action | Planned experience |
+Set the following environment variables on your persistent Account Mode Next.js server:
+
+<CodeWindow title="Account Mode environment configuration" language="bash" code={"NEXTGUIDE_ADDON_REGISTRY_URL=https://your-approved-registry.example/v1/registry\nNEXTGUIDE_ADDON_REGISTRY_PUBLIC_KEY_B64=YOUR_TRUSTED_BASE64_ENCODED_ED25519_PEM"} />
+
+The Base64 value is the trusted registry's **public** Ed25519 PEM key, encoded as UTF-8 then Base64. Obtain the exact public key through a trusted, independent channel; never accept a signing key merely because an unsigned registry response supplied it. Do not put the registry configuration in a `NEXT_PUBLIC_` variable.
+
+If those variables are missing, the Add-ons page explains that the catalog connection is not configured. If the signature or endpoint is invalid, the server rejects the response; it never falls back to unsigned data. Only a logged-in Account Mode owner can access the discovery API.
+
+## Current and future actions
+
+| Action | Status |
 | --- | --- |
-| Discover | Browse approved, compatible add-ons in Account Mode |
-| Inspect | Read release details, author and requested capabilities |
-| Install | Verify the pinned signing key, release metadata and artifact digest |
-| Configure | Set add-on preferences and approved host scopes |
-| Enable/disable | Activate or stop extension functionality without losing settings |
-| Update | Review permission changes before upgrading |
-| Rollback | Return to a previously approved compatible version when safe |
-| Uninstall | Remove installed files and decide whether to keep private data |
+| Discover | Search and filter approved content-only releases in Account Mode |
+| Inspect | Full detail view with author, signed release, compatibility, license and requested permissions |
+| Install | Planned: verify artifact bytes, request permission approval and persist installed state |
+| Configure | Planned: store scoped settings and trusted credential handles |
+| Enable/disable | Planned: start and stop a reviewed extension safely |
+| Update | Planned: permission-diff review and transactional integrity checks |
+| Rollback | Planned: restore a previously reviewed, compatible version |
+| Uninstall | Planned: remove files safely, with a private-data retention choice |
 
-The extension host, capability broker, private storage, signed catalog client and safe view renderer are **foundations**, not a finished installer.
+The existing extension capability broker, isolated runner prototype and signed content archive verifier are foundations. They do not make executable marketplace add-ons safe to install today.
 
-## Security requirements before launch
+## Security requirements before executable add-ons
 
-An executable add-on must run outside the privileged Next.js server, in an enforceable isolation boundary. Custom React widgets need an isolated browser execution model. Network, storage, secrets, routes and scheduled tasks must go through host-approved APIs with audit logs and resource limits.
+Executable add-ons require independent code review, properly signed v2 artifacts, hardened OS sandboxing and resource controls, and browser-frame isolation for custom React components. The private registry service remains separately deployed and is **not** part of this public repository.
 
-For progress, follow [NextGuide roadmap issue #101](https://github.com/m1nsook/NextGuide/issues/101). If you're publishing today, start at [Getting started](/addons/getting-started).
+Track implementation in [roadmap issue #101](https://github.com/m1nsook/NextGuide/issues/101). To publish a currently supported content add-on, start with [Getting started](/addons/getting-started).
