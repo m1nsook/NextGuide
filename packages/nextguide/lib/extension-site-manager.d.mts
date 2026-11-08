@@ -56,6 +56,7 @@ export declare function createAccountAddonManager(options?: {
     expectedRevision: number
     consent: true
   }): {revision: number; removed: string; privateDataPreserved: true}
+  publicPages(): Promise<Array<{id: string; version: string; slug: string; title: string; group: string; markdown: string}>>
   readEnabled(input: {id: string}): Promise<null | {
     id: string
     version: string

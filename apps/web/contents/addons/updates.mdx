@@ -33,7 +33,7 @@ The owner-facing **Add-ons** page can install, enable/disable, update, roll back
 Owner authentication and same-origin checks apply to every mutation. A concurrent change requires refreshing the page rather than overwriting another update. A revoked or stale release cannot be reactivated or rolled back.
 
 <Callout kind="warning" title="Current milestone boundaries">
-Enabled, reviewed v1 Markdown content can be opened at the site's dedicated `/docs/addons/<publisher.addon>/` route (or `/addons/<id>/` when the docs base is root). Add-on pages do not yet join the public docs sidebar and search index. Executable add-ons, privileged permissions, secrets, React components and automatic background update checks remain future milestones. Legacy v1 content is never compiled as untrusted MDX.
+Enabled, reviewed v1 Markdown content can be opened at the site's dedicated `/docs/addons/<publisher.addon>/` route (or `/addons/<id>/` when the docs base is root). Fresh Account Mode installations now include enabled and still-approved Markdown pages in their public docs sidebar and search index. Pages are excluded when disabled, revoked, corrupted or no longer covered by a fresh signed registry. Already-installed sites need an explicit generated-file refresh to receive the updated navigation adapter; authored MDX must not be overwritten. Executable add-ons, privileged permissions, secrets, React components and automatic background update checks remain future milestones. Legacy v1 content is never compiled as untrusted MDX.
 </Callout>
 
 For details see [Account Mode marketplace](/addons/marketplace) and [runtime API](/addons/api).

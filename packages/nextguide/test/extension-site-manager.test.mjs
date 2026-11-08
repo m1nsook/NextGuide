@@ -130,7 +130,7 @@ test("owner catalog includes exact compatibility and durable installed state",as
     const enabled=await f.manager.toggle({id:"acme.docs",enabled:true,expectedRevision:1})
     assert.equal(enabled.addon.enabled,true)
     const approved=await f.manager.readEnabled({id:"acme.docs"})
-    assert.match(approved.pages[0].markdown,/Welcome 1\.0\.0/)
+    assert.ok(approved.pages[0].markdown.includes("Welcome 1.0.0"))
     const disabled=await f.manager.toggle({id:"acme.docs",enabled:false,expectedRevision:2})
     assert.equal(disabled.addon.enabled,false)
     assert.equal(await f.manager.readEnabled({id:"acme.docs"}),null)
@@ -193,4 +193,25 @@ test("stale signed metadata, incompatible alpha versions and revoked releases ar
     }),/not reviewed/)
     assert.equal(revoked.network.calls.length,0)
   }finally{revoked.cleanup()}
+})
+
+test("public navigation includes only explicitly enabled signed Markdown pages",async()=>{
+  const a=versioned("1.0.0")
+  const f=fixture({signedReleases:signed([a.release]),artifacts:[a]})
+  try {
+    assert.deepEqual(await f.manager.publicPages(),[])
+    assert.equal(f.network.calls.length,0,"disabled add-ons do not need registry requests")
+    await f.manager.install({id:"acme.docs",version:"1.0.0",expectedRevision:0,consent:true})
+    assert.deepEqual(await f.manager.publicPages(),[])
+    await f.manager.toggle({id:"acme.docs",enabled:true,expectedRevision:1})
+    const pages=await f.manager.publicPages()
+    assert.equal(pages.length,1)
+    assert.deepEqual(Object.keys(pages[0]).sort(),["group","id","markdown","slug","title","version"])
+    assert.equal(pages[0].id,"acme.docs")
+    assert.equal(pages[0].title,"Docs Extension")
+    assert.equal(pages[0].slug,"")
+    assert.ok(pages[0].markdown.includes("Welcome 1.0.0"))
+    await f.manager.toggle({id:"acme.docs",enabled:false,expectedRevision:2})
+    assert.deepEqual(await f.manager.publicPages(),[])
+  } finally { f.cleanup() }
 })

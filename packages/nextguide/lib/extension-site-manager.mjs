@@ -114,6 +114,46 @@ export function createAccountAddonManager({
       requireConsent(consent)
       return store.uninstall({id,expectedRevision})
     },
+    /**
+     * Public Account Mode docs index. Only enabled v1 Markdown from fresh,
+     * active, signature-verified releases is returned. One signed catalog
+     * fetch is shared for all installed add-ons; no unsigned/stale fallback.
+     * Navigation/search consumers MUST NOT compile this content as MDX.
+     */
+    async publicPages() {
+      const enabled=store.list().addons.filter(x=>x.enabled)
+      if (!enabled.length) return []
+      const {envelope}=await signed()
+      const pages=[]
+      for (const addon of enabled) {
+        // A single revoked or corrupt entry must never leak stale content.
+        // Keep unrelated verified add-ons discoverable.
+        try {
+          const verified=store.readEnabled({
+            id:addon.id,envelope,pinnedPublicKeyPem
+          })
+          if (!verified) continue
+          const root=verified.manifest.entrypoints.content+"/"
+          for (const page of verified.pages) {
+            if (!page.path.startsWith(root)) continue
+            const name=page.path.slice(root.length,-3)
+            if (!name || name.length>180) continue
+            const label=name==="index" ? verified.manifest.name :
+              name.split("/").at(-1).replace(/[-_]/g," ")
+            pages.push({
+              id:addon.id,version:verified.version,
+              slug:name==="index" ? "" : name,
+              title:label,group:verified.manifest.name,
+              markdown:page.markdown.slice(0,3500),
+            })
+          }
+        } catch {
+          // Already enabled but no longer approved, malformed or missing:
+          // exclude from public search/navigation until owner resolves it.
+        }
+      }
+      return pages.slice(0,500)
+    },
     /** Privileged API for a future safe Markdown-only public page adapter. */
     async readEnabled({id}={}) {
       if (typeof id!=="string" || !ID.test(id)) reject("INVALID_REQUEST","Invalid add-on ID")
