@@ -34,6 +34,12 @@ The developer publisher supports GitHub App sign-in, repository selection, prefl
 
 The extension host is not a security sandbox. Executable add-ons require a separate isolated runner, verified artifacts and owner-approved permissions before we can offer them in the marketplace.
 
+## Executable v2 developer and review track
+
+The [official add-on template](https://github.com/m1nsook/NextGuide-Addons) now provides a complete **offline v2 JavaScript/TypeScript developer lab**, including Bun compilation, deterministic archive packaging, source-bound SHA-256 and an example brokered admin page. NextGuide itself can verify short-lived, independently signed v2 review metadata, the exact archive, source and compiled bytes, and safely download them through a DNS-pinned GitHub asset transport.
+
+This **does not** make executable packages publishable through the current v1-only private ngapi registry or installable in Account Mode. See [Reviewed v2 packages](/addons/v2-supply-chain) for the signed protocol and remaining security gates.
+
 ## Documentation routes
 
 Add-on developer docs live under `/addons` with a dedicated sidebar, search, and page navigation. For framework basics, visit [NextGuide documentation](/docs); for UI component examples, see the [component catalog](/components).
