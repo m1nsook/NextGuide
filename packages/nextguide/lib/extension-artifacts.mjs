@@ -29,13 +29,16 @@ function text(bytes) {
   try { return new TextDecoder("utf-8", { fatal: true }).decode(bytes) }
   catch { return fail("Invalid UTF-8 in archive") }
 }
+function safeRelative(path) {
+  return typeof path === "string" && path.length <= 160 && PATH.test(path) &&
+    !path.startsWith("/") && !path.includes("\\") && !path.includes(":") &&
+    path.split("/").every(part => part && part !== "." && part !== ".." && !part.endsWith("."))
+}
 function pathFromHeader(header) {
   if (header[0] === 0) fail("Empty tar member path")
   const nameEnd = header.subarray(0, 100).indexOf(0)
   const name = text(header.subarray(0, nameEnd < 0 ? 100 : nameEnd))
-  if (Buffer.from(name, "utf8").length > 100 || !PATH.test(name) ||
-      name.startsWith("/") || name.includes("\\") || name.includes(":") ||
-      name.split("/").some(part => !part || part === "." || part === ".." || part.endsWith("."))) {
+  if (Buffer.from(name, "utf8").length > 100 || !safeRelative(name)) {
     fail("Unsafe add-on archive path")
   }
   // PAX extensions, GNU long names and ustar prefixes are unsupported.
@@ -128,8 +131,8 @@ export function verifyApprovedContentArchive({ envelope, pinnedPublicKeyPem,
       manifest.repository !== release.manifest.repository ||
       manifest.category !== "content" || !Array.isArray(manifest.permissions) ||
       manifest.permissions.length !== 0 || !object(manifest.entrypoints) ||
-      typeof manifest.entrypoints.content !== "string" ||
-      typeof manifest.icon !== "string") {
+      manifest.entrypoints.content !== release.manifest.entrypoints?.content ||
+      manifest.icon !== release.manifest.icon) {
     fail("Manifest does not match signed content-only release")
   }
   const icon = files.get(manifest.icon)
@@ -142,9 +145,8 @@ export function verifyApprovedContentArchive({ envelope, pinnedPublicKeyPem,
     fail("Invalid add-on PNG icon")
   }
   const prefix = manifest.entrypoints.content + "/"
-  if (!PATH.test(manifest.entrypoints.content) ||
-      manifest.entrypoints.content.includes("/") ||
-      !PATH.test(manifest.icon)) fail("Unsafe manifest asset path")
+  if (!safeRelative(manifest.entrypoints.content) ||
+      !safeRelative(manifest.icon)) fail("Unsafe manifest asset path")
   const pages = []
   for (const [path, data] of files) {
     if (path === "nextguide-addon.json" || path === manifest.icon) continue
