@@ -323,3 +323,38 @@ test("extension exports ship with declarations and safe client boundary", async 
   assert.doesNotMatch(source, /dangerouslySetInnerHTML/)
   assert.doesNotMatch(source, /\beval\s*\(/)
 })
+
+test("official add-on docs have their own route, navigation and real NextGuide blocks", () => {
+  const website = join(dirname(dirname(root)), "apps", "web")
+  const contents = join(website, "contents", "addons")
+  const read = (path) => readFileSync(join(website, path), "utf8")
+  assert.ok(existsSync(join(website, "app/(addons)/addons/[[...slug]]/page.tsx")))
+  assert.ok(existsSync(join(website, "app/(addons)/layout.tsx")))
+  assert.match(read("lib/source.ts"), /contents\/addons/)
+  assert.match(read("lib/navigation.ts"), /getAddonsNavigation/)
+  assert.match(read("components/docs-sidebar.tsx"), /basePath/)
+  assert.match(read("app/page.tsx"), /href="\/addons"/)
+  const catalog = JSON.parse(readFileSync(join(contents, "_meta.json"), "utf8"))
+  for (const name of ["index", "getting-started", "manifest", "components", "api",
+    "permissions", "publishing", "updates", "marketplace"]) {
+    assert.ok(catalog.some(item => item.slug === name), "missing add-on guide: " + name)
+    assert.ok(existsSync(join(contents, name + ".mdx")))
+  }
+  const gettingStarted = read("contents/addons/getting-started.mdx")
+  const manifest = read("contents/addons/manifest.mdx")
+  const publishing = read("contents/addons/publishing.mdx")
+  assert.match(gettingStarted, /<FileTree/)
+  assert.match(gettingStarted, /<CodeWindow/)
+  assert.match(gettingStarted, /<CodeTabs/)
+  assert.match(manifest, /<FileTree/)
+  assert.match(manifest, /<CodeWindow/)
+  assert.match(publishing, /https:\/\/ngapi\.m1nsook\.com\/publish/)
+  assert.doesNotMatch(publishing, /GITHUB_TOKEN|fine-grained personal access token/)
+  assert.match(read("contents/addons/components.mdx"), /<ExtensionView/)
+  const baseMeta = JSON.parse(read("contents/docs/_meta.json"))
+  assert.equal(baseMeta.some(item => item.slug === "addons"), false)
+  for (const old of ["index", "manifest", "publishing", "api"]) {
+    const legacy = read("contents/docs/addons/" + old + ".mdx")
+    assert.match(legacy, /\/addons/)
+  }
+})

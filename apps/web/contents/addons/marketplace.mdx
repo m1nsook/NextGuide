@@ -1,0 +1,31 @@
+---
+title: Marketplace (planned)
+description: Planned installation and management workflow for NextGuide Account Mode.
+---
+
+# Account Mode marketplace
+
+<Callout kind="warning" title="Not available yet">
+NextGuide's **in-site marketplace** has not been released. The ngapi Publisher is working, but browsing and installing extensions from a NextGuide installation's `/admin` is still a development milestone.
+</Callout>
+
+## What site owners will be able to do
+
+| Action | Planned experience |
+| --- | --- |
+| Discover | Browse approved, compatible add-ons in Account Mode |
+| Inspect | Read release details, author and requested capabilities |
+| Install | Verify the pinned signing key, release metadata and artifact digest |
+| Configure | Set add-on preferences and approved host scopes |
+| Enable/disable | Activate or stop extension functionality without losing settings |
+| Update | Review permission changes before upgrading |
+| Rollback | Return to a previously approved compatible version when safe |
+| Uninstall | Remove installed files and decide whether to keep private data |
+
+The extension host, capability broker, private storage, signed catalog client and safe view renderer are **foundations**, not a finished installer.
+
+## Security requirements before launch
+
+An executable add-on must run outside the privileged Next.js server, in an enforceable isolation boundary. Custom React widgets need an isolated browser execution model. Network, storage, secrets, routes and scheduled tasks must go through host-approved APIs with audit logs and resource limits.
+
+For progress, follow [NextGuide roadmap issue #101](https://github.com/m1nsook/NextGuide/issues/101). If you're publishing today, start at [Getting started](/addons/getting-started).

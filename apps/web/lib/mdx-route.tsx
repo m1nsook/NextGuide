@@ -38,7 +38,7 @@ export function createMdxRoute(source: DocsInstance, base: string, getNavigation
         return undefined
       }
       const breadcrumbs: DocsBreadcrumbItem[] = [
-        { title: base === "/docs" ? "Documentation" : base === "/components" ? "Components" : "Docs", href: base },
+        { title: base === "/docs" ? "Documentation" : base === "/components" ? "Components" : base === "/addons" ? "Add-ons" : "Docs", href: base },
         ...segments.map((segment, index) => {
           const path = base + "/" + segments.slice(0, index + 1).join("/")
           const final = index === segments.length - 1

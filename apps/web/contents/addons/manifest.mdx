@@ -1,0 +1,53 @@
+---
+title: Manifest reference
+description: All required metadata for the current content-only add-on format and future extension descriptors.
+---
+
+# Add-on manifest
+
+The root `nextguide-addon.json` file identifies the publisher, the version and what the add-on is allowed to include. The current registry supports **schema version 1, content-only add-ons**.
+
+<CodeWindow title="nextguide-addon.json" language="json" code={"{\n  \"$schema\": \"./schema/nextguide-addon.schema.json\",\n  \"schemaVersion\": 1,\n  \"id\": \"acme.hello-world\",\n  \"name\": \"Hello World\",\n  \"summary\": \"A small documentation add-on.\",\n  \"description\": \"Sample Markdown pages for a NextGuide Account Mode site.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Acme\"\n  },\n  \"repository\": \"https://github.com/acme/hello-world\",\n  \"license\": \"MIT\",\n  \"category\": \"content\",\n  \"keywords\": [\n    \"documentation\",\n    \"example\"\n  ],\n  \"compatibility\": {\n    \"mode\": \"account\",\n    \"nextguide\": \">=1.0.0 <2.0.0\"\n  },\n  \"permissions\": [],\n  \"entrypoints\": {\n    \"content\": \"content\"\n  },\n  \"icon\": \"icon.png\"\n}"} />
+
+## Fields
+
+| Field | Current requirement |
+| --- | --- |
+| `schemaVersion` | `1` for releases accepted by the private registry today |
+| `id` | Stable lowercase `publisher.addon-name` identifier |
+| `name` | Human-readable display name |
+| `summary`, `description` | Meaningful summary and full description |
+| `version` | Increasing SemVer version, e.g. `0.1.0` |
+| `author.name` | Publisher display name |
+| `repository` | Actual public GitHub source repository, not the template |
+| `license` | Package license identifier |
+| `category` | `content` for current schema v1 releases |
+| `keywords` | Discoverability terms |
+| `icon` | Local PNG asset; not a remote URL |
+| `compatibility.mode` | `account` |
+| `compatibility.nextguide` | NextGuide compatibility version range |
+| `permissions` | Empty array `[]` for v1 |
+| `entrypoints.content` | Relative folder of Markdown source files |
+
+## Folder layout
+
+<FileTree title="Expected v1 source layout" items={[{"name":"my-nextguide-addon","kind":"folder","children":[{"name":"nextguide-addon.json","kind":"json","detail":"Required identity and compatibility"},{"name":"icon.png","kind":"file","detail":"Local PNG icon"},{"name":"content","kind":"folder","children":[{"name":"index.md","kind":"file","detail":"Markdown content"}]},{"name":"docs","kind":"folder","children":[{"name":"AUTHORING.md","kind":"file"},{"name":"REVIEW.md","kind":"file"}]},{"name":"schema","kind":"folder","children":[{"name":"nextguide-addon.schema.json","kind":"json"}]},{"name":"scripts","kind":"folder","children":[{"name":"validate-addon.mjs","kind":"code"},{"name":"ng-addon.mjs","kind":"code"}]},{"name":"test","kind":"folder","children":[{"name":"publish-addon.test.mjs","kind":"code"},{"name":"validate-addon.test.mjs","kind":"code"}]},{"name":"package.json","kind":"json"}]}]} />
+
+Use a local PNG icon between 32 and 1024 pixels per side, up to 256 KiB. The `content` directory may contain plain Markdown, but no executable MDX or script payloads. Source commits and release archives must match; publishing unsigned local files is not supported.
+
+## A future executable manifest
+
+The NextGuide source package includes a **draft** schema v2 validator. This example is not currently publishable through ngapi:
+
+<CodeWindow title="Future: nextguide-addon.json (not publishable)" language="json" code={"{\n  \"schemaVersion\": 2,\n  \"id\": \"acme.search-tools\",\n  \"name\": \"Search Tools\",\n  \"version\": \"1.0.0\",\n  \"category\": \"integration\",\n  \"compatibility\": {\n    \"mode\": \"account\",\n    \"nextguide\": \">=1.0.0 <2.0.0\"\n  },\n  \"permissions\": [\n    \"admin.pages\",\n    \"storage.read\",\n    \"storage.write\"\n  ],\n  \"entrypoints\": {\n    \"server\": \"dist/server.mjs\",\n    \"client\": \"dist/client.js\"\n  }\n}"} />
+
+The extensions API defines capability requests but does not grant execution permission. Read [Permissions & security](/addons/permissions) and the [Extension API](/addons/api) for current boundaries.
+
+## Common validation problems
+
+- **Invalid add-on ID:** Use `publisher.addon-slug`, not just `addon-slug`.
+- **Repository mismatch:** The manifest URL must match the selected GitHub repository.
+- **Version already registered:** Publish a higher semantic version; released versions are immutable.
+- **Unsupported permissions or entrypoints:** Current v1 releases allow `permissions: []` and `entrypoints.content` only.
+
+The [Publisher](https://ngapi.m1nsook.com/publish) checks all supported issues together and offers explicit corrections for safe metadata changes. It should not silently rewrite your source.

@@ -2,7 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import type { NavItem } from "nextguide/core"
 import type { DocsInstance } from "nextguide/mdx"
-import { componentDocs, docs, openapi, REFERENCE_BASE } from "./source"
+import { addonDocs, componentDocs, docs, openapi, REFERENCE_BASE } from "./source"
 import { site } from "./site"
 
 /** Prefix every relative href in a tree, e.g. "/intro" → "/docs/intro" ("/" → "/docs"). */
@@ -54,7 +54,12 @@ export function getEditUrl(source: DocsInstance, slug: string): string | undefin
 }
 
 export async function getDocsNavigation(): Promise<NavItem[]> {
-  return withBase(await docs.getNavigation(), "/docs")
+  // Keep legacy /docs/addons URLs routable but out of the framework sidebar.
+  return withBase(await docs.getNavigation(), "/docs").filter(item => item.href !== "/docs/addons")
+}
+
+export async function getAddonsNavigation(): Promise<NavItem[]> {
+  return withBase(await addonDocs.getNavigation(), "/addons")
 }
 
 export async function getComponentsNavigation(): Promise<NavItem[]> {
@@ -79,14 +84,16 @@ function section(title: string, href: string, items: NavItem[]): NavItem {
 
 /** The one sidebar shared by Docs, Components and the API Reference. */
 export async function getSidebar(): Promise<NavItem[]> {
-  const [docsNav, componentsNav, referenceNav] = await Promise.all([
+  const [docsNav, addonsNav, componentsNav, referenceNav] = await Promise.all([
     getDocsNavigation(),
+    getAddonsNavigation(),
     getComponentsNavigation(),
     getReferenceNavigation(),
   ])
 
   return [
     section("Documentation", "#documentation", docsNav),
+    section("Add-ons", "#addons", addonsNav),
     section("Components", "#components", componentsNav),
     section("API Reference", "#api-reference", referenceNav),
   ]

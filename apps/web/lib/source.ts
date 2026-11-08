@@ -11,6 +11,7 @@ const shared: Omit<DocsConfig, "contentDir"> = {
 
 export const docs = createDocs({ contentDir: "contents/docs", ...shared })
 export const componentDocs = createDocs({ contentDir: "contents/components", ...shared })
+export const addonDocs = createDocs({ contentDir: "contents/addons", ...shared })
 
 // This reference is a fictional example, not an actual NextGuide web service.
 export const openapi = createOpenAPI({ source: "contents/openapi/example.yaml", allowRemote: false })

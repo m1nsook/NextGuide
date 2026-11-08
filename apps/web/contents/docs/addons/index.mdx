@@ -1,48 +1,15 @@
 ---
-title: NextGuide add-ons
-description: Create, publish, review, and eventually install community add-ons for Account Mode.
+title: Add-on docs have moved
+description: The NextGuide Add-ons developer documentation now has its own section.
 ---
 
-# NextGuide add-ons
+# Add-on docs have moved
 
-Add-ons are independently maintained packages for **NextGuide Account Mode**. The first supported publishing format is deliberately limited to Markdown content and a PNG icon. Add-ons do not get arbitrary server execution, private credentials, or permissioned hooks.
-
-<Callout kind="info" title="Current status">
-The developer template, local validation, archive packaging, and GitHub Release publishing command exist. The separate ngapi registry serves a signed read-only catalog and has a private owner approval dashboard. Public submissions are currently restricted during rollout. The Account Mode marketplace browser and add-on installer are **not implemented yet**.
-</Callout>
-
-## How add-ons reach the registry
-
-1. **Create:** Start with the [NextGuide-Addons template](https://github.com/m1nsook/NextGuide-Addons). Replace its metadata and icon, then add Markdown pages.
-2. **Validate and pack:** Run `bun test` and `bun ng-addon pack` locally.
-3. **Publish:** Run `bun ng-addon publish` to verify the source commit, upload an immutable `.tgz` to the author's GitHub Release, and request registry review.
-4. **Review:** The ngapi server verifies the release independently. An authorized NextGuide registry reviewer approves or rejects it in the private dashboard.
-5. **Catalog:** Approved versions appear in the signed public API. They will appear inside installed sites' authenticated **Account Mode `/admin` marketplace** when the client and installer are implemented.
-
-Passing a GitHub check or creating a Release is not approval. Only the separate reviewer can add a release to the trusted registry.
-
-## What works today?
-
-| Feature | Status |
-| --- | --- |
-| Create a content-only add-on from a repository template | Available |
-| Validate a manifest, PNG and Markdown content | Available |
-| Create a versioned `.tgz` archive | Available |
-| Publish an artifact as a GitHub Release | Available through the publisher CLI |
-| Submit the release to ngapi | Implemented; public POST endpoint still restricted during rollout |
-| Human review, signing, and read-only catalog API | Running on the registry |
-| Browse, install, enable, disable, update or uninstall inside a NextGuide site | Not yet implemented |
-
-The registry owner's **ngapi `/admin`** page is only a review queue; it is not the marketplace for NextGuide users. There is no supported public `/marketplace` page.
-
-## Supported scope
-
-**Today:** Documentation-only add-ons with a JSON manifest, one local PNG icon, and Markdown (`.md`) content. `permissions` must be empty and `compatibility.mode` must be `account`.
-
-**Planned:** Themes, icon and language packs, accessibility features, AI, OAuth, and external integrations. These need implemented, reviewed extension APIs before anyone can install them. Listing a category in the schema does not make its runtime available.
+Add-on guides now have a **dedicated documentation portal** and sidebar.
 
 <LinkCards>
-  <LinkCard title="Create an add-on" description="Use the template, configure the complete manifest and validate your files" href="/docs/addons/manifest" />
-  <LinkCard title="Publish and review" description="Create a verified GitHub Release and submit it for owner approval" href="/docs/addons/publishing" />
-  <LinkCard title="Extension API roadmap" description="What future permissioned add-ons will be able to do" href="/docs/addons/api" />
+  <LinkCard title="Open NextGuide Add-ons" href="/addons" description="Create, validate, publish and maintain add-ons" />
+  <LinkCard title="Getting started" href="/addons/getting-started" description="Create a content-only add-on using the official template" />
 </LinkCards>
+
+This URL remains available for older links. New documentation and updates are published under `/addons`.

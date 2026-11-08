@@ -1,0 +1,34 @@
+---
+title: Updates & removal
+description: Publish new versions, revoke old releases and understand add-on withdrawal.
+---
+
+# Updates and removal
+
+NextGuide keeps GitHub release artifacts immutable. Every update is independently checked and must be manually approved before it becomes available in the signed catalog.
+
+## Publish an update
+
+1. Update the add-on files and increase `version` in `nextguide-addon.json`.
+2. Commit and push changes to the same GitHub repository.
+3. Visit [NextGuide Publisher](https://ngapi.m1nsook.com/publish) and select the repository.
+4. Validate the release and submit the new version.
+5. Check the pending review and wait for approval.
+
+<CodeWindow title="Version update example" language="json" code={"{\n  \"id\": \"acme.hello-world\",\n  \"version\": \"0.2.0\",\n  \"repository\": \"https://github.com/acme/hello-world\"\n}"} />
+
+## Removing a published add-on
+
+The publisher can withdraw an add-on they control; the registry owner can remove it through the protected `/admin` dashboard. These are **catalog actions**: approved versions are marked revoked in the signed index, and pending submissions are withdrawn.
+
+Removal does **not** silently delete GitHub Releases, erase the review audit log, or uninstall copies already installed on user sites.
+
+## Future in-site update manager
+
+Account Mode's planned marketplace will separately support installing, enabling, disabling, updating, rolling back and uninstalling add-ons. It must verify the artifact digest, compatible NextGuide version, signed catalog and permissions, and must handle revoked releases safely.
+
+<Callout kind="info" title="Publisher vs. installer">
+The working publisher at [ngapi.m1nsook.com/publish](https://ngapi.m1nsook.com/publish) is for **developers**. The planned marketplace will be inside **each site's own Account Mode /admin**.
+</Callout>
+
+Read [Marketplace (planned)](/addons/marketplace) and [Permissions & security](/addons/permissions).

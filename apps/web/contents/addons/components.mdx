@@ -1,0 +1,44 @@
+---
+title: Components & themes
+description: How NextGuide will render add-on UI, MDX blocks and themes without trusting arbitrary package code.
+---
+
+# Components, MDX and themes
+
+We want add-ons to support **real components and integrations**, not just Markdown files. Today the framework provides a safe, data-driven UI foundation; running third-party React/TypeScript add-ons is still a separate milestone.
+
+<Callout kind="warning" title="Not a downloadable executable add-on yet">
+These APIs are part of the NextGuide source implementation. The private registry still accepts content-only v1 archives and cannot install code-bearing v2 bundles. Don't attempt to bundle JavaScript in a v1 content directory.
+</Callout>
+
+## Describe a view
+
+NextGuide already has a host-owned renderer for a limited set of JSON UI nodes. It uses **NextGuide UI components**, rather than arbitrary HTML.
+
+<CodeWindow title="Safe UI descriptor" language="json" code={"{\n  \"type\": \"card\",\n  \"children\": [\n    {\n      \"type\": \"heading\",\n      \"level\": 2,\n      \"text\": \"Search settings\"\n    },\n    {\n      \"type\": \"paragraph\",\n      \"text\": \"Control which pages appear in search results.\"\n    },\n    {\n      \"type\": \"badge\",\n      \"text\": \"Preview\"\n    },\n    {\n      \"type\": \"button\",\n      \"text\": \"Configure\",\n      \"action\": \"open_settings\"\n    }\n  ]\n}"} />
+
+## Render with NextGuide
+
+<Preview>
+  <ExtensionView view={{type:"card",children:[
+    {type:"heading",level:2,text:"Search settings"},
+    {type:"paragraph",text:"Control which pages appear in search results."},
+    {type:"badge",text:"Preview"}
+  ]}} />
+</Preview>
+
+<CodeWindow title="Trusted site integration (not marketplace install)" language="tsx" code={"import { ExtensionView } from \"nextguide/extensions/ui\"\n\nconst view = {\n  type: \"card\",\n  children: [\n    { type: \"heading\", level: 2, text: \"Search settings\" },\n    { type: \"paragraph\", text: \"Choose which pages appear in search.\" }\n  ]\n}\n\nexport default function SearchSettingsPreview() {\n  return <ExtensionView view={view} />\n}"} />
+
+Currently supported descriptors include text, headings, paragraphs, badges, links, buttons, dividers, stacks and cards. Action identifiers must be handled and authorized by the host. Descriptors cannot contain raw HTML, JSX, scripts or injected React callbacks.
+
+## Next milestones
+
+| Capability | Required boundary |
+| --- | --- |
+| Custom React components | Isolated browser execution and controlled host messaging |
+| MDX blocks | Verified rendering adapters with permissions |
+| Themes & icon packs | Reviewed assets and scoped style tokens |
+| Admin pages | Protected host navigation and capability-approved actions |
+| Server endpoints & jobs | Isolated process runtime, explicit requests and resource limits |
+
+See [Extension API](/addons/api) and [Permissions & security](/addons/permissions).
