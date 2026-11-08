@@ -1,41 +1,105 @@
 ---
-title: Verification and updates
-description: How NextGuide will review, distribute and manage add-ons.
+title: Publish and review
+description: Publish an immutable GitHub Release and request manual review from the NextGuide registry.
 ---
 
-# Verification and updates
+# Publish and review an add-on
 
-Passing the developer repository's CI is only a first check, **not** proof that the add-on is safe.
+The developer owns the source repository and GitHub Release artifacts. NextGuide's separate registry verifies the files, queues the submission, and records an approved release in a signed index. **You cannot self-approve a release.**
 
-## Proposed publishing flow
+<Callout kind="warning" title="Deployment rollout">
+The registry at `https://ngapi.m1nsook.com` currently provides public read-only catalog endpoints and a protected reviewer dashboard. The operator has intentionally restricted public `POST /v1/submissions` until production hardening is complete. Publishing a GitHub Release works independently, but the final submission currently returns 403 until this route is enabled.
+</Callout>
 
-1. The developer publishes a tagged version pointing to an immutable Git commit.
-2. A trusted NextGuide verifier fetches that specific commit, independently validates its manifest and scans the files.
-3. A reviewer approves compatibility, declared permissions, license and any privileged behavior.
-4. The registry records the approved SHA, SHA-256 content digest, version and publisher identity.
-5. Account Mode users see the reviewed release with permissions before installing it.
+## 1. Prepare a release
 
-The installer must verify release digests before use, store the selected version, and refuse unverified or revoked releases.
+Start with your own repository created from the [official template](https://github.com/m1nsook/NextGuide-Addons). Make sure:
 
-## Updating and removing an add-on
+- `nextguide-addon.json` names **your** public GitHub repository.
+- `id` is unique and `version` uses SemVer.
+- `icon.png` is valid, locally stored and referenced by `icon`.
+- The content directory contains only `.md` pages.
+- Every changed source file is **committed and pushed** to GitHub.
 
-Each new upstream release goes through verification again. After approval, users can be notified and choose to update. Updates that introduce new permissions require a fresh explicit approval. Failures must roll back to the previous working version.
+Run:
 
-Enable/disable should not delete user data. Uninstall should clearly separate package removal from optional data deletion.
+```bash
+bun test
+bun ng-addon pack
+```
 
-## Registry API proposal
+The generated `.tgz` includes the validated manifest, PNG and Markdown pages. The archive must match the selected public source commit.
 
-A separate service such as `https://ngapi.m1nsook.com` can serve versioned metadata and update checks independently of npm:
+## 2. Supply a GitHub token locally
 
-| Endpoint (proposed) | Purpose |
-| --- | --- |
-| `GET /v1/addons` | Search and filter reviewed add-ons |
-| `GET /v1/addons/{id}` | Add-on details and publisher |
-| `GET /v1/addons/{id}/versions` | Reviewed releases and compatibility |
-| `GET /v1/addons/{id}/updates` | Check approved updates for a pinned version |
+Create a **fine-grained personal access token** scoped only to **your add-on repository**, with **Contents: Read and write**. Keep it out of your repository and logs. The publisher uses it only to call GitHub; it is never sent to NextGuide's registry.
 
-The domain and endpoints are **proposals**, not deployed services. Use HTTPS, a restricted publisher identity, audited approvals, rate limits, content hashes and a way to revoke malicious releases.
+Set an environment variable called `GITHUB_TOKEN` (or `GH_TOKEN`) in your local shell. For example, in a temporary Linux/macOS terminal session:
 
-The registry can update independently of NextGuide npm releases, but the installed runtime must still satisfy each add-on's compatibility range. No developer gets direct write access to NextGuide core.
+```bash
+read -rsp "GitHub token: " GITHUB_TOKEN
+export GITHUB_TOKEN
+echo
+```
 
-[Back to add-ons](/docs/addons).
+On Windows PowerShell:
+
+```powershell
+$env:GITHUB_TOKEN = Read-Host "GitHub token"
+```
+
+Don't place tokens directly in documentation, `nextguide-addon.json`, tracked `.env` files or command histories.
+
+## 3. Verify before publishing
+
+```bash
+bun ng-addon publish --dry-run
+```
+
+The dry run checks that your local manifest, icon and Markdown bytes match a real GitHub commit. It prints the pinned SHA and archive digest without creating a Release or contacting the registry.
+
+You can also pin an exact pushed commit:
+
+```bash
+bun ng-addon publish --commit YOUR_FULL_40_CHARACTER_SHA --dry-run
+```
+
+## 4. Publish and submit
+
+When public submissions are enabled by the registry operator:
+
+```bash
+bun ng-addon publish --registry https://ngapi.m1nsook.com
+```
+
+The command:
+
+1. Validates and packs the source.
+2. Verifies each file against the selected GitHub commit.
+3. Creates a `vVERSION` GitHub Release and uploads `nextguide-addon-VERSION.tgz`, or reuses an existing archive **only when its GitHub-reported SHA-256 and size match**.
+4. Submits the repository, tag, commit SHA, artifact URL and digest to `POST /v1/submissions`.
+5. Prints the submission identifier and `pending` review status when accepted.
+
+If the GitHub Release succeeds but registry submission is blocked or temporarily unavailable, the archive remains on GitHub. **Do not overwrite the release** or bump the version merely to retry. Once the route is enabled, rerun `bun ng-addon publish`; the CLI will reuse an identical verified asset and submit it again.
+
+## 5. Review and approval
+
+The ngapi registry independently downloads and validates the source and artifact. The registry owner receives a Discord notification and can **approve** or **reject** the pending submission through a protected admin review queue.
+
+Once approved, the release appears in the signed public catalog:
+
+- [`GET https://ngapi.m1nsook.com/v1/addons`](https://ngapi.m1nsook.com/v1/addons) — approved add-ons and search
+- [`GET https://ngapi.m1nsook.com/v1/registry`](https://ngapi.m1nsook.com/v1/registry) — Ed25519-signed release index
+- `GET /v1/addons/{id}` — details, icon, compatibility and pinned artifact digest
+- `GET /v1/addons/{id}/versions` — approved and revoked versions
+- `GET /v1/addons/{id}/updates?from=0.1.0&nextguide=1.0.0` — compatible updates
+
+An empty catalog is expected before the first approval.
+
+## Updates and security
+
+Each update needs a higher version, a new GitHub Release, fresh independent verification, and another manual approval. Older approved versions are not silently replaced. A release can be revoked from the signed index.
+
+The future **NextGuide Account Mode `/admin` marketplace** must verify the registry signature, artifact digest, compatibility and installation paths before installing content. It also needs transactional install, enable, disable, update, uninstall, backup and rollback support. **That client installer does not exist yet.** The ngapi review dashboard is not a customer-facing marketplace.
+
+[Create an add-on](/docs/addons/manifest) · [Extension API roadmap](/docs/addons/api)

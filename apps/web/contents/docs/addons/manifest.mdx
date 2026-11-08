@@ -1,45 +1,110 @@
 ---
 title: Create an add-on
-description: Start from the official add-on repository template.
+description: Make a content-only NextGuide add-on from the official template and validate it locally.
 ---
 
 # Create an add-on
 
-Start with [NextGuide-Addons](https://github.com/m1nsook/NextGuide-Addons). Choose **Use this template** to get the manifest, Markdown example, validator and GitHub workflow, or fork it.
+You don't need to modify the NextGuide framework or install a separate SDK to author a content-only add-on.
 
-## Basic manifest
+## 1. Create your own repository
 
-The manifest is named `nextguide-addon.json`. This simplified example shows the key fields:
+Open [NextGuide-Addons](https://github.com/m1nsook/NextGuide-Addons) and choose **Use this template → Create a new repository**. Make the new repository **public**, because the publisher and registry independently verify GitHub commits and Release assets.
+
+You can download the template to work locally on Windows, Linux, or macOS. The tooling needs Bun and a compatible Node.js runtime; it does **not** require Docker.
+
+The template contains:
+
+```text
+my-nextguide-addon/
+├── nextguide-addon.json        # Add-on identity, version and compatibility
+├── icon.png                    # Your own PNG logo, included in every release
+├── content/
+│   └── index.md                # Documentation content
+├── schema/
+│   └── nextguide-addon.schema.json
+├── scripts/
+│   ├── validate-addon.mjs      # Validates the source files
+│   └── ng-addon.mjs            # pack and publish commands
+├── test/                       # Validator regression tests
+└── package.json                # Bun commands
+```
+
+Do not submit the template unchanged: it contains sample publisher metadata.
+
+## 2. Edit `nextguide-addon.json`
+
+This is a complete example for a publisher named `acme`:
 
 ```json
 {
+  "$schema": "./schema/nextguide-addon.schema.json",
   "schemaVersion": 1,
   "id": "acme.hello-world",
   "name": "Hello World",
-  "summary": "Example documentation pages",
-  "description": "An introductory content package for NextGuide.",
+  "summary": "An example documentation add-on.",
+  "description": "Adds a small set of example help pages to an Account Mode site.",
   "version": "0.1.0",
   "author": { "name": "Acme" },
   "repository": "https://github.com/acme/hello-world",
   "license": "MIT",
   "category": "content",
-  "keywords": ["documentation"],
-  "compatibility": { "mode": "account", "nextguide": ">=1.0.0 <2.0.0" },
+  "icon": "icon.png",
+  "keywords": ["documentation", "example"],
+  "compatibility": {
+    "mode": "account",
+    "nextguide": ">=1.0.0 <2.0.0"
+  },
   "permissions": [],
   "entrypoints": { "content": "content" }
 }
 ```
 
-A schema reference can also be included. See the [complete template and JSON Schema](https://github.com/m1nsook/NextGuide-Addons).
+| Field | What to supply |
+| --- | --- |
+| `id` | Permanent, lowercase `publisher.addon-slug` identifier; changing it creates a different add-on |
+| `version` | SemVer such as `0.1.0`; use a new version for every released update |
+| `repository` | The **actual public GitHub repository** you created, not the template repository |
+| `icon` | Path to a local PNG file, included in the archive |
+| `category` | Descriptive category; v1 executable features are not enabled by category |
+| `compatibility.mode` | Must be `account` |
+| `compatibility.nextguide` | Explicit supported NextGuide version range |
+| `permissions` | Must be `[]` in the current content-only format |
+| `entrypoints.content` | Relative folder containing the Markdown pages |
 
-The initial format only supports Markdown content with no runtime permissions. Custom JavaScript, executable MDX, shell scripts, private tokens and arbitrary hooks are not permitted. AI, themes, OAuth and integrations will gain appropriate extension entrypoints as their APIs are implemented.
+The example `>=1.0.0 <2.0.0` is a **future NextGuide 1.x compatibility range**, not a claim that the current alpha has a working add-on installer.
 
-## Validate before submission
+For all properties and validation rules, see the [complete JSON Schema](https://github.com/m1nsook/NextGuide-Addons/blob/main/schema/nextguide-addon.schema.json).
 
-<CodeWindow title="Run local checks" language="bash" code={"node scripts/validate-addon.mjs\\nnode --test test/validate-addon.test.mjs"} />
+## 3. Supply your own icon and Markdown
 
-The template's GitHub workflow repeats these checks on pull requests and pushes to the default branch. It does not automatically publish or install an add-on.
+Replace `icon.png` with your add-on's own artwork. The first format requires a local PNG between 32 and 1024 pixels in each dimension, no larger than 256 KiB. A square 256 × 256 transparent icon is recommended. Remote URLs and SVG files are not accepted as icon sources.
 
-Submit a link to your repository and immutable commit SHA with the [official submission form](https://github.com/m1nsook/NextGuide/issues/new?template=submit-your-addon.md). An independent review is required before registry inclusion.
+Create or edit files under `content/`:
 
-[Next: learn the extension API roadmap](/docs/addons/api).
+```markdown
+# Hello World
+
+Welcome to my NextGuide add-on.
+
+## First steps
+
+This page is distributed as reviewed Markdown content.
+```
+
+Only `.md` content is supported. Do not include executable MDX, JavaScript, shell install scripts, symlinks, or credentials.
+
+## 4. Validate and package
+
+From the root of **your add-on repository**:
+
+```bash
+bun test
+bun ng-addon pack
+```
+
+The pack command creates a versioned `dist/nextguide-addon-0.1.0.tgz` file and prints its SHA-256 digest. It does not publish anything.
+
+Before publishing, commit and push `nextguide-addon.json`, `icon.png`, and every `content/` file to your public GitHub repository. The publisher verifies their Git blob hashes against an actual commit and rejects uncommitted changes.
+
+If you're ready to publish, continue to [Publish and review](/docs/addons/publishing).
