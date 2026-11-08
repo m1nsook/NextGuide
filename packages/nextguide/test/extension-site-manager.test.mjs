@@ -105,7 +105,7 @@ function fixture({version="1.0.0",signedReleases,artifacts,now=NOW}={}) {
     resolver:async()=>[{family:4,address:"93.184.216.34"}],
     transport:network.transport,
   })
-  return {manager,network,cleanup:()=>rmSync(base,{recursive:true,force:true})}
+  return {manager,network,project,dataDir,cleanup:()=>rmSync(base,{recursive:true,force:true})}
 }
 
 test("owner catalog includes exact compatibility and durable installed state",async()=>{
