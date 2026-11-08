@@ -256,7 +256,7 @@ test("revoked or expired v2 records cannot trigger outbound DNS or HTTPS",async(
       envelope:signed,pinnedPublicKeyPem:pem,
       id:"acme.storage",version:"1.0.0",
       now:clock,resolver:async()=>{called++;throw Error("unexpected DNS")}
-    }),/revoked|expired/)
+    }),/not active|No active|expired/)
   }
   assert.equal(called,0)
   assert.ok(archive.length>32)
