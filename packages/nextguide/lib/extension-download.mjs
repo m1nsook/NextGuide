@@ -1,5 +1,5 @@
 /**
- * Strict, read-only downloader for *signed* v1 GitHub Release artifacts.
+ * Strict, read-only downloader for signed, reviewed GitHub Release artifacts.
  *
  * This is host-side Node code, not an add-on network capability. The target
  * URL comes only from a verified signed registry release. GitHub's asset
@@ -11,6 +11,8 @@ import { lookup as dnsLookup } from "node:dns/promises"
 import { request as httpsRequest } from "node:https"
 import { verifySignedRegistryEnvelope } from "./extension-catalog.mjs"
 import { verifyApprovedContentArchive } from "./extension-artifacts.mjs"
+import { verifySignedV2RegistryEnvelope } from "./extension-v2-catalog.mjs"
+import { verifyReviewedV2Archive } from "./extension-v2-artifacts.mjs"
 import { isPublicExtensionIPv4 } from "./extension-network.mjs"
 
 const MAX_BYTES = 3 * 1024 * 1024
@@ -186,4 +188,55 @@ export async function downloadVerifiedContentRelease({
     current=safeUrl(result.redirect,first,true)
   }
   return fail("DOWNLOAD_FAILED", "Could not download reviewed artifact")
+}
+
+
+/**
+ * V2 read-only review intake: downloads only an active, nonexpired, signed
+ * release, enforces public IPv4 DNS/TLS/CDN confinement, and verifies every
+ * executable/source byte. It DOES NOT install, grant permissions or run code.
+ *
+ * This is intentionally independent of the v1 Account Mode installer. The
+ * private registry must serve a separately signed /v2/registry index before
+ * any public v2 release can pass these checks.
+ */
+export async function downloadReviewedV2Release({
+  envelope,pinnedPublicKeyPem,id,version,
+  resolver=dnsLookup,transport=httpsRequest,
+  signal,timeoutMs=15000,now=()=>Date.now(),
+}={}){
+  if(!ID.test(id) || !VERSION.test(version) ||
+     typeof resolver!=="function" || typeof transport!=="function" ||
+     !Number.isSafeInteger(timeoutMs) || timeoutMs<100 || timeoutMs>30000 ||
+     typeof now!=="function" || !Number.isFinite(now())){
+    fail("CONFIGURATION","Invalid v2 release request or trusted downloader options")
+  }
+  // Authenticate and check expiry BEFORE ANY DNS request or HTTPS fetch.
+  const catalog=verifySignedV2RegistryEnvelope(envelope,pinnedPublicKeyPem,{now:now()})
+  const release=catalog.releases.find(r=>
+    r.manifest.id===id && r.manifest.version===version)
+  if(!release || release.status!=="active" ||
+     release.size<32 || release.size>MAX_BYTES){
+    fail("NOT_APPROVED","No active, reviewed signed v2 release")
+  }
+  const first=release.assetUrl
+  let current=safeUrl(first,first,false)
+  const timer=AbortSignal.timeout(timeoutMs)
+  const active=signal?AbortSignal.any([signal,timer]):timer
+  for(let attempt=0;attempt<=MAX_REDIRECTS;attempt++){
+    if(active.aborted)throw cancelled()
+    const result=await pinnedGet(current,release.size,{resolver,transport,signal:active})
+    if(result.bytes){
+      // The v2 release key and archive/source/bundle digest are rechecked
+      // before returning the original bytes for private storage/review.
+      const verified=verifyReviewedV2Archive({
+        envelope,pinnedPublicKeyPem,id,version,archive:result.bytes,
+        now:now(),
+      })
+      return {archive:result.bytes,verified}
+    }
+    if(attempt===MAX_REDIRECTS)fail("INVALID_REDIRECT","GitHub asset redirected too many times")
+    current=safeUrl(result.redirect,first,true)
+  }
+  return fail("DOWNLOAD_FAILED","Reviewed v2 release could not be downloaded")
 }

@@ -1,0 +1,45 @@
+---
+title: Reviewed v2 packages
+description: The signed executable release protocol, byte-level verifier and private registry rollout boundary.
+---
+
+# Reviewed executable v2 packages
+
+NextGuide supports **read-only verification** of independently reviewed v2 executable archives. This does not enable production execution. The private ngapi server currently approves content-only v1 releases; v2 requires a separate registry deployment.
+
+## Source to trusted bytes
+
+1. Author a JavaScript/TypeScript extension in the [NextGuide-Addons template](https://github.com/m1nsook/NextGuide-Addons), then build the deterministic v2 archive.
+2. Publish an immutable GitHub Release linked to a specific source commit.
+3. An independent reviewer validates original source, exact bundle, requested capabilities, reproducible build and package integrity.
+4. The private ngapi operator signs the reviewed release with Ed25519. The signature binds repository, commit, manifest, source SHA-256, compiled bundle SHA-256, reviewer, requested permissions and active/revoked status.
+5. An Account Mode host pins the public verification key, fetches a short-lived signed index and downloads only that exact approved GitHub artifact through DNS-pinned HTTPS.
+6. Installation and execution still require an explicit site-owner permission grant and production-approved OS isolation.
+
+## Versioned registry contract
+
+The future signed index lives at the separate HTTPS path **/v2/registry** and has **schemaVersion 2**, issue and expiration timestamps (maximum six-hour signed lifetime), and a list of immutable reviewed releases. Its signatures and release formats cannot be confused with the working v1 content-only format.
+
+Every signed release must include a complete v2 Account Mode manifest and a review attestation with the original commit, review identity, original source and compiled bundle digests. The archive uses the narrow single-file server developer format: original source file, compiled server module, exact manifest, and a per-member SHA-256 integrity descriptor. An optional signed PNG icon is supported.
+
+The verifier rejects unapproved executable permissions, revoked or expired metadata, invalid keys and signatures, mismatching byte hashes, unexpected archive files, symlinks, unsafe paths and decompression bombs.
+
+## Verify a release without executing it
+
+<CodeWindow title="NextGuide v2 signed release intake (trusted Node host only)" language="typescript" code={"import { createVerifiedV2RegistryClient } from \"nextguide/extensions/v2-catalog\"\nimport { downloadReviewedV2Release } from \"nextguide/extensions/download\"\n\nconst pinnedPublicKeyPem = process.env.NEXTGUIDE_V2_PUBLIC_KEY_PEM!\nconst registry = createVerifiedV2RegistryClient({\n  registryUrl: \"https://ngapi.m1nsook.com/v2/registry\",\n  pinnedPublicKeyPem,\n})\nconst envelope = await registry.fetchSignedEnvelope()\nconst result = await downloadReviewedV2Release({\n  envelope, pinnedPublicKeyPem,\n  id: \"acme.storage\", version: \"1.0.0\",\n})\n// The verified compiled bytes are DATA. Never import or run them here."} />
+
+For already-downloaded archives use the **nextguide/extensions/v2-artifacts** verifier. The **nextguide/extensions/v2-catalog** module also provides a permission-diff helper; identifying newly requested permissions is not a grant.
+
+The signed catalog and archive are checked independently, without writing third-party code to disk or importing it into the Next.js host.
+
+## Private ngapi deployment requirements
+
+The registry backend must verify independent review, reproducible build provenance and immutable GitHub assets before signing. Signed indexes need expiration, revocation and signing-key rotation procedures. Server-side authorization must never accept a publisher-supplied reviewer field as proof without authenticated staff approval. No private keys or private registry server implementation belong in the public NextGuide package.
+
+**The private ngapi service has not been upgraded by this milestone.** Before server deployment, prepare and test a private patch against the actual VPS backend, with a backup and rollback procedure.
+
+## Remaining execution gates
+
+The experimental Linux Bubblewrap runner still needs cgroup memory/process limits and independent sandbox testing. Windows has no approved secure backend yet. Browser UI execution requires separate origin/frame isolation. The private v2 installer must transactionally pin approved versions, obtain explicit site-owner grants and recheck revocations before each activation.
+
+Do not treat an Ed25519 signature as permission to execute JavaScript. See the [security roadmap](https://github.com/m1nsook/NextGuide/issues/101).
