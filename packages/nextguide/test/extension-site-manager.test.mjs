@@ -181,7 +181,7 @@ test("stale signed metadata, incompatible alpha versions and revoked releases ar
     assert.equal((await alpha.manager.catalog()).releases[0].compatible,false)
     await assert.rejects(alpha.manager.install({
       id:"acme.docs",version:"1.0.0",expectedRevision:0,consent:true
-    }),/incompatible/)
+    }),/not reviewed, active or compatible/)
     assert.equal(alpha.network.calls.length,0)
   }finally{alpha.cleanup()}
   const revoked=fixture({
