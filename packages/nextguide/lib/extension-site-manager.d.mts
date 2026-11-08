@@ -1,6 +1,7 @@
 import type { InstalledAddon } from "./extension-install-state.mjs"
 export type AccountAddonCatalog = {
   configured: boolean
+  catalogFresh: boolean
   releases: Array<{
     manifest: {
       id: string
