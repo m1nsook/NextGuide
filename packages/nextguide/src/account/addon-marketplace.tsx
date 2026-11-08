@@ -47,6 +47,7 @@ type InstalledAddon = {
 }
 type Catalog = {
   configured: boolean
+  catalogFresh: boolean
   releases: Release[]
   installed: { revision: number; addons: InstalledAddon[] }
   nextguideVersion: string
@@ -57,15 +58,16 @@ type Action =
   | { kind: "rollback"; id: string; version: string }
   | { kind: "uninstall"; id: string }
 
-function ReleaseDetails({ release, back, installed, onAction, busy }: {
+function ReleaseDetails({ release, back, installed, onAction, busy, catalogFresh }: {
   release: Release
   back: () => void
   installed?: InstalledAddon
   onAction: (action: Action) => void
   busy: boolean
+  catalogFresh: boolean
 }) {
   const { manifest: addon } = release
-  const canInstall = release.compatible && addon.permissions.length === 0
+  const canInstall = catalogFresh && release.compatible && addon.permissions.length === 0
   const newer = (a: string, b: string) => a.split(".").map(Number).some((n,i,all) =>
     all.slice(0,i).every((v,j)=>v===Number(b.split(".")[j])) && n>Number(b.split(".")[i]))
   const canUpdate = installed && canInstall && newer(addon.version, installed.version)
@@ -244,7 +246,8 @@ export function AccountAddonMarketplace() {
     {notice && <Card><CardContent className="p-5 text-sm text-foreground" role="status">{notice}</CardContent></Card>}
     {loading && <Card><CardContent className="p-6 text-sm text-muted-foreground">Loading approved add-ons…</CardContent></Card>}
     {selected ? <ReleaseDetails release={selected} back={()=>setChosen(null)}
-      installed={installed.find(a=>a.id===selected.manifest.id)} onAction={setPending} busy={busy}/> : <>
+      installed={installed.find(a=>a.id===selected.manifest.id)} onAction={setPending} busy={busy}
+      catalogFresh={catalog?.catalogFresh??false}/> : <>
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-semibold tracking-tight">Add-ons</h1>
           <Badge variant="secondary">Reviewed content</Badge></div>
@@ -272,6 +275,7 @@ export function AccountAddonMarketplace() {
           </CardContent></Card>)}
         </div>
       </section>}
+      {catalog?.configured && !catalog.catalogFresh && <Card><CardContent className="p-5 text-sm text-muted-foreground" role="status">The verified catalog is older than one hour. Discovery is available, but new installs, updates and enabling are suspended until the registry issues a fresh signed index. Disable and uninstall remain available.</CardContent></Card>}
       {catalog && !catalog.configured && <Card><CardHeader>
         <CardTitle>Signed registry not configured</CardTitle>
         <CardDescription>Set a trusted registry URL and pinned Ed25519 public key on the Account Mode server.
