@@ -266,7 +266,7 @@ export function AccountAddonMarketplace() {
           </CardHeader><CardContent className="flex flex-wrap gap-2">
             {releases.some(x=>x.manifest.id===addon.id) && <Button variant="outline" size="sm"
               disabled={busy} onClick={()=>setChosen(addon.id)}>Details</Button>}
-            <Button variant="outline" size="sm" disabled={busy} onClick={()=>
+            <Button variant="outline" size="sm" disabled={busy || (!addon.enabled && !catalog.catalogFresh)} onClick={()=>
               setPending({kind:"toggle",id:addon.id,enabled:!addon.enabled})}>
               {addon.enabled?"Disable":"Enable"}
             </Button>
