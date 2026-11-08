@@ -130,7 +130,7 @@ test("owner catalog includes exact compatibility and durable installed state",as
     const enabled=await f.manager.toggle({id:"acme.docs",enabled:true,expectedRevision:1})
     assert.equal(enabled.addon.enabled,true)
     const approved=await f.manager.readEnabled({id:"acme.docs"})
-    assert.ok(pages[0].markdown.includes("Welcome 1.0.0"))
+    assert.ok(approved.pages[0].markdown.includes("Welcome 1.0.0"))
     const disabled=await f.manager.toggle({id:"acme.docs",enabled:false,expectedRevision:2})
     assert.equal(disabled.addon.enabled,false)
     assert.equal(await f.manager.readEnabled({id:"acme.docs"}),null)
