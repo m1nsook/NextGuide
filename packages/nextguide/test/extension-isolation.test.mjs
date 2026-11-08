@@ -132,9 +132,11 @@ test("invalid IPC and output floods terminate the process", async () => {
 
 test("sandbox exit and unavailable binaries fail closed", async () => {
   const { child } = fakeProcess({ autoReady: false })
-  const { runner } = host(child)
+  const { runner } = host(child, { spawn() {
+    queueMicrotask(() => child.emit("exit", 1))
+    return child
+  } })
   const result = runner.start({ manifest: MANIFEST, code: CODE, artifactSha256: DIGEST })
-  queueMicrotask(() => child.emit("exit", 1))
   await assert.rejects(result, /Sandbox process exited/)
   assert.equal(child.killed, true)
   const broker = createExtensionBroker({ authorize: () => ({ permissions: [] }) })
