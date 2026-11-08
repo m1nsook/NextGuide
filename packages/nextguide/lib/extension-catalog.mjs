@@ -120,7 +120,7 @@ export function createVerifiedRegistryClient({ registryUrl, pinnedPublicKeyPem, 
   const publicKey = createPublicKey(pinnedPublicKeyPem)
   if (publicKey.asymmetricKeyType !== "ed25519") fail("Pinned key must be Ed25519")
   return {
-    async fetchVerified() {
+    async fetchSignedEnvelope() {
       const response = await fetchImpl(url.toString(), {
         method: "GET", redirect: "error", cache: "no-store",
         signal: AbortSignal.timeout(8000),
@@ -142,7 +142,11 @@ export function createVerifiedRegistryClient({ registryUrl, pinnedPublicKeyPem, 
       let envelope
       try { envelope = JSON.parse(Buffer.concat(chunks).toString("utf8")) }
       catch { fail("Invalid registry response JSON") }
-      return verifySignedRegistryEnvelope(envelope, pinnedPublicKeyPem)
+      verifySignedRegistryEnvelope(envelope, pinnedPublicKeyPem)
+      return envelope
+    },
+    async fetchVerified() {
+      return verifySignedRegistryEnvelope(await this.fetchSignedEnvelope(), pinnedPublicKeyPem)
     },
     async listApproved() {
       return listVerifiedAddons(await this.fetchVerified())
