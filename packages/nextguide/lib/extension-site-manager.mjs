@@ -68,15 +68,23 @@ export function createAccountAddonManager({
       const installed=store.list()
       if (!registry) return {configured:false,releases:[],installed,
         nextguideVersion,catalogFresh:false}
-      const {payload,catalogFresh}=await signed({requireFresh:false})
-      return {
-        configured:true,
-        releases:listVerifiedAddons(payload).map(release=>({
-          ...release,
-          compatible:compatibleAddonRange(
-            release.manifest.compatibility.nextguide,nextguideVersion)
-        })),
-        installed,nextguideVersion,catalogFresh,
+      try {
+        const {payload,catalogFresh}=await signed({requireFresh:false})
+        return {
+          configured:true,
+          releases:listVerifiedAddons(payload).map(release=>({
+            ...release,
+            compatible:compatibleAddonRange(
+              release.manifest.compatibility.nextguide,nextguideVersion)
+          })),
+          installed,nextguideVersion,catalogFresh,registryUnavailable:false,
+        }
+      } catch {
+        // A broken, unsigned or unavailable registry must never supply a
+        // release. Owners can still inspect private history and disable or
+        // uninstall already-installed content without fetching network data.
+        return {configured:true,releases:[],installed,nextguideVersion,
+          catalogFresh:false,registryUnavailable:true}
       }
     },
     async install({id,version,expectedRevision,consent}={}) {

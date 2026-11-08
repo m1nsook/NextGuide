@@ -215,3 +215,29 @@ test("public navigation includes only explicitly enabled signed Markdown pages",
     assert.deepEqual(await f.manager.publicPages(),[])
   } finally { f.cleanup() }
 })
+
+test("registry outage keeps owner activity available and allows safe disable/uninstall",async()=>{
+  const a=versioned("1.0.0")
+  const f=fixture({signedReleases:signed([a.release]),artifacts:[a]})
+  try {
+    await f.manager.install({id:"acme.docs",version:"1.0.0",expectedRevision:0,consent:true})
+    await f.manager.toggle({id:"acme.docs",enabled:true,expectedRevision:1})
+    const offline=createAccountAddonManager({
+      project:f.project,dataDir:f.dataDir,nextguideVersion:"1.0.0",now:()=>NOW,
+      registryUrl:"https://registry.example/v1/registry",pinnedPublicKeyPem:pem,
+      registryFetch:async()=>{throw Error("registry temporarily unavailable")},
+    })
+    const catalog=await offline.catalog()
+    assert.equal(catalog.registryUnavailable,true)
+    assert.equal(catalog.catalogFresh,false)
+    assert.deepEqual(catalog.releases,[])
+    assert.equal(catalog.installed.addons[0].enabled,true)
+    assert.deepEqual(catalog.installed.history.map(e=>e.operation),["install","enable"])
+    await assert.rejects(offline.toggle({id:"acme.docs",enabled:true,expectedRevision:2}),/registry temporarily unavailable/)
+    const disabled=await offline.toggle({id:"acme.docs",enabled:false,expectedRevision:2})
+    assert.equal(disabled.addon.enabled,false)
+    assert.equal((await offline.catalog()).installed.history.at(-1).operation,"disable")
+    assert.equal(offline.uninstall({id:"acme.docs",expectedRevision:3,consent:true}).privateDataPreserved,true)
+    assert.deepEqual((await offline.catalog()).installed.addons,[])
+  }finally{f.cleanup()}
+})

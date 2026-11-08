@@ -6,6 +6,13 @@ export type InstalledAddon = {
   name: string
   availableVersions: string[]
 }
+export type AddonActivity = {
+  revision: number
+  at: string
+  operation: "install" | "update" | "rollback" | "enable" | "disable" | "uninstall" | "no-op"
+  id: string
+  version: string
+}
 export declare function compatibleAddonRange(range: unknown, version: unknown): boolean
 export declare function createAccountAddonStore(config: {
   project?: string
@@ -16,7 +23,7 @@ export declare function createAccountAddonStore(config: {
   /** Trusted clock injection for tests only. */
   now?: () => number
 }): {
-  list(): { revision: number; addons: InstalledAddon[] }
+  list(): { revision: number; addons: InstalledAddon[]; history: AddonActivity[] }
   install(input: {
     envelope: unknown
     pinnedPublicKeyPem: string

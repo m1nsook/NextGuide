@@ -100,7 +100,7 @@ test("stable range parser fails closed and prerelease sites cannot install stabl
   assert.equal(compatibleAddonRange("^1.0.0","1.0.0"),false)
   const f=fixture("0.0.1-alpha.2")
   try{
-    assert.deepEqual(f.store.list(),{revision:0,addons:[]})
+    assert.deepEqual(f.store.list(),{revision:0,addons:[],history:[]})
     const v1=packed("1.0.0")
     assert.throws(()=>f.store.install(request(v1,signed([v1.release]),0)),/incompatible/)
   }finally{f.cleanup()}
@@ -220,4 +220,48 @@ test("isolation rejects Developer Mode and symlink redirects to private state",(
       project,dataDir,nextguideVersion:"1.0.0"
     }),/unsafe add-on file/)
   }finally{rmSync(base,{recursive:true,force:true})}
+})
+
+test("private journal records successful lifecycle changes, not denied transactions",()=>{
+  const f=fixture()
+  try {
+    const v1=packed("1.0.0"),v2=packed("1.1.0")
+    const envelope=signed([v1.release,v2.release])
+    f.store.install(request(v1,envelope,0))
+    f.store.setEnabled({id:"acme.readme",enabled:true,expectedRevision:1,
+      envelope,pinnedPublicKeyPem:pem})
+    assert.throws(()=>f.store.install(request(v2,envelope,0)),/index changed/)
+    assert.deepEqual(f.store.list().history.map(e=>e.operation),["install","enable"])
+    f.store.install(request(v2,envelope,2))
+    f.store.rollback({id:"acme.readme",version:"1.0.0",expectedRevision:3,
+      envelope,pinnedPublicKeyPem:pem})
+    const history=f.store.list().history
+    assert.deepEqual(history.map(e=>e.operation),["install","enable","update","rollback"])
+    assert.deepEqual(history.map(e=>e.revision),[1,2,3,4])
+    assert.ok(history.every(e=>e.at===new Date(FIXED_NOW).toISOString()))
+    assert.ok(history.every(e=>Object.keys(e).sort().join(",")==="at,id,operation,revision,version"))
+    const restarted=createAccountAddonStore({
+      project:f.project,dataDir:f.dataDir,nextguideVersion:"1.0.0",now:()=>FIXED_NOW,
+    })
+    assert.deepEqual(restarted.list().history,history)
+    restarted.uninstall({id:"acme.readme",expectedRevision:4})
+    assert.equal(restarted.list().history.at(-1).operation,"uninstall")
+    assert.equal(restarted.list().addons.length,0)
+  } finally { f.cleanup() }
+})
+
+test("older v1 installed indexes without activity history remain readable",()=>{
+  const f=fixture()
+  try {
+    const v1=packed("1.0.0"),envelope=signed([v1.release])
+    f.store.install(request(v1,envelope,0))
+    const index=join(dirname(accountFile(f.project,f.dataDir)),"addons","installed.json")
+    const old=JSON.parse(readFileSync(index,"utf8"))
+    delete old.history
+    writeFileSync(index,JSON.stringify(old))
+    assert.deepEqual(f.store.list().history,[])
+    f.store.setEnabled({id:"acme.readme",enabled:true,expectedRevision:1,
+      envelope,pinnedPublicKeyPem:pem})
+    assert.deepEqual(f.store.list().history.map(e=>e.revision),[2])
+  } finally { f.cleanup() }
 })

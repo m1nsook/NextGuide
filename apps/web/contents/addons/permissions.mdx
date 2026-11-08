@@ -26,6 +26,14 @@ NextGuide's extension API separates **what an add-on requests** from **what a si
 
 The current trusted host requires explicit owner approval before activation. The future marketplace must ask the owner again when a newer release requests additional permissions.
 
+## Owner activity and registry outages
+
+Account Mode stores a private, bounded journal of the latest **100 successful** add-on installation changes, including installs, enabling, disabling, upgrades, rollbacks and removals. Each event records the add-on ID, version, change type, UTC timestamp and installation revision. The journal is committed atomically with the installation state, so denied and interrupted transactions cannot create misleading success events.
+
+The owner can review recent activity under **Admin → Add-ons**. This journal contains no downloaded executable code, access tokens or signing keys; it is local operational history, not a substitute for independent code review or security monitoring.
+
+When a configured registry cannot be verified, the catalog fails closed and shows no releases. Owners can still inspect their local installed list and activity history, disable content or uninstall it; installation, upgrading and enabling remain blocked until a fresh signed catalog becomes available.
+
 ## Host-mediated messages
 
 The `nextguide/extensions/runtime` broker binds messages to an already verified add-on identity. Client-supplied IDs cannot switch storage namespaces. Network requests are denied by default. The optional restricted HTTPS host adapter pins vetted public IPv4 DNS results to a TLS connection, rejects redirects and has fixed response limits. It must be configured by the trusted host and never exposed directly to add-on code.
