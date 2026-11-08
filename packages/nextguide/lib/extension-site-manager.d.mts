@@ -59,7 +59,7 @@ export declare function createAccountAddonManager(options?: {
   readEnabled(input: {id: string}): Promise<null | {
     id: string
     version: string
-    manifest: Record<string, unknown>
+    manifest: { name: string; entrypoints: { content: string } } & Record<string, unknown>
     icon: { path: string; bytes: Buffer }
     pages: Array<{ path: string; markdown: string }>
   }>
