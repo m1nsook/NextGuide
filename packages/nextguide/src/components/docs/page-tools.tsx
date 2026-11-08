@@ -39,6 +39,38 @@ export interface DocsPageActionsProps {
   editUrl?: string
 }
 
+/**
+ * Build a source-aware prompt for the page tools. The URL comes from the
+ * current browser location, so it includes the actual deployed base path
+ * (e.g. GitHub Pages) instead of a guessed docs route.
+ */
+export function buildDocsChatGPTPrompt({ title, markdown, pageUrl }: {
+  title: string
+  markdown: string
+  pageUrl: string
+}): string {
+  const url = new URL(pageUrl)
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    throw new Error("Documentation page must have an HTTP(S) URL")
+  }
+  url.hash = ""
+  url.search = ""
+  const excerpt = markdown.length > 2200
+    ? markdown.slice(0, 2200) + "\n[Excerpt truncated]"
+    : markdown
+  return [
+    "Please help me understand this documentation page and answer my questions about it.",
+    "Open the source URL for the complete documentation if you can access it.",
+    "If you cannot access the URL, use the provided excerpt and say when context is missing.",
+    "",
+    "Page title: " + title,
+    "Source URL: " + url.href,
+    "",
+    "Documentation excerpt:",
+    excerpt,
+  ].join("\n")
+}
+
 export function DocsPageActions({ markdown, title, editUrl }: DocsPageActionsProps) {
   const [copied, setCopied] = useState(false)
 
@@ -53,13 +85,11 @@ export function DocsPageActions({ markdown, title, editUrl }: DocsPageActionsPro
   }
 
   function askChatGPT() {
-    const excerpt = markdown.length > 2200 ? markdown.slice(0, 2200) + "\n[Excerpt truncated]" : markdown
-    const prompt = [
-      "Please help me understand this documentation page. Explain it and answer follow-up questions.",
-      "Title: " + title,
-      "",
-      excerpt,
-    ].join("\n")
+    const prompt = buildDocsChatGPTPrompt({
+      title,
+      markdown,
+      pageUrl: window.location.href,
+    })
     window.open("https://chatgpt.com/?q=" + encodeURIComponent(prompt), "_blank", "noopener,noreferrer")
   }
 
