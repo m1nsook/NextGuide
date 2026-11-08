@@ -178,7 +178,10 @@ test("publisher posts verified release to review queue, owner approves with CSRF
       const sub=await fetch(base+"/v1/submissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(req)})
       assert.equal(sub.status,202)
       const id=(await sub.json()).id
-      const before=await (await fetch(base+"/admin")).text()
+      const pageResponse = await fetch(base+"/admin")
+      // HTML form POST must send the real Origin, not "null" under no-referrer.
+      assert.equal(pageResponse.headers.get("referrer-policy"),"same-origin")
+      const before=await pageResponse.text()
       assert.match(before,/Registry owner login/)
       assert.doesNotMatch(before,/Pending add-on publications/)
       const unauth=await fetch(base+"/admin/review/"+id+"/approve",{method:"POST",headers:{Origin:opts.origin,"Content-Type":"application/x-www-form-urlencoded"},body:"csrf=invalid",redirect:"manual"})
