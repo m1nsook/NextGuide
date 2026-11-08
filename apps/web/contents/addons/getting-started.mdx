@@ -1,0 +1,47 @@
+---
+title: Getting started
+description: Create, validate and submit a content-only add-on using the GitHub App publisher.
+---
+
+# Create your first add-on
+
+<Callout kind="info" title="No separate SDK">
+You need a public GitHub repository created from the [NextGuide-Addons template](https://github.com/m1nsook/NextGuide-Addons). Your add-on uses its own `nextguide-addon.json` manifest and the publisher at [ngapi.m1nsook.com/publish](https://ngapi.m1nsook.com/publish).
+</Callout>
+
+## 1. Create a repository
+
+Open the [official repository template](https://github.com/m1nsook/NextGuide-Addons), choose **Use this template**, and create a new **public** repository. The publisher will verify the committed files and its GitHub Release.
+
+<FileTree title="Content add-on template" items={[{"name":"my-nextguide-addon","kind":"folder","children":[{"name":"nextguide-addon.json","kind":"json","detail":"Required identity and compatibility"},{"name":"icon.png","kind":"file","detail":"Local PNG icon"},{"name":"content","kind":"folder","children":[{"name":"index.md","kind":"file","detail":"Markdown content"}]},{"name":"docs","kind":"folder","children":[{"name":"AUTHORING.md","kind":"file"},{"name":"REVIEW.md","kind":"file"}]},{"name":"schema","kind":"folder","children":[{"name":"nextguide-addon.schema.json","kind":"json"}]},{"name":"scripts","kind":"folder","children":[{"name":"validate-addon.mjs","kind":"code"},{"name":"ng-addon.mjs","kind":"code"}]},{"name":"test","kind":"folder","children":[{"name":"publish-addon.test.mjs","kind":"code"},{"name":"validate-addon.test.mjs","kind":"code"}]},{"name":"package.json","kind":"json"}]}]} />
+
+## 2. Configure your identity
+
+Edit `nextguide-addon.json`. The add-on ID must be **publisher-qualified** (for example `acme.hello-world`). Replace the template repository URL with your repository's actual GitHub URL; add your own author name, version and icon.
+
+<CodeWindow title="nextguide-addon.json" language="json" code={"{\n  \"$schema\": \"./schema/nextguide-addon.schema.json\",\n  \"schemaVersion\": 1,\n  \"id\": \"acme.hello-world\",\n  \"name\": \"Hello World\",\n  \"summary\": \"A small documentation add-on.\",\n  \"description\": \"Sample Markdown pages for a NextGuide Account Mode site.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Acme\"\n  },\n  \"repository\": \"https://github.com/acme/hello-world\",\n  \"license\": \"MIT\",\n  \"category\": \"content\",\n  \"keywords\": [\n    \"documentation\",\n    \"example\"\n  ],\n  \"compatibility\": {\n    \"mode\": \"account\",\n    \"nextguide\": \">=1.0.0 <2.0.0\"\n  },\n  \"permissions\": [],\n  \"entrypoints\": {\n    \"content\": \"content\"\n  },\n  \"icon\": \"icon.png\"\n}"} />
+
+The `compatibility.nextguide` value above is an example of a future 1.x compatibility range, **not** an indication that a current alpha installation supports the marketplace.
+
+## 3. Write content
+
+The current v1 format accepts plain `.md` files. It deliberately does not execute MDX, TypeScript, JavaScript or React.
+
+<CodeWindow title="content/index.md" language="markdown" code={"# Hello World\n\nWelcome to my NextGuide add-on.\n\n## Getting started\n\nThis Markdown is reviewed before publication."} />
+
+## 4. Validate and commit
+
+The GitHub App publisher runs preflight checks and shows file/line diagnostics. You can also test the template locally:
+
+<CodeTabs items={[{"label":"Bun","language":"bash","code":"bun test\\nbun ng-addon pack"},{"label":"npm","language":"bash","code":"npm test\\nnpm run ng-addon -- pack"}]} />
+
+Commit and push the manifest, icon and content to GitHub. Uncommitted local changes cannot be verified by the publisher.
+
+## 5. Publish and request review
+
+Open [NextGuide Publisher](https://ngapi.m1nsook.com/publish), sign in using GitHub, select your add-on repository, validate it and submit for owner review. Once approved, your release appears in the signed registry. For details, see [Publishing & review](/addons/publishing).
+
+<LinkCards>
+  <LinkCard href="/addons/manifest" title="Manifest reference" description="Identity, compatibility, required fields and example manifest" />
+  <LinkCard href="/addons/publishing" title="Publishing and review" description="Release immutability, approval and failed submission recovery" />
+</LinkCards>

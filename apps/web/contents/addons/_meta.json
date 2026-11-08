@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "index",
+    "title": "Overview"
+  },
+  {
+    "slug": "getting-started",
+    "title": "Getting started"
+  },
+  {
+    "slug": "manifest",
+    "title": "Manifest reference"
+  },
+  {
+    "slug": "components",
+    "title": "Components & themes"
+  },
+  {
+    "slug": "api",
+    "title": "Extension API"
+  },
+  {
+    "slug": "permissions",
+    "title": "Permissions & security"
+  },
+  {
+    "slug": "publishing",
+    "title": "Publishing & review"
+  },
+  {
+    "slug": "updates",
+    "title": "Updates & removal"
+  },
+  {
+    "slug": "marketplace",
+    "title": "Marketplace (planned)"
+  }
+]

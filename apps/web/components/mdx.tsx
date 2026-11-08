@@ -8,6 +8,7 @@ import { ApiPreview, EdgeCasePreview, Preview } from "./demos/preview"
 import { Install, Tab, Tabs } from "./install"
 import { MdxLink } from "./mdx-link"
 import { CodeWindow, CodeTabs, FileTree, Steps, Step, LinkCards, LinkCard as PackageLinkCard } from "nextguide/blocks"
+import { ExtensionView } from "nextguide/extensions/ui"
 import { Button, Badge, Alert, AlertTitle, AlertDescription, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Progress, Kbd, ScrollArea, ScrollAreaViewport, ScrollBar, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, Accordion, AccordionItem, AccordionTrigger, AccordionContent, Tabs as UiTabs, TabsList, TabsTrigger, TabsContent, Separator, Skeleton, Input, Label, Switch, Checkbox, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, Textarea, NativeSelect, Spinner, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink as PackageBreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "nextguide/ui"
 
 /** Preserve the official NextGuide MDX component, adjusting only its plain-anchor URL. */
@@ -50,6 +51,7 @@ export const mdxComponents = {
   CodeWindow,
   CodeTabs,
   FileTree,
+  ExtensionView,
   Steps,
   Step,
   LinkCards,

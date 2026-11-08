@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, BookOpen, Code2, Layers3, LockKeyhole, Palette, ServerCog } from "lucide-react"
+import { ArrowRight, BookOpen, Code2, Layers3, LockKeyhole, Palette, Puzzle, ServerCog } from "lucide-react"
 import { Logo } from "@/components/logo"
 import { SearchButton } from "@/components/search"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -7,6 +7,7 @@ import { site } from "@/lib/site"
 
 const features = [
   { title: "MDX documentation", description: "Documentation pages, search, navigation, code blocks, and reusable components.", icon: BookOpen, href: "/docs" },
+  { title: "Add-on developer docs", description: "Build, validate, publish and maintain NextGuide add-ons with versioned extension APIs.", icon: Puzzle, href: "/addons" },
   { title: "API reference", description: "OpenAPI-powered references with reusable endpoint components and typed parsing.", icon: Layers3, href: "/reference" },
   { title: "App and Pages Router", description: "Next.js is required. Developer Mode supports both router styles.", icon: Code2, href: "/docs/getting-started/installation" },
   { title: "Setup wizard", description: "Account Mode setup includes branding, themes, and an ownership token (unreleased).", icon: Palette, href: "/account-docs" },
@@ -23,6 +24,7 @@ export default function HomePage() {
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
             <Link href="/docs" className="hover:text-foreground">Documentation</Link>
             <Link href="/components" className="hover:text-foreground">Components</Link>
+            <Link href="/addons" className="hover:text-foreground">Add-ons</Link>
             <Link href="/reference" className="hover:text-foreground">API Reference</Link>
             <a href={site.github} className="hover:text-foreground" target="_blank" rel="noopener noreferrer">GitHub</a>
           </nav>
