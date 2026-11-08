@@ -1,18 +1,6 @@
 [
-  {
-    "slug": "index",
-    "title": "Overview"
-  },
-  {
-    "slug": "manifest",
-    "title": "Create an add-on"
-  },
-  {
-    "slug": "api",
-    "title": "Extension API roadmap"
-  },
-  {
-    "slug": "publishing",
-    "title": "Verification & updates"
-  }
+  { "slug": "index", "title": "Overview" },
+  { "slug": "manifest", "title": "Create an add-on" },
+  { "slug": "publishing", "title": "Publish and review" },
+  { "slug": "api", "title": "Extension API roadmap" }
 ]

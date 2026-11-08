@@ -1,32 +1,48 @@
 ---
 title: NextGuide add-ons
-description: A community extension platform for Account Mode.
+description: Create, publish, review, and eventually install community add-ons for Account Mode.
 ---
 
 # NextGuide add-ons
 
-Add-ons will extend NextGuide without giving third-party developers write access to the NextGuide repository. **They will be available only in Account Mode.**
+Add-ons are independently maintained packages for **NextGuide Account Mode**. The first supported publishing format is deliberately limited to Markdown content and a PNG icon. Add-ons do not get arbitrary server execution, private credentials, or permissioned hooks.
 
-<Callout kind="info" title="Development status">The public author template and initial static validator are being prepared. The marketplace UI, add-on runtime, installation backend and hosted API are not live yet.</Callout>
+<Callout kind="info" title="Current status">
+The developer template, local validation, archive packaging, and GitHub Release publishing command exist. The separate ngapi registry serves a signed read-only catalog and has a private owner approval dashboard. Public submissions are currently restricted during rollout. The Account Mode marketplace browser and add-on installer are **not implemented yet**.
+</Callout>
 
-## Explore the future marketplace
+## How add-ons reach the registry
 
-The planned `/marketplace` includes search, category filters, publisher identity, installation status and compatibility. Selecting an add-on opens a dedicated detail page with its description, permissions, screenshots, release history and supported NextGuide versions.
+1. **Create:** Start with the [NextGuide-Addons template](https://github.com/m1nsook/NextGuide-Addons). Replace its metadata and icon, then add Markdown pages.
+2. **Validate and pack:** Run `bun test` and `bun ng-addon pack` locally.
+3. **Publish:** Run `bun ng-addon publish` to verify the source commit, upload an immutable `.tgz` to the author's GitHub Release, and request registry review.
+4. **Review:** The ngapi server verifies the release independently. An authorized NextGuide registry reviewer approves or rejects it in the private dashboard.
+5. **Catalog:** Approved versions appear in the signed public API. They will appear inside installed sites' authenticated **Account Mode `/admin` marketplace** when the client and installer are implemented.
 
-The installed-addons view will let the owner install, enable, disable, uninstall, update or pin a compatible version. An update will never quietly add new permissions.
+Passing a GitHub check or creating a Release is not approval. Only the separate reviewer can add a release to the trusted registry.
 
-## What developers can build
+## What works today?
 
-- Documentation sources and custom content blocks
-- Themes, language packs and icon packs
-- Accessibility improvements
-- AI agents and assistants
-- OAuth providers and external integrations
+| Feature | Status |
+| --- | --- |
+| Create a content-only add-on from a repository template | Available |
+| Validate a manifest, PNG and Markdown content | Available |
+| Create a versioned `.tgz` archive | Available |
+| Publish an artifact as a GitHub Release | Available through the publisher CLI |
+| Submit the release to ngapi | Implemented; public POST endpoint still restricted during rollout |
+| Human review, signing, and read-only catalog API | Running on the registry |
+| Browse, install, enable, disable, update or uninstall inside a NextGuide site | Not yet implemented |
 
-Executable extensions need a verified, permissioned runtime. Listing a category does not mean its runtime API is already available.
+The registry owner's **ngapi `/admin`** page is only a review queue; it is not the marketplace for NextGuide users. There is no supported public `/marketplace` page.
+
+## Supported scope
+
+**Today:** Documentation-only add-ons with a JSON manifest, one local PNG icon, and Markdown (`.md`) content. `permissions` must be empty and `compatibility.mode` must be `account`.
+
+**Planned:** Themes, icon and language packs, accessibility features, AI, OAuth, and external integrations. These need implemented, reviewed extension APIs before anyone can install them. Listing a category in the schema does not make its runtime available.
 
 <LinkCards>
-  <LinkCard title="Create an add-on" description="Manifest, template and first checks" href="/docs/addons/manifest" />
-  <LinkCard title="Extension API" description="Proposed integration hooks and safe boundaries" href="/docs/addons/api" />
-  <LinkCard title="Verification & updates" description="Review, registry, permissions, and rollback" href="/docs/addons/publishing" />
+  <LinkCard title="Create an add-on" description="Use the template, configure the complete manifest and validate your files" href="/docs/addons/manifest" />
+  <LinkCard title="Publish and review" description="Create a verified GitHub Release and submit it for owner approval" href="/docs/addons/publishing" />
+  <LinkCard title="Extension API roadmap" description="What future permissioned add-ons will be able to do" href="/docs/addons/api" />
 </LinkCards>
