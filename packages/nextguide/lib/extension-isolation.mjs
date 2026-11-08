@@ -16,7 +16,7 @@ import { spawn as nodeSpawn } from "node:child_process"
 import { createHash } from "node:crypto"
 import { chmodSync, existsSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
-import { dirname, join } from "node:path"
+import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const worker = fileURLToPath(new URL("./extension-worker.mjs", import.meta.url))
@@ -81,6 +81,9 @@ export function createLinuxExtensionRunner({
       if (typeof code !== "string" || !HASH.test(artifactSha256)) {
         throw error("INVALID_ARTIFACT", "Expected a compiled module and lowercase SHA-256.")
       }
+      if (manifest?.schemaVersion !== 2 || typeof manifest?.entrypoints?.server !== "string") {
+        throw error("INVALID_MANIFEST", "Executable modules require a v2 server entrypoint.")
+      }
       const bytes = Buffer.from(code, "utf8")
       if (bytes.length < 1 || bytes.length > MAX_SOURCE ||
           createHash("sha256").update(bytes).digest("hex") !== artifactSha256) {
@@ -106,6 +109,8 @@ export function createLinuxExtensionRunner({
         resolveStartup = resolve
         rejectStartup = reject
       })
+      // A setup exception can occur before the caller begins awaiting ready.
+      void ready.catch(() => {})
       function terminate(code, message) {
         if (stopped) return
         stopped = true
