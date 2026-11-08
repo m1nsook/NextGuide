@@ -165,6 +165,10 @@ test("stale signed metadata, incompatible alpha versions and revoked releases ar
   const a=versioned("1.0.0")
   const stale=fixture({signedReleases:signed([a.release],"2026-11-06T00:00:00Z"),artifacts:[a]})
   try{
+    const listed=await stale.manager.catalog()
+    assert.equal(listed.configured,true)
+    assert.equal(listed.catalogFresh,false)
+    assert.equal(listed.releases.length,1)
     await assert.rejects(stale.manager.install({
       id:"acme.docs",version:"1.0.0",expectedRevision:0,consent:true
     }),/last hour/)
