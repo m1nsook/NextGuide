@@ -1,33 +1,102 @@
 ---
-title: Add-on API roadmap
-description: Planned extension points and the boundaries for safe third-party code.
+title: Extension API roadmap
+description: Versioned capabilities, trusted host lifecycle, and plans for isolated add-ons.
 ---
 
 # Extension API roadmap
 
-The NextGuide 1.0 plan is to publish a versioned, typed add-on API from the **single** NextGuide package. The exported runtime API is **not implemented yet**, so these are contracts to design, not imports developers can already use.
+NextGuide is being developed as a **full extension platform**, not merely a Markdown add-on marketplace. The existing content-only v1 format remains valid. v2 metadata will support UI, MDX components, themes, admin tools, AI, OAuth, server endpoints, scheduled jobs, translations and integrations.
 
-## Planned integration surfaces
+<Callout kind="warning" title="Execution is not yet supported">
+The first extension-host foundation is for **explicitly trusted, site-owner-supplied modules only**. It does not install, import, sandbox, or run third-party marketplace JavaScript. The public ngapi registry still verifies content-only v1 releases; its private verifier must be upgraded independently before accepting executable packages.
+</Callout>
 
-| Extension point | Purpose | Safety boundary |
-| --- | --- | --- |
-| Documentation | Add pages, metadata and reusable blocks | Sanitized content and isolated custom rendering |
-| Theme and icon packs | Design tokens and approved assets | No access to owner secrets |
-| Localization | Add locale catalogs and translated strings | Schema and fallback validation |
-| AI integrations | Connect assistants and models | Owner-approved credential scopes and request quotas |
-| OAuth integrations | Authorize external services | Server-managed secrets, callback and state validation |
-| Accessibility | Offer assistive features | Isolated UI hooks and compatibility tests |
-| External integrations | Read approved service data | Narrow permission grants and audited requests |
+## Foundation: `nextguide/extensions`
 
-## What a real API must provide
+The single `nextguide` npm package includes a versioned extension contract. The first module provides:
 
-- Add-on identity, SemVer and compatible NextGuide versions.
-- Typed and documented registration hooks per extension category.
-- An explicit permission/capability model, with owner approval and revocation.
-- Lifecycle hooks for install, activation, disable, updates and uninstall.
-- A storage namespace and safe network/secret access through host-provided APIs.
-- An isolated execution boundary for code-capable extensions; schema validation alone is not sufficient.
+- `EXTENSION_API_VERSION` — host contract version.
+- `EXTENSION_CAPABILITIES` — declared permissions for documentation, MDX blocks, UI, themes, icons, locales, AI, authentication, server routes/jobs, storage, network and secrets.
+- `validateExtensionManifest(manifest)` — checks both content-only v1 and new v2 descriptors and returns **every validation issue together**.
+- `createExtensionHost()` — in-process lifecycle and contribution management for **trusted extensions only**, with explicit capability approval, activation, deactivation and cleanup.
 
-For 1.0.0, start with a secure small set and expand rather than promise unrestricted execution. No arbitrary `postinstall` hooks, server-side dynamic code evaluation, or unreviewed package imports.
+A valid manifest is a declaration, **not permission to execute code**.
 
-[Verification, updates and registry](/docs/addons/publishing).
+## Planned v2 manifest
+
+```json
+{
+  "schemaVersion": 2,
+  "id": "acme.search-tools",
+  "name": "Search Tools",
+  "version": "1.0.0",
+  "category": "integration",
+  "compatibility": {
+    "mode": "account",
+    "nextguide": ">=1.0.0 <2.0.0"
+  },
+  "permissions": ["admin.pages", "docs.pages"],
+  "entrypoints": {
+    "client": "dist/client.js",
+    "server": "dist/server.mjs"
+  }
+}
+```
+
+This is a **draft extension contract**, not yet a package you can submit to ngapi. Future versions will add detailed permission descriptions, package signatures, asset inventories, extension identifiers, and capability-specific contribution schemas.
+
+## Initial capability groups
+
+| Capability group | Planned scope |
+| --- | --- |
+| `docs.pages`, `mdx.blocks` | Pages and dynamic MDX components |
+| `ui.components`, `admin.pages` | UI extensions and owner dashboard integrations |
+| `theme.tokens`, `icons.packs`, `i18n.locales` | Appearance and localization |
+| `ai.providers`, `auth.providers` | AI, external identity and OAuth integration |
+| `server.routes`, `server.jobs` | Server-side endpoints and scheduled work |
+| `storage.read`, `storage.write` | Scoped extension storage |
+| `network.fetch`, `secrets.read` | Policy-controlled host-provided services |
+
+No capability is granted merely because an add-on requests it.
+
+## Trusted host example
+
+```ts
+import { createExtensionHost } from "nextguide/extensions"
+
+const host = createExtensionHost()
+
+// Only do this for code deliberately supplied and trusted by the site owner.
+host.registerTrusted({
+  manifest: {
+    schemaVersion: 2,
+    id: "acme.search-tools",
+    name: "Search Tools",
+    version: "1.0.0",
+    category: "integration",
+    compatibility: { mode: "account", nextguide: ">=1.0.0 <2.0.0" },
+    permissions: ["admin.pages"],
+    entrypoints: { client: "dist/client.js" }
+  },
+  activate(ctx) {
+    ctx.contribute("admin.page", { title: "Search Tools", path: "/admin/search" })
+    ctx.onDeactivate(() => console.log("Stopped"))
+  }
+})
+
+host.approve("acme.search-tools", ["admin.pages"])
+await host.enable("acme.search-tools")
+```
+
+Contributions are **JSON descriptors**. They are not automatically wired to Next.js routes, React rendering or server APIs yet; that requires isolated runners and dedicated rendering adapters.
+
+## Safety architecture and next milestones
+
+1. **Contract and trusted host foundation:** Versioned manifest, capability definitions, activation/deactivation. This part is initially supported in source.
+2. **Isolation and adapters:** Sandbox/cross-process boundaries, host-mediated storage and network access, safe React/MDX rendering and versioned SDK.
+3. **Signed distribution:** Upgrade the private ngapi verification system to audit code-bearing releases and permission changes.
+4. **Account Mode installer:** Browse verified releases, approve permissions, install, configure, enable/disable, update, roll back and uninstall.
+
+No remote `import()`, raw `eval`, in-process execution of untrusted server code or silent permission escalation is permitted in this foundation.
+
+[Create a content-only add-on](/docs/addons/manifest) · [Publishing and review](/docs/addons/publishing)

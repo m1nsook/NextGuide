@@ -21,7 +21,7 @@ function run(command, args) {
 rmSync(out, { recursive: true, force: true })
 run(process.execPath, [require.resolve("typescript/bin/tsc"), "--project", join(here, "tsconfig.json")])
 
-for (const name of ["core", "mdx", "openapi", "components", "ui", "blocks", "icons", "fonts"]) {
+for (const name of ["core", "mdx", "openapi", "components", "ui", "blocks", "icons", "fonts", "extensions"]) {
   if (!existsSync(join(out, name, "index.js"))) {
     throw new Error("Missing compiled NextGuide module: " + name)
   }
