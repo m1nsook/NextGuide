@@ -197,6 +197,7 @@ interface ExtensionRecord {
   approved: Set<ExtensionCapability>
   contributions: ExtensionContribution[]
   cleanup: Array<() => void | Promise<void>>
+  session: { active: boolean } | null
 }
 
 function cloneContribution(value: Record<string, unknown>): Record<string, unknown> {
@@ -233,7 +234,7 @@ export function createExtensionHost() {
       }
       if (typeof extension.activate !== "function") throw new ExtensionHostError("Missing activation callback.", "INVALID_MODULE")
       if (extensions.has(extension.manifest.id)) throw new ExtensionHostError("Extension already registered.", "DUPLICATE_EXTENSION")
-      extensions.set(extension.manifest.id, { extension, state: "disabled", approved: new Set(), contributions: [], cleanup: [] })
+      extensions.set(extension.manifest.id, { extension, state: "disabled", approved: new Set(), contributions: [], cleanup: [], session: null })
     },
     approve(id: string, permissions: readonly ExtensionCapability[]): void {
       const item = get(id)
@@ -248,16 +249,20 @@ export function createExtensionHost() {
       const missing = item.extension.manifest.permissions.filter(permission => !item.approved.has(permission))
       if (missing.length) throw new ExtensionHostError("Permission approval required: " + missing.join(", "), "PERMISSION_REQUIRED")
       item.state = "activating"
+      const session = { active: true }
+      item.session = session
       const context: ExtensionContext = {
         id,
         hasPermission: permission => item.approved.has(permission) && item.extension.manifest.permissions.includes(permission),
         contribute(kind, value) {
+          if (!session.active || (item.state !== "activating" && item.state !== "active")) throw new ExtensionHostError("Extension context is no longer active.", "INVALID_STATE")
           if (!(kind in EXTENSION_CONTRIBUTIONS)) throw new ExtensionHostError("Unsupported contribution kind.", "INVALID_CONTRIBUTION")
           const permission = EXTENSION_CONTRIBUTIONS[kind]
           if (!context.hasPermission(permission)) throw new ExtensionHostError("Contribution permission not approved.", "PERMISSION_REQUIRED")
           item.contributions.push({ extensionId: id, kind, value: cloneContribution(value) })
         },
         onDeactivate(callback) {
+          if (!session.active || (item.state !== "activating" && item.state !== "active")) throw new ExtensionHostError("Extension context is no longer active.", "INVALID_STATE")
           if (typeof callback !== "function") throw new ExtensionHostError("Cleanup must be a function.", "INVALID_CLEANUP")
           item.cleanup.push(callback)
         }
@@ -269,6 +274,8 @@ export function createExtensionHost() {
         for (const callback of item.cleanup.reverse()) {
           try { await callback() } catch { /* preserve activation failure */ }
         }
+        session.active = false
+        item.session = null
         item.cleanup = []
         item.contributions = []
         item.state = "disabled"
@@ -279,6 +286,8 @@ export function createExtensionHost() {
       const item = get(id)
       if (item.state !== "active") throw new ExtensionHostError("Extension is not active.", "INVALID_STATE")
       item.state = "deactivating"
+      if (item.session) item.session.active = false
+      item.session = null
       let failure: unknown
       try { await item.extension.deactivate?.() } catch (error) { failure = error }
       for (const callback of item.cleanup.reverse()) {
