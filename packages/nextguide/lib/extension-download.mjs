@@ -203,16 +203,16 @@ export async function downloadVerifiedContentRelease({
 export async function downloadReviewedV2Release({
   envelope,pinnedPublicKeyPem,id,version,
   resolver=dnsLookup,transport=httpsRequest,
-  signal,timeoutMs=15000,now=Date.now(),
+  signal,timeoutMs=15000,now=()=>Date.now(),
 }={}){
   if(!ID.test(id) || !VERSION.test(version) ||
      typeof resolver!=="function" || typeof transport!=="function" ||
      !Number.isSafeInteger(timeoutMs) || timeoutMs<100 || timeoutMs>30000 ||
-     !Number.isFinite(now)){
+     typeof now!=="function" || !Number.isFinite(now())){
     fail("CONFIGURATION","Invalid v2 release request or trusted downloader options")
   }
   // Authenticate and check expiry BEFORE ANY DNS request or HTTPS fetch.
-  const catalog=verifySignedV2RegistryEnvelope(envelope,pinnedPublicKeyPem,{now})
+  const catalog=verifySignedV2RegistryEnvelope(envelope,pinnedPublicKeyPem,{now:now()})
   const release=catalog.releases.find(r=>
     r.manifest.id===id && r.manifest.version===version)
   if(!release || release.status!=="active" ||
@@ -231,7 +231,7 @@ export async function downloadReviewedV2Release({
       // before returning the original bytes for private storage/review.
       const verified=verifyReviewedV2Archive({
         envelope,pinnedPublicKeyPem,id,version,archive:result.bytes,
-        now:Date.now(),
+        now:now(),
       })
       return {archive:result.bytes,verified}
     }
