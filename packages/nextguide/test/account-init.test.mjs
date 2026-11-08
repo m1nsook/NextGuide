@@ -48,6 +48,13 @@ test("App Router Account Mode scaffolds protected routes and owner token without
       assert.match(source, /next\/font\/google/, route + " should self-host Inter")
       assert.match(source, /--ng-preview-inter/, route + " should supply the Account Mode font variable")
     }
+    const docsSource = readFileSync(join(project, "src/lib/nextguide.ts"), "utf8")
+    assert.match(docsSource, /getInstalledAddonPages/)
+    assert.match(docsSource, /createAccountAddonManager/)
+    assert.match(docsSource, /async function getBaseSidebar/)
+    assert.match(docsSource, /async function getBaseSearchIndex/)
+    assert.match(docsSource, /section\("Add-ons", "#addons"/)
+    assert.match(docsSource, /section: "Add-ons"/)
     assert.ok(existsSync(join(project, "src/app/admin/page.tsx")))
     const addOnRoute = readFileSync(join(project,
       "src/app/docs/addons/[id]/[[...page]]/page.tsx"), "utf8")
