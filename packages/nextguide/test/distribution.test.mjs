@@ -9,7 +9,7 @@ const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 const output = join(root, "dist")
 
 test("all-in-one exports are present", () => {
-  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./blocks", "./ui/primitives", "./ui/interactive", "./fonts", "./fonts/catalog", "./site/next", "./styles.css"]) {
+  for (const key of [".", "./core", "./mdx", "./mdx/server", "./mdx/client", "./openapi", "./components", "./ui", "./icons", "./blocks", "./ui/primitives", "./ui/interactive", "./fonts", "./fonts/catalog", "./site/next", "./styles.css", "./extensions", "./extensions/runtime", "./extensions/views", "./extensions/ui", "./extensions/storage", "./extensions/catalog"]) {
     assert.ok(manifest.exports[key], key)
   }
 })
@@ -301,4 +301,25 @@ test("Account Mode ships the supplied shadcn Base UI Vega controls independently
     "--ng-preview-jetbrains-mono", "--ng-preview-geist-mono", "--ng-preview-ibm-plex-mono"]) {
     assert.ok(studio.includes(family), "Font preview missing " + family)
   }
+})
+
+test("extension exports ship with declarations and safe client boundary", async () => {
+  const [extensions, runtime, views, ui, storage, catalog] = await Promise.all([
+    import("nextguide/extensions"),
+    import("nextguide/extensions/runtime"),
+    import("nextguide/extensions/views"),
+    import("nextguide/extensions/ui"),
+    import("nextguide/extensions/storage"),
+    import("nextguide/extensions/catalog"),
+  ])
+  assert.equal(typeof extensions.createExtensionHost, "function")
+  assert.equal(typeof runtime.createExtensionBroker, "function")
+  assert.equal(typeof views.validateExtensionView, "function")
+  assert.equal(typeof ui.ExtensionView, "function")
+  assert.equal(typeof storage.createExtensionFileStorage, "function")
+  assert.equal(typeof catalog.createVerifiedRegistryClient, "function")
+  const source = readFileSync(join(root, "dist/extensions/ui.js"), "utf8")
+  assert.match(source, /^"use client";?/)
+  assert.doesNotMatch(source, /dangerouslySetInnerHTML/)
+  assert.doesNotMatch(source, /eval/)
 })

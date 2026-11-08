@@ -65,6 +65,24 @@ import "nextguide/styles.css"
 
 [Browse live component examples](https://m1nsook.github.io/NextGuide/components/ui/).
 
+## Extension runtime foundation (source preview)
+
+The single NextGuide package now includes `nextguide/extensions`,
+`nextguide/extensions/runtime`, `nextguide/extensions/storage`,
+`nextguide/extensions/views`, `nextguide/extensions/ui`, and
+`nextguide/extensions/catalog`.
+
+These provide a typed capability contract, a trusted lifecycle host, a
+permission-gated message broker, private per-extension JSON storage, and a
+declarative React view renderer using NextGuide's own UI components,
+and a pinned-key verifier for ngapi's signed, read-only registry index.
+
+**Security boundary:** These APIs do not execute, import, or sandbox
+third-party marketplace JavaScript. Signed v2 package verification, OS/browser
+isolation, and the Account Mode marketplace installer are still in development.
+Content-only v1 add-ons remain compatible. Read the
+[extension runtime roadmap](https://m1nsook.github.io/NextGuide/docs/addons/api/).
+
 ## Upgrades and support
 
 Preview an existing Developer Mode upgrade with `bunx nextguide upgrade --dry-run`. Generated-file updates require the explicit `--refresh-generated` flag and keep backups. Read [the upgrade guide](https://m1nsook.github.io/NextGuide/docs/getting-started/upgrading/).

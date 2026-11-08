@@ -16,9 +16,9 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs",
+    "test": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs",
     "test:dist": "node --test test/distribution.test.mjs",
-    "prepack": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs",
+    "prepack": "node scripts/build.mjs && node --test test/cli-ui.test.mjs test/account-ui-isolation.test.mjs test/account-semantics-icons.test.mjs test/doctor.test.mjs test/init.test.mjs test/distribution.test.mjs test/page.test.mjs test/page-cli.test.mjs test/version.test.mjs test/upgrade.test.mjs test/account-auth.test.mjs test/account-init.test.mjs test/account-cms.test.mjs test/extensions.test.mjs test/extension-runtime.test.mjs test/extension-storage.test.mjs test/extension-catalog.test.mjs",
     "test:unit": "bunx vitest run",
     "check-types": "node scripts/build.mjs"
   },
@@ -147,6 +147,28 @@
     "./extensions": {
       "types": "./dist/extensions/index.d.ts",
       "default": "./dist/extensions/index.js"
+    },
+    "./extensions/runtime": {
+      "types": "./dist/extensions/runtime.d.ts",
+      "default": "./dist/extensions/runtime.js"
+    },
+    "./extensions/views": {
+      "types": "./dist/extensions/views.d.ts",
+      "default": "./dist/extensions/views.js"
+    },
+    "./extensions/ui": {
+      "types": "./dist/extensions/ui.d.ts",
+      "default": "./dist/extensions/ui.js"
+    },
+    "./extensions/storage": {
+      "types": "./lib/extension-storage.d.mts",
+      "node": "./lib/extension-storage.mjs",
+      "default": "./lib/extension-storage.mjs"
+    },
+    "./extensions/catalog": {
+      "types": "./lib/extension-catalog.d.mts",
+      "node": "./lib/extension-catalog.mjs",
+      "default": "./lib/extension-catalog.mjs"
     }
   },
   "imports": {
