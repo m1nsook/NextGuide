@@ -54,7 +54,8 @@ export function getEditUrl(source: DocsInstance, slug: string): string | undefin
 }
 
 export async function getDocsNavigation(): Promise<NavItem[]> {
-  return withBase(await docs.getNavigation(), "/docs")
+  // Keep legacy /docs/addons URLs routable but out of the framework sidebar.
+  return withBase(await docs.getNavigation(), "/docs").filter(item => item.href !== "/docs/addons")
 }
 
 export async function getAddonsNavigation(): Promise<NavItem[]> {
