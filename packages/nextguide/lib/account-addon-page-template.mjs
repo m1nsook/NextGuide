@@ -29,7 +29,7 @@ const readPage = cache(async (id__ID_TYPE__, rawPage__PAGE_TYPE__) => {
     const entry = addon.pages.find(item => item.path === target)
     if (!entry) return null
     const title = slug === "index" ? String(addon.manifest.name || id)
-      : slug.split("/").at(-1).replace(/[-_]/g, " ")
+      : (slug.split("/").at(-1) ?? slug).replace(/[-_]/g, " ")
     return { title, id, version: addon.version, markdown: entry.markdown }
   } catch {
     // Missing signed freshness, revoked release, corrupt blob, bad config or
