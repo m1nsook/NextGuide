@@ -240,11 +240,16 @@ test("private journal records successful lifecycle changes, not denied transacti
     assert.deepEqual(history.map(e=>e.revision),[1,2,3,4])
     assert.ok(history.every(e=>e.at===new Date(FIXED_NOW).toISOString()))
     assert.ok(history.every(e=>Object.keys(e).sort().join(",")==="at,id,operation,revision,version"))
+    f.store.rollback({id:"acme.readme",version:"1.1.0",expectedRevision:4,
+      envelope,pinnedPublicKeyPem:pem})
+    assert.equal(f.store.list().history.at(-1).operation,"rollback",
+      "Restoring a newer cached version is still an explicit rollback")
+    const refreshed=f.store.list().history
     const restarted=createAccountAddonStore({
       project:f.project,dataDir:f.dataDir,nextguideVersion:"1.0.0",now:()=>FIXED_NOW,
     })
-    assert.deepEqual(restarted.list().history,history)
-    restarted.uninstall({id:"acme.readme",expectedRevision:4})
+    assert.deepEqual(restarted.list().history,refreshed)
+    restarted.uninstall({id:"acme.readme",expectedRevision:5})
     assert.equal(restarted.list().history.at(-1).operation,"uninstall")
     assert.equal(restarted.list().addons.length,0)
   } finally { f.cleanup() }
