@@ -12,6 +12,7 @@ import { dirname, join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { accountFile, createBootstrap } from "../lib/account-auth.mjs"
 import { createAccountV2AddonManager } from "../lib/extension-v2-site-manager.mjs"
+import { fullStudioRouteSource } from "../lib/account-studio-template.mjs"
 
 const keys=generateKeyPairSync("ed25519")
 const pem=keys.publicKey.export({format:"pem",type:"spki"})
@@ -301,4 +302,22 @@ test("private journal refuses symlink replacement and survives interrupted revis
     writeFileSync(path,backup,{mode:0o600})
     assert.equal((await m.catalog()).installed.revision,1)
   }finally{f.cleanup()}
+})
+
+
+test("generated Account Mode studio gates every v2 action behind owner session and origin",()=>{
+  for(const typed of [true,false]){
+    const route=fullStudioRouteSource(typed)
+    assert.match(route,/if \(!authorized\(request\)\)/)
+    assert.match(route,/if \(!sameOrigin\(request\)\)/)
+    assert.match(route,/action === "addons-v2"/)
+    for(const action of ["stage","grant","revoke","rollback","uninstall"]){
+      assert.ok(route.includes('action === "addon-v2-'+action+'"'),
+        "missing owner-authenticated v2 route "+action)
+    }
+    assert.ok(route.indexOf('if (action.startsWith("addon-v2-"))') <
+      route.indexOf('if (action.startsWith("addon-"))'),
+      "v2 routes must not accidentally dispatch to the v1 content installer")
+    assert.match(route,/createAccountV2AddonManager\(\{ project: process\.cwd\(\) \}\)/)
+  }
 })
