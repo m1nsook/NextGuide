@@ -317,8 +317,12 @@ export function createAccountV2AddonManager({
           reviewedAt:release.review.approvedAt,
         }
         immutableBlob(release,archive)
+        // Never carry over approvals from ANY previous executable version.
+        // A rollback will require fresh consent for that exact digest.
         const versions=prior?
-          [...prior.versions.filter(x=>x.version!==version),snapshot].slice(-MAX_VERSIONS):
+          [...prior.versions.filter(x=>x.version!==version).map(x=>({
+            ...x,grants:[],
+          })),snapshot].slice(-MAX_VERSIONS):
           [snapshot]
         next.addons[id]={id,pinnedVersion:version,versions}
         return {addon:publicEntry(next.addons[id]),executionAvailable:false}
@@ -381,7 +385,7 @@ export function createAccountV2AddonManager({
         verifyReviewedV2Archive({envelope,pinnedPublicKeyPem,id,version,
           archive:checkedBlob(snapshot),now:now()})
         entry.pinnedVersion=version
-        snapshot.grants=[]
+        for(const prior of entry.versions)prior.grants=[]
         return {addon:publicEntry(entry),executionAvailable:false}
       })
     },
