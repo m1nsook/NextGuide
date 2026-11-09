@@ -5,7 +5,7 @@ description: The signed executable release protocol, byte-level verifier and pri
 
 # Reviewed executable v2 packages
 
-NextGuide supports **read-only verification** of independently reviewed v2 executable archives. This does not enable production execution. The private ngapi server currently approves content-only v1 releases; v2 requires a separate registry deployment.
+NextGuide supports **read-only verification and private Account Mode staging** of independently reviewed v2 executable archives, with owner permission-consent records. This does not enable production execution. The private ngapi server currently approves content-only v1 releases; v2 requires a separate registry deployment.
 
 ## Source to trusted bytes
 
@@ -37,6 +37,26 @@ The signed catalog and archive are checked independently, without writing third-
 The registry backend must verify independent review, reproducible build provenance and immutable GitHub assets before signing. Signed indexes need expiration, revocation and signing-key rotation procedures. Server-side authorization must never accept a publisher-supplied reviewer field as proof without authenticated staff approval. No private keys or private registry server implementation belong in the public NextGuide package.
 
 **The private ngapi service has not been upgraded by this milestone.** Before server deployment, prepare and test a private patch against the actual VPS backend, with a backup and rollback procedure.
+
+## Account Mode private v2 staging
+
+The Account Mode **Add-ons** page now has a separate **Executable extensions** review panel below the existing, working v1 Markdown marketplace. Once your privately hosted ngapi implements the signed v2 endpoint and its public key is pinned to the host, the panel can browse reviewed v2 releases, show independent reviewer identity, version, compatibility, exact archive digest and requested capabilities.
+
+The server-side staging journal lives outside the Next.js project and stores only immutable, reviewed package bytes, bounded state history and version-specific permission approvals. It uses cross-process locking, atomic journal revisions and exact SHA-256 checks. Staged executable add-ons are always **blocked from execution**; no enabled flag or host-process module loader exists.
+
+Owner actions:
+
+- **Stage reviewed release:** Download the signed GitHub artifact, verify every byte, check compatibility and latest active signed status again, and save it privately with no grants.
+- **Review and approve capabilities:** Require owner session, same-origin request, explicit consent and exact pinned version/digest/permission list. Permission approval is a record only, never an execution grant.
+- **Update and rollback:** Only to signed active versions. Clear *all* prior grants and require fresh review. If the registry is expired, unreachable or revoked, the action fails closed.
+- **Revoke permissions and uninstall:** Work offline to let the owner disable previously granted privileges or remove the staged add-on from the journal even when the signed registry is unavailable.
+- **History:** The last 100 successful actions are stored privately. No executable code or credentials are exposed through the API response.
+
+Trusted Account Mode server configuration uses **NEXTGUIDE_ADDON_V2_REGISTRY_URL** set to the trusted HTTPS `/v2/registry` endpoint and **NEXTGUIDE_ADDON_V2_PUBLIC_KEY_B64** containing the base64-encoded pinned PEM public key. Never place a private signing key or public registry URL in browser-provided request data.
+
+The generated studio API uses existing site-owner session validation and origin protection for all changes. **Existing Account Mode installations must preview and explicitly apply a generated-route refresh** using the `nextguide upgrade --refresh-generated --dry-run` command and then `--refresh-generated`; NextGuide does not silently overwrite previously installed routes.
+
+No private ngapi v2 server upgrade has happened. Until the registry service is implemented, the panel shows configuration/unavailable status and retains safe offline access to existing staged state. The released `0.0.1-alpha.2` package also does not meet manifests requiring `>=1.0.0`, intentionally preventing premature alpha staging.
 
 ## Remaining execution gates
 
