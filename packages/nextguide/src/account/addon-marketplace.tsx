@@ -409,9 +409,10 @@ function V2ReviewPanel() {
     <AlertDialog open={pending!==null} onOpenChange={open=>{if(!open&&!busy)setPending(null)}}>
       <AlertDialogContent><AlertDialogHeader>
         <AlertDialogTitle>Review executable add-on change</AlertDialogTitle>
-        <AlertDialogDescription asChild>
-          <div className="space-y-2"><V2ActionDescription action={pending}/></div>
+        <AlertDialogDescription>
+          Explicit review and consent are required. No executable code will run.
         </AlertDialogDescription>
+        <div className="space-y-2 text-sm text-muted-foreground"><V2ActionDescription action={pending}/></div>
       </AlertDialogHeader><AlertDialogFooter>
         <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
         <AlertDialogAction disabled={busy} onClick={()=>void apply()}>
